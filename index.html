@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Go Rabbit Web — Coming Soon</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --blue: #2B47A8;
+      --blue-dark: #1E3380;
+      --red: #E83B2E;
+      --white: #FFFFFF;
+      --gray-light: #F5F7FA;
+      --gray: #8892A4;
+      --gray-dark: #3A4560;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--white);
+      color: var(--gray-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Subtle animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(43, 71, 168, 0.04) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(232, 59, 46, 0.03) 0%, transparent 50%);
+      animation: bgDrift 20s ease-in-out infinite alternate;
+      z-index: -1;
+    }
+
+    @keyframes bgDrift {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(3%, 2%) rotate(2deg); }
+    }
+
+    /* Main container */
+    .hero {
+      text-align: center;
+      padding: 2rem;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    /* Logo animation */
+    .logo-container {
+      margin-bottom: 2.5rem;
+      position: relative;
+    }
+
+    .logo {
+      width: 180px;
+      height: auto;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      animation: logoReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+      filter: drop-shadow(0 4px 20px rgba(43, 71, 168, 0.15));
+      transition: filter 0.3s ease;
+    }
+
+    .logo:hover {
+      filter: drop-shadow(0 8px 30px rgba(43, 71, 168, 0.25));
+    }
+
+    /* Pulse ring behind logo */
+    .logo-container::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200px;
+      height: 200px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      border: 2px solid rgba(43, 71, 168, 0.08);
+      animation: pulseRing 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes logoReveal {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes pulseRing {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+      }
+    }
+
+    /* Heading */
+    .heading {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+
+    .subheading {
+      font-size: 1.6rem;
+      font-weight: 300;
+      color: var(--gray-dark);
+      line-height: 1.4;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+
+    .subheading strong {
+      font-weight: 600;
+      color: var(--blue-dark);
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Email form */
+    .signup-form {
+      display: flex;
+      gap: 0.5rem;
+      max-width: 440px;
+      margin: 0 auto 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1s forwards;
+    }
+
+    .signup-form input[type="email"] {
+      flex: 1;
+      padding: 0.85rem 1.2rem;
+      border: 2px solid #E2E6EE;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--gray-dark);
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .signup-form input[type="email"]::placeholder {
+      color: var(--gray);
+    }
+
+    .signup-form input[type="email"]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(43, 71, 168, 0.1);
+    }
+
+    .signup-form button {
+      padding: 0.85rem 1.8rem;
+      background: var(--blue);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .signup-form button:hover {
+      background: var(--blue-dark);
+    }
+
+    .signup-form button:active {
+      transform: scale(0.98);
+    }
+
+    /* Accent dot */
+    .signup-form button::after {
+      content: ' →';
+    }
+
+    .note {
+      font-size: 0.8rem;
+      color: var(--gray);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.2s forwards;
+    }
+
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--gray);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.4s forwards;
+    }
+
+    .footer a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Red accent dot */
+    .accent-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--red);
+      border-radius: 50%;
+      margin-left: 2px;
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.3); }
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      .signup-form {
+        flex-direction: column;
+      }
+      .subheading {
+        font-size: 1.3rem;
+      }
+      .logo {
+        width: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="logo-container">
+      <img src="logo.png" alt="Go Rabbit Web" class="logo">
+    </div>
+
+    <p class="heading">Coming Soon<span class="accent-dot"></span></p>
+    <p class="subheading">We're building something <strong>fast</strong>.<br>Stay in the loop.</p>
+
+    <form class="signup-form" onsubmit="handleSubmit(event)">
+      <input type="email" placeholder="Enter your email" required>
+      <button type="submit">Notify Me</button>
+    </form>
+
+    <p class="note">No spam. Just launch day updates.</p>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 Go Rabbit Web &middot; <a href="mailto:keith@gorunrabbit.com">Contact</a>
+  </div>
+
+  <script>
+    function handleSubmit(e) {
+      e.preventDefault();
+      const input = e.target.querySelector('input');
+      const btn = e.target.querySelector('button');
+      const email = input.value;
+
+      btn.textContent = 'Subscribed ✓';
+      btn.style.background = '#22C55E';
+      input.value = '';
+      input.disabled = true;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.textContent = 'Notify Me';
+        btn.style.background = '';
+        input.disabled = false;
+        btn.disabled = false;
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
