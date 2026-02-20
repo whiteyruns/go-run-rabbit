@@ -4,6 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Go Rabbit Web — Coming Soon</title>
+  <meta name="description" content="Go Rabbit Web — We're building something fast. Stay in the loop.">
+
+  <!-- Favicon -->
+  <link rel="icon" href="favicon.ico" sizes="any">
+  <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Go Rabbit Web — Coming Soon">
+  <meta property="og:description" content="We're building something fast. Stay in the loop.">
+  <meta property="og:image" content="og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Go Rabbit Web — Coming Soon">
+  <meta name="twitter:description" content="We're building something fast. Stay in the loop.">
+  <meta name="twitter:image" content="og-image.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -18,14 +38,13 @@
       --blue-dark: #1E3380;
       --red: #E83B2E;
       --white: #FFFFFF;
-      --gray-light: #F5F7FA;
       --gray: #8892A4;
       --gray-dark: #3A4560;
     }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: var(--white);
+      background: #EFEFEF;
       color: var(--gray-dark);
       min-height: 100vh;
       display: flex;
@@ -36,50 +55,43 @@
       position: relative;
     }
 
-    /* Subtle animated background */
+    /* Radial vignette matching the video's built-in lighting */
     body::before {
       content: '';
       position: fixed;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(ellipse at 30% 20%, rgba(43, 71, 168, 0.04) 0%, transparent 50%),
-                  radial-gradient(ellipse at 70% 80%, rgba(232, 59, 46, 0.03) 0%, transparent 50%);
-      animation: bgDrift 20s ease-in-out infinite alternate;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 40%, #F9F9FB 0%, #F2F2F4 35%, #EFEFEF 65%, #E8E8EA 100%);
       z-index: -1;
     }
 
-    @keyframes bgDrift {
-      0% { transform: translate(0, 0) rotate(0deg); }
-      100% { transform: translate(3%, 2%) rotate(2deg); }
-    }
-
-    /* Main container */
     .hero {
       text-align: center;
       padding: 2rem;
-      max-width: 600px;
+      max-width: 700px;
       width: 100%;
     }
 
-    /* Video hero */
     .logo-container {
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.5rem;
       position: relative;
+      /* Oversized so edges are well outside the visible rabbit */
+      overflow: visible;
     }
 
     .hero-video {
-      width: 320px;
-      max-width: 80vw;
+      width: 640px;
+      max-width: 100vw;
       height: auto;
-      border-radius: 12px;
+      display: block;
+      margin: 0 auto;
       opacity: 0;
-      transform: scale(0.95);
-      animation: videoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      transform: scale(0.97);
+      animation: videoReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      /* Aggressive feather — fully dissolves the rectangular boundary */
+      -webkit-mask-image: radial-gradient(ellipse 60% 55% at center, black 35%, transparent 70%);
+      mask-image: radial-gradient(ellipse 60% 55% at center, black 35%, transparent 70%);
     }
 
-    /* Static logo fallback — hidden when video loads */
     .logo-fallback {
       width: 180px;
       height: auto;
@@ -90,7 +102,7 @@
     .no-video .logo-fallback {
       display: block;
       opacity: 0;
-      animation: videoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+      animation: videoReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
     }
 
     .no-video .hero-video {
@@ -104,7 +116,6 @@
       }
     }
 
-    /* Content starts hidden, revealed after video plays */
     .content-area {
       opacity: 0;
       transform: translateY(16px);
@@ -116,7 +127,6 @@
       transform: translateY(0);
     }
 
-    /* Heading */
     .heading {
       font-size: 1.1rem;
       font-weight: 600;
@@ -139,7 +149,6 @@
       color: var(--blue-dark);
     }
 
-    /* Email form */
     .signup-form {
       display: flex;
       gap: 0.5rem;
@@ -150,11 +159,12 @@
     .signup-form input[type="email"] {
       flex: 1;
       padding: 0.85rem 1.2rem;
-      border: 2px solid #E2E6EE;
+      border: 2px solid #D8DBE4;
       border-radius: 10px;
       font-family: inherit;
       font-size: 0.95rem;
       color: var(--gray-dark);
+      background: var(--white);
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
@@ -199,15 +209,22 @@
       color: var(--gray);
     }
 
-    /* Footer */
+    /* Footer with logo */
     .footer {
       position: fixed;
       bottom: 1.5rem;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
       font-size: 0.75rem;
       color: var(--gray);
       opacity: 0;
       animation: fadeIn 0.8s ease 1.4s forwards;
     }
+
+
 
     .footer a {
       color: var(--blue);
@@ -222,7 +239,6 @@
       to { opacity: 1; }
     }
 
-    /* Red accent dot */
     .accent-dot {
       display: inline-block;
       width: 6px;
@@ -238,7 +254,6 @@
       50% { opacity: 0.5; transform: scale(1.3); }
     }
 
-    /* Responsive */
     @media (max-width: 500px) {
       .signup-form {
         flex-direction: column;
@@ -247,7 +262,7 @@
         font-size: 1.3rem;
       }
       .hero-video {
-        width: 260px;
+        width: 100%;
       }
     }
   </style>
@@ -282,48 +297,36 @@
   </div>
 
   <div class="footer">
-    &copy; 2026 Go Rabbit Web &middot; <a href="mailto:keith@gorunrabbit.com">Contact</a>
+&copy; 2026 Go Rabbit Web &middot; <a href="mailto:keith@gorunrabbit.com">Contact</a>
   </div>
 
   <script>
     const video = document.getElementById('heroVideo');
     const content = document.getElementById('contentArea');
 
-    // Reveal content after video finishes its first play
     function revealContent() {
       content.classList.add('visible');
     }
 
+    let hasRevealed = false;
     video.addEventListener('ended', function () {
-      // Brief pause, then reveal text, then loop the video
-      setTimeout(revealContent, 300);
-      setTimeout(() => {
-        video.play();
-      }, 1500);
+      if (!hasRevealed) {
+        hasRevealed = true;
+        setTimeout(revealContent, 300);
+      }
+      setTimeout(() => video.play(), 2000);
     });
 
-    // Fallback: if video can't play, show static logo + content immediately
     video.addEventListener('error', function () {
       document.body.classList.add('no-video');
       revealContent();
     });
 
-    // Safety net: if video hasn't played after 3s, reveal content anyway
     setTimeout(() => {
       if (!content.classList.contains('visible')) {
         revealContent();
       }
     }, 3000);
-
-    // After first loop, set video to loop continuously
-    let firstPlay = true;
-    video.addEventListener('ended', function () {
-      if (firstPlay) {
-        firstPlay = false;
-      }
-      // Replay with a subtle pause between loops
-      setTimeout(() => video.play(), 2000);
-    });
 
     function handleSubmit(e) {
       e.preventDefault();
