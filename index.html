@@ -24,6 +24,7 @@
   <meta name="twitter:title" content="Go Rabbit Web — Coming Soon">
   <meta name="twitter:description" content="We're building something fast. Stay in the loop.">
   <meta name="twitter:image" content="https://gorunrabbit.com/og-image.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -44,7 +45,7 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #EFEFEF;
+      background: var(--white);
       color: var(--gray-dark);
       min-height: 100vh;
       display: flex;
@@ -55,76 +56,55 @@
       position: relative;
     }
 
-    /* Radial vignette matching the video's built-in lighting */
     body::before {
       content: '';
       position: fixed;
-      inset: 0;
-      background: radial-gradient(ellipse 80% 70% at 50% 40%, #F9F9FB 0%, #F2F2F4 35%, #EFEFEF 65%, #E8E8EA 100%);
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(43, 71, 168, 0.04) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 80%, rgba(232, 59, 46, 0.03) 0%, transparent 50%);
+      animation: bgDrift 20s ease-in-out infinite alternate;
       z-index: -1;
+    }
+
+    @keyframes bgDrift {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      100% { transform: translate(3%, 2%) rotate(2deg); }
     }
 
     .hero {
       text-align: center;
       padding: 2rem;
-      max-width: 700px;
+      max-width: 600px;
       width: 100%;
     }
 
     .logo-container {
-      margin-bottom: 0.5rem;
+      margin-bottom: 2.5rem;
       position: relative;
-      /* Oversized so edges are well outside the visible rabbit */
-      overflow: visible;
     }
 
-    .hero-video {
-      width: 640px;
-      max-width: 100vw;
+    .logo {
+      width: 220px;
       height: auto;
-      display: block;
-      margin: 0 auto;
       opacity: 0;
-      transform: scale(0.97);
-      animation: videoReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
-      /* Aggressive feather — fully dissolves the rectangular boundary */
-      -webkit-mask-image: radial-gradient(ellipse 60% 55% at center, black 35%, transparent 70%);
-      mask-image: radial-gradient(ellipse 60% 55% at center, black 35%, transparent 70%);
-    }
-
-    .logo-fallback {
-      width: 180px;
-      height: auto;
-      display: none;
+      transform: translateY(20px) scale(0.95);
+      animation: logoReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
       filter: drop-shadow(0 4px 20px rgba(43, 71, 168, 0.15));
+      transition: filter 0.3s ease;
     }
 
-    .no-video .logo-fallback {
-      display: block;
-      opacity: 0;
-      animation: videoReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    .logo:hover {
+      filter: drop-shadow(0 8px 30px rgba(43, 71, 168, 0.25));
     }
 
-    .no-video .hero-video {
-      display: none;
-    }
-
-    @keyframes videoReveal {
+    @keyframes logoReveal {
       to {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0) scale(1);
       }
-    }
-
-    .content-area {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .content-area.visible {
-      opacity: 1;
-      transform: translateY(0);
     }
 
     .heading {
@@ -134,6 +114,8 @@
       text-transform: uppercase;
       letter-spacing: 0.15em;
       margin-bottom: 0.75rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.6s forwards;
     }
 
     .subheading {
@@ -142,6 +124,8 @@
       color: var(--gray-dark);
       line-height: 1.4;
       margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 0.8s forwards;
     }
 
     .subheading strong {
@@ -149,22 +133,34 @@
       color: var(--blue-dark);
     }
 
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .signup-form {
       display: flex;
       gap: 0.5rem;
       max-width: 440px;
       margin: 0 auto 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1s forwards;
     }
 
     .signup-form input[type="email"] {
       flex: 1;
       padding: 0.85rem 1.2rem;
-      border: 2px solid #D8DBE4;
+      border: 2px solid #E2E6EE;
       border-radius: 10px;
       font-family: inherit;
       font-size: 0.95rem;
       color: var(--gray-dark);
-      background: var(--white);
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
@@ -207,24 +203,18 @@
     .note {
       font-size: 0.8rem;
       color: var(--gray);
+      opacity: 0;
+      animation: fadeUp 0.8s ease 1.2s forwards;
     }
 
-    /* Footer with logo */
     .footer {
       position: fixed;
       bottom: 1.5rem;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
       font-size: 0.75rem;
       color: var(--gray);
       opacity: 0;
       animation: fadeIn 0.8s ease 1.4s forwards;
     }
-
-
 
     .footer a {
       color: var(--blue);
@@ -261,8 +251,8 @@
       .subheading {
         font-size: 1.3rem;
       }
-      .hero-video {
-        width: 100%;
+      .logo {
+        width: 170px;
       }
     }
   </style>
@@ -270,64 +260,25 @@
 <body>
   <div class="hero">
     <div class="logo-container">
-      <video
-        class="hero-video"
-        autoplay
-        muted
-        playsinline
-        poster="poster.png"
-        id="heroVideo"
-      >
-        <source src="hero.mp4" type="video/mp4">
-      </video>
-      <img src="logo.png" alt="Go Rabbit Web" class="logo-fallback">
+      <img src="logo.png" alt="Go Rabbit Web" class="logo">
     </div>
 
-    <div class="content-area" id="contentArea">
-      <p class="heading">Coming Soon<span class="accent-dot"></span></p>
-      <p class="subheading">We're building something <strong>fast</strong>.<br>Stay in the loop.</p>
+    <p class="heading">Coming Soon<span class="accent-dot"></span></p>
+    <p class="subheading">We're building something <strong>fast</strong>.<br>Stay in the loop.</p>
 
-      <form class="signup-form" onsubmit="handleSubmit(event)">
-        <input type="email" placeholder="Enter your email" required>
-        <button type="submit">Notify Me</button>
-      </form>
+    <form class="signup-form" onsubmit="handleSubmit(event)">
+      <input type="email" placeholder="Enter your email" required>
+      <button type="submit">Notify Me</button>
+    </form>
 
-      <p class="note">No spam. Just launch day updates.</p>
-    </div>
+    <p class="note">No spam. Just launch day updates.</p>
   </div>
 
   <div class="footer">
-&copy; 2026 Go Rabbit Web &middot; <a href="mailto:keith@gorunrabbit.com">Contact</a>
+    &copy; 2026 Go Rabbit Web &middot; <a href="mailto:keith@gorunrabbit.com">Contact</a>
   </div>
 
   <script>
-    const video = document.getElementById('heroVideo');
-    const content = document.getElementById('contentArea');
-
-    function revealContent() {
-      content.classList.add('visible');
-    }
-
-    let hasRevealed = false;
-    video.addEventListener('ended', function () {
-      if (!hasRevealed) {
-        hasRevealed = true;
-        setTimeout(revealContent, 300);
-      }
-      setTimeout(() => video.play(), 2000);
-    });
-
-    video.addEventListener('error', function () {
-      document.body.classList.add('no-video');
-      revealContent();
-    });
-
-    setTimeout(() => {
-      if (!content.classList.contains('visible')) {
-        revealContent();
-      }
-    }, 3000);
-
     function handleSubmit(e) {
       e.preventDefault();
       const input = e.target.querySelector('input');
