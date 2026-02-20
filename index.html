@@ -63,57 +63,57 @@
       width: 100%;
     }
 
-    /* Logo animation */
+    /* Video hero */
     .logo-container {
-      margin-bottom: 2.5rem;
+      margin-bottom: 1.5rem;
       position: relative;
     }
 
-    .logo {
+    .hero-video {
+      width: 320px;
+      max-width: 80vw;
+      height: auto;
+      border-radius: 12px;
+      opacity: 0;
+      transform: scale(0.95);
+      animation: videoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+    }
+
+    /* Static logo fallback — hidden when video loads */
+    .logo-fallback {
       width: 180px;
       height: auto;
-      opacity: 0;
-      transform: translateY(20px) scale(0.95);
-      animation: logoReveal 1s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+      display: none;
       filter: drop-shadow(0 4px 20px rgba(43, 71, 168, 0.15));
-      transition: filter 0.3s ease;
     }
 
-    .logo:hover {
-      filter: drop-shadow(0 8px 30px rgba(43, 71, 168, 0.25));
+    .no-video .logo-fallback {
+      display: block;
+      opacity: 0;
+      animation: videoReveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
     }
 
-    /* Pulse ring behind logo */
-    .logo-container::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 200px;
-      height: 200px;
-      transform: translate(-50%, -50%);
-      border-radius: 50%;
-      border: 2px solid rgba(43, 71, 168, 0.08);
-      animation: pulseRing 3s ease-in-out infinite;
-      pointer-events: none;
+    .no-video .hero-video {
+      display: none;
     }
 
-    @keyframes logoReveal {
+    @keyframes videoReveal {
       to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: scale(1);
       }
     }
 
-    @keyframes pulseRing {
-      0%, 100% {
-        transform: translate(-50%, -50%) scale(0.8);
-        opacity: 0;
-      }
-      50% {
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 1;
-      }
+    /* Content starts hidden, revealed after video plays */
+    .content-area {
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .content-area.visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Heading */
@@ -124,8 +124,6 @@
       text-transform: uppercase;
       letter-spacing: 0.15em;
       margin-bottom: 0.75rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 0.6s forwards;
     }
 
     .subheading {
@@ -134,24 +132,11 @@
       color: var(--gray-dark);
       line-height: 1.4;
       margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 0.8s forwards;
     }
 
     .subheading strong {
       font-weight: 600;
       color: var(--blue-dark);
-    }
-
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     /* Email form */
@@ -160,8 +145,6 @@
       gap: 0.5rem;
       max-width: 440px;
       margin: 0 auto 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.8s ease 1s forwards;
     }
 
     .signup-form input[type="email"] {
@@ -207,16 +190,13 @@
       transform: scale(0.98);
     }
 
-    /* Accent dot */
     .signup-form button::after {
-      content: ' →';
+      content: ' \2192';
     }
 
     .note {
       font-size: 0.8rem;
       color: var(--gray);
-      opacity: 0;
-      animation: fadeUp 0.8s ease 1.2s forwards;
     }
 
     /* Footer */
@@ -226,7 +206,7 @@
       font-size: 0.75rem;
       color: var(--gray);
       opacity: 0;
-      animation: fadeUp 0.8s ease 1.4s forwards;
+      animation: fadeIn 0.8s ease 1.4s forwards;
     }
 
     .footer a {
@@ -236,6 +216,10 @@
 
     .footer a:hover {
       text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      to { opacity: 1; }
     }
 
     /* Red accent dot */
@@ -262,8 +246,8 @@
       .subheading {
         font-size: 1.3rem;
       }
-      .logo {
-        width: 140px;
+      .hero-video {
+        width: 260px;
       }
     }
   </style>
@@ -271,18 +255,30 @@
 <body>
   <div class="hero">
     <div class="logo-container">
-      <img src="logo.png" alt="Go Rabbit Web" class="logo">
+      <video
+        class="hero-video"
+        autoplay
+        muted
+        playsinline
+        poster="poster.png"
+        id="heroVideo"
+      >
+        <source src="hero.mp4" type="video/mp4">
+      </video>
+      <img src="logo.png" alt="Go Rabbit Web" class="logo-fallback">
     </div>
 
-    <p class="heading">Coming Soon<span class="accent-dot"></span></p>
-    <p class="subheading">We're building something <strong>fast</strong>.<br>Stay in the loop.</p>
+    <div class="content-area" id="contentArea">
+      <p class="heading">Coming Soon<span class="accent-dot"></span></p>
+      <p class="subheading">We're building something <strong>fast</strong>.<br>Stay in the loop.</p>
 
-    <form class="signup-form" onsubmit="handleSubmit(event)">
-      <input type="email" placeholder="Enter your email" required>
-      <button type="submit">Notify Me</button>
-    </form>
+      <form class="signup-form" onsubmit="handleSubmit(event)">
+        <input type="email" placeholder="Enter your email" required>
+        <button type="submit">Notify Me</button>
+      </form>
 
-    <p class="note">No spam. Just launch day updates.</p>
+      <p class="note">No spam. Just launch day updates.</p>
+    </div>
   </div>
 
   <div class="footer">
@@ -290,13 +286,51 @@
   </div>
 
   <script>
+    const video = document.getElementById('heroVideo');
+    const content = document.getElementById('contentArea');
+
+    // Reveal content after video finishes its first play
+    function revealContent() {
+      content.classList.add('visible');
+    }
+
+    video.addEventListener('ended', function () {
+      // Brief pause, then reveal text, then loop the video
+      setTimeout(revealContent, 300);
+      setTimeout(() => {
+        video.play();
+      }, 1500);
+    });
+
+    // Fallback: if video can't play, show static logo + content immediately
+    video.addEventListener('error', function () {
+      document.body.classList.add('no-video');
+      revealContent();
+    });
+
+    // Safety net: if video hasn't played after 3s, reveal content anyway
+    setTimeout(() => {
+      if (!content.classList.contains('visible')) {
+        revealContent();
+      }
+    }, 3000);
+
+    // After first loop, set video to loop continuously
+    let firstPlay = true;
+    video.addEventListener('ended', function () {
+      if (firstPlay) {
+        firstPlay = false;
+      }
+      // Replay with a subtle pause between loops
+      setTimeout(() => video.play(), 2000);
+    });
+
     function handleSubmit(e) {
       e.preventDefault();
       const input = e.target.querySelector('input');
       const btn = e.target.querySelector('button');
-      const email = input.value;
 
-      btn.textContent = 'Subscribed ✓';
+      btn.textContent = 'Subscribed \u2713';
       btn.style.background = '#22C55E';
       input.value = '';
       input.disabled = true;
