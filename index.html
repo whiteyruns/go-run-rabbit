@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Go Rabbit Web — Coming Soon</title>
-  <meta name="description" content="Go Rabbit Web — We're building something fast. Stay in the loop.">
+  <title>Go Run Rabbit — Event Production & Camp Management</title>
+  <meta name="description" content="Go Run Rabbit LLC — Event production and camp management. Currently powering Swan Forest Camp at Burning Man.">
 
   <!-- Favicon -->
   <link rel="icon" href="favicon.ico" sizes="any">
@@ -13,16 +13,16 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Go Rabbit Web — Coming Soon">
-  <meta property="og:description" content="We're building something fast. Stay in the loop.">
+  <meta property="og:title" content="Go Run Rabbit — Event Production & Camp Management">
+  <meta property="og:description" content="Event production and camp management. Currently powering Swan Forest Camp at Burning Man.">
   <meta property="og:image" content="https://gorunrabbit.com/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Go Rabbit Web — Coming Soon">
-  <meta name="twitter:description" content="We're building something fast. Stay in the loop.">
+  <meta name="twitter:title" content="Go Run Rabbit — Event Production & Camp Management">
+  <meta name="twitter:description" content="Event production and camp management. Currently powering Swan Forest Camp at Burning Man.">
   <meta name="twitter:image" content="https://gorunrabbit.com/og-image.png">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -267,40 +267,19 @@
       <img src="logo.png" alt="Go Rabbit Web" class="logo">
     </div>
 
-    <p class="heading">Coming Soon<span class="accent-dot"></span></p>
-    <p class="subheading">We're building something <strong>fast</strong>.<br>Stay in the loop.</p>
+    <p class="heading">Event Production & Camp Management<span class="accent-dot"></span></p>
+    <p class="subheading">We build <strong>community experiences</strong>.<br>Currently powering Swan Forest Camp.</p>
 
-    <form class="signup-form" onsubmit="handleSubmit(event)">
-      <input type="email" placeholder="Enter your email" required>
-      <button type="submit">Notify Me</button>
-    </form>
+    <div class="signup-form" style="justify-content: center;">
+      <a href="https://swanforestcamp.com" style="padding: 0.85rem 1.8rem; background: var(--blue); color: var(--white); border: none; border-radius: 10px; font-family: inherit; font-size: 0.95rem; font-weight: 600; text-decoration: none; white-space: nowrap; display: inline-block; transition: background 0.2s ease;">Visit Swan Forest Camp &rarr;</a>
+    </div>
 
-    <p class="note">No spam. Just launch day updates.</p>
+    <p class="note">Burning Man theme camp &middot; infrastructure &middot; logistics</p>
   </div>
 
   <div class="footer">
-    &copy; 2026 Go Rabbit Web &middot; <a href="mailto:keith@gorunrabbit.com">Contact</a>
+    &copy; 2026 Go Run Rabbit LLC &middot; <a href="mailto:info@gorunrabbit.com">info@gorunrabbit.com</a> &middot; <a href="https://swanforestcamp.com/terms">Terms</a> &middot; <a href="https://swanforestcamp.com/privacy">Privacy</a>
   </div>
 
-  <script>
-    function handleSubmit(e) {
-      e.preventDefault();
-      const input = e.target.querySelector('input');
-      const btn = e.target.querySelector('button');
-
-      btn.textContent = 'Subscribed \u2713';
-      btn.style.background = '#22C55E';
-      input.value = '';
-      input.disabled = true;
-      btn.disabled = true;
-
-      setTimeout(() => {
-        btn.textContent = 'Notify Me';
-        btn.style.background = '';
-        input.disabled = false;
-        btn.disabled = false;
-      }, 3000);
-    }
-  </script>
 </body>
 </html>
