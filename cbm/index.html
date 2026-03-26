@@ -949,7 +949,7 @@ function CBMSponsorshipDashboard() {
               <MetricCard label="Capture Rate" value={`${((totalCurrentRevenue / totalProjectedRevenue) * 100).toFixed(1)}%`} sub="Of total potential" />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <MetricCard label="Total Venues" value="11" sub="Fremont East + Arts District" />
+              <MetricCard label="Total Venues" value={venues.length.toString()} sub="Fremont East + Arts District" />
               <MetricCard label="Annual Foot Traffic" value={`${(annualFootTraffic / 1000000).toFixed(1)}M+`} sub="Venue traffic only" />
               <MetricCard label="Block Party 2026" value="100K+" sub="Projected across 10 events" accent />
               <MetricCard label="Combined Reach" value={`${((annualFootTraffic + blockPartyProjected) / 1000000).toFixed(1)}M+`} sub="Venues + Events annually" />
