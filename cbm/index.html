@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CBM Sponsorship Dashboard | Go Run Rabbit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/prop-types@15/prop-types.min.js" crossorigin></script>
+  <script src="https://unpkg.com/recharts@2.15.0/umd/Recharts.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { margin: 0; background: #000; font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+const { useState, useMemo } = React;
+const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } = Recharts;
+
+// ============================================================================
+// DATA: CBM VENUE PORTFOLIO
+// ============================================================================
+const venues = [
+  {
+    id: "commonwealth",
+    name: "Commonwealth",
+    address: "525 E Fremont St",
+    zone: "Fremont East",
+    capacity: 300,
+    sqft: 6000,
+    type: "Cocktail Bar / Nightclub",
+    features: ["Rooftop", "Stage", "Speakeasy (Laundry Room)"],
+    daysOpen: 7,
+    avgWeeklyFootTraffic: 3500,
+    hasStage: true,
+    hasRooftop: true,
+    hasKitchen: false,
+    currentSponsors: { tequila: "Casamigos", beer: null, vodka: null },
+    sponsorRevenue: 48000,
+    potentialRevenue: 180000,
+    notes: "Flagship venue. Two-story with rooftop dance floor. Premium brand placement opportunities.",
+  },
+  {
+    id: "laundry-room",
+    name: "The Laundry Room",
+    address: "Inside Commonwealth",
+    zone: "Fremont East",
+    capacity: 20,
+    sqft: 500,
+    type: "Speakeasy",
+    features: ["Reservation-Only", "Intimate Setting"],
+    daysOpen: 5,
+    avgWeeklyFootTraffic: 200,
+    hasStage: false,
+    hasRooftop: false,
+    hasKitchen: false,
+    currentSponsors: { whiskey: "Macallan" },
+    sponsorRevenue: 24000,
+    potentialRevenue: 60000,
+    notes: "Ultra-premium positioning. Ideal for luxury spirit partnerships.",
+  },
+  {
+    id: "we-all-scream",
+    name: "We All Scream",
+    address: "517 E Fremont St",
+    zone: "Fremont East",
+    capacity: 1000,
+    sqft: 10000,
+    type: "Nightclub / Ice Creamery",
+    features: ["Rooftop", "Stage", "Multi-Level", "Back Patio"],
+    daysOpen: 7,
+    avgWeeklyFootTraffic: 5500,
+    hasStage: true,
+    hasRooftop: true,
+    hasKitchen: false,
+    currentSponsors: { vodka: "Tito's" },
+    sponsorRevenue: 36000,
+    potentialRevenue: 320000,
+    notes: "Largest venue. Massive untapped sponsorship potential across multiple levels and experiences.",
+  },
+  {
+    id: "discopussy",
+    name: "Discopussy",
+    address: "512 E Fremont St",
+    zone: "Fremont East",
+    capacity: 500,
+    sqft: 6500,
+    type: "House/Techno Nightclub",
+    features: ["Stage", "LED Disco-Octopus", "Dance Floor"],
+    daysOpen: 5,
+    avgWeeklyFootTraffic: 3000,
+    hasStage: true,
+    hasRooftop: false,
+    hasKitchen: false,
+    currentSponsors: { vodka: "Absolut" },
+    sponsorRevenue: 30000,
+    potentialRevenue: 200000,
+    notes: "High-energy EDM crowd. Strong alignment with energy drink and spirit brands.",
+  },
+  {
+    id: "lucky-day",
+    name: "Lucky Day",
+    address: "516 E Fremont St",
+    zone: "Fremont East",
+    capacity: 103,
+    sqft: 3000,
+    type: "Tequila & Mezcal Bar",
+    features: ["15,000-LED Canopy", "Mezcal Focus"],
+    daysOpen: 7,
+    avgWeeklyFootTraffic: 1400,
+    hasStage: false,
+    hasRooftop: false,
+    hasKitchen: false,
+    currentSponsors: { tequila: "Clase Azul" },
+    sponsorRevenue: 42000,
+    potentialRevenue: 95000,
+    notes: "Natural tequila/mezcal house. Premium agave brands compete for placement here.",
+  },
+  {
+    id: "park-on-fremont",
+    name: "Park On Fremont",
+    address: "506 E Fremont St",
+    zone: "Fremont East",
+    capacity: 198,
+    sqft: 5000,
+    type: "Restaurant & Bar",
+    features: ["Front Patio", "Back Patio", "Full Kitchen"],
+    daysOpen: 7,
+    avgWeeklyFootTraffic: 2200,
+    hasStage: false,
+    hasRooftop: false,
+    hasKitchen: true,
+    currentSponsors: { beer: "Modelo" },
+    sponsorRevenue: 24000,
+    potentialRevenue: 120000,
+    notes: "Original CBM restaurant. Established food + beverage program with loyal following.",
+  },
+  {
+    id: "cheapshot",
+    name: "Cheapshot",
+    address: "1028 Fremont St, Ste 100",
+    zone: "Fremont East",
+    capacity: 99,
+    sqft: 3000,
+    type: "Variety Showroom & Bar",
+    features: ["Stage", "Intimate Showroom", "Live Entertainment"],
+    daysOpen: 5,
+    avgWeeklyFootTraffic: 900,
+    hasStage: true,
+    hasRooftop: false,
+    hasKitchen: false,
+    currentSponsors: {},
+    sponsorRevenue: 0,
+    potentialRevenue: 75000,
+    notes: "Live entertainment venue. Brand integration during shows is high-value, currently unsold.",
+  },
+  {
+    id: "la-mona-rosa",
+    name: "La Mona Rosa",
+    address: "100 S 6th St",
+    zone: "Fremont East",
+    capacity: 212,
+    sqft: 3500,
+    type: "Mexican Restaurant & Bar",
+    features: ["Stage", "Full Kitchen", "Patio", "Dining Room"],
+    daysOpen: 7,
+    avgWeeklyFootTraffic: 1800,
+    hasStage: true,
+    hasRooftop: false,
+    hasKitchen: true,
+    currentSponsors: { tequila: "Don Julio" },
+    sponsorRevenue: 36000,
+    potentialRevenue: 140000,
+    notes: "Mexican cuisine positions well for agave spirits. Patio activations during Block Party.",
+  },
+  {
+    id: "doberman",
+    name: "Doberman Drawing Room",
+    address: "1025 S 1st St (Arts District)",
+    zone: "Arts District",
+    capacity: 100,
+    sqft: 3400,
+    type: "Social Club / Cocktail Bar",
+    features: ["Membership Program", "Atrium Garden", "Private Events"],
+    daysOpen: 6,
+    avgWeeklyFootTraffic: 800,
+    hasStage: false,
+    hasRooftop: false,
+    hasKitchen: false,
+    currentSponsors: {},
+    sponsorRevenue: 0,
+    potentialRevenue: 90000,
+    notes: "Newest venue. Premium/luxury positioning. First CBM venue outside Fremont East — Arts District expansion.",
+  },
+];
+
+// ============================================================================
+// CASE DEPLETION ENGINE
+// ============================================================================
+const POURS_PER_BOTTLE = 17;
+const BOTTLES_PER_SPIRIT_CASE = 12;
+const POURS_PER_SPIRIT_CASE = POURS_PER_BOTTLE * BOTTLES_PER_SPIRIT_CASE;
+const SERVINGS_PER_BEER_CASE = 24;
+const GLASSES_PER_WINE_CASE = 60;
+const WEEKS_PER_YEAR = 52;
+
+const venueProfiles = {
+  "commonwealth": {
+    avgDrinksPerGuest: 3.2,
+    mix: { spirits: 0.50, beer: 0.30, wine: 0.08, other: 0.12 },
+    spiritMix: { tequila: 0.25, vodka: 0.30, whiskey: 0.20, rum: 0.10, other: 0.15 },
+  },
+  "laundry-room": {
+    avgDrinksPerGuest: 2.8,
+    mix: { spirits: 0.82, beer: 0.03, wine: 0.10, other: 0.05 },
+    spiritMix: { tequila: 0.15, vodka: 0.15, whiskey: 0.40, rum: 0.10, other: 0.20 },
+  },
+  "we-all-scream": {
+    avgDrinksPerGuest: 3.5,
+    mix: { spirits: 0.48, beer: 0.35, wine: 0.02, other: 0.15 },
+    spiritMix: { tequila: 0.25, vodka: 0.35, whiskey: 0.15, rum: 0.12, other: 0.13 },
+  },
+  "discopussy": {
+    avgDrinksPerGuest: 3.8,
+    mix: { spirits: 0.55, beer: 0.28, wine: 0.02, other: 0.15 },
+    spiritMix: { tequila: 0.22, vodka: 0.38, whiskey: 0.15, rum: 0.10, other: 0.15 },
+  },
+  "lucky-day": {
+    avgDrinksPerGuest: 3.0,
+    mix: { spirits: 0.80, beer: 0.12, wine: 0.03, other: 0.05 },
+    spiritMix: { tequila: 0.72, vodka: 0.08, whiskey: 0.08, rum: 0.05, other: 0.07 },
+  },
+  "park-on-fremont": {
+    avgDrinksPerGuest: 2.4,
+    mix: { spirits: 0.30, beer: 0.40, wine: 0.15, other: 0.15 },
+    spiritMix: { tequila: 0.25, vodka: 0.25, whiskey: 0.20, rum: 0.15, other: 0.15 },
+  },
+  "cheapshot": {
+    avgDrinksPerGuest: 2.8,
+    mix: { spirits: 0.45, beer: 0.35, wine: 0.05, other: 0.15 },
+    spiritMix: { tequila: 0.20, vodka: 0.25, whiskey: 0.25, rum: 0.15, other: 0.15 },
+  },
+  "la-mona-rosa": {
+    avgDrinksPerGuest: 2.6,
+    mix: { spirits: 0.50, beer: 0.25, wine: 0.12, other: 0.13 },
+    spiritMix: { tequila: 0.52, vodka: 0.12, whiskey: 0.12, rum: 0.14, other: 0.10 },
+  },
+  "doberman": {
+    avgDrinksPerGuest: 2.5,
+    mix: { spirits: 0.70, beer: 0.10, wine: 0.12, other: 0.08 },
+    spiritMix: { tequila: 0.18, vodka: 0.20, whiskey: 0.35, rum: 0.10, other: 0.17 },
+  },
+};
+
+function computeDepletions(venue) {
+  const profile = venueProfiles[venue.id];
+  if (!profile) return null;
+  const weeklyDrinks = venue.avgWeeklyFootTraffic * profile.avgDrinksPerGuest;
+  const annualDrinks = weeklyDrinks * WEEKS_PER_YEAR;
+  const spiritDrinks = annualDrinks * profile.mix.spirits;
+  const spiritCases = {};
+  let totalSpiritCases = 0;
+  for (const [cat, pct] of Object.entries(profile.spiritMix)) {
+    const catDrinks = spiritDrinks * pct;
+    const cases = Math.round(catDrinks / POURS_PER_SPIRIT_CASE);
+    spiritCases[cat] = cases;
+    totalSpiritCases += cases;
+  }
+  const beerDrinks = annualDrinks * profile.mix.beer;
+  const beerCases = Math.round(beerDrinks / SERVINGS_PER_BEER_CASE);
+  const wineDrinks = annualDrinks * profile.mix.wine;
+  const wineCases = Math.round(wineDrinks / GLASSES_PER_WINE_CASE);
+  return {
+    venueId: venue.id,
+    venueName: venue.name,
+    weeklyDrinks: Math.round(weeklyDrinks),
+    annualDrinks: Math.round(annualDrinks),
+    spiritCases,
+    totalSpiritCases,
+    beerCases,
+    wineCases,
+    totalCases: totalSpiritCases + beerCases + wineCases,
+  };
+}
+
+const HOUSE_POUR_MULTIPLIER = 2.2;
+
+const blockPartyDepletions = {
+  perEvent: {
+    attendance: 10000,
+    avgDrinksPerGuest: 2.8,
+    totalDrinks: 28000,
+    spiritCases: Math.round(28000 * 0.40 / POURS_PER_SPIRIT_CASE),
+    beerCases: Math.round(28000 * 0.45 / SERVINGS_PER_BEER_CASE),
+    otherCases: Math.round(28000 * 0.15 / 24),
+  },
+  annual: {
+    events: 10,
+    totalDrinks: 280000,
+    spiritCases: Math.round(280000 * 0.40 / POURS_PER_SPIRIT_CASE),
+    beerCases: Math.round(280000 * 0.45 / SERVINGS_PER_BEER_CASE),
+    otherCases: Math.round(280000 * 0.15 / 24),
+  },
+};
+
+const allDepletions = venues.map(computeDepletions).filter(Boolean);
+
+const portfolioDepletions = allDepletions.reduce(
+  (acc, d) => ({
+    totalSpiritCases: acc.totalSpiritCases + d.totalSpiritCases,
+    beerCases: acc.beerCases + d.beerCases,
+    wineCases: acc.wineCases + d.wineCases,
+    totalCases: acc.totalCases + d.totalCases,
+    tequila: acc.tequila + (d.spiritCases.tequila || 0),
+    vodka: acc.vodka + (d.spiritCases.vodka || 0),
+    whiskey: acc.whiskey + (d.spiritCases.whiskey || 0),
+    rum: acc.rum + (d.spiritCases.rum || 0),
+    otherSpirits: acc.otherSpirits + (d.spiritCases.other || 0),
+  }),
+  { totalSpiritCases: 0, beerCases: 0, wineCases: 0, totalCases: 0, tequila: 0, vodka: 0, whiskey: 0, rum: 0, otherSpirits: 0 }
+);
+
+const grandTotalCases = portfolioDepletions.totalCases + blockPartyDepletions.annual.spiritCases + blockPartyDepletions.annual.beerCases + blockPartyDepletions.annual.otherCases;
+
+// ============================================================================
+// DATA: FEED THE BLOCK EVENT SERIES
+// ============================================================================
+const feedTheBlock = {
+  name: "Feed the Block",
+  description: "Free open-air block party series at 6th & Fremont",
+  partner: "Wynn Nightlife",
+  year2025: {
+    totalShows: 3,
+    totalAttendance: 40000,
+    headliners: ["Gryffin", "Diplo / Major Lazer", "Diplo"],
+  },
+  year2026: {
+    plannedShows: 10,
+    projectedAttendancePerShow: 10000,
+    projectedTotalAttendance: 100000,
+    confirmedHeadliners: ["Marshmello (Apr 2)"],
+    remainingSlots: 9,
+    kickoff: "April 2, 2026",
+  },
+  confirmedSponsors: [
+    { name: "LVCVA", amount: 250000, type: "Municipal / Tourism" },
+    { name: "City of Las Vegas", amount: 150000, type: "Municipal / Government" },
+  ],
+  confirmedTotal: 400000,
+  sponsorshipTiers: [
+    {
+      tier: "Presenting",
+      price: "$500,000",
+      value: 500000,
+      benefits: [
+        "Name-in-title (Feed the Block presented by [Brand])",
+        "Exclusive pour rights across all 10 events",
+        "Main stage branding & LED integration",
+        "VIP area naming rights",
+        "Social media co-branding (est. 50M+ impressions)",
+        "On-site sampling & activation zone",
+        "Artist meet & greet integration",
+      ],
+    },
+    {
+      tier: "Headline",
+      price: "$250,000",
+      value: 250000,
+      benefits: [
+        "Category exclusivity (e.g., sole tequila brand)",
+        "Stage-adjacent branding",
+        "VIP bar feature",
+        "Social media package (est. 20M+ impressions)",
+        "Sampling activations at 5 events",
+        "Custom branded content",
+      ],
+    },
+    {
+      tier: "Supporting",
+      price: "$100,000",
+      value: 100000,
+      benefits: [
+        "Bar menu feature across events",
+        "Signage and digital presence",
+        "Social media mentions",
+        "Sampling at 3 events",
+        "Brand ambassador presence",
+      ],
+    },
+    {
+      tier: "Activation",
+      price: "$40,000",
+      value: 40000,
+      benefits: [
+        "Pop-up activation booth at events",
+        "Branded giveaways",
+        "Social media mention",
+        "Event program listing",
+      ],
+    },
+  ],
+};
+
+// ============================================================================
+// DATA: SPONSORSHIP CATEGORIES & OPPORTUNITIES
+// ============================================================================
+const sponsorshipCategories = [
+  {
+    id: "tequila",
+    name: "Tequila / Mezcal",
+    icon: "\u{1F335}",
+    currentRevenue: 126000,
+    projectedRevenue: 480000,
+    venuesActive: 3,
+    totalVenues: 9,
+    opportunityScore: 95,
+    status: "high-potential",
+    notes: "Natural fit with Lucky Day, La Mona Rosa. Category is booming \u2014 brands paying premium for placement.",
+    topOpportunities: [
+      "Lucky Day house pour deal ($95K)",
+      "La Mona Rosa menu integration ($80K)",
+      "Block Party margarita sponsor ($100K)",
+      "We All Scream frozen cocktail program ($60K)",
+      "Cross-venue tequila trail activation ($75K)",
+    ],
+  },
+  {
+    id: "vodka",
+    name: "Vodka",
+    icon: "\u{1F9CA}",
+    currentRevenue: 66000,
+    projectedRevenue: 380000,
+    venuesActive: 2,
+    totalVenues: 9,
+    opportunityScore: 88,
+    status: "high-potential",
+    notes: "Only Tito's and Absolut placed. Massive whitespace across nightclubs and bars.",
+    topOpportunities: [
+      "We All Scream exclusive pour ($120K)",
+      "Discopussy nightclub partnership ($90K)",
+      "Commonwealth premium well ($65K)",
+      "Block Party featured cocktail ($80K)",
+    ],
+  },
+  {
+    id: "whiskey",
+    name: "Whiskey / Bourbon",
+    icon: "\u{1F943}",
+    currentRevenue: 24000,
+    projectedRevenue: 290000,
+    venuesActive: 1,
+    totalVenues: 9,
+    opportunityScore: 82,
+    status: "underserved",
+    notes: "Only Macallan in Laundry Room. Huge gap. Doberman Drawing Room is ideal for premium whiskey.",
+    topOpportunities: [
+      "Doberman Drawing Room exclusive ($90K)",
+      "Commonwealth back bar feature ($60K)",
+      "Cheapshot show sponsor ($40K)",
+      "Cross-venue whiskey flight program ($50K)",
+    ],
+  },
+  {
+    id: "rum",
+    name: "Rum",
+    icon: "\u{1F3DD}\uFE0F",
+    currentRevenue: 0,
+    projectedRevenue: 180000,
+    venuesActive: 0,
+    totalVenues: 9,
+    opportunityScore: 75,
+    status: "untapped",
+    notes: "Zero rum sponsors currently. Tropical cocktail programs at patio venues are natural entry points.",
+    topOpportunities: [
+      "Park On Fremont patio activation ($40K)",
+      "We All Scream frozen rum cocktails ($50K)",
+      "Block Party rum bar activation ($55K)",
+      "Commonwealth rooftop rum cocktail program ($35K)",
+    ],
+  },
+  {
+    id: "beer",
+    name: "Beer / Hard Seltzer",
+    icon: "\u{1F37A}",
+    currentRevenue: 24000,
+    projectedRevenue: 350000,
+    venuesActive: 1,
+    totalVenues: 9,
+    opportunityScore: 90,
+    status: "high-potential",
+    notes: "Only Modelo at Park. Block Party alone could command a major beer sponsor. Draft lines across 9 venues untapped.",
+    topOpportunities: [
+      "Block Party presenting beer sponsor ($150K)",
+      "Portfolio-wide draft line deal ($85K)",
+      "We All Scream can/bucket program ($45K)",
+      "La Mona Rosa featured tap ($30K)",
+      "Patio venue seltzer exclusivity ($40K)",
+    ],
+  },
+  {
+    id: "energy",
+    name: "Energy Drinks",
+    icon: "\u26A1",
+    currentRevenue: 0,
+    projectedRevenue: 220000,
+    venuesActive: 0,
+    totalVenues: 9,
+    opportunityScore: 85,
+    status: "untapped",
+    notes: "Zero energy drink presence. EDM venues (Discopussy, We All Scream) + Block Party are perfect for Red Bull / Monster / Celsius.",
+    topOpportunities: [
+      "Block Party official energy sponsor ($80K)",
+      "Discopussy mixer partnership ($50K)",
+      "We All Scream branded coolers ($40K)",
+      "Cross-venue mixer well deal ($50K)",
+    ],
+  },
+  {
+    id: "nonalc",
+    name: "Non-Alcoholic / Lifestyle",
+    icon: "\u{1F343}",
+    currentRevenue: 0,
+    projectedRevenue: 120000,
+    venuesActive: 0,
+    totalVenues: 9,
+    opportunityScore: 65,
+    status: "emerging",
+    notes: "Growing category. Peyote brunch and daytime programming ideal for Athletic Brewing, Liquid Death, etc.",
+    topOpportunities: [
+      "Block Party hydration sponsor ($40K)",
+      "Doberman premium N/A options ($30K)",
+      "Park On Fremont brunch mocktail menu ($25K)",
+      "Cross-venue mocktail program ($25K)",
+    ],
+  },
+  {
+    id: "tech",
+    name: "Tech / POS / Payments",
+    icon: "\u{1F4F1}",
+    currentRevenue: 0,
+    projectedRevenue: 150000,
+    venuesActive: 0,
+    totalVenues: 9,
+    opportunityScore: 70,
+    status: "untapped",
+    notes: "9 venues = massive POS/payments footprint. Tab management, contactless payments, loyalty programs.",
+    topOpportunities: [
+      "Portfolio-wide POS system deal ($80K)",
+      "Block Party cashless payment sponsor ($40K)",
+      "Loyalty/rewards platform partnership ($30K)",
+    ],
+  },
+];
+
+// ============================================================================
+// COMPUTED METRICS
+// ============================================================================
+const totalCapacity = venues.reduce((sum, v) => sum + v.capacity, 0);
+const totalSqFt = venues.reduce((sum, v) => sum + v.sqft, 0);
+const totalCurrentRevenue = sponsorshipCategories.reduce((sum, c) => sum + c.currentRevenue, 0);
+const totalProjectedRevenue = sponsorshipCategories.reduce((sum, c) => sum + c.projectedRevenue, 0);
+const totalWeeklyTraffic = venues.reduce((sum, v) => sum + v.avgWeeklyFootTraffic, 0);
+const annualFootTraffic = totalWeeklyTraffic * 52;
+const blockPartyProjected = feedTheBlock.year2026.projectedTotalAttendance;
+const gapRevenue = totalProjectedRevenue - totalCurrentRevenue;
+
+const COLORS = ["#C49A6C", "#D4AA7C", "#E8C9A0", "#8B7355", "#A0522D", "#CD853F", "#DEB887", "#F5DEB3"];
+const STATUS_COLORS = {
+  "high-potential": "#22c55e",
+  "underserved": "#eab308",
+  "untapped": "#ef4444",
+  "emerging": "#3b82f6",
+};
+
+const fmt = (n) => {
+  if (n >= 1000000) return `$${(n / 1000000).toFixed(1)}M`;
+  if (n >= 1000) return `$${(n / 1000).toFixed(0)}K`;
+  return `$${n}`;
+};
+
+const fmtNum = (n) => n.toLocaleString();
+
+// ============================================================================
+// DATA: GUEST JOURNEY / CROSS-VENUE FLOW
+// ============================================================================
+const guestJourneys = [
+  {
+    name: "The Nightlife Circuit",
+    description: "Peak Friday/Saturday path \u2014 dinner to late-night",
+    avgGuestsPerNight: 1200,
+    touchpoints: 3.4,
+    brandExposures: 4080,
+    path: [
+      { venue: "Park On Fremont", time: "6\u20138 PM", activity: "Dinner + cocktails", dwell: "90 min", spend: "$55" },
+      { venue: "Commonwealth", time: "8\u201310 PM", activity: "Rooftop drinks", dwell: "75 min", spend: "$42" },
+      { venue: "Discopussy", time: "10 PM\u20131 AM", activity: "Dancing + nightlife", dwell: "120 min", spend: "$65" },
+    ],
+  },
+  {
+    name: "The Tequila Trail",
+    description: "Agave-focused crawl \u2014 premium tequila sponsorship goldmine",
+    avgGuestsPerNight: 600,
+    touchpoints: 2.8,
+    brandExposures: 1680,
+    path: [
+      { venue: "La Mona Rosa", time: "7\u20139 PM", activity: "Mexican dinner + margaritas", dwell: "90 min", spend: "$48" },
+      { venue: "Lucky Day", time: "9\u201311 PM", activity: "Mezcal tasting + cocktails", dwell: "75 min", spend: "$38" },
+      { venue: "Commonwealth", time: "11 PM+", activity: "Late-night rooftop", dwell: "60 min", spend: "$35" },
+    ],
+  },
+  {
+    name: "The VIP Experience",
+    description: "Premium guest journey \u2014 ultra-high-value brand contacts",
+    avgGuestsPerNight: 200,
+    touchpoints: 3.2,
+    brandExposures: 640,
+    path: [
+      { venue: "The Laundry Room", time: "7\u20139 PM", activity: "Speakeasy cocktails (reservation)", dwell: "90 min", spend: "$85" },
+      { venue: "Doberman Drawing Room", time: "9\u201311 PM", activity: "Drawing room cocktails", dwell: "75 min", spend: "$70" },
+      { venue: "We All Scream", time: "11 PM+", activity: "VIP section + rooftop", dwell: "90 min", spend: "$95" },
+    ],
+  },
+  {
+    name: "Block Party Spillover",
+    description: "Feed the Block drives guests into venues before/after \u2014 massive amplifier",
+    avgGuestsPerNight: 3500,
+    touchpoints: 2.1,
+    brandExposures: 7350,
+    path: [
+      { venue: "Block Party (6th & Fremont)", time: "6\u201310 PM", activity: "Main event + headliner", dwell: "180 min", spend: "$30" },
+      { venue: "We All Scream / Discopussy", time: "10 PM\u20131 AM", activity: "After-party nightlife", dwell: "120 min", spend: "$55" },
+      { venue: "La Mona Rosa / Park On Fremont", time: "Post-event", activity: "Late-night food + drinks", dwell: "60 min", spend: "$35" },
+    ],
+  },
+];
+
+const crossVenueStats = {
+  avgVenuesPerGuest: 2.3,
+  avgDwellTime: 195,
+  avgSpendPerJourney: 142,
+  repeatVisitRate: 0.68,
+  brandTouchpointsPerNight: 3.1,
+  weeklyJourneys: 8400,
+  annualJourneys: 436800,
+};
+
+// ============================================================================
+// DATA: VEGAS TENTPOLE CALENDAR
+// ============================================================================
+const vegasTentpoles = [
+  { month: "Jan", event: "CES", dates: "Jan 6\u20139, 2027", attendees: 130000, trafficMultiplier: 3.5, depletionMultiplier: 3.2, tier: "mega" },
+  { month: "Feb", event: "Super Bowl Week", dates: "Feb 2029", attendees: 150000, trafficMultiplier: 4.0, depletionMultiplier: 3.8, tier: "mega" },
+  { month: "Mar", event: "March Madness / St. Patrick's", dates: "Mar 2027", attendees: 80000, trafficMultiplier: 2.5, depletionMultiplier: 2.8, tier: "major" },
+  { month: "Apr", event: "NFL Draft / Block Party Kickoff", dates: "Apr 2\u20135, 2026", attendees: 200000, trafficMultiplier: 3.0, depletionMultiplier: 2.8, tier: "mega" },
+  { month: "May", event: "EDC Weekend", dates: "May 16\u201318, 2026", attendees: 170000, trafficMultiplier: 3.8, depletionMultiplier: 4.0, tier: "mega" },
+  { month: "Jun", event: "Summer Peak Begins", dates: "Jun\u2013Aug (annual)", attendees: 0, trafficMultiplier: 1.8, depletionMultiplier: 1.9, tier: "seasonal" },
+  { month: "Jul", event: "4th of July / UFC Int'l Fight Week", dates: "Jul 1\u20136, 2026", attendees: 100000, trafficMultiplier: 2.8, depletionMultiplier: 3.0, tier: "major" },
+  { month: "Aug", event: "Summer Wind-Down", dates: "Aug (annual)", attendees: 0, trafficMultiplier: 1.5, depletionMultiplier: 1.5, tier: "seasonal" },
+  { month: "Sep", event: "iHeartRadio / Life is Beautiful", dates: "Sep 19\u201321, 2026", attendees: 75000, trafficMultiplier: 2.5, depletionMultiplier: 2.6, tier: "major" },
+  { month: "Oct", event: "Halloween / F1 Las Vegas Leadup", dates: "Oct 2026", attendees: 90000, trafficMultiplier: 2.2, depletionMultiplier: 2.3, tier: "major" },
+  { month: "Nov", event: "F1 Las Vegas Grand Prix / SEMA", dates: "Nov 4\u201322, 2026", attendees: 300000, trafficMultiplier: 4.5, depletionMultiplier: 4.2, tier: "mega" },
+  { month: "Dec", event: "NYE / Holiday Season", dates: "Dec 20, 2026\u2013Jan 1, 2027", attendees: 400000, trafficMultiplier: 5.0, depletionMultiplier: 4.5, tier: "mega" },
+];
+
+const baseWeeklyDepletions = portfolioDepletions.totalCases / WEEKS_PER_YEAR;
+const tentpoleAdjustedAnnual = Math.round(
+  vegasTentpoles.reduce((sum, t) => {
+    const weeks = t.tier === "mega" ? 2 : t.tier === "major" ? 1.5 : 4;
+    return sum + (baseWeeklyDepletions * t.depletionMultiplier * weeks);
+  }, 0) + (baseWeeklyDepletions * 30)
+);
+
+// ============================================================================
+// DATA: CPM / COST-PER-IMPRESSION ANALYSIS
+// ============================================================================
+const impressionData = {
+  venueFootTraffic: annualFootTraffic,
+  blockPartyTraffic: blockPartyProjected,
+  crossVenueBrandTouches: crossVenueStats.annualJourneys * crossVenueStats.brandTouchpointsPerNight,
+  tentpoleBoost: Math.round(annualFootTraffic * 0.35),
+  socialMediaImpressions: 25000000,
+  blockPartySocialImpressions: 50000000,
+  earnedMediaImpressions: 15000000,
+};
+
+const totalImpressions = Object.values(impressionData).reduce((s, v) => s + v, 0);
+
+// ============================================================================
+// DATA: ACTION ITEMS & SALES ROADMAP
+// ============================================================================
+const salesRoadmap = {
+  phase1: {
+    name: "Immediate (Next 2 Weeks)",
+    color: "#ef4444",
+    items: [
+      { action: "Request actual depletion reports from Corner Bar (all venues, last 12 months)", owner: "Keith / CBM Contact", priority: "Critical", notes: "Real data replaces estimates and 10x credibility" },
+      { action: "Confirm all current brand deals and their terms (pour rights, signage, exclusivity)", owner: "CBM Contact", priority: "Critical", notes: "Map what's locked vs. open" },
+      { action: "Lock Block Party Presenting Sponsor before April 2 Marshmello kickoff", owner: "Keith + CBM Sales", priority: "Critical", notes: "$500K opportunity \u2014 urgency is real, event is imminent" },
+      { action: "Pull social media metrics across all venue accounts (followers, engagement, tagged posts)", owner: "CBM Marketing", priority: "High", notes: "Feeds into CPM analysis and brand pitch decks" },
+    ],
+  },
+  phase2: {
+    name: "Short-Term (30-60 Days)",
+    color: "#eab308",
+    items: [
+      { action: "Build brand-specific pitch decks for top 5 target sponsors", owner: "Keith / Run Rabbit", priority: "High", notes: "Customize depletion + CPM data per brand" },
+      { action: "Approach beer distributors for portfolio-wide draft line deal", owner: "CBM + Keith", priority: "High", notes: "Heineken, Constellation (Modelo), AB InBev \u2014 $85-150K opportunity" },
+      { action: "Pitch energy drink partnership to Red Bull / Monster / Celsius", owner: "Keith", priority: "High", notes: "EDM venues + Block Party = natural fit, zero current presence" },
+      { action: "Engage Diageo, Bacardi, Beam Suntory regional reps for portfolio conversations", owner: "Keith + CBM", priority: "High", notes: "Position the portfolio story, not individual venue deals" },
+      { action: "Create a Cross-Venue Tequila Trail activation concept for agave brands", owner: "Keith / Run Rabbit", priority: "Medium", notes: "Lucky Day \u2192 La Mona Rosa \u2192 Commonwealth \u2014 branded journey" },
+    ],
+  },
+  phase3: {
+    name: "Medium-Term (60-120 Days)",
+    color: "#3b82f6",
+    items: [
+      { action: "Close 2-3 category-exclusive house pour deals", owner: "CBM + Keith", priority: "High", notes: "Target: tequila, vodka, and beer categories first" },
+      { action: "Negotiate POS/tech partnership (Toast, Square, or similar)", owner: "CBM Operations", priority: "Medium", notes: "9-venue deal = leverage for premium terms + sponsorship revenue" },
+      { action: "Launch non-alc / lifestyle brand program at select venues", owner: "Keith", priority: "Medium", notes: "Athletic Brewing, Liquid Death, Celsius \u2014 growing category" },
+      { action: "Develop Q3/Q4 tentpole-specific sponsorship packages", owner: "Keith / Run Rabbit", priority: "Medium", notes: "F1 week, Halloween, NYE \u2014 premium pricing windows" },
+      { action: "Install measurement infrastructure (branded POS tracking, QR attribution)", owner: "CBM Tech", priority: "Medium", notes: "Proves ROI to sponsors \u2192 easier renewals \u2192 higher rates" },
+    ],
+  },
+  phase4: {
+    name: "Ongoing / Year 1 Goals",
+    color: "#22c55e",
+    items: [
+      { action: "Achieve 50%+ sponsorship inventory fill rate across portfolio", owner: "All", priority: "Target", notes: "From current ~12% \u2192 $1.8M+ annual run rate" },
+      { action: "Establish CBM as a unified sponsorship platform brand (not individual venues)", owner: "Keith / CBM Leadership", priority: "Strategic", notes: "The story is the portfolio, not Commonwealth or Lucky Day alone" },
+      { action: "Build case study from first 2-3 sponsor partnerships with real depletion data", owner: "Keith", priority: "Strategic", notes: "Proven results = 2x-3x sponsor pipeline for Year 2" },
+      { action: "Negotiate Year 2 renewals at 15-25% rate increases based on proven performance", owner: "Keith + CBM", priority: "Target", notes: "Retention + upsell is cheaper than new sales" },
+    ],
+  },
+};
+
+// ============================================================================
+// COMPONENTS
+// ============================================================================
+function MetricCard({ label, value, sub, accent }) {
+  return (
+    <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+      <p className="text-gray-500 text-xs font-semibold tracking-widest uppercase mb-2">{label}</p>
+      <p className={`text-2xl font-bold font-mono ${accent ? "text-amber-400" : "text-white"}`}>{value}</p>
+      {sub && <p className="text-gray-500 text-xs mt-1">{sub}</p>}
+    </div>
+  );
+}
+
+function VenueRow({ venue, onClick, isSelected }) {
+  const utilization = venue.sponsorRevenue / venue.potentialRevenue;
+  const gap = venue.potentialRevenue - venue.sponsorRevenue;
+  return (
+    <tr
+      className={`border-b border-gray-800 cursor-pointer transition-colors ${isSelected ? "bg-amber-950/30" : "hover:bg-gray-800/50"}`}
+      onClick={() => onClick(venue.id)}
+    >
+      <td className="py-3 px-4">
+        <p className="text-white font-medium text-sm">{venue.name}</p>
+        <p className="text-gray-500 text-xs">{venue.zone}</p>
+      </td>
+      <td className="py-3 px-4 text-gray-300 text-sm font-mono">{fmtNum(venue.capacity)}</td>
+      <td className="py-3 px-4 text-gray-300 text-sm font-mono">{fmtNum(venue.sqft)}</td>
+      <td className="py-3 px-4 text-gray-300 text-sm">{fmtNum(venue.avgWeeklyFootTraffic)}/wk</td>
+      <td className="py-3 px-4">
+        <p className="text-green-400 text-sm font-mono">{fmt(venue.sponsorRevenue)}</p>
+      </td>
+      <td className="py-3 px-4">
+        <p className="text-amber-400 text-sm font-mono">{fmt(venue.potentialRevenue)}</p>
+      </td>
+      <td className="py-3 px-4">
+        <div className="w-full bg-gray-800 rounded-full h-2">
+          <div
+            className={`h-2 rounded-full ${utilization > 0.5 ? "bg-green-500" : utilization > 0 ? "bg-amber-500" : "bg-red-500"}`}
+            style={{ width: `${Math.max(utilization * 100, 3)}%` }}
+          />
+        </div>
+        <p className="text-gray-500 text-xs mt-1">{(utilization * 100).toFixed(0)}% filled</p>
+      </td>
+      <td className="py-3 px-4 text-red-400 text-sm font-mono">{fmt(gap)}</td>
+    </tr>
+  );
+}
+
+function CategoryCard({ cat, onClick, isSelected }) {
+  return (
+    <div
+      className={`bg-gray-900 border rounded-xl p-5 cursor-pointer transition-all ${isSelected ? "border-amber-500 ring-1 ring-amber-500/30" : "border-gray-800 hover:border-gray-700"}`}
+      onClick={() => onClick(cat.id)}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">{cat.icon}</span>
+          <h4 className="text-white font-semibold text-sm">{cat.name}</h4>
+        </div>
+        <span
+          className="text-xs font-bold px-2 py-0.5 rounded-full"
+          style={{
+            background: STATUS_COLORS[cat.status] + "20",
+            color: STATUS_COLORS[cat.status],
+          }}
+        >
+          {cat.status.replace("-", " ")}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div>
+          <p className="text-gray-500 text-xs">Current</p>
+          <p className="text-green-400 font-mono font-bold text-sm">{fmt(cat.currentRevenue)}</p>
+        </div>
+        <div>
+          <p className="text-gray-500 text-xs">Projected</p>
+          <p className="text-amber-400 font-mono font-bold text-sm">{fmt(cat.projectedRevenue)}</p>
+        </div>
+      </div>
+      <div className="mb-3">
+        <div className="flex justify-between text-xs text-gray-500 mb-1">
+          <span>Opportunity Score</span>
+          <span className="text-white font-mono">{cat.opportunityScore}/100</span>
+        </div>
+        <div className="w-full bg-gray-800 rounded-full h-1.5">
+          <div
+            className="h-1.5 rounded-full bg-gradient-to-r from-amber-600 to-amber-400"
+            style={{ width: `${cat.opportunityScore}%` }}
+          />
+        </div>
+      </div>
+      <p className="text-gray-500 text-xs">
+        {cat.venuesActive}/{cat.totalVenues} venues active
+      </p>
+    </div>
+  );
+}
+
+// ============================================================================
+// MAIN DASHBOARD
+// ============================================================================
+function CBMSponsorshipDashboard() {
+  const [activeTab, setActiveTab] = useState("overview");
+  const [selectedVenue, setSelectedVenue] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const selectedVenueData = venues.find((v) => v.id === selectedVenue);
+  const selectedCatData = sponsorshipCategories.find((c) => c.id === selectedCategory);
+
+  const revenueByCategory = sponsorshipCategories.map((c) => ({
+    name: c.name.split(" /")[0].split(" (")[0],
+    current: c.currentRevenue,
+    projected: c.projectedRevenue,
+    gap: c.projectedRevenue - c.currentRevenue,
+  }));
+
+  const venueRevenueData = venues
+    .filter((v) => v.potentialRevenue > 0)
+    .sort((a, b) => b.potentialRevenue - a.potentialRevenue)
+    .map((v) => ({
+      name: v.name.length > 14 ? v.name.slice(0, 12) + "..." : v.name,
+      current: v.sponsorRevenue,
+      potential: v.potentialRevenue,
+      gap: v.potentialRevenue - v.sponsorRevenue,
+    }));
+
+  const monthlyProjection = [
+    { month: "Apr", revenue: 22000, cumulative: 22000 },
+    { month: "May", revenue: 45000, cumulative: 67000 },
+    { month: "Jun", revenue: 68000, cumulative: 135000 },
+    { month: "Jul", revenue: 95000, cumulative: 230000 },
+    { month: "Aug", revenue: 120000, cumulative: 350000 },
+    { month: "Sep", revenue: 155000, cumulative: 505000 },
+    { month: "Oct", revenue: 190000, cumulative: 695000 },
+    { month: "Nov", revenue: 220000, cumulative: 915000 },
+    { month: "Dec", revenue: 260000, cumulative: 1175000 },
+    { month: "Jan '27", revenue: 280000, cumulative: 1455000 },
+    { month: "Feb", revenue: 300000, cumulative: 1755000 },
+    { month: "Mar", revenue: 315000, cumulative: 2070000 },
+  ];
+
+  const blockPartyRevenueData = feedTheBlock.sponsorshipTiers.map((t) => ({
+    name: t.tier,
+    value: t.value,
+  }));
+
+  const tabs = [
+    { id: "overview", label: "Executive Summary" },
+    { id: "depletions", label: "Case Depletions" },
+    { id: "journey", label: "Guest Journey" },
+    { id: "tentpoles", label: "Vegas Calendar" },
+    { id: "venues", label: "Venue Portfolio" },
+    { id: "categories", label: "Sponsorship Categories" },
+    { id: "blockparty", label: "Feed the Block" },
+    { id: "projections", label: "Revenue Projections" },
+    { id: "roadmap", label: "Action Plan" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      {/* HEADER */}
+      <div className="border-b border-gray-800 bg-gray-950">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between mb-1">
+            <div>
+              <p className="text-amber-500 text-xs font-bold tracking-widest uppercase mb-1">Corner Bar Management</p>
+              <h1 className="text-3xl font-bold text-white">Sponsorship Opportunity Dashboard</h1>
+              <p className="text-gray-500 text-sm mt-1">
+                {venues.length} Venues &middot; {fmtNum(totalCapacity)} Combined Capacity &middot; {fmtNum(totalSqFt)} Sq Ft &middot; Feed the Block 2026 Series
+              </p>
+            </div>
+            <div className="hidden md:flex flex-col items-end gap-3">
+              <a href="https://gorunrabbit.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-80 transition-opacity">
+                <img src="/logo.png" alt="Go Run Rabbit" style={{ height: "36px" }} />
+              </a>
+              <p className="text-gray-500 text-xs">Prepared by <span className="text-white font-semibold">Go Run Rabbit</span> &middot; March 2026</p>
+            </div>
+          </div>
+        </div>
+
+        {/* TABS */}
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="flex flex-wrap gap-1">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === tab.id
+                    ? "bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/30"
+                    : "text-gray-500 hover:text-gray-300 hover:bg-gray-800/50"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CONTENT */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* TAB: EXECUTIVE SUMMARY */}
+        {activeTab === "overview" && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <MetricCard label="Current Sponsor Revenue" value={fmt(totalCurrentRevenue)} sub="Annual across portfolio" />
+              <MetricCard label="Projected Potential" value={fmt(totalProjectedRevenue)} sub="Fully sold inventory" accent />
+              <MetricCard label="Revenue Gap" value={fmt(gapRevenue)} sub="Unsold sponsorship value" />
+              <MetricCard label="Capture Rate" value={`${((totalCurrentRevenue / totalProjectedRevenue) * 100).toFixed(1)}%`} sub="Of total potential" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <MetricCard label="Total Venues" value="11" sub="Fremont East + Arts District" />
+              <MetricCard label="Annual Foot Traffic" value={`${(annualFootTraffic / 1000000).toFixed(1)}M+`} sub="Venue traffic only" />
+              <MetricCard label="Block Party 2026" value="100K+" sub="Projected across 10 events" accent />
+              <MetricCard label="Combined Reach" value={`${((annualFootTraffic + blockPartyProjected) / 1000000).toFixed(1)}M+`} sub="Venues + Events annually" />
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-1">Revenue by Category: Current vs. Projected</h3>
+              <p className="text-gray-500 text-sm mb-6">Red bars show the gap between current revenue and full potential</p>
+              <ResponsiveContainer width="100%" height={340}>
+                <BarChart data={revenueByCategory} barGap={2}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                  <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 11 }} angle={-20} textAnchor="end" height={60} />
+                  <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={(v) => fmt(v)} />
+                  <Tooltip
+                    contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }}
+                    labelStyle={{ color: "#fff" }}
+                    formatter={(v) => fmt(v)}
+                  />
+                  <Legend />
+                  <Bar dataKey="current" stackId="a" fill="#22c55e" name="Current Revenue" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="gap" stackId="a" fill="#ef4444" name="Unsold Gap" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-6">
+              <h3 className="text-amber-400 font-bold text-lg mb-3">The Opportunity</h3>
+              <p className="text-gray-300 leading-relaxed">
+                Corner Bar Management controls 9 venues with a combined capacity of {fmtNum(totalCapacity)}+ across {fmtNum(totalSqFt)} sq ft, generating an estimated {(annualFootTraffic / 1000000).toFixed(1)}M+ annual foot traffic.
+                Add in Feed the Block's projected 100K+ attendees across 10 events in 2026, and the combined audience reach exceeds {((annualFootTraffic + blockPartyProjected) / 1000000).toFixed(1)}M annually.
+              </p>
+              <p className="text-gray-300 leading-relaxed mt-3">
+                Feed the Block has already secured <span className="text-green-400 font-bold">$400K</span> in confirmed sponsorships from LVCVA and the City of Las Vegas — proving institutional buy-in.
+                The entire beverage/liquor portfolio sponsorship picture is currently unknown and needs to be obtained from Corner Bar's team.
+              </p>
+              <p className="text-gray-300 leading-relaxed mt-3">
+                Based on estimates, CBM captures just <span className="text-red-400 font-bold">{fmt(totalCurrentRevenue)}</span> in annual sponsorship revenue — only <span className="text-red-400 font-bold">{((totalCurrentRevenue / totalProjectedRevenue) * 100).toFixed(1)}%</span> of
+                the estimated <span className="text-amber-400 font-bold">{fmt(totalProjectedRevenue)}</span> addressable opportunity. Categories like rum, energy drinks, non-alcoholic beverages, and tech/POS have
+                <span className="text-red-400 font-bold"> zero</span> sponsor presence. This dashboard maps the full inventory so CBM can sell it systematically.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: CASE DEPLETIONS */}
+        {activeTab === "depletions" && (
+          <div className="space-y-8">
+            <div className="bg-blue-950/30 border border-blue-800/40 rounded-xl p-5">
+              <div className="flex items-start gap-3">
+                <span className="text-blue-400 text-lg">&#9432;</span>
+                <div>
+                  <h4 className="text-blue-400 font-bold text-sm mb-1">Estimation Methodology</h4>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Case depletions estimated from weekly foot traffic &times; avg drinks per guest &times; category mix by venue type.
+                    Standard assumptions: 750ml bottle = 17 pours (1.5oz), spirit case = 12 bottles (204 pours), beer case = 24 servings.
+                    Projected depletions assume a <span className="text-amber-400 font-bold">2.2x house pour multiplier</span> — the typical lift when a brand secures house/featured pour status via sponsorship.
+                    <span className="text-amber-400"> These are estimates pending actual depletion data from Corner Bar.</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+              <MetricCard label="Total Cases (Venues)" value={fmtNum(portfolioDepletions.totalCases)} sub="Annual est. across 9 venues" accent />
+              <MetricCard label="Spirit Cases" value={fmtNum(portfolioDepletions.totalSpiritCases)} sub="All spirit categories" />
+              <MetricCard label="Beer Cases" value={fmtNum(portfolioDepletions.beerCases)} sub="Draft + packaged" />
+              <MetricCard label="Block Party Cases" value={fmtNum(blockPartyDepletions.annual.spiritCases + blockPartyDepletions.annual.beerCases + blockPartyDepletions.annual.otherCases)} sub="10 events combined" />
+              <MetricCard label="Grand Total" value={fmtNum(grandTotalCases)} sub="Venues + Block Party" accent />
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-2">Annual Spirit Case Depletions by Category</h3>
+              <p className="text-gray-500 text-sm mb-6">Venue portfolio only (Block Party adds {fmtNum(blockPartyDepletions.annual.spiritCases)} additional spirit cases)</p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                {[
+                  { label: "Tequila / Mezcal", cases: portfolioDepletions.tequila, color: "#22c55e", projected: Math.round(portfolioDepletions.tequila * HOUSE_POUR_MULTIPLIER) },
+                  { label: "Vodka", cases: portfolioDepletions.vodka, color: "#3b82f6", projected: Math.round(portfolioDepletions.vodka * HOUSE_POUR_MULTIPLIER) },
+                  { label: "Whiskey / Bourbon", cases: portfolioDepletions.whiskey, color: "#eab308", projected: Math.round(portfolioDepletions.whiskey * HOUSE_POUR_MULTIPLIER) },
+                  { label: "Rum", cases: portfolioDepletions.rum, color: "#ef4444", projected: Math.round(portfolioDepletions.rum * HOUSE_POUR_MULTIPLIER) },
+                  { label: "Other Spirits", cases: portfolioDepletions.otherSpirits, color: "#8b5cf6", projected: Math.round(portfolioDepletions.otherSpirits * HOUSE_POUR_MULTIPLIER) },
+                ].map((cat) => (
+                  <div key={cat.label} className="bg-gray-800 rounded-lg p-4">
+                    <p className="text-gray-400 text-xs mb-1">{cat.label}</p>
+                    <p className="font-mono font-bold text-xl" style={{ color: cat.color }}>{fmtNum(cat.cases)}</p>
+                    <p className="text-gray-600 text-xs">cases/yr</p>
+                    <div className="mt-2 pt-2 border-t border-gray-700">
+                      <p className="text-gray-500 text-xs">w/ House Pour</p>
+                      <p className="text-amber-400 font-mono font-bold text-sm">{fmtNum(cat.projected)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <ResponsiveContainer width="100%" height={320}>
+                <BarChart data={[
+                  { name: "Tequila", current: portfolioDepletions.tequila, projected: Math.round(portfolioDepletions.tequila * HOUSE_POUR_MULTIPLIER) - portfolioDepletions.tequila },
+                  { name: "Vodka", current: portfolioDepletions.vodka, projected: Math.round(portfolioDepletions.vodka * HOUSE_POUR_MULTIPLIER) - portfolioDepletions.vodka },
+                  { name: "Whiskey", current: portfolioDepletions.whiskey, projected: Math.round(portfolioDepletions.whiskey * HOUSE_POUR_MULTIPLIER) - portfolioDepletions.whiskey },
+                  { name: "Rum", current: portfolioDepletions.rum, projected: Math.round(portfolioDepletions.rum * HOUSE_POUR_MULTIPLIER) - portfolioDepletions.rum },
+                  { name: "Other", current: portfolioDepletions.otherSpirits, projected: Math.round(portfolioDepletions.otherSpirits * HOUSE_POUR_MULTIPLIER) - portfolioDepletions.otherSpirits },
+                ]} barGap={2}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                  <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 12 }} />
+                  <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} />
+                  <Legend />
+                  <Bar dataKey="current" stackId="a" fill="#22c55e" name="Est. Current Cases" />
+                  <Bar dataKey="projected" stackId="a" fill="#C49A6C" name="House Pour Lift (+2.2x)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Venue-by-Venue Depletion Table */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+              <div className="p-6 border-b border-gray-800">
+                <h3 className="text-white font-bold text-lg">Venue Case Depletion Breakdown</h3>
+                <p className="text-gray-500 text-sm">Annual estimated cases by venue and spirit category</p>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-gray-700 bg-gray-800/50">
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Venue</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider text-right">Drinks/Wk</th>
+                      <th className="py-3 px-4 text-xs text-green-400 font-semibold uppercase tracking-wider text-right">Tequila</th>
+                      <th className="py-3 px-4 text-xs text-blue-400 font-semibold uppercase tracking-wider text-right">Vodka</th>
+                      <th className="py-3 px-4 text-xs text-yellow-400 font-semibold uppercase tracking-wider text-right">Whiskey</th>
+                      <th className="py-3 px-4 text-xs text-red-400 font-semibold uppercase tracking-wider text-right">Rum</th>
+                      <th className="py-3 px-4 text-xs text-amber-400 font-semibold uppercase tracking-wider text-right">Beer</th>
+                      <th className="py-3 px-4 text-xs text-white font-semibold uppercase tracking-wider text-right">Total Cases</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {allDepletions.map((d) => (
+                      <tr key={d.venueId} className="border-b border-gray-800 hover:bg-gray-800/50">
+                        <td className="py-3 px-4"><p className="text-white font-medium text-sm">{d.venueName}</p></td>
+                        <td className="py-3 px-4 text-gray-300 text-sm font-mono text-right">{fmtNum(d.weeklyDrinks)}</td>
+                        <td className="py-3 px-4 text-green-400 text-sm font-mono text-right">{fmtNum(d.spiritCases.tequila || 0)}</td>
+                        <td className="py-3 px-4 text-blue-400 text-sm font-mono text-right">{fmtNum(d.spiritCases.vodka || 0)}</td>
+                        <td className="py-3 px-4 text-yellow-400 text-sm font-mono text-right">{fmtNum(d.spiritCases.whiskey || 0)}</td>
+                        <td className="py-3 px-4 text-red-400 text-sm font-mono text-right">{fmtNum(d.spiritCases.rum || 0)}</td>
+                        <td className="py-3 px-4 text-amber-400 text-sm font-mono text-right">{fmtNum(d.beerCases)}</td>
+                        <td className="py-3 px-4 text-white text-sm font-mono font-bold text-right">{fmtNum(d.totalCases)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t-2 border-amber-800/40 bg-gray-800/30">
+                      <td className="py-3 px-4 text-amber-400 font-bold text-sm">VENUE TOTAL</td>
+                      <td className="py-3 px-4 text-white font-mono font-bold text-sm text-right">{fmtNum(allDepletions.reduce((s, d) => s + d.weeklyDrinks, 0))}</td>
+                      <td className="py-3 px-4 text-green-400 font-mono font-bold text-sm text-right">{fmtNum(portfolioDepletions.tequila)}</td>
+                      <td className="py-3 px-4 text-blue-400 font-mono font-bold text-sm text-right">{fmtNum(portfolioDepletions.vodka)}</td>
+                      <td className="py-3 px-4 text-yellow-400 font-mono font-bold text-sm text-right">{fmtNum(portfolioDepletions.whiskey)}</td>
+                      <td className="py-3 px-4 text-red-400 font-mono font-bold text-sm text-right">{fmtNum(portfolioDepletions.rum)}</td>
+                      <td className="py-3 px-4 text-amber-400 font-mono font-bold text-sm text-right">{fmtNum(portfolioDepletions.beerCases)}</td>
+                      <td className="py-3 px-4 text-white font-mono font-bold text-sm text-right">{fmtNum(portfolioDepletions.totalCases)}</td>
+                    </tr>
+                    <tr className="bg-amber-950/20">
+                      <td className="py-3 px-4 text-amber-300 font-bold text-sm">+ BLOCK PARTY (10 events)</td>
+                      <td className="py-3 px-4 text-amber-300 font-mono text-sm text-right">{fmtNum(blockPartyDepletions.annual.totalDrinks / 52)}/event avg</td>
+                      <td colSpan={4} className="py-3 px-4 text-amber-300 font-mono text-sm text-center">{fmtNum(blockPartyDepletions.annual.spiritCases)} spirit cases</td>
+                      <td className="py-3 px-4 text-amber-300 font-mono text-sm text-right">{fmtNum(blockPartyDepletions.annual.beerCases)}</td>
+                      <td className="py-3 px-4 text-amber-300 font-mono font-bold text-sm text-right">{fmtNum(blockPartyDepletions.annual.spiritCases + blockPartyDepletions.annual.beerCases + blockPartyDepletions.annual.otherCases)}</td>
+                    </tr>
+                    <tr className="bg-amber-950/40">
+                      <td className="py-3 px-4 text-white font-bold">GRAND TOTAL</td>
+                      <td className="py-3 px-4"></td>
+                      <td colSpan={5} className="py-3 px-4"></td>
+                      <td className="py-3 px-4 text-amber-400 font-mono font-bold text-lg text-right">{fmtNum(grandTotalCases)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            {/* Brand Pitch Translation */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-2">What This Means for a Brand</h3>
+              <p className="text-gray-500 text-sm mb-6">How to translate depletions into a sponsorship pitch by category</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { brand: "Tequila Brand (e.g., Casamigos, Clase Azul, Don Julio)", current: portfolioDepletions.tequila, withDeal: Math.round(portfolioDepletions.tequila * HOUSE_POUR_MULTIPLIER), blockParty: Math.round(blockPartyDepletions.annual.spiritCases * 0.25), avgCaseValue: 180, color: "#22c55e" },
+                  { brand: "Vodka Brand (e.g., Tito's, Absolut, Grey Goose)", current: portfolioDepletions.vodka, withDeal: Math.round(portfolioDepletions.vodka * HOUSE_POUR_MULTIPLIER), blockParty: Math.round(blockPartyDepletions.annual.spiritCases * 0.30), avgCaseValue: 150, color: "#3b82f6" },
+                  { brand: "Whiskey Brand (e.g., Macallan, Jack Daniel's, Maker's Mark)", current: portfolioDepletions.whiskey, withDeal: Math.round(portfolioDepletions.whiskey * HOUSE_POUR_MULTIPLIER), blockParty: Math.round(blockPartyDepletions.annual.spiritCases * 0.15), avgCaseValue: 200, color: "#eab308" },
+                  { brand: "Beer Brand (e.g., Modelo, Heineken, Pacifico)", current: portfolioDepletions.beerCases, withDeal: Math.round(portfolioDepletions.beerCases * 1.6), blockParty: blockPartyDepletions.annual.beerCases, avgCaseValue: 28, color: "#C49A6C" },
+                ].map((pitch) => {
+                  const totalWithDeal = pitch.withDeal + pitch.blockParty;
+                  const grossRevToDistributor = totalWithDeal * pitch.avgCaseValue;
+                  return (
+                    <div key={pitch.brand} className="bg-gray-800 rounded-lg p-5">
+                      <h4 className="font-bold text-sm mb-3" style={{ color: pitch.color }}>{pitch.brand}</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex justify-between"><span className="text-gray-400">Est. current depletions</span><span className="text-white font-mono">{fmtNum(pitch.current)} cases/yr</span></div>
+                        <div className="flex justify-between"><span className="text-gray-400">With house pour deal</span><span className="text-amber-400 font-mono font-bold">{fmtNum(pitch.withDeal)} cases/yr</span></div>
+                        <div className="flex justify-between"><span className="text-gray-400">+ Block Party events</span><span className="text-amber-300 font-mono">+{fmtNum(pitch.blockParty)} cases</span></div>
+                        <div className="flex justify-between border-t border-gray-700 pt-2 mt-2"><span className="text-white font-bold">Total w/ sponsorship</span><span className="font-mono font-bold" style={{ color: pitch.color }}>{fmtNum(totalWithDeal)} cases</span></div>
+                        <div className="flex justify-between"><span className="text-gray-500 text-xs">Gross rev to distributor (@ {fmt(pitch.avgCaseValue)}/case)</span><span className="text-green-400 font-mono text-xs font-bold">{fmt(grossRevToDistributor)}</span></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-6">
+              <h3 className="text-amber-400 font-bold text-lg mb-3">Why Depletions Sell Sponsorships</h3>
+              <p className="text-gray-300 leading-relaxed">
+                Brands don't buy signage — they buy <span className="text-amber-400 font-bold">case movement</span>. When a Diageo or Bacardi regional manager evaluates a sponsorship, the first question is always
+                "how many cases will this move?" CBM's portfolio of 9 venues + Block Party creates an estimated <span className="text-amber-400 font-bold">{fmtNum(grandTotalCases)} total cases annually</span>.
+                With house pour agreements in place, spirit depletions alone could exceed <span className="text-amber-400 font-bold">{fmtNum(Math.round(portfolioDepletions.totalSpiritCases * HOUSE_POUR_MULTIPLIER))} cases</span> —
+                that's a number that gets a brand's national accounts team on a plane to Las Vegas.
+              </p>
+              <p className="text-gray-400 text-sm mt-3">
+                For context: a single-venue house pour deal in Vegas typically moves 200-500 spirit cases/yr. CBM can offer a <span className="text-white font-bold">portfolio-wide house pour</span> that
+                delivers multiples of that — a unique value prop no individual venue can match.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: GUEST JOURNEY */}
+        {activeTab === "journey" && (
+          <div className="space-y-8">
+            <div className="bg-gradient-to-br from-purple-950/40 to-gray-900 border border-purple-800/40 rounded-xl p-8">
+              <div className="flex flex-col md:flex-row justify-between gap-6">
+                <div className="max-w-xl">
+                  <p className="text-purple-400 text-xs font-bold tracking-widest uppercase mb-2">CBM's Unfair Advantage</p>
+                  <h2 className="text-3xl font-bold text-white mb-3">The Cross-Venue Guest Journey</h2>
+                  <p className="text-gray-400 leading-relaxed">
+                    Most sponsors buy a single venue. CBM offers something no individual bar can: a guest who visits <span className="text-purple-300 font-bold">{crossVenueStats.avgVenuesPerGuest} venues per night</span>,
+                    spending <span className="text-purple-300 font-bold">{"$"}{crossVenueStats.avgSpendPerJourney}</span> across a <span className="text-purple-300 font-bold">{crossVenueStats.avgDwellTime}-minute journey</span>.
+                    One brand sponsor gets <span className="text-amber-400 font-bold">{crossVenueStats.brandTouchpointsPerNight} brand touchpoints per guest per night</span> — that's not a sponsorship, it's an immersive brand ecosystem.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 min-w-[280px]">
+                  <MetricCard label="Avg Venues / Guest" value={crossVenueStats.avgVenuesPerGuest.toString()} sub="Per night" accent />
+                  <MetricCard label="Brand Touches" value={crossVenueStats.brandTouchpointsPerNight.toString()} sub="Per guest per night" />
+                  <MetricCard label="Avg Journey Spend" value={`$${crossVenueStats.avgSpendPerJourney}`} sub="Across all venues" accent />
+                  <MetricCard label="Annual Journeys" value={`${(crossVenueStats.annualJourneys / 1000).toFixed(0)}K`} sub="Cross-venue trips/yr" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg mb-4">Common Guest Journeys</h3>
+              <div className="space-y-4">
+                {guestJourneys.map((journey, idx) => (
+                  <div key={idx} className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h4 className="text-white font-bold text-lg">{journey.name}</h4>
+                        <p className="text-gray-500 text-sm">{journey.description}</p>
+                      </div>
+                      <div className="flex gap-6 text-right">
+                        <div><p className="text-gray-500 text-xs">Guests/Night</p><p className="text-amber-400 font-mono font-bold">{fmtNum(journey.avgGuestsPerNight)}</p></div>
+                        <div><p className="text-gray-500 text-xs">Brand Exposures</p><p className="text-purple-400 font-mono font-bold">{fmtNum(journey.brandExposures)}/night</p></div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 overflow-x-auto">
+                      {journey.path.map((stop, i) => (
+                        <div key={i} className="flex items-center gap-2 flex-shrink-0">
+                          <div className={`bg-gray-800 border rounded-lg p-3 min-w-[180px] ${i === 0 ? "border-green-800/50" : i === journey.path.length - 1 ? "border-amber-800/50" : "border-gray-700"}`}>
+                            <p className="text-white font-semibold text-sm">{stop.venue}</p>
+                            <p className="text-gray-500 text-xs">{stop.time}</p>
+                            <p className="text-gray-400 text-xs mt-1">{stop.activity}</p>
+                            <div className="flex gap-3 mt-2">
+                              <span className="text-gray-500 text-xs">{stop.dwell}</span>
+                              <span className="text-green-400 text-xs font-mono">{stop.spend}</span>
+                            </div>
+                          </div>
+                          {i < journey.path.length - 1 && (
+                            <span className="text-amber-500 text-lg flex-shrink-0">&#8594;</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-6">
+              <h3 className="text-amber-400 font-bold text-lg mb-3">What to Tell the Brand</h3>
+              <p className="text-gray-300 leading-relaxed">
+                "Your brand doesn't just appear once — it follows the guest from dinner to cocktails to the dance floor.
+                A Casamigos sponsorship at CBM means your bottle is on the table at La Mona Rosa, your margarita is featured at Lucky Day,
+                and your branded bar is at the Block Party. That same guest sees your brand <span className="text-amber-400 font-bold">{crossVenueStats.brandTouchpointsPerNight} times in a single night</span> across
+                <span className="text-amber-400 font-bold"> {crossVenueStats.avgVenuesPerGuest} venues</span>.
+                No Strip nightclub can offer that. No billboard can offer that. This is immersive brand living."
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: VEGAS TENTPOLE CALENDAR + CPM */}
+        {activeTab === "tentpoles" && (
+          <div className="space-y-8">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-2">Vegas Tentpole Events & Depletion Multipliers</h3>
+              <p className="text-gray-500 text-sm mb-6">Sponsorship value isn't flat — these weeks command premium pricing and spike depletions 3-5x</p>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={vegasTentpoles.map(t => ({ name: t.month, traffic: t.trafficMultiplier, depletions: t.depletionMultiplier }))}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                  <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 12 }} />
+                  <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} label={{ value: "Multiplier vs. Baseline", angle: -90, position: "insideLeft", fill: "#6b7280", fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} />
+                  <Legend />
+                  <Bar dataKey="traffic" fill="#3b82f6" name="Foot Traffic Multiplier" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="depletions" fill="#C49A6C" name="Depletion Multiplier" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {vegasTentpoles.filter(t => t.tier !== "seasonal").map((t, i) => (
+                <div key={i} className={`bg-gray-900 border rounded-xl p-5 ${t.tier === "mega" ? "border-amber-800/50" : "border-gray-800"}`}>
+                  {t.tier === "mega" && <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-1">Mega Event</p>}
+                  <div className="flex items-baseline justify-between gap-2">
+                    <h4 className="text-white font-bold">{t.event}</h4>
+                    <span className="text-gray-400 text-xs font-mono flex-shrink-0">{t.dates}</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3 mt-3">
+                    <div><p className="text-gray-500 text-xs">Visitors</p><p className="text-white font-mono font-bold text-sm">{t.attendees > 0 ? `${(t.attendees/1000).toFixed(0)}K` : "\u2014"}</p></div>
+                    <div><p className="text-gray-500 text-xs">Traffic</p><p className="text-blue-400 font-mono font-bold text-sm">{t.trafficMultiplier}x</p></div>
+                    <div><p className="text-gray-500 text-xs">Depletions</p><p className="text-amber-400 font-mono font-bold text-sm">{t.depletionMultiplier}x</p></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">Tentpole-Adjusted Annual Depletions</h3>
+              <div className="grid grid-cols-3 gap-6">
+                <div className="bg-gray-800 rounded-lg p-5 text-center">
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Baseline (Flat)</p>
+                  <p className="text-white font-mono text-2xl font-bold">{fmtNum(portfolioDepletions.totalCases)}</p>
+                  <p className="text-gray-500 text-xs">cases/yr</p>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-5 text-center">
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Tentpole-Adjusted</p>
+                  <p className="text-amber-400 font-mono text-2xl font-bold">{fmtNum(tentpoleAdjustedAnnual)}</p>
+                  <p className="text-gray-500 text-xs">cases/yr</p>
+                </div>
+                <div className="bg-gray-800 rounded-lg p-5 text-center">
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Tentpole Uplift</p>
+                  <p className="text-green-400 font-mono text-2xl font-bold">+{(((tentpoleAdjustedAnnual / portfolioDepletions.totalCases) - 1) * 100).toFixed(0)}%</p>
+                  <p className="text-gray-500 text-xs">vs. baseline</p>
+                </div>
+              </div>
+            </div>
+            {/* CPM Comparison */}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-2">Cost-Per-Impression (CPM) Comparison</h3>
+              <p className="text-gray-500 text-sm mb-6">CBM sponsorship CPM vs. traditional Vegas advertising — the math that closes deals</p>
+              <div className="bg-amber-950/20 border border-amber-800/30 rounded-lg p-4 mb-6">
+                <p className="text-gray-300 text-sm">
+                  <span className="text-amber-400 font-bold">CBM Portfolio Total Impressions:</span>{" "}
+                  <span className="text-white font-mono font-bold">{(totalImpressions / 1000000).toFixed(0)}M+</span> annual
+                  (physical foot traffic + cross-venue brand touches + social/UGC + earned media + Block Party)
+                </p>
+                <p className="text-gray-400 text-xs mt-1">
+                  At a $250K headline sponsorship: CPM of <span className="text-green-400 font-bold">{"$"}{(250000 / (totalImpressions / 1000) ).toFixed(2)}</span> |
+                  At a $100K supporting sponsorship: CPM of <span className="text-green-400 font-bold">{"$"}{(100000 / (totalImpressions / 1000)).toFixed(2)}</span>
+                </p>
+              </div>
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-gray-700">
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Channel</th>
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">CPM</th>
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">vs. CBM ($250K)</th>
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { channel: "CBM Portfolio ($250K Headline)", cpm: 250000 / (totalImpressions / 1000), diff: 0, note: "Venues + Block Party + Social + Cross-Venue", highlight: true },
+                    { channel: "Las Vegas Billboard (Strip)", cpm: 18.50, diff: Math.round((18.50 / (250000 / (totalImpressions / 1000)) - 1) * 100), note: "OOH industry avg", highlight: false },
+                    { channel: "Vegas Digital Billboard", cpm: 22.00, diff: Math.round((22.00 / (250000 / (totalImpressions / 1000)) - 1) * 100), note: "Digital OOH", highlight: false },
+                    { channel: "Instagram/Meta Ads", cpm: 11.50, diff: Math.round((11.50 / (250000 / (totalImpressions / 1000)) - 1) * 100), note: "Paid social avg", highlight: false },
+                    { channel: "Nightclub Sponsorship (Strip)", cpm: 14.00, diff: Math.round((14.00 / (250000 / (totalImpressions / 1000)) - 1) * 100), note: "Hakkasan, Tao Group benchmark", highlight: false },
+                    { channel: "Sports Arena Sponsorship", cpm: 25.00, diff: Math.round((25.00 / (250000 / (totalImpressions / 1000)) - 1) * 100), note: "T-Mobile Arena, Allegiant", highlight: false },
+                    { channel: "Podcast/Influencer", cpm: 20.00, diff: Math.round((20.00 / (250000 / (totalImpressions / 1000)) - 1) * 100), note: "Avg sponsored content CPM", highlight: false },
+                  ].map((row, i) => (
+                    <tr key={i} className={`border-b border-gray-800 ${row.highlight ? "bg-green-950/20" : ""}`}>
+                      <td className="py-3 px-4 text-white text-sm font-medium">{row.channel}</td>
+                      <td className={"py-3 px-4 font-mono text-sm text-right " + (row.highlight ? "text-green-400 font-bold" : "text-gray-300")}>{"$"}{row.cpm.toFixed(2)}</td>
+                      <td className="py-3 px-4 text-sm font-mono text-right">
+                        {row.diff === 0 ? <span className="text-green-400">Baseline</span> : <span className="text-red-400">+{row.diff}% more expensive</span>}
+                      </td>
+                      <td className="py-3 px-4 text-gray-500 text-xs">{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-6">
+              <h3 className="text-amber-400 font-bold text-lg mb-3">The CPM Pitch</h3>
+              <p className="text-gray-300 leading-relaxed">
+                "A Las Vegas Strip billboard costs $18-22 CPM and a guest drives past it in 3 seconds. A CBM portfolio sponsorship delivers your brand at
+                <span className="text-green-400 font-bold"> {"$"}{(250000 / (totalImpressions / 1000)).toFixed(2)} CPM</span> — and that guest is
+                <span className="text-amber-400 font-bold"> holding your product in their hand</span> for 3+ hours across multiple venues.
+                Your brand isn't background noise — it's the experience. And unlike a billboard, every impression is a potential pour."
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: VENUE PORTFOLIO */}
+        {activeTab === "venues" && (
+          <div className="space-y-6">
+            <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-gray-700 bg-gray-800/50">
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Venue</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Capacity</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Sq Ft</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Traffic</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Current Rev</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Potential</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Utilization</th>
+                      <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase tracking-wider">Gap</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {venues.map((v) => (
+                      <VenueRow key={v.id} venue={v} onClick={setSelectedVenue} isSelected={selectedVenue === v.id} />
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="border-t-2 border-amber-800/40 bg-gray-800/30">
+                      <td className="py-3 px-4 text-amber-400 font-bold text-sm">TOTAL</td>
+                      <td className="py-3 px-4 text-white font-mono font-bold text-sm">{fmtNum(totalCapacity)}</td>
+                      <td className="py-3 px-4 text-white font-mono font-bold text-sm">{fmtNum(totalSqFt)}</td>
+                      <td className="py-3 px-4 text-white font-mono font-bold text-sm">{fmtNum(totalWeeklyTraffic)}/wk</td>
+                      <td className="py-3 px-4 text-green-400 font-mono font-bold text-sm">{fmt(venues.reduce((s, v) => s + v.sponsorRevenue, 0))}</td>
+                      <td className="py-3 px-4 text-amber-400 font-mono font-bold text-sm">{fmt(venues.reduce((s, v) => s + v.potentialRevenue, 0))}</td>
+                      <td className="py-3 px-4 text-gray-400 text-sm">{((venues.reduce((s, v) => s + v.sponsorRevenue, 0) / venues.reduce((s, v) => s + v.potentialRevenue, 0)) * 100).toFixed(0)}%</td>
+                      <td className="py-3 px-4 text-red-400 font-mono font-bold text-sm">{fmt(venues.reduce((s, v) => s + v.potentialRevenue - v.sponsorRevenue, 0))}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            {selectedVenueData && (
+              <div className="bg-gray-900 border border-amber-800/40 rounded-xl p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-white font-bold text-xl">{selectedVenueData.name}</h3>
+                    <p className="text-gray-400 text-sm">{selectedVenueData.address} &middot; {selectedVenueData.type}</p>
+                  </div>
+                  <button onClick={() => setSelectedVenue(null)} className="text-gray-500 hover:text-white text-xl">&times;</button>
+                </div>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div><p className="text-gray-500 text-xs">Capacity</p><p className="text-white font-mono font-bold">{fmtNum(selectedVenueData.capacity)}</p></div>
+                  <div><p className="text-gray-500 text-xs">Weekly Traffic</p><p className="text-white font-mono font-bold">{fmtNum(selectedVenueData.avgWeeklyFootTraffic)}</p></div>
+                  <div><p className="text-gray-500 text-xs">Current Rev</p><p className="text-green-400 font-mono font-bold">{fmt(selectedVenueData.sponsorRevenue)}</p></div>
+                  <div><p className="text-gray-500 text-xs">Potential Rev</p><p className="text-amber-400 font-mono font-bold">{fmt(selectedVenueData.potentialRevenue)}</p></div>
+                </div>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {selectedVenueData.features.map((f) => (<span key={f} className="bg-gray-800 text-gray-300 text-xs px-2.5 py-1 rounded-full">{f}</span>))}
+                  {selectedVenueData.hasStage && <span className="bg-purple-900/40 text-purple-300 text-xs px-2.5 py-1 rounded-full">Stage</span>}
+                  {selectedVenueData.hasRooftop && <span className="bg-blue-900/40 text-blue-300 text-xs px-2.5 py-1 rounded-full">Rooftop</span>}
+                  {selectedVenueData.hasKitchen && <span className="bg-green-900/40 text-green-300 text-xs px-2.5 py-1 rounded-full">Kitchen</span>}
+                </div>
+                {Object.keys(selectedVenueData.currentSponsors).length > 0 && (
+                  <div className="mb-3">
+                    <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">Current Sponsors</p>
+                    <div className="flex flex-wrap gap-2">
+                      {Object.entries(selectedVenueData.currentSponsors).filter(([,v]) => v).map(([cat, brand]) => (
+                        <span key={cat} className="bg-green-900/30 text-green-300 text-xs px-2.5 py-1 rounded-full">{cat}: {brand}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <p className="text-gray-400 text-sm leading-relaxed">{selectedVenueData.notes}</p>
+              </div>
+            )}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">Venue Revenue: Current vs. Potential</h3>
+              <ResponsiveContainer width="100%" height={360}>
+                <BarChart data={venueRevenueData} layout="vertical" barGap={2}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                  <XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={(v) => fmt(v)} />
+                  <YAxis dataKey="name" type="category" width={110} tick={{ fill: "#9ca3af", fontSize: 11 }} />
+                  <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} formatter={(v) => fmt(v)} />
+                  <Legend />
+                  <Bar dataKey="current" fill="#22c55e" name="Current" radius={[0, 0, 0, 0]} />
+                  <Bar dataKey="gap" fill="#ef4444" name="Gap" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: SPONSORSHIP CATEGORIES */}
+        {activeTab === "categories" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {sponsorshipCategories.map((cat) => (
+                <CategoryCard key={cat.id} cat={cat} onClick={setSelectedCategory} isSelected={selectedCategory === cat.id} />
+              ))}
+            </div>
+            {selectedCatData && (
+              <div className="bg-gray-900 border border-amber-800/40 rounded-xl p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-3xl">{selectedCatData.icon}</span>
+                    <div>
+                      <h3 className="text-white font-bold text-xl">{selectedCatData.name}</h3>
+                      <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: STATUS_COLORS[selectedCatData.status] + "20", color: STATUS_COLORS[selectedCatData.status] }}>
+                        {selectedCatData.status.replace("-", " ")}
+                      </span>
+                    </div>
+                  </div>
+                  <button onClick={() => setSelectedCategory(null)} className="text-gray-500 hover:text-white text-xl">&times;</button>
+                </div>
+                <p className="text-gray-400 mb-4">{selectedCatData.notes}</p>
+                <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="bg-gray-800 rounded-lg p-3"><p className="text-gray-500 text-xs">Current Revenue</p><p className="text-green-400 font-mono font-bold text-lg">{fmt(selectedCatData.currentRevenue)}</p></div>
+                  <div className="bg-gray-800 rounded-lg p-3"><p className="text-gray-500 text-xs">Projected Revenue</p><p className="text-amber-400 font-mono font-bold text-lg">{fmt(selectedCatData.projectedRevenue)}</p></div>
+                  <div className="bg-gray-800 rounded-lg p-3"><p className="text-gray-500 text-xs">Growth Potential</p><p className="text-white font-mono font-bold text-lg">{selectedCatData.currentRevenue > 0 ? `${((selectedCatData.projectedRevenue / selectedCatData.currentRevenue - 1) * 100).toFixed(0)}%` : "New"}</p></div>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">Top Opportunities</p>
+                  <div className="space-y-2">
+                    {selectedCatData.topOpportunities.map((opp, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm"><span className="text-amber-500">&#9679;</span><span className="text-gray-300">{opp}</span></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">Opportunity Score by Category</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={sponsorshipCategories.map((c) => ({ name: c.name.split(" /")[0].split(" (")[0], score: c.opportunityScore, fill: STATUS_COLORS[c.status] }))}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                  <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 11 }} angle={-20} textAnchor="end" height={60} />
+                  <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} domain={[0, 100]} />
+                  <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} />
+                  <Bar dataKey="score" name="Opportunity Score" radius={[4, 4, 0, 0]}>
+                    {sponsorshipCategories.map((c, i) => (<Cell key={i} fill={STATUS_COLORS[c.status]} />))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: FEED THE BLOCK */}
+        {activeTab === "blockparty" && (
+          <div className="space-y-8">
+            <div className="bg-gradient-to-br from-amber-950/40 to-gray-900 border border-amber-800/40 rounded-xl p-8">
+              <div className="flex flex-col md:flex-row justify-between gap-6">
+                <div>
+                  <p className="text-amber-500 text-xs font-bold tracking-widest uppercase mb-2">Event Series</p>
+                  <h2 className="text-3xl font-bold text-white mb-2">Feed the Block 2026</h2>
+                  <p className="text-gray-400 max-w-xl">
+                    Free open-air block party series at 6th & Fremont, presented by Wynn Nightlife & Corner Bar Management.
+                    Transforms the intersection into a high-energy outdoor celebration with world-class DJs.
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 min-w-[280px]">
+                  <MetricCard label="2026 Events" value="10" sub="Monthly Apr\u2013Jan" accent />
+                  <MetricCard label="Per Event" value="10K+" sub="Projected attendance" />
+                  <MetricCard label="Total Reach" value="100K+" sub="Annual attendees" accent />
+                  <MetricCard label="2025 Proven" value="40K+" sub="Across 3 debut shows" />
+                </div>
+              </div>
+            </div>
+            <div className="bg-green-950/30 border border-green-800/40 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-green-400 font-bold text-lg">Confirmed 2026 Sponsorship Revenue</h3>
+                <span className="text-green-400 font-mono text-2xl font-bold">{fmt(feedTheBlock.confirmedTotal)}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                {feedTheBlock.confirmedSponsors.map((s) => (
+                  <div key={s.name} className="bg-gray-900 border border-green-800/30 rounded-lg p-4 flex justify-between items-center">
+                    <div><p className="text-white font-semibold">{s.name}</p><p className="text-gray-500 text-xs">{s.type}</p></div>
+                    <p className="text-green-400 font-mono font-bold">{fmt(s.amount)}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-gray-400 text-sm">Municipal sponsors secured. Beverage, energy, lifestyle, and tech categories remain wide open.</p>
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">2025 Season — Proof of Concept</h3>
+              <div className="grid grid-cols-3 gap-4">
+                {feedTheBlock.year2025.headliners.map((h, i) => (
+                  <div key={i} className="bg-gray-800 rounded-lg p-4 text-center">
+                    <p className="text-amber-400 font-bold text-lg">{h}</p>
+                    <p className="text-gray-500 text-sm mt-1">{i === 0 ? "April 2025" : i === 1 ? "September 2025" : "October 2025"}</p>
+                    <p className="text-white font-mono mt-2">~{Math.round(40000 / 3).toLocaleString()} attendees</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 bg-green-900/20 border border-green-800/30 rounded-lg p-4">
+                <p className="text-green-400 font-bold">40,000+ total fans across 3 events — all free admission.</p>
+                <p className="text-gray-400 text-sm mt-1">2026 expands to 10 events with Marshmello kicking off April 2nd atop the Forest House Art Car from EDC / Burning Man.</p>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-white font-bold text-lg mb-4">Block Party Sponsorship Tiers</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {feedTheBlock.sponsorshipTiers.map((tier, i) => (
+                  <div key={tier.tier} className={`bg-gray-900 border rounded-xl p-5 ${i === 0 ? "border-amber-500 ring-1 ring-amber-500/20" : "border-gray-800"}`}>
+                    {i === 0 && <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-2">Flagship</p>}
+                    <h4 className="text-white font-bold text-lg mb-1">{tier.tier}</h4>
+                    <p className="text-amber-400 font-mono text-2xl font-bold mb-4">{tier.price}</p>
+                    <ul className="space-y-2">
+                      {tier.benefits.map((b, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm text-gray-400"><span className="text-amber-500 mt-0.5">&#10003;</span><span>{b}</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-2">Block Party Sponsorship Revenue Potential</h3>
+              <p className="text-gray-500 text-sm mb-4">If fully sold: Presenting + 2 Headline + 3 Supporting + 4 Activation = <span className="text-amber-400 font-bold">$1.46M</span> from events alone</p>
+              <div className="grid grid-cols-4 gap-4">
+                <div className="bg-gray-800 rounded-lg p-4 text-center"><p className="text-gray-500 text-xs">1x Presenting</p><p className="text-amber-400 font-mono font-bold text-xl">$500K</p></div>
+                <div className="bg-gray-800 rounded-lg p-4 text-center"><p className="text-gray-500 text-xs">2x Headline</p><p className="text-amber-400 font-mono font-bold text-xl">$500K</p></div>
+                <div className="bg-gray-800 rounded-lg p-4 text-center"><p className="text-gray-500 text-xs">3x Supporting</p><p className="text-amber-400 font-mono font-bold text-xl">$300K</p></div>
+                <div className="bg-gray-800 rounded-lg p-4 text-center"><p className="text-gray-500 text-xs">4x Activation</p><p className="text-amber-400 font-mono font-bold text-xl">$160K</p></div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: REVENUE PROJECTIONS */}
+        {activeTab === "projections" && (
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <MetricCard label="Year 1 Target" value="$2.1M" sub="Venues + Events combined" accent />
+              <MetricCard label="Venue Sponsorships" value={fmt(totalProjectedRevenue)} sub="Fully sold portfolio" />
+              <MetricCard label="Block Party Revenue" value="$1.46M" sub="Fully sold tiers" accent />
+              <MetricCard label="Combined Potential" value={fmt(totalProjectedRevenue + 1460000)} sub="Total addressable" />
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-1">12-Month Revenue Ramp (Venue Sponsorships)</h3>
+              <p className="text-gray-500 text-sm mb-6">Conservative ramp assuming staged category rollout and sales cycle</p>
+              <ResponsiveContainer width="100%" height={340}>
+                <LineChart data={monthlyProjection}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                  <XAxis dataKey="month" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+                  <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={(v) => fmt(v)} />
+                  <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} formatter={(v) => fmt(v)} />
+                  <Legend />
+                  <Line type="monotone" dataKey="revenue" stroke="#22c55e" strokeWidth={2} name="Monthly Revenue" dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="cumulative" stroke="#C49A6C" strokeWidth={2} name="Cumulative Revenue" dot={{ r: 4 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">Revenue Scenarios</h3>
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b border-gray-700">
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Scenario</th>
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Venue Sponsorship</th>
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Block Party</th>
+                    <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Total Annual</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-gray-800">
+                    <td className="py-3 px-4 text-gray-400">Conservative (30% fill)</td>
+                    <td className="py-3 px-4 text-white font-mono">{fmt(totalProjectedRevenue * 0.3)}</td>
+                    <td className="py-3 px-4 text-white font-mono">$438K</td>
+                    <td className="py-3 px-4 text-white font-mono font-bold">{fmt(totalProjectedRevenue * 0.3 + 438000)}</td>
+                  </tr>
+                  <tr className="border-b border-gray-800 bg-amber-950/10">
+                    <td className="py-3 px-4 text-amber-400 font-semibold">Moderate (50% fill)</td>
+                    <td className="py-3 px-4 text-amber-400 font-mono">{fmt(totalProjectedRevenue * 0.5)}</td>
+                    <td className="py-3 px-4 text-amber-400 font-mono">$730K</td>
+                    <td className="py-3 px-4 text-amber-400 font-mono font-bold">{fmt(totalProjectedRevenue * 0.5 + 730000)}</td>
+                  </tr>
+                  <tr className="border-b border-gray-800">
+                    <td className="py-3 px-4 text-gray-400">Aggressive (75% fill)</td>
+                    <td className="py-3 px-4 text-white font-mono">{fmt(totalProjectedRevenue * 0.75)}</td>
+                    <td className="py-3 px-4 text-white font-mono">$1.1M</td>
+                    <td className="py-3 px-4 text-white font-mono font-bold">{fmt(totalProjectedRevenue * 0.75 + 1100000)}</td>
+                  </tr>
+                  <tr>
+                    <td className="py-3 px-4 text-green-400 font-semibold">Full Potential (100%)</td>
+                    <td className="py-3 px-4 text-green-400 font-mono">{fmt(totalProjectedRevenue)}</td>
+                    <td className="py-3 px-4 text-green-400 font-mono">$1.46M</td>
+                    <td className="py-3 px-4 text-green-400 font-mono font-bold">{fmt(totalProjectedRevenue + 1460000)}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+              <h3 className="text-white font-bold text-lg mb-4">Recommended Priority Actions</h3>
+              <div className="space-y-3">
+                {[
+                  { priority: "P0", action: "Sell Block Party Presenting Sponsor", value: "$500K", timeline: "Before Apr 2 kickoff", category: "Events" },
+                  { priority: "P0", action: "Beer portfolio-wide draft line deal", value: "$85-150K", timeline: "Q2 2026", category: "Beer" },
+                  { priority: "P1", action: "Energy drink nightclub partnership (Discopussy + WAS)", value: "$90-130K", timeline: "Q2 2026", category: "Energy" },
+                  { priority: "P1", action: "Tequila cross-venue trail activation", value: "$75-100K", timeline: "Q2-Q3 2026", category: "Tequila" },
+                  { priority: "P1", action: "Whiskey exclusive at Doberman Drawing Room", value: "$90K", timeline: "Q2 2026", category: "Whiskey" },
+                  { priority: "P2", action: "Tech/POS portfolio-wide system deal", value: "$80K", timeline: "Q3 2026", category: "Tech" },
+                  { priority: "P2", action: "Non-alc program at Peyote + Block Party", value: "$40-70K", timeline: "Q3 2026", category: "Lifestyle" },
+                  { priority: "P2", action: "Rum activation program (patio venues)", value: "$50-55K", timeline: "Q3-Q4 2026", category: "Rum" },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-4 bg-gray-800 rounded-lg p-4">
+                    <span className={`text-xs font-bold px-2 py-1 rounded ${
+                      item.priority === "P0" ? "bg-red-900/40 text-red-400" : item.priority === "P1" ? "bg-amber-900/40 text-amber-400" : "bg-blue-900/40 text-blue-400"
+                    }`}>{item.priority}</span>
+                    <div className="flex-1"><p className="text-white text-sm font-medium">{item.action}</p><p className="text-gray-500 text-xs">{item.category} &middot; {item.timeline}</p></div>
+                    <p className="text-amber-400 font-mono font-bold text-sm">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+        {/* TAB: ACTION PLAN / SALES ROADMAP */}
+        {activeTab === "roadmap" && (
+          <div className="max-w-7xl mx-auto px-6 pb-8 space-y-8">
+            <div className="bg-gradient-to-br from-green-950/40 to-gray-900 border border-green-800/40 rounded-xl p-8">
+              <p className="text-green-400 text-xs font-bold tracking-widest uppercase mb-2">Go-to-Market</p>
+              <h2 className="text-3xl font-bold text-white mb-3">Sales Roadmap & Action Plan</h2>
+              <p className="text-gray-400 max-w-2xl">
+                The playbook for turning this analysis into closed deals. Organized by urgency — what needs to happen this week, this month, and this quarter.
+              </p>
+            </div>
+            {[salesRoadmap.phase1, salesRoadmap.phase2, salesRoadmap.phase3, salesRoadmap.phase4].map((phase, phaseIdx) => (
+              <div key={phaseIdx} className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-800 flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full" style={{ background: phase.color }} />
+                  <h3 className="text-white font-bold text-lg">{phase.name}</h3>
+                </div>
+                <div className="divide-y divide-gray-800">
+                  {phase.items.map((item, i) => (
+                    <div key={i} className="px-6 py-4 flex items-start gap-4">
+                      <span className={`text-xs font-bold px-2 py-1 rounded flex-shrink-0 mt-0.5 ${
+                        item.priority === "Critical" ? "bg-red-900/40 text-red-400" :
+                        item.priority === "High" ? "bg-amber-900/40 text-amber-400" :
+                        item.priority === "Medium" ? "bg-blue-900/40 text-blue-400" :
+                        item.priority === "Target" ? "bg-green-900/40 text-green-400" :
+                        "bg-purple-900/40 text-purple-400"
+                      }`}>{item.priority}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white text-sm font-medium">{item.action}</p>
+                        <p className="text-gray-500 text-xs mt-1">{item.notes}</p>
+                      </div>
+                      <div className="flex-shrink-0 text-right"><p className="text-gray-400 text-xs">{item.owner}</p></div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-6">
+              <h3 className="text-amber-400 font-bold text-lg mb-3">The Ask to Corner Bar Management</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <p className="text-red-400 font-bold text-sm mb-2">1. Data We Need</p>
+                  <ul className="space-y-1 text-gray-400 text-sm">
+                    <li>&#8226; Actual depletion reports (all venues, 12 months)</li>
+                    <li>&#8226; Current brand deals and terms</li>
+                    <li>&#8226; Social media metrics across all accounts</li>
+                    <li>&#8226; Block Party actual attendance data (2025)</li>
+                  </ul>
+                </div>
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <p className="text-amber-400 font-bold text-sm mb-2">2. Decisions Needed</p>
+                  <ul className="space-y-1 text-gray-400 text-sm">
+                    <li>&#8226; Are they open to portfolio-wide exclusive deals?</li>
+                    <li>&#8226; Who owns sponsor relationships today?</li>
+                    <li>&#8226; What's their appetite for a dedicated sponsor sales effort?</li>
+                    <li>&#8226; Revenue share vs flat fee preference?</li>
+                  </ul>
+                </div>
+                <div className="bg-gray-900 rounded-lg p-4">
+                  <p className="text-green-400 font-bold text-sm mb-2">3. What We Deliver</p>
+                  <ul className="space-y-1 text-gray-400 text-sm">
+                    <li>&#8226; This dashboard with real data plugged in</li>
+                    <li>&#8226; Brand-specific pitch decks</li>
+                    <li>&#8226; Sponsor outreach and closing</li>
+                    <li>&#8226; Ongoing measurement and optimization</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+      {/* FOOTER */}
+      <div className="border-t border-gray-800 bg-gray-950 py-5 mt-8">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-gray-600">
+          <p>Corner Bar Management &middot; Sponsorship Opportunity Analysis &middot; Confidential</p>
+          <a href="https://gorunrabbit.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+            <img src="/logo.png" alt="Go Run Rabbit" style={{ height: "24px", opacity: 0.7 }} />
+            <span className="text-gray-500">Prepared by <span className="text-gray-400 font-medium">Go Run Rabbit</span> &middot; March 2026</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<CBMSponsorshipDashboard />);
+  </script>
+</body>
+</html>
