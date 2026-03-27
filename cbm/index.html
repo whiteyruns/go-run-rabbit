@@ -1089,7 +1089,8 @@ function CBMSponsorshipDashboard() {
     setDataLoading(true);
     setDataError(null);
     try {
-      const base = window.location.href.replace(/\/[^\/]*$/, '/');
+      const loc = window.location.href.endsWith('/') ? window.location.href : window.location.href + '/';
+      const base = loc;
       const [pmixResp, srResp] = await Promise.all([
         fetch(base + "data/toast-pmix.csv", { redirect: "follow" }),
         fetch(base + "data/sevenrooms-reservations.csv", { redirect: "follow" }),
