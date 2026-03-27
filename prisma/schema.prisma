@@ -1,0 +1,124 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("client") // "admin" | "client"
+  createdAt DateTime @default(now())
+}
+
+model Venue {
+  id            String              @id
+  name          String
+  address       String
+  zone          String
+  capacity      Int
+  sqft          Int
+  type          String
+  features      String              // JSON array
+  daysOpen      Int
+  weeklyTraffic Int
+  notes         String?
+  imageUrl      String?
+  posData       POSRecord[]
+  reservations  ReservationRecord[]
+}
+
+model POSRecord {
+  id             String   @id @default(cuid())
+  venueId        String
+  venue          Venue    @relation(fields: [venueId], references: [id])
+  businessDate   DateTime
+  menuGroup      String
+  menuItem       String
+  spiritCategory String?
+  qtySold        Int
+  grossSales     Float
+  itemCost       Float
+  netSales       Float
+  voidQty        Int      @default(0)
+  compQty        Int      @default(0)
+  source         String   // "csv_upload" | "toast_api" | "sample"
+  importedAt     DateTime @default(now())
+
+  @@index([venueId, businessDate])
+  @@index([spiritCategory])
+  @@index([menuItem])
+}
+
+model ReservationRecord {
+  id            String   @id @default(cuid())
+  venueId       String
+  venue         Venue    @relation(fields: [venueId], references: [id])
+  date          DateTime
+  time          String
+  partySize     Int
+  status        String
+  source        String
+  guestName     String?
+  visitCount    Int      @default(1)
+  lifetimeSpend Float    @default(0)
+  tags          String?
+  noShow        Boolean  @default(false)
+  dataSource    String   // "csv_upload" | "sevenrooms_api" | "sample"
+  importedAt    DateTime @default(now())
+
+  @@index([venueId, date])
+}
+
+model PipelineDeal {
+  id             String    @id @default(cuid())
+  brandName      String
+  category       String
+  tier           String
+  status         String    @default("prospect")
+  value          Float?
+  contactName    String?
+  contactEmail   String?
+  notes          String?
+  venues         String?   // JSON array of venue IDs
+  nextAction     String?
+  nextActionDate DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model PitchLink {
+  id         String    @id @default(cuid())
+  token      String    @unique @default(cuid())
+  title      String
+  brandName  String?
+  category   String?
+  venueIds   String?   // JSON array
+  expiresAt  DateTime
+  viewCount  Int       @default(0)
+  lastViewed DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+model APICredential {
+  id        String    @id @default(cuid())
+  service   String    // "toast" | "sevenrooms"
+  config    String    // encrypted JSON
+  lastSync  DateTime?
+  status    String    @default("configured")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model RecapLog {
+  id     String   @id @default(cuid())
+  type   String
+  sentTo String
+  sentAt DateTime @default(now())
+  data   String?
+}

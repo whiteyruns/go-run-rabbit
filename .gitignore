@@ -1,0 +1,24 @@
+# dependencies
+node_modules/
+
+# next.js
+.next/
+out/
+
+# env
+.env
+.env.local
+
+# vercel
+.vercel
+
+# prisma
+prisma/dev.db
+prisma/dev.db-journal
+src/generated/
+
+# misc
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+_old/
