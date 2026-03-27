@@ -18,8 +18,240 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-const { useState, useMemo } = React;
-const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis } = Recharts;
+const { useState, useMemo, useCallback, useRef } = React;
+const { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line, Legend, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Treemap } = Recharts;
+
+// ============================================================================
+// CSV IMPORT ENGINE
+// ============================================================================
+function parseCSV(text) {
+  const lines = text.split("\n").filter(l => l.trim());
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => obj[h.trim()] = vals[i]?.trim() || "");
+    return obj;
+  });
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let current = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQuotes = !inQuotes; continue; }
+    if (ch === ',' && !inQuotes) { result.push(current); current = ""; continue; }
+    current += ch;
+  }
+  result.push(current);
+  return result;
+}
+
+function analyzePMIXData(rows) {
+  if (!rows.length) return null;
+
+  // Top sellers by qty
+  const itemTotals = {};
+  const categoryTotals = {};
+  const venueTotals = {};
+  const venueByCategory = {};
+  const dailySales = {};
+  const dayOfWeekSales = {};
+  const monthSales = {};
+  const spiritCategoryCases = {};
+  let totalQty = 0, totalGross = 0, totalCost = 0, totalNet = 0;
+  let totalVoids = 0, totalComps = 0;
+
+  for (const row of rows) {
+    const qty = parseInt(row["Qty Sold"]) || 0;
+    const gross = parseFloat(row["Gross Sales"]) || 0;
+    const cost = parseFloat(row["Item Cost"]) || 0;
+    const net = parseFloat(row["Net Sales"]) || 0;
+    const voidQty = parseInt(row["Void Qty"]) || 0;
+    const compQty = parseInt(row["Comp Qty"]) || 0;
+    const item = row["Menu Item"];
+    const group = row["Menu Group"];
+    const venue = row["Location"];
+    const date = row["Business Date"];
+    const spiritCat = row["Spirit Category"];
+
+    totalQty += qty; totalGross += gross; totalCost += cost; totalNet += net;
+    totalVoids += voidQty; totalComps += compQty;
+
+    // Item totals
+    if (!itemTotals[item]) itemTotals[item] = { qty: 0, gross: 0, cost: 0, group, spiritCat, venue: {} };
+    itemTotals[item].qty += qty;
+    itemTotals[item].gross += gross;
+    itemTotals[item].cost += cost;
+    if (!itemTotals[item].venue[venue]) itemTotals[item].venue[venue] = 0;
+    itemTotals[item].venue[venue] += qty;
+
+    // Category totals
+    if (!categoryTotals[group]) categoryTotals[group] = { qty: 0, gross: 0, cost: 0 };
+    categoryTotals[group].qty += qty;
+    categoryTotals[group].gross += gross;
+    categoryTotals[group].cost += cost;
+
+    // Spirit category cases (for comparison with estimates)
+    if (spiritCat && spiritCat !== "Beer" && spiritCat !== "Wine" && spiritCat !== "Champagne" && spiritCat !== "Non-Alcoholic" && spiritCat !== "Other") {
+      if (!spiritCategoryCases[spiritCat]) spiritCategoryCases[spiritCat] = { qty: 0, gross: 0 };
+      spiritCategoryCases[spiritCat].qty += qty;
+      spiritCategoryCases[spiritCat].gross += gross;
+    }
+
+    // Venue totals
+    if (!venueTotals[venue]) venueTotals[venue] = { qty: 0, gross: 0, cost: 0 };
+    venueTotals[venue].qty += qty;
+    venueTotals[venue].gross += gross;
+    venueTotals[venue].cost += cost;
+
+    // Venue by spirit category
+    if (!venueByCategory[venue]) venueByCategory[venue] = {};
+    if (!venueByCategory[venue][spiritCat]) venueByCategory[venue][spiritCat] = { qty: 0, gross: 0 };
+    venueByCategory[venue][spiritCat].qty += qty;
+    venueByCategory[venue][spiritCat].gross += gross;
+
+    // Daily sales
+    if (date) {
+      if (!dailySales[date]) dailySales[date] = { qty: 0, gross: 0 };
+      dailySales[date].qty += qty;
+      dailySales[date].gross += gross;
+
+      // Day of week
+      const d = new Date(date + "T12:00:00");
+      const dow = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()];
+      if (!dayOfWeekSales[dow]) dayOfWeekSales[dow] = { qty: 0, gross: 0, days: 0 };
+      dayOfWeekSales[dow].qty += qty;
+      dayOfWeekSales[dow].gross += gross;
+
+      // Month
+      const month = date.slice(0, 7);
+      if (!monthSales[month]) monthSales[month] = { qty: 0, gross: 0 };
+      monthSales[month].qty += qty;
+      monthSales[month].gross += gross;
+    }
+  }
+
+  // Count unique days per DOW
+  const dateSet = new Set(rows.map(r => r["Business Date"]).filter(Boolean));
+  for (const date of dateSet) {
+    const d = new Date(date + "T12:00:00");
+    const dow = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][d.getDay()];
+    if (dayOfWeekSales[dow]) dayOfWeekSales[dow].days++;
+  }
+
+  const topSellers = Object.entries(itemTotals)
+    .map(([name, d]) => ({ name, ...d, pourCost: d.cost / d.gross }))
+    .sort((a, b) => b.qty - a.qty);
+
+  const categoryBreakdown = Object.entries(categoryTotals)
+    .map(([name, d]) => ({ name, ...d, pourCost: d.cost / d.gross }))
+    .sort((a, b) => b.gross - a.gross);
+
+  const venueBreakdown = Object.entries(venueTotals)
+    .map(([name, d]) => ({ name, ...d, pourCost: d.cost / d.gross }))
+    .sort((a, b) => b.gross - a.gross);
+
+  const totalDays = dateSet.size || 1;
+
+  return {
+    totalQty, totalGross, totalCost, totalNet, totalVoids, totalComps,
+    totalDays,
+    avgDailyRevenue: totalGross / totalDays,
+    avgDailyDrinks: totalQty / totalDays,
+    overallPourCost: totalCost / totalGross,
+    topSellers,
+    categoryBreakdown,
+    venueBreakdown,
+    venueByCategory,
+    spiritCategoryCases,
+    dailySales,
+    dayOfWeekSales,
+    monthSales,
+  };
+}
+
+function analyzeReservationData(rows) {
+  if (!rows.length) return null;
+
+  const venueTotals = {};
+  const sourceTotals = {};
+  const tagCounts = {};
+  let totalCovers = 0, totalNoShows = 0, totalRes = 0;
+  let totalLifetimeSpend = 0;
+  const partySizes = [];
+  const repeatVisitors = { first: 0, returning: 0, regular: 0 };
+  const dailyRes = {};
+
+  for (const row of rows) {
+    const venue = row["Venue"];
+    const partySize = parseInt(row["Party Size"]) || 0;
+    const status = row["Status"];
+    const source = row["Source"];
+    const visits = parseInt(row["Visit Count"]) || 0;
+    const spend = parseInt(row["Lifetime Spend"]) || 0;
+    const noShow = row["No Show"] === "Yes";
+    const date = row["Date"];
+    const tags = row["Tags"] || "";
+
+    totalRes++;
+    totalCovers += partySize;
+    if (noShow) totalNoShows++;
+    totalLifetimeSpend += spend;
+    partySizes.push(partySize);
+
+    if (visits <= 1) repeatVisitors.first++;
+    else if (visits <= 5) repeatVisitors.returning++;
+    else repeatVisitors.regular++;
+
+    if (!venueTotals[venue]) venueTotals[venue] = { res: 0, covers: 0, noShows: 0, avgSpend: 0, totalSpend: 0 };
+    venueTotals[venue].res++;
+    venueTotals[venue].covers += partySize;
+    if (noShow) venueTotals[venue].noShows++;
+    venueTotals[venue].totalSpend += spend;
+
+    if (!sourceTotals[source]) sourceTotals[source] = 0;
+    sourceTotals[source]++;
+
+    if (tags) {
+      for (const tag of tags.split(";").map(t => t.trim()).filter(Boolean)) {
+        if (!tagCounts[tag]) tagCounts[tag] = 0;
+        tagCounts[tag]++;
+      }
+    }
+
+    if (date) {
+      if (!dailyRes[date]) dailyRes[date] = { res: 0, covers: 0 };
+      dailyRes[date].res++;
+      dailyRes[date].covers += partySize;
+    }
+  }
+
+  // Compute avg spend per venue
+  for (const v of Object.values(venueTotals)) {
+    v.avgSpend = v.res > 0 ? Math.round(v.totalSpend / v.res) : 0;
+  }
+
+  const dateSet = new Set(rows.map(r => r["Date"]).filter(Boolean));
+  const totalDays = dateSet.size || 1;
+
+  return {
+    totalRes, totalCovers, totalNoShows, totalDays,
+    noShowRate: totalNoShows / totalRes,
+    avgPartySize: totalCovers / totalRes,
+    avgDailyRes: totalRes / totalDays,
+    avgDailyCovers: totalCovers / totalDays,
+    avgLifetimeSpend: totalLifetimeSpend / totalRes,
+    repeatVisitors,
+    venueTotals: Object.entries(venueTotals).map(([name, d]) => ({ name, ...d })).sort((a, b) => b.covers - a.covers),
+    sourceTotals: Object.entries(sourceTotals).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count),
+    tagCounts: Object.entries(tagCounts).map(([name, count]) => ({ name, count })).sort((a, b) => b.count - a.count),
+    dailyRes,
+  };
+}
 
 // ============================================================================
 // DATA: CBM VENUE PORTFOLIO
@@ -842,6 +1074,47 @@ function CBMSponsorshipDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [selectedVenue, setSelectedVenue] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [pmixData, setPmixData] = useState(null);
+  const [srData, setSrData] = useState(null);
+  const [dataLoading, setDataLoading] = useState(false);
+  const [dataError, setDataError] = useState(null);
+  const [posView, setPosView] = useState("overview");
+  const pmixFileRef = useRef(null);
+  const srFileRef = useRef(null);
+
+  const pmixAnalysis = useMemo(() => pmixData ? analyzePMIXData(pmixData) : null, [pmixData]);
+  const srAnalysis = useMemo(() => srData ? analyzeReservationData(srData) : null, [srData]);
+
+  const loadDemoData = useCallback(async () => {
+    setDataLoading(true);
+    setDataError(null);
+    try {
+      const [pmixResp, srResp] = await Promise.all([
+        fetch("data/toast-pmix.csv"),
+        fetch("data/sevenrooms-reservations.csv"),
+      ]);
+      if (!pmixResp.ok) throw new Error("Could not load Toast PMIX sample data. Run: node generate-sample-data.js");
+      const pmixText = await pmixResp.text();
+      const srText = srResp.ok ? await srResp.text() : "";
+      setPmixData(parseCSV(pmixText));
+      if (srText) setSrData(parseCSV(srText));
+    } catch (e) {
+      setDataError(e.message);
+    }
+    setDataLoading(false);
+  }, []);
+
+  const handleFileUpload = useCallback((e, type) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const rows = parseCSV(ev.target.result);
+      if (type === "pmix") setPmixData(rows);
+      else setSrData(rows);
+    };
+    reader.readAsText(file);
+  }, []);
 
   const selectedVenueData = venues.find((v) => v.id === selectedVenue);
   const selectedCatData = sponsorshipCategories.find((c) => c.id === selectedCategory);
@@ -885,6 +1158,7 @@ function CBMSponsorshipDashboard() {
 
   const tabs = [
     { id: "overview", label: "Executive Summary" },
+    { id: "posdata", label: pmixAnalysis ? "\u2705 POS Data" : "\u{1F4CA} POS Data" },
     { id: "depletions", label: "Case Depletions" },
     { id: "journey", label: "Guest Journey" },
     { id: "tentpoles", label: "Vegas Calendar" },
@@ -989,6 +1263,439 @@ function CBMSponsorshipDashboard() {
                 <span className="text-red-400 font-bold"> zero</span> sponsor presence. This dashboard maps the full inventory so CBM can sell it systematically.
               </p>
             </div>
+          </div>
+        )}
+
+        {/* TAB: POS DATA (IMPORT + ANALYSIS) */}
+        {activeTab === "posdata" && (
+          <div className="space-y-8">
+            {/* Import Controls */}
+            {!pmixAnalysis && (
+              <div className="bg-gradient-to-br from-emerald-950/40 to-gray-900 border border-emerald-800/40 rounded-xl p-8">
+                <p className="text-emerald-400 text-xs font-bold tracking-widest uppercase mb-2">Data Pipeline</p>
+                <h2 className="text-3xl font-bold text-white mb-3">Import POS & Reservation Data</h2>
+                <p className="text-gray-400 max-w-2xl mb-6">
+                  Upload Toast PMIX exports and SevenRooms reservation data to replace estimates with real numbers.
+                  Or load the demo dataset to see what this dashboard can do with actual data.
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                    <p className="text-white font-bold text-sm mb-2">Toast PMIX Export</p>
+                    <p className="text-gray-500 text-xs mb-3">Product mix report from Toast Back Office</p>
+                    <input ref={pmixFileRef} type="file" accept=".csv" onChange={(e) => handleFileUpload(e, "pmix")} className="hidden" />
+                    <button onClick={() => pmixFileRef.current?.click()} className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg w-full transition-colors">
+                      Upload CSV
+                    </button>
+                  </div>
+                  <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                    <p className="text-white font-bold text-sm mb-2">SevenRooms Export</p>
+                    <p className="text-gray-500 text-xs mb-3">Reservation data with guest profiles</p>
+                    <input ref={srFileRef} type="file" accept=".csv" onChange={(e) => handleFileUpload(e, "sr")} className="hidden" />
+                    <button onClick={() => srFileRef.current?.click()} className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg w-full transition-colors">
+                      Upload CSV
+                    </button>
+                  </div>
+                  <div className="bg-gray-900 border border-emerald-800/40 rounded-xl p-5">
+                    <p className="text-emerald-400 font-bold text-sm mb-2">Load Demo Data</p>
+                    <p className="text-gray-500 text-xs mb-3">58K drink sales + 20K reservations (6 months)</p>
+                    <button onClick={loadDemoData} disabled={dataLoading}
+                      className="bg-emerald-700 hover:bg-emerald-600 disabled:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg w-full transition-colors font-semibold">
+                      {dataLoading ? "Loading..." : "Load Sample Data"}
+                    </button>
+                  </div>
+                </div>
+                {dataError && <p className="text-red-400 text-sm">{dataError}</p>}
+                <div className="bg-blue-950/30 border border-blue-800/40 rounded-xl p-5">
+                  <div className="flex items-start gap-3">
+                    <span className="text-blue-400 text-lg">&#9432;</span>
+                    <div>
+                      <h4 className="text-blue-400 font-bold text-sm mb-1">How to get the data from Toast</h4>
+                      <p className="text-gray-400 text-sm leading-relaxed">
+                        Toast Back Office → Reports → Sales → Product Mix (PMIX). Select date range, all venues, export as CSV.
+                        The file should contain columns for: Location, Business Date, Menu Group, Menu Item, Qty Sold, Gross Sales, Item Cost, Net Sales.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Data loaded — show analysis */}
+            {pmixAnalysis && (
+              <div className="space-y-8">
+                {/* Data status banner */}
+                <div className="bg-emerald-950/30 border border-emerald-800/40 rounded-xl p-5 flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse" />
+                    <div>
+                      <p className="text-emerald-400 font-bold text-sm">POS Data Loaded</p>
+                      <p className="text-gray-500 text-xs">
+                        {pmixData.length.toLocaleString()} PMIX rows &middot; {pmixAnalysis.totalDays} days &middot; {pmixAnalysis.venueBreakdown.length} venues
+                        {srAnalysis ? ` · ${srData.length.toLocaleString()} reservations` : ""}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {["overview","topsellers","venues","categories","reservations"].map(v => (
+                      <button key={v} onClick={() => setPosView(v)}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${posView === v ? "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/30" : "text-gray-500 hover:text-gray-300"}`}>
+                        {v === "overview" ? "Overview" : v === "topsellers" ? "Top Sellers" : v === "venues" ? "By Venue" : v === "categories" ? "Categories" : "Reservations"}
+                      </button>
+                    ))}
+                    <button onClick={() => { setPmixData(null); setSrData(null); setPosView("overview"); }}
+                      className="text-gray-600 hover:text-red-400 text-xs ml-2">Clear Data</button>
+                  </div>
+                </div>
+
+                {/* POS Overview */}
+                {posView === "overview" && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <MetricCard label="Total Drinks Sold" value={fmtNum(pmixAnalysis.totalQty)} sub={`${pmixAnalysis.totalDays} days (${fmtNum(Math.round(pmixAnalysis.avgDailyDrinks))}/day)`} accent />
+                      <MetricCard label="Gross Revenue" value={fmt(pmixAnalysis.totalGross)} sub={`${fmt(Math.round(pmixAnalysis.avgDailyRevenue))}/day avg`} />
+                      <MetricCard label="Pour Cost" value={`${(pmixAnalysis.overallPourCost * 100).toFixed(1)}%`} sub={`${fmt(Math.round(pmixAnalysis.totalCost))} total COGS`} />
+                      <MetricCard label="Voids + Comps" value={fmtNum(pmixAnalysis.totalVoids + pmixAnalysis.totalComps)} sub={`${((pmixAnalysis.totalVoids + pmixAnalysis.totalComps) / pmixAnalysis.totalQty * 100).toFixed(2)}% of volume`} />
+                    </div>
+
+                    {/* Revenue by day of week */}
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                      <h3 className="text-white font-bold text-lg mb-1">Average Daily Revenue by Day of Week</h3>
+                      <p className="text-gray-500 text-sm mb-6">All venues combined — shows peak earning nights</p>
+                      <ResponsiveContainer width="100%" height={280}>
+                        <BarChart data={["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map(dow => ({
+                          name: dow,
+                          revenue: pmixAnalysis.dayOfWeekSales[dow] ? Math.round(pmixAnalysis.dayOfWeekSales[dow].gross / Math.max(pmixAnalysis.dayOfWeekSales[dow].days, 1)) : 0,
+                          drinks: pmixAnalysis.dayOfWeekSales[dow] ? Math.round(pmixAnalysis.dayOfWeekSales[dow].qty / Math.max(pmixAnalysis.dayOfWeekSales[dow].days, 1)) : 0,
+                        }))}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                          <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 12 }} />
+                          <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={v => fmt(v)} />
+                          <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} formatter={(v,n) => n === "revenue" ? fmt(v) : fmtNum(v)} />
+                          <Legend />
+                          <Bar dataKey="revenue" fill="#22c55e" name="Avg Revenue" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Monthly revenue trend */}
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                      <h3 className="text-white font-bold text-lg mb-1">Monthly Revenue Trend</h3>
+                      <p className="text-gray-500 text-sm mb-6">Actual revenue from POS data — shows tentpole and seasonal impact</p>
+                      <ResponsiveContainer width="100%" height={280}>
+                        <LineChart data={Object.entries(pmixAnalysis.monthSales).sort(([a],[b]) => a.localeCompare(b)).map(([month, d]) => ({
+                          month: month.slice(2),
+                          revenue: Math.round(d.gross),
+                          drinks: d.qty,
+                        }))}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                          <XAxis dataKey="month" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+                          <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={v => fmt(v)} />
+                          <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} formatter={v => fmt(v)} />
+                          <Legend />
+                          <Line type="monotone" dataKey="revenue" stroke="#C49A6C" strokeWidth={2} name="Monthly Revenue" dot={{ r: 4 }} />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+
+                    {/* Estimated vs Actual callout */}
+                    <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-6">
+                      <h3 className="text-amber-400 font-bold text-lg mb-3">Estimated vs. Actual: What the Data Shows</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="bg-gray-900 rounded-lg p-4">
+                          <p className="text-gray-500 text-xs uppercase mb-1">Est. Annual Drinks (from model)</p>
+                          <p className="text-gray-400 font-mono text-lg">{fmtNum(allDepletions.reduce((s,d) => s + d.annualDrinks, 0))}</p>
+                          <p className="text-gray-600 text-xs mt-2">Actual annual (projected from {pmixAnalysis.totalDays}d)</p>
+                          <p className="text-emerald-400 font-mono text-lg font-bold">{fmtNum(Math.round(pmixAnalysis.totalQty * 365 / pmixAnalysis.totalDays))}</p>
+                          <p className={`text-xs mt-1 font-bold ${(pmixAnalysis.totalQty * 365 / pmixAnalysis.totalDays) > allDepletions.reduce((s,d) => s + d.annualDrinks, 0) ? "text-emerald-400" : "text-red-400"}`}>
+                            {(((pmixAnalysis.totalQty * 365 / pmixAnalysis.totalDays) / allDepletions.reduce((s,d) => s + d.annualDrinks, 0) - 1) * 100).toFixed(1)}% vs estimate
+                          </p>
+                        </div>
+                        <div className="bg-gray-900 rounded-lg p-4">
+                          <p className="text-gray-500 text-xs uppercase mb-1">Est. Weekly Traffic (from model)</p>
+                          <p className="text-gray-400 font-mono text-lg">{fmtNum(totalWeeklyTraffic)}</p>
+                          <p className="text-gray-600 text-xs mt-2">Implied weekly from drink volume</p>
+                          <p className="text-emerald-400 font-mono text-lg font-bold">{fmtNum(Math.round(pmixAnalysis.totalQty / pmixAnalysis.totalDays * 7 / 3.0))}</p>
+                          <p className="text-gray-500 text-xs mt-1">Assuming 3.0 drinks/guest avg</p>
+                        </div>
+                        <div className="bg-gray-900 rounded-lg p-4">
+                          <p className="text-gray-500 text-xs uppercase mb-1">Actual Annual Gross Revenue</p>
+                          <p className="text-emerald-400 font-mono text-2xl font-bold">{fmt(Math.round(pmixAnalysis.totalGross * 365 / pmixAnalysis.totalDays))}</p>
+                          <p className="text-gray-500 text-xs mt-2">Beverage revenue alone (excl. food, door)</p>
+                          <p className="text-amber-400 text-xs mt-1">This is what brands are buying access to</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Top Sellers */}
+                {posView === "topsellers" && (
+                  <div className="space-y-6">
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                      <h3 className="text-white font-bold text-lg mb-1">Top 20 Drinks by Volume</h3>
+                      <p className="text-gray-500 text-sm mb-6">Across all venues — {pmixAnalysis.totalDays} days of data</p>
+                      <ResponsiveContainer width="100%" height={520}>
+                        <BarChart data={pmixAnalysis.topSellers.slice(0, 20).map(d => ({
+                          name: d.name.length > 22 ? d.name.slice(0,20) + "..." : d.name,
+                          qty: d.qty,
+                          revenue: Math.round(d.gross),
+                        }))} layout="vertical" barGap={2}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                          <XAxis type="number" tick={{ fill: "#9ca3af", fontSize: 11 }} />
+                          <YAxis dataKey="name" type="category" width={160} tick={{ fill: "#9ca3af", fontSize: 11 }} />
+                          <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} />
+                          <Legend />
+                          <Bar dataKey="qty" fill="#C49A6C" name="Units Sold" radius={[0, 4, 4, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+                      <div className="p-6 border-b border-gray-800">
+                        <h3 className="text-white font-bold text-lg">Top 30 Items — Detailed</h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="border-b border-gray-700 bg-gray-800/50">
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">#</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Item</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Category</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">Qty Sold</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">Revenue</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">COGS</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">Pour Cost</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">Profit</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {pmixAnalysis.topSellers.slice(0, 30).map((item, i) => (
+                              <tr key={item.name} className="border-b border-gray-800 hover:bg-gray-800/50">
+                                <td className="py-3 px-4 text-gray-500 text-sm font-mono">{i + 1}</td>
+                                <td className="py-3 px-4 text-white text-sm font-medium">{item.name}</td>
+                                <td className="py-3 px-4 text-gray-400 text-xs">{item.spiritCat || item.group}</td>
+                                <td className="py-3 px-4 text-amber-400 text-sm font-mono text-right">{fmtNum(item.qty)}</td>
+                                <td className="py-3 px-4 text-green-400 text-sm font-mono text-right">{fmt(Math.round(item.gross))}</td>
+                                <td className="py-3 px-4 text-red-400 text-sm font-mono text-right">{fmt(Math.round(item.cost))}</td>
+                                <td className="py-3 px-4 text-sm font-mono text-right">
+                                  <span className={item.pourCost > 0.25 ? "text-red-400" : item.pourCost > 0.20 ? "text-amber-400" : "text-green-400"}>
+                                    {(item.pourCost * 100).toFixed(1)}%
+                                  </span>
+                                </td>
+                                <td className="py-3 px-4 text-emerald-400 text-sm font-mono font-bold text-right">{fmt(Math.round(item.gross - item.cost))}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* By Venue */}
+                {posView === "venues" && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {pmixAnalysis.venueBreakdown.map(v => (
+                        <div key={v.name} className="bg-gray-900 border border-gray-800 rounded-xl p-5">
+                          <p className="text-white font-bold text-sm mb-1">{v.name}</p>
+                          <p className="text-amber-400 font-mono text-xl font-bold">{fmt(Math.round(v.gross))}</p>
+                          <p className="text-gray-500 text-xs">{fmtNum(v.qty)} drinks &middot; {(v.pourCost * 100).toFixed(1)}% pour cost</p>
+                          <div className="mt-3 pt-3 border-t border-gray-800">
+                            <p className="text-gray-500 text-xs mb-1">Annualized</p>
+                            <p className="text-emerald-400 font-mono font-bold">{fmt(Math.round(v.gross * 365 / pmixAnalysis.totalDays))}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                      <h3 className="text-white font-bold text-lg mb-4">Revenue by Venue</h3>
+                      <ResponsiveContainer width="100%" height={340}>
+                        <BarChart data={pmixAnalysis.venueBreakdown.map(v => ({
+                          name: v.name.length > 16 ? v.name.slice(0,14) + "..." : v.name,
+                          revenue: Math.round(v.gross),
+                          cost: Math.round(v.cost),
+                          profit: Math.round(v.gross - v.cost),
+                        }))} barGap={2}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                          <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
+                          <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={v => fmt(v)} />
+                          <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} formatter={v => fmt(v)} />
+                          <Legend />
+                          <Bar dataKey="profit" stackId="a" fill="#22c55e" name="Gross Profit" />
+                          <Bar dataKey="cost" stackId="a" fill="#ef4444" name="COGS" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                )}
+
+                {/* Categories */}
+                {posView === "categories" && (
+                  <div className="space-y-6">
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                      <h3 className="text-white font-bold text-lg mb-1">Revenue by Menu Group</h3>
+                      <p className="text-gray-500 text-sm mb-6">Actual category split from POS data</p>
+                      <ResponsiveContainer width="100%" height={340}>
+                        <BarChart data={pmixAnalysis.categoryBreakdown.map(c => ({
+                          name: c.name.split(" - ")[0].split(" (")[0],
+                          revenue: Math.round(c.gross),
+                          qty: c.qty,
+                          pourCost: Math.round(c.pourCost * 100),
+                        }))} barGap={2}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                          <XAxis dataKey="name" tick={{ fill: "#9ca3af", fontSize: 10 }} angle={-20} textAnchor="end" height={70} />
+                          <YAxis tick={{ fill: "#9ca3af", fontSize: 11 }} tickFormatter={v => fmt(v)} />
+                          <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} formatter={(v,n) => n === "pourCost" ? v+"%" : n === "qty" ? fmtNum(v) : fmt(v)} />
+                          <Legend />
+                          <Bar dataKey="revenue" fill="#C49A6C" name="Revenue" radius={[4, 4, 0, 0]} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    {/* Spirit category breakdown for brand pitches */}
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                      <h3 className="text-white font-bold text-lg mb-1">Spirit Category Breakdown</h3>
+                      <p className="text-gray-500 text-sm mb-6">Real volume data for brand pitches — this is what Diageo/Bacardi want to see</p>
+                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                        {Object.entries(pmixAnalysis.spiritCategoryCases).sort(([,a],[,b]) => b.qty - a.qty).map(([cat, d]) => {
+                          const annualDrinks = Math.round(d.qty * 365 / pmixAnalysis.totalDays);
+                          const estCases = Math.round(annualDrinks / 204);
+                          const colors = { "Tequila / Mezcal": "#22c55e", "Vodka": "#3b82f6", "Whiskey / Bourbon": "#eab308", "Rum": "#ef4444", "Gin": "#8b5cf6", "Other Spirits": "#6b7280" };
+                          return (
+                            <div key={cat} className="bg-gray-800 rounded-lg p-4">
+                              <p className="text-gray-400 text-xs mb-1">{cat}</p>
+                              <p className="font-mono font-bold text-xl" style={{ color: colors[cat] || "#C49A6C" }}>{fmtNum(d.qty)}</p>
+                              <p className="text-gray-600 text-xs">drinks ({pmixAnalysis.totalDays}d)</p>
+                              <div className="mt-2 pt-2 border-t border-gray-700">
+                                <p className="text-gray-500 text-xs">Est. Annual Cases</p>
+                                <p className="text-amber-400 font-mono font-bold text-sm">{fmtNum(estCases)}</p>
+                              </div>
+                              <div className="mt-1">
+                                <p className="text-gray-500 text-xs">Revenue</p>
+                                <p className="text-green-400 font-mono font-bold text-sm">{fmt(Math.round(d.gross * 365 / pmixAnalysis.totalDays))}/yr</p>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+                      <div className="p-6 border-b border-gray-800">
+                        <h3 className="text-white font-bold text-lg">Category Detail Table</h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="border-b border-gray-700 bg-gray-800/50">
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase">Category</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">Qty Sold</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">Revenue</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">COGS</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">Pour Cost</th>
+                              <th className="py-3 px-4 text-xs text-gray-400 font-semibold uppercase text-right">% of Total Rev</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {pmixAnalysis.categoryBreakdown.map(c => (
+                              <tr key={c.name} className="border-b border-gray-800 hover:bg-gray-800/50">
+                                <td className="py-3 px-4 text-white text-sm font-medium">{c.name}</td>
+                                <td className="py-3 px-4 text-amber-400 text-sm font-mono text-right">{fmtNum(c.qty)}</td>
+                                <td className="py-3 px-4 text-green-400 text-sm font-mono text-right">{fmt(Math.round(c.gross))}</td>
+                                <td className="py-3 px-4 text-red-400 text-sm font-mono text-right">{fmt(Math.round(c.cost))}</td>
+                                <td className="py-3 px-4 text-sm font-mono text-right">
+                                  <span className={c.pourCost > 0.25 ? "text-red-400" : c.pourCost > 0.20 ? "text-amber-400" : "text-green-400"}>
+                                    {(c.pourCost * 100).toFixed(1)}%
+                                  </span>
+                                </td>
+                                <td className="py-3 px-4 text-gray-300 text-sm font-mono text-right">{(c.gross / pmixAnalysis.totalGross * 100).toFixed(1)}%</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Reservations */}
+                {posView === "reservations" && srAnalysis && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <MetricCard label="Total Reservations" value={fmtNum(srAnalysis.totalRes)} sub={`${srAnalysis.totalDays} days of data`} accent />
+                      <MetricCard label="Total Covers" value={fmtNum(srAnalysis.totalCovers)} sub={`${srAnalysis.avgPartySize.toFixed(1)} avg party size`} />
+                      <MetricCard label="No-Show Rate" value={`${(srAnalysis.noShowRate * 100).toFixed(1)}%`} sub={`${fmtNum(srAnalysis.totalNoShows)} no-shows`} />
+                      <MetricCard label="Avg Lifetime Spend" value={`$${Math.round(srAnalysis.avgLifetimeSpend)}`} sub="Per guest (SevenRooms)" />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                        <h3 className="text-white font-bold text-lg mb-4">Reservations by Venue</h3>
+                        <div className="space-y-3">
+                          {srAnalysis.venueTotals.map(v => (
+                            <div key={v.name} className="flex items-center justify-between bg-gray-800 rounded-lg p-3">
+                              <div>
+                                <p className="text-white text-sm font-medium">{v.name}</p>
+                                <p className="text-gray-500 text-xs">{fmtNum(v.covers)} covers &middot; {(v.noShows / v.res * 100).toFixed(1)}% no-show</p>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-amber-400 font-mono font-bold">{fmtNum(v.res)}</p>
+                                <p className="text-gray-500 text-xs">${fmtNum(v.avgSpend)} avg spend</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="space-y-6">
+                        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                          <h3 className="text-white font-bold text-lg mb-4">Booking Source</h3>
+                          <ResponsiveContainer width="100%" height={220}>
+                            <PieChart>
+                              <Pie data={srAnalysis.sourceTotals.slice(0, 6)} dataKey="count" nameKey="name" cx="50%" cy="50%" outerRadius={80} label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}>
+                                {srAnalysis.sourceTotals.slice(0, 6).map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                              </Pie>
+                              <Tooltip contentStyle={{ background: "#111827", border: "1px solid #374151", borderRadius: "8px" }} />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+                          <h3 className="text-white font-bold text-lg mb-3">Guest Segments</h3>
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="bg-gray-800 rounded-lg p-3 text-center">
+                              <p className="text-blue-400 font-mono text-xl font-bold">{fmtNum(srAnalysis.repeatVisitors.first)}</p>
+                              <p className="text-gray-500 text-xs">First Timers</p>
+                            </div>
+                            <div className="bg-gray-800 rounded-lg p-3 text-center">
+                              <p className="text-amber-400 font-mono text-xl font-bold">{fmtNum(srAnalysis.repeatVisitors.returning)}</p>
+                              <p className="text-gray-500 text-xs">Returning (2-5)</p>
+                            </div>
+                            <div className="bg-gray-800 rounded-lg p-3 text-center">
+                              <p className="text-emerald-400 font-mono text-xl font-bold">{fmtNum(srAnalysis.repeatVisitors.regular)}</p>
+                              <p className="text-gray-500 text-xs">Regulars (5+)</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-purple-950/30 border border-purple-800/40 rounded-xl p-6">
+                      <h3 className="text-purple-400 font-bold text-lg mb-3">Guest Intelligence for Sponsors</h3>
+                      <p className="text-gray-300 leading-relaxed">
+                        SevenRooms data reveals that <span className="text-purple-300 font-bold">{(srAnalysis.repeatVisitors.regular / srAnalysis.totalRes * 100).toFixed(1)}%</span> of reservations come from
+                        regulars (5+ visits) with an average lifetime spend of <span className="text-amber-400 font-bold">${Math.round(srAnalysis.avgLifetimeSpend)}</span>.
+                        These aren't one-time tourists — they're recurring brand contacts. A sponsor gets repeated exposure to a loyal, high-spending audience
+                        that returns week after week.
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {posView === "reservations" && !srAnalysis && (
+                  <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
+                    <p className="text-gray-400 mb-4">No SevenRooms data loaded</p>
+                    <input ref={srFileRef} type="file" accept=".csv" onChange={(e) => handleFileUpload(e, "sr")} className="hidden" />
+                    <button onClick={() => srFileRef.current?.click()} className="bg-gray-800 hover:bg-gray-700 text-white text-sm px-4 py-2 rounded-lg transition-colors">
+                      Upload SevenRooms CSV
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 
