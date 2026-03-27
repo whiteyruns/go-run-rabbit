@@ -1089,11 +1089,12 @@ function CBMSponsorshipDashboard() {
     setDataLoading(true);
     setDataError(null);
     try {
+      const base = window.location.href.replace(/\/[^\/]*$/, '/');
       const [pmixResp, srResp] = await Promise.all([
-        fetch("data/toast-pmix.csv"),
-        fetch("data/sevenrooms-reservations.csv"),
+        fetch(base + "data/toast-pmix.csv", { redirect: "follow" }),
+        fetch(base + "data/sevenrooms-reservations.csv", { redirect: "follow" }),
       ]);
-      if (!pmixResp.ok) throw new Error("Could not load Toast PMIX sample data. Run: node generate-sample-data.js");
+      if (!pmixResp.ok) throw new Error(`Could not load sample data (${pmixResp.status}). Ensure data/ files are deployed.`);
       const pmixText = await pmixResp.text();
       const srText = srResp.ok ? await srResp.text() : "";
       setPmixData(parseCSV(pmixText));
