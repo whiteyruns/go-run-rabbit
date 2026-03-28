@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   BarChart,
   Bar,
@@ -69,8 +70,21 @@ export default function VenuesPage() {
                       onClick={() => setSelectedVenue(venue.id)}
                     >
                       <td className="py-3 px-4">
-                        <p className="text-neon-violet font-bold text-sm">{venue.name}</p>
-                        <p className="text-on-surface-variant text-xs">{venue.zone}</p>
+                        <div className="flex items-center gap-3">
+                          <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                            <Image
+                              src={`/venues/${venue.id}.jpg`}
+                              alt={venue.name}
+                              fill
+                              className="object-cover"
+                              sizes="40px"
+                            />
+                          </div>
+                          <div>
+                            <p className="text-neon-violet font-bold text-sm">{venue.name}</p>
+                            <p className="text-on-surface-variant text-xs">{venue.zone}</p>
+                          </div>
+                        </div>
                       </td>
                       <td className="py-3 px-4 text-on-surface-variant text-sm font-mono">{fmtNum(venue.capacity)}</td>
                       <td className="py-3 px-4 text-on-surface-variant text-sm font-mono">{fmtNum(venue.sqft)}</td>
@@ -113,14 +127,30 @@ export default function VenuesPage() {
 
         {/* Venue detail panel on click */}
         {selectedVenueData && (
-          <div className="bg-surface-container-high rounded-xl p-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-on-surface font-extrabold text-xl">{selectedVenueData.name}</h3>
-                <p className="text-on-surface-variant text-sm">{selectedVenueData.address} &middot; {selectedVenueData.type}</p>
+          <div className="bg-surface-container-high rounded-xl overflow-hidden">
+            {/* Hero banner */}
+            <div className="relative aspect-[21/9] w-full">
+              <Image
+                src={`/venues/${selectedVenueData.id}.jpg`}
+                alt={selectedVenueData.name}
+                fill
+                className="object-cover"
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface-container-high via-surface-container-high/40 to-transparent" />
+              <button
+                onClick={() => setSelectedVenue(null)}
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors text-lg"
+              >
+                &times;
+              </button>
+              <div className="absolute bottom-4 left-6">
+                <h3 className="text-on-surface font-extrabold text-xl drop-shadow-lg">{selectedVenueData.name}</h3>
+                <p className="text-on-surface-variant text-sm drop-shadow-lg">{selectedVenueData.address} &middot; {selectedVenueData.type}</p>
               </div>
-              <button onClick={() => setSelectedVenue(null)} className="text-on-surface-variant hover:text-on-surface text-xl">&times;</button>
             </div>
+            <div className="p-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div><p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Capacity</p><p className="text-on-surface font-mono font-bold">{fmtNum(selectedVenueData.capacity)}</p></div>
               <div><p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Weekly Traffic</p><p className="text-on-surface font-mono font-bold">{fmtNum(selectedVenueData.avgWeeklyFootTraffic)}</p></div>
@@ -144,6 +174,7 @@ export default function VenuesPage() {
               </div>
             )}
             <p className="text-on-surface-variant text-sm leading-relaxed">{selectedVenueData.notes}</p>
+            </div>
           </div>
         )}
 

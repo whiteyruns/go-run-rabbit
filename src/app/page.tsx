@@ -111,9 +111,7 @@ export default function HomePage() {
             {/* East Fremont District — Wide */}
             <div className="md:col-span-7 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#19191d] to-[#25252a] flex items-center justify-center text-[#48474b]">
-                  <span className="text-sm tracking-wider uppercase">Platform Screenshot</span>
-                </div>
+                <img src="/projects/efd.jpg" alt="East Fremont District platform" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -129,9 +127,7 @@ export default function HomePage() {
             {/* Feed the Block */}
             <div className="md:col-span-5 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#19191d] to-[#25252a] flex items-center justify-center text-[#48474b]">
-                  <span className="text-sm tracking-wider uppercase">Event Photo</span>
-                </div>
+                <img src="/projects/feed-the-block.jpg" alt="Feed the Block concert event" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -146,9 +142,8 @@ export default function HomePage() {
             {/* Forest House — Small */}
             <div className="md:col-span-5 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
-                <div className="absolute inset-0 bg-gradient-to-tr from-[#25252a] to-[#aea2ff]/5 flex items-center justify-center">
-                  <span className="text-[80px] text-[#aea2ff]/10">&#127795;</span>
-                </div>
+                <img src="/projects/forest-house.jpg" alt="Forest House Art Car" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <h3 className="text-2xl font-bold mb-2">Forest House Art Car</h3>
                   <p className="text-[#acaaae] text-sm">Mobile stage for Burning Man + EDC. Main stage for Feed the Block series.</p>
@@ -159,9 +154,8 @@ export default function HomePage() {
             {/* Prodigal Swan — Small */}
             <div className="md:col-span-7 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[21/10]">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#25252a] to-[#7157ff]/5 flex items-center justify-center text-[#48474b]">
-                  <span className="text-sm tracking-wider uppercase">Installation Photo</span>
-                </div>
+                <img src="/projects/prodigal-swan.jpg" alt="Prodigal Swan art installation" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <h3 className="text-2xl font-bold mb-2">Prodigal Swan</h3>
                   <p className="text-[#acaaae] text-sm">Large-scale art installation — Burning Man. Design, fabrication, and playa logistics.</p>
@@ -208,8 +202,8 @@ export default function HomePage() {
         <section id="about" className="px-8 py-32 max-w-7xl mx-auto flex flex-col md:flex-row gap-20 items-center">
           <div className="w-full md:w-1/2 relative">
             <div className="absolute -inset-4 bg-[#aea2ff]/20 blur-3xl rounded-full" />
-            <div className="relative aspect-square rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 border border-[#48474b]/20 bg-[#1f1f23] flex items-center justify-center text-[#48474b]">
-              <span className="text-sm tracking-wider uppercase">Headshot</span>
+            <div className="relative aspect-square rounded-2xl overflow-hidden grayscale hover:grayscale-0 transition-all duration-500 border border-[#48474b]/20 bg-[#1f1f23]">
+              <img src="/keith-white.jpg" alt="Keith White" className="w-full h-full object-cover" />
             </div>
           </div>
           <div className="w-full md:w-1/2">
