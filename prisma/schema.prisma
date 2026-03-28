@@ -86,6 +86,7 @@ model PipelineDeal {
   contactEmail   String?
   notes          String?
   venues         String?   // JSON array of venue IDs
+  dealPoints     String?   // JSON array of { type, venues, status }
   nextAction     String?
   nextActionDate DateTime?
   createdAt      DateTime  @default(now())

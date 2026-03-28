@@ -3,6 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { fmt } from "@/lib/utils";
 
+interface DealPoint {
+  type: string;
+  venues: string[];
+  status: "offered" | "negotiating" | "confirmed" | "active" | "expired";
+}
+
 interface Deal {
   id: string;
   brandName: string;
@@ -14,11 +20,48 @@ interface Deal {
   contactEmail: string | null;
   notes: string | null;
   venues: string | null;
+  dealPoints: string | null;
   nextAction: string | null;
   nextActionDate: string | null;
   createdAt: string;
   updatedAt: string;
 }
+
+const DEAL_POINT_TYPES = [
+  "House / Well Pour",
+  "Back Bar Placement",
+  "Featured Cocktail / Menu Inclusion",
+  "Tap Handle / Draft Line",
+  "Bar Rail Signage",
+  "LED / Digital Signage",
+  "VIP Area Branding",
+  "Event Activation / Sampling",
+  "Social Media / Content",
+  "Staff Training / Brand Ambassador",
+  "Glassware / Branded Serveware",
+  "Category Exclusivity",
+  "Bathroom / Entrance Signage",
+];
+
+const DEAL_POINT_STATUSES = [
+  { id: "offered", label: "Offered", color: "text-on-surface-variant", bg: "bg-surface-container" },
+  { id: "negotiating", label: "Negotiating", color: "text-neon-violet", bg: "bg-neon-violet/10" },
+  { id: "confirmed", label: "Confirmed", color: "text-neon-cyan", bg: "bg-neon-cyan/10" },
+  { id: "active", label: "Active", color: "text-neon-cyan", bg: "bg-neon-cyan/15" },
+  { id: "expired", label: "Expired", color: "text-on-surface-variant/50", bg: "bg-surface-container-low" },
+];
+
+const VENUE_OPTIONS = [
+  { id: "commonwealth", name: "Commonwealth" },
+  { id: "laundry-room", name: "Laundry Room" },
+  { id: "we-all-scream", name: "We All Scream" },
+  { id: "discopussy", name: "Discopussy" },
+  { id: "lucky-day", name: "Lucky Day" },
+  { id: "park-on-fremont", name: "Park On Fremont" },
+  { id: "cheapshot", name: "Cheapshot" },
+  { id: "la-mona-rosa", name: "La Mona Rosa" },
+  { id: "doberman", name: "Doberman" },
+];
 
 const STATUSES = [
   { id: "prospect", label: "Prospect", color: "text-on-surface-variant", bg: "bg-surface-container" },
@@ -40,6 +83,7 @@ const TIERS = ["presenting", "headline", "supporting", "activation"];
 const emptyForm = {
   brandName: "", category: CATEGORIES[0], tier: "supporting", status: "prospect",
   value: "", contactName: "", contactEmail: "", notes: "", nextAction: "", nextActionDate: "",
+  dealPoints: [] as DealPoint[],
 };
 
 export default function PipelinePage() {
@@ -64,7 +108,8 @@ export default function PipelinePage() {
     e.preventDefault();
     setSaving(true);
     const method = editingId ? "PUT" : "POST";
-    const body = editingId ? { id: editingId, ...form } : form;
+    const submitForm = { ...form, dealPoints: form.dealPoints.length > 0 ? form.dealPoints : null };
+    const body = editingId ? { id: editingId, ...submitForm } : submitForm;
     await fetch("/api/pipeline", {
       method,
       headers: { "Content-Type": "application/json" },
@@ -79,6 +124,8 @@ export default function PipelinePage() {
 
   const handleEdit = (deal: Deal) => {
     setEditingId(deal.id);
+    let parsedDealPoints: DealPoint[] = [];
+    try { parsedDealPoints = deal.dealPoints ? JSON.parse(deal.dealPoints) : []; } catch { /* ignore */ }
     setForm({
       brandName: deal.brandName,
       category: deal.category,
@@ -90,6 +137,7 @@ export default function PipelinePage() {
       notes: deal.notes || "",
       nextAction: deal.nextAction || "",
       nextActionDate: deal.nextActionDate?.split("T")[0] || "",
+      dealPoints: parsedDealPoints,
     });
     setShowForm(true);
   };
@@ -225,6 +273,22 @@ export default function PipelinePage() {
                       </div>
                     )}
                     {deal.notes && <p className="text-on-surface-variant/60 text-xs mt-2 line-clamp-1">{deal.notes}</p>}
+                    {deal.dealPoints && (() => {
+                      let points: DealPoint[] = [];
+                      try { points = JSON.parse(deal.dealPoints); } catch { /* ignore */ }
+                      return points.length > 0 ? (
+                        <div className="flex flex-wrap gap-1.5 mt-2">
+                          {points.map((dp, i) => {
+                            const dpStatus = DEAL_POINT_STATUSES.find(s => s.id === dp.status);
+                            return (
+                              <span key={i} className={`text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full ${dpStatus?.bg || "bg-surface-container"} ${dpStatus?.color || "text-on-surface-variant"}`}>
+                                {dp.type.split(" / ")[0]} ({dp.venues.length}v)
+                              </span>
+                            );
+                          })}
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     {/* Quick status buttons */}
@@ -352,6 +416,56 @@ export default function PipelinePage() {
                   className="w-full bg-surface-container-low border-0 border-b border-outline-variant/30 rounded-lg px-4 py-3 text-on-surface text-sm focus:outline-none focus:border-neon-violet focus:border-b-2 transition-all resize-none"
                   placeholder="Internal notes about this deal..."
                 />
+              </div>
+
+              {/* Deal Points */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">Deal Points</label>
+                  <button type="button" onClick={() => setForm({ ...form, dealPoints: [...form.dealPoints, { type: DEAL_POINT_TYPES[0], venues: [], status: "offered" }] })}
+                    className="text-neon-violet text-xs font-bold hover:text-neon-cyan transition-colors">+ Add</button>
+                </div>
+                {form.dealPoints.length === 0 && (
+                  <p className="text-on-surface-variant/40 text-xs">No deal points added. Click + Add to specify placement rights.</p>
+                )}
+                <div className="space-y-3">
+                  {form.dealPoints.map((dp, i) => (
+                    <div key={i} className="bg-surface-container-low rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <select value={dp.type} onChange={e => {
+                          const updated = [...form.dealPoints];
+                          updated[i] = { ...dp, type: e.target.value };
+                          setForm({ ...form, dealPoints: updated });
+                        }} className="bg-surface-container border-0 rounded-md px-3 py-1.5 text-on-surface text-sm focus:ring-1 focus:ring-neon-violet flex-1 mr-2">
+                          {DEAL_POINT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                        <select value={dp.status} onChange={e => {
+                          const updated = [...form.dealPoints];
+                          updated[i] = { ...dp, status: e.target.value as DealPoint["status"] };
+                          setForm({ ...form, dealPoints: updated });
+                        }} className="bg-surface-container border-0 rounded-md px-3 py-1.5 text-on-surface text-xs focus:ring-1 focus:ring-neon-violet w-32">
+                          {DEAL_POINT_STATUSES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
+                        </select>
+                        <button type="button" onClick={() => setForm({ ...form, dealPoints: form.dealPoints.filter((_, j) => j !== i) })}
+                          className="text-on-surface-variant/40 hover:text-neon-pink ml-2 text-sm transition-colors">&times;</button>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {VENUE_OPTIONS.map(v => (
+                          <button key={v.id} type="button" onClick={() => {
+                            const updated = [...form.dealPoints];
+                            const venues = dp.venues.includes(v.id) ? dp.venues.filter(vid => vid !== v.id) : [...dp.venues, v.id];
+                            updated[i] = { ...dp, venues };
+                            setForm({ ...form, dealPoints: updated });
+                          }} className={`text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-1 rounded-full transition-all ${
+                            dp.venues.includes(v.id) ? "bg-neon-violet/20 text-neon-violet" : "bg-surface-container text-on-surface-variant/50 hover:text-on-surface-variant"
+                          }`}>
+                            {v.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <div className="flex gap-3 pt-2">

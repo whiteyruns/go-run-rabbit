@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { brandName, category, tier, status, value, contactName, contactEmail, notes, venues, nextAction, nextActionDate } = body;
+  const { brandName, category, tier, status, value, contactName, contactEmail, notes, venues, dealPoints, nextAction, nextActionDate } = body;
 
   if (!brandName || !category) {
     return NextResponse.json({ error: "Brand name and category required" }, { status: 400 });
@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
       contactEmail: contactEmail || null,
       notes: notes || null,
       venues: venues ? JSON.stringify(venues) : null,
+      dealPoints: dealPoints ? JSON.stringify(dealPoints) : null,
       nextAction: nextAction || null,
       nextActionDate: nextActionDate ? new Date(nextActionDate) : null,
     },
@@ -70,6 +71,7 @@ export async function PUT(request: NextRequest) {
   if (data.contactEmail !== undefined) updateData.contactEmail = data.contactEmail || null;
   if (data.notes !== undefined) updateData.notes = data.notes || null;
   if (data.venues !== undefined) updateData.venues = data.venues ? JSON.stringify(data.venues) : null;
+  if (data.dealPoints !== undefined) updateData.dealPoints = data.dealPoints ? JSON.stringify(data.dealPoints) : null;
   if (data.nextAction !== undefined) updateData.nextAction = data.nextAction || null;
   if (data.nextActionDate !== undefined) updateData.nextActionDate = data.nextActionDate ? new Date(data.nextActionDate) : null;
 
