@@ -102,10 +102,10 @@ export const feedTheBlock: FeedTheBlock = {
   },
 
   confirmedSponsors: [
-    { name: "LVCVA", amount: 250000, type: "Municipal / Tourism", status: "closed" },
+    { name: "LVCVA", amount: 200000, type: "Municipal / Tourism", status: "closed" },
     { name: "City of Las Vegas", amount: 200000, type: "Municipal / Government", status: "closed" },
   ],
-  confirmedTotal: 450000,
+  confirmedTotal: 400000,
 
   socialMetrics: {
     impressions: 7976920,

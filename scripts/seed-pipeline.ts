@@ -20,7 +20,7 @@ async function main() {
       category: "Municipal / Tourism",
       tier: "presenting",
       status: "closed",
-      value: 250000,
+      value: 200000,
       contactName: null,
       contactEmail: null,
       notes: "Las Vegas Convention & Visitors Authority. Feed the Block 2026 presenting sponsor. Deal closed.",
