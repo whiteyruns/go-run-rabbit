@@ -85,6 +85,40 @@ export default function HomePage() {
               </div>
             </div>
 
+            {/* East Fremont District */}
+            <div className="bg-gray-900/50 border border-gray-800 rounded-2xl overflow-hidden hover:border-gray-700 transition-colors">
+              <div className="aspect-[21/9] bg-gradient-to-br from-orange-950/30 to-gray-900 flex items-center justify-center text-gray-600">
+                <span className="text-sm tracking-wider uppercase">Platform Screenshot</span>
+              </div>
+              <div className="p-8">
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-white">F.E.E.D. — East Fremont Entertainment District</h3>
+                    <p className="text-orange-400 text-sm font-medium">District Marketing Platform &middot; 16 Venues &middot; 108K+ Sq Ft</p>
+                  </div>
+                  <a href="https://east-fremont-district.vercel.app" target="_blank" rel="noopener noreferrer" className="text-xs text-gray-500 border border-gray-700 px-3 py-1 rounded-full hover:text-white hover:border-gray-500 transition-colors flex-shrink-0">
+                    Live &rarr;
+                  </a>
+                </div>
+                <p className="text-gray-400 leading-relaxed mb-4">
+                  B2B marketing and booking platform that positions East Fremont as a single rentable entertainment district.
+                  &quot;Rent an Entire Entertainment District&quot; — one operator, 16 venues, unified production, security, and city coordination.
+                  Designed to convert corporate event planners, brand activation teams, and convention organizers.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1 mb-5">
+                  <li>&bull; Interactive district map, venue inventory with capacity/features/zones</li>
+                  <li>&bull; Tiered activation frameworks: single venue to full district takeover</li>
+                  <li>&bull; Inquiry pipeline with Resend email notifications and Supabase persistence</li>
+                  <li>&bull; Case studies (Feed the Block: 15K+ street activation), SEO infrastructure</li>
+                </ul>
+                <div className="flex flex-wrap gap-2">
+                  {["Next.js", "Supabase", "Resend", "Recharts", "Sharp", "Vercel"].map(t => (
+                    <span key={t} className="text-xs font-mono text-gray-500 bg-gray-800 px-2.5 py-1 rounded">{t}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
             {/* Swan Forest */}
             <div className="bg-gray-900/50 border border-gray-800 rounded-2xl overflow-hidden hover:border-gray-700 transition-colors">
               <div className="aspect-[21/9] bg-gradient-to-br from-emerald-950/30 to-gray-900 flex items-center justify-center text-gray-600">
