@@ -75,9 +75,7 @@ export default function HomePage() {
             {/* CBM Dashboard — Large */}
             <div className="md:col-span-8 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/9]">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#19191d] to-[#25252a] flex items-center justify-center text-[#48474b]">
-                  <span className="text-sm tracking-wider uppercase">Dashboard Screenshot</span>
-                </div>
+                <img src="/projects/cbm-dashboard.jpg" alt="CBM Sponsorship Dashboard" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -94,9 +92,7 @@ export default function HomePage() {
             {/* Swan Forest — Tall */}
             <div className="md:col-span-4 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] h-full min-h-[300px]">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#19191d] to-[#25252a] flex items-center justify-center text-[#48474b]">
-                  <span className="text-sm tracking-wider uppercase">Admin Screenshot</span>
-                </div>
+                <img src="/projects/swan-forest-admin.jpg" alt="Swan Forest Camp Operations" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-80" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
