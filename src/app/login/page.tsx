@@ -29,7 +29,6 @@ export default function LoginPage() {
       return;
     }
 
-    // Route based on role
     if (data.user.role === "admin") {
       router.push("/dashboard");
     } else {
@@ -38,51 +37,58 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <img src="/logo.png" alt="Go Run Rabbit" className="h-16 mx-auto mb-4 opacity-80" />
-          <h1 className="text-white text-xl font-bold">CBM Portal</h1>
-          <p className="text-gray-500 text-sm mt-1">Sponsorship Intelligence Dashboard</p>
+    <div className="min-h-screen bg-[#0e0e11] flex items-center justify-center px-4 relative overflow-hidden">
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-[#aea2ff]/5 blur-[150px] rounded-full" />
+      <div className="absolute -bottom-40 -right-40 w-[400px] h-[400px] bg-[#00eefc]/5 blur-[150px] rounded-full" />
+
+      <div className="w-full max-w-sm relative z-10">
+        <div className="text-center mb-10">
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <span className="w-8 h-[1px] bg-[#00eefc]" />
+            <span className="text-[#00eefc] text-[10px] font-bold uppercase tracking-[0.2em]">Secure Access</span>
+            <span className="w-8 h-[1px] bg-[#00eefc]" />
+          </div>
+          <h1 className="text-[#f3f0f4] text-2xl font-extrabold tracking-tight">CBM Dashboards</h1>
+          <p className="text-[#acaaae] text-sm mt-2">Sponsorship Intelligence Platform</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-[#1f1f23] rounded-xl p-8 space-y-5">
           <div>
-            <label className="text-gray-400 text-xs font-semibold uppercase tracking-wider block mb-1">Email</label>
+            <label className="text-[#acaaae] text-[10px] font-bold uppercase tracking-[0.15em] block mb-2">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
+              className="w-full bg-[#131316] border-0 border-b border-[#48474b]/30 rounded-lg px-4 py-3 text-[#f3f0f4] text-sm focus:outline-none focus:border-[#aea2ff] focus:border-b-2 transition-all placeholder:text-[#48474b]"
               placeholder="you@gorunrabbit.com"
               required
             />
           </div>
           <div>
-            <label className="text-gray-400 text-xs font-semibold uppercase tracking-wider block mb-1">Password</label>
+            <label className="text-[#acaaae] text-[10px] font-bold uppercase tracking-[0.15em] block mb-2">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-amber-500"
+              className="w-full bg-[#131316] border-0 border-b border-[#48474b]/30 rounded-lg px-4 py-3 text-[#f3f0f4] text-sm focus:outline-none focus:border-[#aea2ff] focus:border-b-2 transition-all placeholder:text-[#48474b]"
               placeholder="Enter password"
               required
             />
           </div>
 
-          {error && <p className="text-red-400 text-sm">{error}</p>}
+          {error && <p className="text-[#ff6b98] text-sm font-medium">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-amber-600 hover:bg-amber-500 disabled:bg-gray-700 text-white font-semibold py-2 rounded-lg transition-colors text-sm"
+            className="w-full bg-gradient-to-br from-[#7157ff] to-[#aea2ff] text-[#1f0078] font-bold py-3 rounded-md hover:opacity-90 disabled:opacity-40 active:scale-[0.98] transition-all text-sm tracking-tight"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Authenticating..." : "Sign In"}
           </button>
         </form>
 
-        <p className="text-gray-600 text-xs text-center mt-4">
-          Go Run Rabbit LLC &middot; Confidential
+        <p className="text-[#48474b] text-[10px] text-center mt-6 uppercase tracking-[0.15em] font-bold">
+          Go Run Rabbit LLC &middot; Technical Auteur
         </p>
       </div>
     </div>
