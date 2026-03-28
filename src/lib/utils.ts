@@ -2,24 +2,24 @@
 // Formatting utilities and color constants for CBM Dashboard
 // ============================================================================
 
-/** Chart color palette */
+/** Chart color palette — Technical Vitality neon system */
 export const COLORS = [
-  "#C49A6C",
-  "#D4AA7C",
-  "#E8C9A0",
-  "#8B7355",
-  "#A0522D",
-  "#CD853F",
-  "#DEB887",
-  "#F5DEB3",
+  "#aea2ff", // violet
+  "#00eefc", // cyan
+  "#ff6b98", // pink
+  "#7157ff", // violet-dim
+  "#00deec", // cyan-dim
+  "#e4006c", // pink-dim
+  "#9282ff", // primary-fixed-dim
+  "#ff8eac", // tertiary-fixed
 ] as const;
 
 /** Status badge colors keyed by sponsorship status */
 export const STATUS_COLORS: Record<string, string> = {
-  "high-potential": "#22c55e",
-  "underserved": "#eab308",
-  "untapped": "#ef4444",
-  "emerging": "#3b82f6",
+  "high-potential": "#00eefc",
+  "underserved": "#aea2ff",
+  "untapped": "#ff6b98",
+  "emerging": "#7157ff",
 };
 
 /**

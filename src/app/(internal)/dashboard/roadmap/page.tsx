@@ -11,17 +11,26 @@ export default function RoadmapPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
+    <div className="max-w-7xl mx-auto px-8 py-10">
+      <h1 className="text-4xl font-extrabold tracking-tight mb-2">
+        Sales Roadmap &amp; Action Plan
+      </h1>
+      <p className="text-on-surface-variant mb-10">
+        Technical execution path for distribution scaling and portfolio expansion.
+        Organized by urgency — what needs to happen this week, this month, and
+        this quarter.
+      </p>
+
       <div className="space-y-8">
         {/* Go-to-Market Header */}
-        <div className="bg-gradient-to-br from-green-950/40 to-gray-900 border border-green-800/40 rounded-xl p-8">
-          <p className="text-green-400 text-xs font-bold tracking-widest uppercase mb-2">
+        <div className="bg-surface-container p-8 rounded-xl">
+          <p className="text-neon-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-3">
             Go-to-Market
           </p>
-          <h2 className="text-3xl font-bold text-white mb-3">
+          <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mb-3">
             Sales Roadmap &amp; Action Plan
           </h2>
-          <p className="text-gray-400 max-w-2xl">
+          <p className="text-on-surface-variant max-w-2xl">
             The playbook for turning this analysis into closed deals. Organized
             by urgency — what needs to happen this week, this month, and this
             quarter.
@@ -32,41 +41,50 @@ export default function RoadmapPage() {
         {phases.map((phase, phaseIdx) => (
           <div
             key={phaseIdx}
-            className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden"
+            className="bg-surface-container-high rounded-xl overflow-hidden"
           >
-            <div className="px-6 py-4 border-b border-gray-800 flex items-center gap-3">
+            <div className="px-8 py-5 flex items-center gap-3">
               <div
-                className="w-3 h-3 rounded-full"
-                style={{ background: phase.color }}
+                className="w-3 h-3 rounded-full shadow-[0_0_8px_currentColor]"
+                style={{ background: phase.color, color: phase.color }}
               />
-              <h3 className="text-white font-bold text-lg">{phase.name}</h3>
+              <h3 className="text-on-surface font-bold text-lg uppercase tracking-tight">
+                {phase.name}
+              </h3>
             </div>
-            <div className="divide-y divide-gray-800">
+            <div className="divide-y divide-outline-variant/10">
               {phase.items.map((item, i) => (
-                <div key={i} className="px-6 py-4 flex items-start gap-4">
+                <div
+                  key={i}
+                  className="px-8 py-5 flex items-start gap-4 hover:bg-surface-container transition-colors"
+                >
                   <span
-                    className={`text-xs font-bold px-2 py-1 rounded flex-shrink-0 mt-0.5 ${
+                    className={`text-[10px] font-bold px-2 py-1 rounded flex-shrink-0 mt-0.5 uppercase tracking-[0.15em] ${
                       item.priority === "Critical"
-                        ? "bg-red-900/40 text-red-400"
+                        ? "bg-neon-pink/20 text-neon-pink"
                         : item.priority === "High"
-                          ? "bg-amber-900/40 text-amber-400"
+                          ? "bg-neon-cyan/20 text-neon-cyan"
                           : item.priority === "Medium"
-                            ? "bg-blue-900/40 text-blue-400"
+                            ? "bg-neon-violet/20 text-neon-violet"
                             : item.priority === "Target"
-                              ? "bg-green-900/40 text-green-400"
-                              : "bg-purple-900/40 text-purple-400"
+                              ? "bg-neon-cyan/20 text-neon-cyan"
+                              : "bg-neon-violet-dim/20 text-neon-violet"
                     }`}
                   >
                     {item.priority}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm font-medium">
+                    <p className="text-on-surface text-sm font-bold">
                       {item.action}
                     </p>
-                    <p className="text-gray-500 text-xs mt-1">{item.notes}</p>
+                    <p className="text-on-surface-variant text-xs mt-1">
+                      {item.notes}
+                    </p>
                   </div>
                   <div className="flex-shrink-0 text-right">
-                    <p className="text-gray-400 text-xs">{item.owner}</p>
+                    <p className="text-on-surface-variant text-xs">
+                      {item.owner}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -75,16 +93,16 @@ export default function RoadmapPage() {
         ))}
 
         {/* The Ask to Corner Bar */}
-        <div className="bg-amber-950/30 border border-amber-800/40 rounded-xl p-6">
-          <h3 className="text-amber-400 font-bold text-lg mb-3">
+        <div className="bg-surface-container rounded-xl p-8">
+          <h3 className="text-on-surface font-bold text-xl uppercase tracking-tight mb-6">
             The Ask to Corner Bar Management
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-900 rounded-lg p-4">
-              <p className="text-red-400 font-bold text-sm mb-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-surface-container-high rounded-xl p-6">
+              <p className="text-neon-pink font-bold text-sm mb-3 uppercase tracking-[0.15em] text-[10px]">
                 1. Data We Need
               </p>
-              <ul className="space-y-1 text-gray-400 text-sm">
+              <ul className="space-y-2 text-on-surface-variant text-sm">
                 <li>
                   &#8226; Actual depletion reports (all venues, 12 months)
                 </li>
@@ -93,11 +111,11 @@ export default function RoadmapPage() {
                 <li>&#8226; Block Party actual attendance data (2025)</li>
               </ul>
             </div>
-            <div className="bg-gray-900 rounded-lg p-4">
-              <p className="text-amber-400 font-bold text-sm mb-2">
+            <div className="bg-surface-container-high rounded-xl p-6">
+              <p className="text-neon-cyan font-bold text-sm mb-3 uppercase tracking-[0.15em] text-[10px]">
                 2. Decisions Needed
               </p>
-              <ul className="space-y-1 text-gray-400 text-sm">
+              <ul className="space-y-2 text-on-surface-variant text-sm">
                 <li>
                   &#8226; Are they open to portfolio-wide exclusive deals?
                 </li>
@@ -109,11 +127,11 @@ export default function RoadmapPage() {
                 <li>&#8226; Revenue share vs flat fee preference?</li>
               </ul>
             </div>
-            <div className="bg-gray-900 rounded-lg p-4">
-              <p className="text-green-400 font-bold text-sm mb-2">
+            <div className="bg-surface-container-high rounded-xl p-6">
+              <p className="text-neon-violet font-bold text-sm mb-3 uppercase tracking-[0.15em] text-[10px]">
                 3. What We Deliver
               </p>
-              <ul className="space-y-1 text-gray-400 text-sm">
+              <ul className="space-y-2 text-on-surface-variant text-sm">
                 <li>&#8226; This dashboard with real data plugged in</li>
                 <li>&#8226; Brand-specific pitch decks</li>
                 <li>&#8226; Sponsor outreach and closing</li>

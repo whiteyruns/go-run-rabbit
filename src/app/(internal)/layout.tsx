@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { DashboardNav } from "@/components/dashboard/dashboard-nav";
+import { Manrope } from "next/font/google";
+
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 
 export default async function InternalLayout({
   children,
@@ -12,19 +15,15 @@ export default async function InternalLayout({
   if (session.role !== "admin") redirect("/client/overview");
 
   return (
-    <div className="min-h-screen bg-black text-white" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className={`${manrope.variable} min-h-screen bg-surface text-on-surface font-sans selection:bg-neon-violet-dim selection:text-white`}>
       <DashboardNav />
       <main>{children}</main>
-      {/* Footer */}
-      <div className="border-t border-gray-800 bg-gray-950 py-5 mt-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-gray-600">
-          <p>Corner Bar Management &middot; Sponsorship Opportunity Analysis &middot; Confidential</p>
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Go Run Rabbit" style={{ height: "24px", opacity: 0.7 }} />
-            <span className="text-gray-500">Prepared by <span className="text-gray-400 font-medium">Go Run Rabbit</span></span>
-          </div>
+      <footer className="bg-surface-container-lowest py-6 mt-16">
+        <div className="max-w-7xl mx-auto px-8 flex justify-between items-center text-[10px] text-on-surface-variant uppercase tracking-[0.15em]">
+          <span>CBM &middot; Pulse &middot; Secure</span>
+          <span>Go Run Rabbit &middot; Technical Auteur</span>
         </div>
-      </div>
+      </footer>
     </div>
   );
 }

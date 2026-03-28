@@ -6,19 +6,27 @@ import { fmt, fmtNum } from "@/lib/utils";
 
 export default function BlockPartyPage() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
+    <div className="max-w-7xl mx-auto px-8 py-10">
+      <h1 className="text-4xl font-extrabold tracking-tight mb-2">
+        Feed the Block 2026
+      </h1>
+      <p className="text-on-surface-variant mb-10">
+        Marketing &amp; sponsorship lifecycle for the free open-air block party
+        series at 6th &amp; Fremont.
+      </p>
+
       <div className="space-y-8">
         {/* Event Overview */}
-        <div className="bg-gradient-to-br from-amber-950/40 to-gray-900 border border-amber-800/40 rounded-xl p-8">
-          <div className="flex flex-col md:flex-row justify-between gap-6">
+        <div className="bg-surface-container p-8 rounded-xl">
+          <div className="flex flex-col md:flex-row justify-between gap-8">
             <div>
-              <p className="text-amber-500 text-xs font-bold tracking-widest uppercase mb-2">
+              <p className="text-neon-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-3">
                 Event Series
               </p>
-              <h2 className="text-3xl font-bold text-white mb-2">
+              <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mb-3">
                 Feed the Block 2026
               </h2>
-              <p className="text-gray-400 max-w-xl">
+              <p className="text-on-surface-variant max-w-xl">
                 Free open-air block party series at 6th &amp; Fremont, presented
                 by Wynn Nightlife &amp; Corner Bar Management. Transforms the
                 intersection into a high-energy outdoor celebration with
@@ -29,7 +37,7 @@ export default function BlockPartyPage() {
               <MetricCard
                 label="2026 Events"
                 value="10"
-                sub="Monthly Apr–Jan"
+                sub="Monthly Apr-Jan"
                 accent
               />
               <MetricCard
@@ -53,12 +61,12 @@ export default function BlockPartyPage() {
         </div>
 
         {/* Confirmed Sponsors */}
-        <div className="bg-green-950/30 border border-green-800/40 rounded-xl p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-green-400 font-bold text-lg">
+        <div className="bg-surface-container-low rounded-xl p-8">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-on-surface font-bold text-xl uppercase tracking-tight">
               Confirmed 2026 Sponsorship Revenue
             </h3>
-            <span className="text-green-400 font-mono text-2xl font-bold">
+            <span className="text-neon-cyan font-mono text-2xl font-bold">
               {fmt(feedTheBlock.confirmedTotal)}
             </span>
           </div>
@@ -66,51 +74,56 @@ export default function BlockPartyPage() {
             {feedTheBlock.confirmedSponsors.map((s) => (
               <div
                 key={s.name}
-                className="bg-gray-900 border border-green-800/30 rounded-lg p-4 flex justify-between items-center"
+                className="bg-surface-container-high rounded-xl p-5 flex justify-between items-center"
               >
                 <div>
-                  <p className="text-white font-semibold">{s.name}</p>
-                  <p className="text-gray-500 text-xs">{s.type}</p>
+                  <p className="text-on-surface font-bold">{s.name}</p>
+                  <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                    {s.type}
+                  </p>
                 </div>
-                <p className="text-green-400 font-mono font-bold">
+                <p className="text-neon-cyan font-mono font-bold">
                   {fmt(s.amount)}
                 </p>
               </div>
             ))}
           </div>
-          <p className="text-gray-400 text-sm">
+          <p className="text-on-surface-variant text-sm">
             Municipal sponsors secured. Beverage, energy, lifestyle, and tech
             categories remain wide open.
           </p>
         </div>
 
         {/* 2025 Proof of Concept */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h3 className="text-white font-bold text-lg mb-4">
+        <div className="bg-surface-container-high rounded-xl p-8">
+          <h3 className="text-on-surface font-bold text-xl uppercase tracking-tight mb-6">
             2025 Season — Proof of Concept
           </h3>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-6">
             {feedTheBlock.year2025.headliners.map((h, i) => (
-              <div key={i} className="bg-gray-800 rounded-lg p-4 text-center">
-                <p className="text-amber-400 font-bold text-lg">{h}</p>
-                <p className="text-gray-500 text-sm mt-1">
+              <div
+                key={i}
+                className="bg-surface-container rounded-xl p-6 text-center"
+              >
+                <p className="text-neon-violet font-bold text-lg">{h}</p>
+                <p className="text-on-surface-variant text-sm mt-2">
                   {i === 0
                     ? "April 2025"
                     : i === 1
                       ? "September 2025"
                       : "October 2025"}
                 </p>
-                <p className="text-white font-mono mt-2">
+                <p className="text-on-surface font-mono mt-2">
                   ~{fmtNum(Math.round(40000 / 3))} attendees
                 </p>
               </div>
             ))}
           </div>
-          <div className="mt-4 bg-green-900/20 border border-green-800/30 rounded-lg p-4">
-            <p className="text-green-400 font-bold">
+          <div className="mt-6 bg-surface-container rounded-xl p-5">
+            <p className="text-neon-cyan font-bold">
               40,000+ total fans across 3 events — all free admission.
             </p>
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-on-surface-variant text-sm mt-1">
               2026 expands to 10 events with Marshmello kicking off April 2nd
               atop the Forest House Art Car from EDC / Burning Man.
             </p>
@@ -119,37 +132,37 @@ export default function BlockPartyPage() {
 
         {/* Sponsorship Tiers */}
         <div>
-          <h3 className="text-white font-bold text-lg mb-4">
+          <h3 className="text-on-surface font-bold text-xl uppercase tracking-tight mb-6">
             Block Party Sponsorship Tiers
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {feedTheBlock.sponsorshipTiers.map((tier, i) => (
               <div
                 key={tier.tier}
-                className={`bg-gray-900 border rounded-xl p-5 ${
+                className={`bg-surface-container-high rounded-xl p-6 transition-all duration-300 hover:bg-surface-bright ${
                   i === 0
-                    ? "border-amber-500 ring-1 ring-amber-500/20"
-                    : "border-gray-800"
+                    ? "ring-1 ring-neon-violet/30"
+                    : ""
                 }`}
               >
                 {i === 0 && (
-                  <p className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-2">
+                  <p className="text-neon-violet text-[10px] font-bold tracking-[0.15em] uppercase mb-3">
                     Flagship
                   </p>
                 )}
-                <h4 className="text-white font-bold text-lg mb-1">
+                <h4 className="text-on-surface font-bold text-lg mb-1">
                   {tier.tier}
                 </h4>
-                <p className="text-amber-400 font-mono text-2xl font-bold mb-4">
+                <p className="text-neon-cyan font-mono text-2xl font-bold mb-4">
                   {tier.price}
                 </p>
                 <ul className="space-y-2">
                   {tier.benefits.map((b, j) => (
                     <li
                       key={j}
-                      className="flex items-start gap-2 text-sm text-gray-400"
+                      className="flex items-start gap-2 text-sm text-on-surface-variant"
                     >
-                      <span className="text-amber-500 mt-0.5">&#10003;</span>
+                      <span className="text-neon-cyan mt-0.5">&#10003;</span>
                       <span>{b}</span>
                     </li>
                   ))}
@@ -160,38 +173,46 @@ export default function BlockPartyPage() {
         </div>
 
         {/* Revenue Potential Grid */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h3 className="text-white font-bold text-lg mb-2">
+        <div className="bg-surface-container-low rounded-xl p-8">
+          <h3 className="text-on-surface font-bold text-xl uppercase tracking-tight mb-2">
             Block Party Sponsorship Revenue Potential
           </h3>
-          <p className="text-gray-500 text-sm mb-4">
+          <p className="text-on-surface-variant text-sm mb-6">
             If fully sold: Presenting + 2 Headline + 3 Supporting + 4 Activation
             ={" "}
-            <span className="text-amber-400 font-bold">$1.46M</span> from
+            <span className="text-neon-cyan font-bold">$1.46M</span> from
             events alone
           </p>
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-gray-800 rounded-lg p-4 text-center">
-              <p className="text-gray-500 text-xs">1x Presenting</p>
-              <p className="text-amber-400 font-mono font-bold text-xl">
+          <div className="grid grid-cols-4 gap-6">
+            <div className="bg-surface-container rounded-xl p-5 text-center">
+              <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                1x Presenting
+              </p>
+              <p className="text-neon-violet font-mono font-bold text-xl mt-2">
                 $500K
               </p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-4 text-center">
-              <p className="text-gray-500 text-xs">2x Headline</p>
-              <p className="text-amber-400 font-mono font-bold text-xl">
+            <div className="bg-surface-container rounded-xl p-5 text-center">
+              <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                2x Headline
+              </p>
+              <p className="text-neon-violet font-mono font-bold text-xl mt-2">
                 $500K
               </p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-4 text-center">
-              <p className="text-gray-500 text-xs">3x Supporting</p>
-              <p className="text-amber-400 font-mono font-bold text-xl">
+            <div className="bg-surface-container rounded-xl p-5 text-center">
+              <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                3x Supporting
+              </p>
+              <p className="text-neon-violet font-mono font-bold text-xl mt-2">
                 $300K
               </p>
             </div>
-            <div className="bg-gray-800 rounded-lg p-4 text-center">
-              <p className="text-gray-500 text-xs">4x Activation</p>
-              <p className="text-amber-400 font-mono font-bold text-xl">
+            <div className="bg-surface-container rounded-xl p-5 text-center">
+              <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                4x Activation
+              </p>
+              <p className="text-neon-violet font-mono font-bold text-xl mt-2">
                 $160K
               </p>
             </div>

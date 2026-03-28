@@ -23,20 +23,21 @@ interface CategoryCardProps {
 function CategoryCard({ cat, onClick, isSelected }: CategoryCardProps) {
   return (
     <div
-      className={`bg-gray-900 border rounded-xl p-5 cursor-pointer transition-all ${
+      className={`bg-surface-container-high rounded-xl p-6 cursor-pointer transition-all duration-300 relative overflow-hidden group hover:bg-surface-bright ${
         isSelected
-          ? "border-amber-500 ring-1 ring-amber-500/30"
-          : "border-gray-800 hover:border-gray-700"
+          ? "ring-1 ring-neon-violet/40"
+          : ""
       }`}
       onClick={() => onClick(cat.id)}
     >
-      <div className="flex items-center justify-between mb-3">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-neon-violet/5 rounded-full -mr-16 -mt-16 blur-3xl group-hover:bg-neon-violet/10 transition-all" />
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="text-xl">{cat.icon}</span>
-          <h4 className="text-white font-semibold text-sm">{cat.name}</h4>
+          <h4 className="text-on-surface font-bold text-sm">{cat.name}</h4>
         </div>
         <span
-          className="text-xs font-bold px-2 py-0.5 rounded-full"
+          className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-[0.15em]"
           style={{
             background: STATUS_COLORS[cat.status] + "20",
             color: STATUS_COLORS[cat.status],
@@ -45,35 +46,39 @@ function CategoryCard({ cat, onClick, isSelected }: CategoryCardProps) {
           {cat.status.replace("-", " ")}
         </span>
       </div>
-      <div className="grid grid-cols-2 gap-3 mb-3">
+      <div className="grid grid-cols-2 gap-3 mb-4">
         <div>
-          <p className="text-gray-500 text-xs">Current</p>
-          <p className="text-green-400 font-mono font-bold text-sm">
+          <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+            Current
+          </p>
+          <p className="text-neon-cyan font-mono font-bold text-sm">
             {fmt(cat.currentRevenue)}
           </p>
         </div>
         <div>
-          <p className="text-gray-500 text-xs">Projected</p>
-          <p className="text-amber-400 font-mono font-bold text-sm">
+          <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+            Projected
+          </p>
+          <p className="text-neon-violet font-mono font-bold text-sm">
             {fmt(cat.projectedRevenue)}
           </p>
         </div>
       </div>
       <div className="mb-3">
-        <div className="flex justify-between text-xs text-gray-500 mb-1">
+        <div className="flex justify-between text-[10px] uppercase tracking-[0.15em] font-bold text-on-surface-variant mb-1">
           <span>Opportunity Score</span>
-          <span className="text-white font-mono">
+          <span className="text-on-surface font-mono">
             {cat.opportunityScore}/100
           </span>
         </div>
-        <div className="w-full bg-gray-800 rounded-full h-1.5">
+        <div className="w-full bg-surface-container rounded-full h-1.5 overflow-hidden">
           <div
-            className="h-1.5 rounded-full bg-gradient-to-r from-amber-600 to-amber-400"
+            className="h-1.5 rounded-full bg-neon-violet shadow-[0_0_12px_rgba(174,162,255,0.4)]"
             style={{ width: `${cat.opportunityScore}%` }}
           />
         </div>
       </div>
-      <p className="text-gray-500 text-xs">
+      <p className="text-on-surface-variant text-xs">
         {cat.venuesActive}/{cat.totalVenues} venues active
       </p>
     </div>
@@ -94,9 +99,17 @@ export default function CategoriesPage() {
   }));
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8">
-      <div className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="max-w-7xl mx-auto px-8 py-10">
+      <h1 className="text-4xl font-extrabold tracking-tight mb-2">
+        Sponsorship Categories
+      </h1>
+      <p className="text-on-surface-variant mb-10">
+        Analyzing active market gaps and opportunity scores across the CBM
+        portfolio. Updated from POS depletions and engagement metrics.
+      </p>
+
+      <div className="space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {sponsorshipCategories.map((cat) => (
             <CategoryCard
               key={cat.id}
@@ -108,16 +121,16 @@ export default function CategoriesPage() {
         </div>
 
         {selectedCatData && (
-          <div className="bg-gray-900 border border-amber-800/40 rounded-xl p-6">
-            <div className="flex justify-between items-start mb-4">
+          <div className="bg-surface-container-low rounded-xl p-8">
+            <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-3">
                 <span className="text-3xl">{selectedCatData.icon}</span>
                 <div>
-                  <h3 className="text-white font-bold text-xl">
+                  <h3 className="text-on-surface font-bold text-xl">
                     {selectedCatData.name}
                   </h3>
                   <span
-                    className="text-xs font-bold px-2 py-0.5 rounded-full"
+                    className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-[0.15em]"
                     style={{
                       background:
                         STATUS_COLORS[selectedCatData.status] + "20",
@@ -130,28 +143,36 @@ export default function CategoriesPage() {
               </div>
               <button
                 onClick={() => setSelectedCategory(null)}
-                className="text-gray-500 hover:text-white text-xl"
+                className="text-on-surface-variant hover:text-on-surface text-xl"
               >
                 &times;
               </button>
             </div>
-            <p className="text-gray-400 mb-4">{selectedCatData.notes}</p>
-            <div className="grid grid-cols-3 gap-4 mb-4">
-              <div className="bg-gray-800 rounded-lg p-3">
-                <p className="text-gray-500 text-xs">Current Revenue</p>
-                <p className="text-green-400 font-mono font-bold text-lg">
+            <p className="text-on-surface-variant mb-6">
+              {selectedCatData.notes}
+            </p>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="bg-surface-container rounded-lg p-4">
+                <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                  Current Revenue
+                </p>
+                <p className="text-neon-cyan font-mono font-bold text-lg">
                   {fmt(selectedCatData.currentRevenue)}
                 </p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <p className="text-gray-500 text-xs">Projected Revenue</p>
-                <p className="text-amber-400 font-mono font-bold text-lg">
+              <div className="bg-surface-container rounded-lg p-4">
+                <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                  Projected Revenue
+                </p>
+                <p className="text-neon-violet font-mono font-bold text-lg">
                   {fmt(selectedCatData.projectedRevenue)}
                 </p>
               </div>
-              <div className="bg-gray-800 rounded-lg p-3">
-                <p className="text-gray-500 text-xs">Growth Potential</p>
-                <p className="text-white font-mono font-bold text-lg">
+              <div className="bg-surface-container rounded-lg p-4">
+                <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold">
+                  Growth Potential
+                </p>
+                <p className="text-on-surface font-mono font-bold text-lg">
                   {selectedCatData.currentRevenue > 0
                     ? `${(
                         (selectedCatData.projectedRevenue /
@@ -164,14 +185,14 @@ export default function CategoriesPage() {
               </div>
             </div>
             <div>
-              <p className="text-gray-500 text-xs uppercase tracking-wider mb-2">
+              <p className="text-on-surface-variant text-[10px] uppercase tracking-[0.15em] font-bold mb-3">
                 Top Opportunities
               </p>
               <div className="space-y-2">
                 {selectedCatData.topOpportunities.map((opp, i) => (
                   <div key={i} className="flex items-center gap-2 text-sm">
-                    <span className="text-amber-500">&#9679;</span>
-                    <span className="text-gray-300">{opp}</span>
+                    <span className="text-neon-violet">&#9679;</span>
+                    <span className="text-on-surface-variant">{opp}</span>
                   </div>
                 ))}
               </div>
@@ -179,30 +200,34 @@ export default function CategoriesPage() {
           </div>
         )}
 
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          <h3 className="text-white font-bold text-lg mb-4">
+        <div className="bg-surface-container-low rounded-xl p-8">
+          <h3 className="text-on-surface font-bold text-xl uppercase tracking-tight mb-2">
             Opportunity Score by Category
           </h3>
+          <p className="text-on-surface-variant text-sm mb-6">
+            Comparative analysis of category potential
+          </p>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#25252a" />
               <XAxis
                 dataKey="name"
-                tick={{ fill: "#9ca3af", fontSize: 11 }}
+                tick={{ fill: "#acaaae", fontSize: 11 }}
                 angle={-20}
                 textAnchor="end"
                 height={60}
               />
               <YAxis
-                tick={{ fill: "#9ca3af", fontSize: 11 }}
+                tick={{ fill: "#acaaae", fontSize: 11 }}
                 domain={[0, 100]}
               />
               <Tooltip
                 contentStyle={{
-                  background: "#111827",
-                  border: "1px solid #374151",
+                  background: "#1f1f23",
+                  border: "none",
                   borderRadius: "8px",
                 }}
+                formatter={(v) => fmt(Number(v))}
               />
               <Bar
                 dataKey="score"
