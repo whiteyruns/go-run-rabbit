@@ -1,12 +1,13 @@
 /**
  * Feed the Block event series data — free open-air block party at 6th & Fremont.
- * Source: cbm/index.html
+ * Updated with actual data from City of Las Vegas sponsorship deck (Feb 2026).
  */
 
 export interface ConfirmedSponsor {
   name: string;
   amount: number;
   type: string;
+  status: "closed" | "pending";
 }
 
 export interface SponsorshipTier {
@@ -16,6 +17,36 @@ export interface SponsorshipTier {
   benefits: string[];
 }
 
+export interface EventPerformance {
+  headliner: string;
+  date: string;
+  attendance: string;
+  signups: number;
+  casinoCrossover: string;
+}
+
+export interface SocialMetrics {
+  impressions: number;
+  engagements: number;
+  videoViews: number;
+  newFollowers: number;
+  followerGrowth: string;
+  tiktokImpressions: number;
+  tiktokEngagement: string;
+  instagramImpressions: number;
+  viralReelViews: number;
+  viralTiktokViews: number;
+}
+
+export interface AudienceProfile {
+  medianAge: number;
+  dwellTimeMinutes: string;
+  stayOver45MinPct: number;
+  hispanicLatinoPct: number;
+  topMarkets: string[];
+  searchOriginZones: string[];
+}
+
 export interface FeedTheBlock {
   name: string;
   description: string;
@@ -23,7 +54,9 @@ export interface FeedTheBlock {
   year2025: {
     totalShows: number;
     totalAttendance: number;
+    totalSignups: number;
     headliners: string[];
+    events: EventPerformance[];
   };
   year2026: {
     plannedShows: number;
@@ -32,9 +65,12 @@ export interface FeedTheBlock {
     confirmedHeadliners: string[];
     remainingSlots: number;
     kickoff: string;
+    contentSpendPerEvent: string;
   };
   confirmedSponsors: ConfirmedSponsor[];
   confirmedTotal: number;
+  socialMetrics: SocialMetrics;
+  audienceProfile: AudienceProfile;
   sponsorshipTiers: SponsorshipTier[];
 }
 
@@ -42,11 +78,19 @@ export const feedTheBlock: FeedTheBlock = {
   name: "Feed the Block",
   description: "Free open-air block party series at 6th & Fremont",
   partner: "Wynn Nightlife",
+
   year2025: {
     totalShows: 3,
-    totalAttendance: 40000,
-    headliners: ["Gryffin", "Diplo / Major Lazer", "Diplo"],
+    totalAttendance: 32000,
+    totalSignups: 30061,
+    headliners: ["Gryffin", "Major Lazer", "Diplo"],
+    events: [
+      { headliner: "Gryffin", date: "April 2025", attendance: "9,700-10,000+", signups: 8769, casinoCrossover: "8,700+" },
+      { headliner: "Major Lazer", date: "September 2025", attendance: "12,000-15,000+", signups: 11736, casinoCrossover: "10,000+" },
+      { headliner: "Diplo", date: "October 2025", attendance: "10,000-12,000+", signups: 10356, casinoCrossover: "9,000+" },
+    ],
   },
+
   year2026: {
     plannedShows: 10,
     projectedAttendancePerShow: 10000,
@@ -54,12 +98,37 @@ export const feedTheBlock: FeedTheBlock = {
     confirmedHeadliners: ["Marshmello (Apr 2)"],
     remainingSlots: 9,
     kickoff: "April 2, 2026",
+    contentSpendPerEvent: "$25,000-$30,000",
   },
+
   confirmedSponsors: [
-    { name: "LVCVA", amount: 250000, type: "Municipal / Tourism" },
-    { name: "City of Las Vegas", amount: 150000, type: "Municipal / Government" },
+    { name: "LVCVA", amount: 250000, type: "Municipal / Tourism", status: "closed" },
+    { name: "City of Las Vegas", amount: 200000, type: "Municipal / Government", status: "closed" },
   ],
-  confirmedTotal: 400000,
+  confirmedTotal: 450000,
+
+  socialMetrics: {
+    impressions: 7976920,
+    engagements: 306159,
+    videoViews: 2405321,
+    newFollowers: 23500,
+    followerGrowth: "+123.1%",
+    tiktokImpressions: 609000,
+    tiktokEngagement: "8%",
+    instagramImpressions: 724000,
+    viralReelViews: 2300000,
+    viralTiktokViews: 112000,
+  },
+
+  audienceProfile: {
+    medianAge: 36,
+    dwellTimeMinutes: "30-44",
+    stayOver45MinPct: 65,
+    hispanicLatinoPct: 34,
+    topMarkets: ["Las Vegas", "Los Angeles", "New York", "San Diego"],
+    searchOriginZones: ["Paradise, NV (The Strip)", "Las Vegas", "Henderson"],
+  },
+
   sponsorshipTiers: [
     {
       tier: "Presenting",
