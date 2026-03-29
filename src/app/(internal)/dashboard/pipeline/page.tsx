@@ -301,6 +301,10 @@ export default function PipelinePage() {
                         {STATUSES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
                       </select>
                     )}
+                    <a href={`/recap/${deal.id}`} target="_blank" rel="noopener noreferrer"
+                      className="text-on-surface-variant hover:text-neon-cyan text-xs px-2 py-1 transition-colors">
+                      Recap
+                    </a>
                     <button onClick={() => handleEdit(deal)} className="text-on-surface-variant hover:text-neon-violet text-xs px-2 py-1 transition-colors">
                       Edit
                     </button>
