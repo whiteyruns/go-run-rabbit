@@ -2,12 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import { venues as allVenues } from "@/data/venues";
-import { sponsorshipCategories } from "@/data/categories";
 import { feedTheBlock } from "@/data/feed-the-block";
 import { computeDepletions, aggregatePortfolio, HOUSE_POUR_MULTIPLIER } from "@/lib/depletion-engine";
 import { fmt, fmtNum } from "@/lib/utils";
@@ -63,10 +58,6 @@ export default function PitchPage() {
     ? allVenues.filter(v => venueFilter.includes(v.id))
     : allVenues;
 
-  const filteredCategories = link.category
-    ? sponsorshipCategories.filter(c => c.id === link.category || c.name.toLowerCase().includes(link.category!.toLowerCase()))
-    : sponsorshipCategories;
-
   const depletions = filteredVenues.map(computeDepletions).filter(Boolean) as NonNullable<ReturnType<typeof computeDepletions>>[];
   const portfolio = aggregatePortfolio(depletions);
 
@@ -74,15 +65,6 @@ export default function PitchPage() {
   const totalSqFt = filteredVenues.reduce((s, v) => s + v.sqft, 0);
   const totalWeeklyTraffic = filteredVenues.reduce((s, v) => s + v.avgWeeklyFootTraffic, 0);
   const annualTraffic = totalWeeklyTraffic * 52;
-
-  const venueRevenueData = filteredVenues
-    .filter(v => v.potentialRevenue > 0)
-    .sort((a, b) => b.potentialRevenue - a.potentialRevenue)
-    .map(v => ({
-      name: v.name.length > 16 ? v.name.slice(0, 14) + "..." : v.name,
-      current: v.sponsorRevenue,
-      potential: v.potentialRevenue,
-    }));
 
   return (
     <div className="min-h-screen bg-[#0e0e11] text-[#f3f0f4]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
@@ -140,13 +122,14 @@ export default function PitchPage() {
           <h3 className="text-xl font-extrabold tracking-tight mb-6">Venue Portfolio</h3>
           <div className="space-y-4">
             {filteredVenues.map(v => (
-              <div key={v.id} className="bg-[#19191d] rounded-xl p-5 flex items-center gap-6">
-                <img src={`/venues/${v.id}.jpg`} alt={v.name} className="w-20 h-20 rounded-lg object-cover flex-shrink-0" />
+              <div key={v.id} className="bg-[#19191d] rounded-xl p-5 flex items-center gap-6 group hover:bg-[#1f1f23] transition-colors">
+                <img src={`/venues/${v.id}.jpg`} alt={v.name} className="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-[#f3f0f4] font-bold">{v.name}</h4>
+                    <h4 className="text-[#f3f0f4] font-bold text-lg">{v.name}</h4>
                     <span className="text-[#acaaae] text-xs">{v.type}</span>
                   </div>
+                  <p className="text-[#acaaae] text-xs mb-2">{v.address} &middot; {v.zone}</p>
                   <div className="flex gap-6 text-sm text-[#acaaae]">
                     <span>Cap: {fmtNum(v.capacity)}</span>
                     <span>{fmtNum(v.sqft)} sqft</span>
@@ -155,6 +138,13 @@ export default function PitchPage() {
                     {v.hasRooftop && <span className="text-[#aea2ff]">Rooftop</span>}
                     {v.hasKitchen && <span className="text-[#00eefc]">Kitchen</span>}
                   </div>
+                  {v.features && v.features.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {v.features.map((f: string) => (
+                        <span key={f} className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-[#25252a] text-[#acaaae]">{f}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -185,58 +175,59 @@ export default function PitchPage() {
           </div>
         </div>
 
-        {/* Venue revenue chart */}
+        {/* Available Activation Points */}
         <div className="bg-[#1f1f23] rounded-xl p-8">
-          <h3 className="text-xl font-extrabold tracking-tight mb-6">Sponsorship Revenue Potential by Venue</h3>
-          <ResponsiveContainer width="100%" height={Math.max(300, filteredVenues.length * 50)}>
-            <BarChart data={venueRevenueData} layout="vertical" barGap={2}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#25252a" />
-              <XAxis type="number" tick={{ fill: "#acaaae", fontSize: 11 }} tickFormatter={v => fmt(v)} />
-              <YAxis dataKey="name" type="category" width={120} tick={{ fill: "#acaaae", fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: "#1f1f23", border: "none", borderRadius: "8px" }} formatter={(v) => fmt(Number(v))} />
-              <Bar dataKey="current" fill="#00eefc" name="Current" />
-              <Bar dataKey="potential" fill="#aea2ff" name="Potential" radius={[0, 4, 4, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+          <h3 className="text-xl font-extrabold tracking-tight mb-2">Activation Opportunities</h3>
+          <p className="text-[#acaaae] text-sm mb-6">Available placement and activation options across the portfolio</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              { point: "House / Well Pour", desc: "Default spirit when customer doesn't specify — highest volume driver", venues: filteredVenues.length },
+              { point: "Back Bar Placement", desc: "Premium bottle display behind the bar — visible to every guest", venues: filteredVenues.length },
+              { point: "Featured Cocktail", desc: "Branded signature drink on the menu — drives trial and upsell", venues: filteredVenues.length },
+              { point: "Tap Handle / Draft Line", desc: "Dedicated draft position — consistent volume for beer brands", venues: filteredVenues.filter(v => v.type.includes("Bar") || v.type.includes("Restaurant")).length },
+              { point: "LED / Digital Signage", desc: "Stage, bar, and rooftop LED integration at high-visibility venues", venues: filteredVenues.filter(v => v.hasStage || v.hasRooftop).length },
+              { point: "Event Activation", desc: "On-site sampling, branded booths, and experiential moments at Feed the Block + venues", venues: filteredVenues.length },
+              { point: "Social Media / Content", desc: "Co-branded posts, creator content, and event recaps — 8M+ annual impressions", venues: 0 },
+              { point: "VIP Area Branding", desc: "Exclusive brand presence in premium sections — Commonwealth rooftop, Laundry Room", venues: filteredVenues.filter(v => v.hasRooftop || v.type.includes("Speakeasy")).length },
+              { point: "Category Exclusivity", desc: "Sole brand in your category across all venues — the ultimate portfolio play", venues: filteredVenues.length },
+            ].map(({ point, desc, venues }) => (
+              <div key={point} className="bg-[#19191d] rounded-xl p-5">
+                <h4 className="text-[#f3f0f4] font-bold text-sm mb-1">{point}</h4>
+                <p className="text-[#acaaae] text-xs leading-relaxed mb-2">{desc}</p>
+                {venues > 0 && <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#aea2ff]">{venues} venue{venues !== 1 ? "s" : ""}</p>}
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Category opportunities — if filtered */}
-        {filteredCategories.length > 0 && (
-          <div className="bg-[#1f1f23] rounded-xl p-8">
-            <h3 className="text-xl font-extrabold tracking-tight mb-6">
-              {link.category ? `${link.category} Opportunity` : "Sponsorship Categories"}
-            </h3>
-            <div className="space-y-4">
-              {filteredCategories.map(cat => (
-                <div key={cat.id} className="bg-[#19191d] rounded-xl p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <span className="text-xl">{cat.icon}</span>
-                      <h4 className="font-bold">{cat.name}</h4>
-                    </div>
-                    <div className="flex gap-6 text-right">
-                      <div>
-                        <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#acaaae]">Current</p>
-                        <p className="text-[#00eefc] font-mono font-bold">{fmt(cat.currentRevenue)}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#acaaae]">Projected</p>
-                        <p className="text-[#aea2ff] font-mono font-bold">{fmt(cat.projectedRevenue)}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-[#acaaae] text-sm mb-3">{cat.notes}</p>
-                  <div>
-                    <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#acaaae] mb-2">Top Opportunities</p>
-                    {cat.topOpportunities.map((opp, i) => (
-                      <p key={i} className="text-[#acaaae] text-sm flex gap-2"><span className="text-[#aea2ff]">&bull;</span>{opp}</p>
-                    ))}
-                  </div>
-                </div>
-              ))}
+        {/* Audience Profile */}
+        <div className="bg-[#1f1f23] rounded-xl p-8">
+          <h3 className="text-xl font-extrabold tracking-tight mb-6">Audience Profile</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-[#19191d] rounded-lg p-4 text-center">
+              <p className="text-2xl font-extrabold font-mono text-[#f3f0f4]">{feedTheBlock.audienceProfile.medianAge}</p>
+              <p className="text-[#acaaae] text-xs">Median Age</p>
+            </div>
+            <div className="bg-[#19191d] rounded-lg p-4 text-center">
+              <p className="text-2xl font-extrabold font-mono text-[#00eefc]">{feedTheBlock.audienceProfile.stayOver45MinPct}%</p>
+              <p className="text-[#acaaae] text-xs">Stay 45+ Minutes</p>
+            </div>
+            <div className="bg-[#19191d] rounded-lg p-4 text-center">
+              <p className="text-2xl font-extrabold font-mono text-[#aea2ff]">{feedTheBlock.audienceProfile.hispanicLatinoPct}%</p>
+              <p className="text-[#acaaae] text-xs">Hispanic/Latino</p>
+            </div>
+            <div className="bg-[#19191d] rounded-lg p-4 text-center">
+              <p className="text-2xl font-extrabold font-mono text-[#f3f0f4]">{(feedTheBlock.socialMetrics.impressions / 1000000).toFixed(1)}M</p>
+              <p className="text-[#acaaae] text-xs">Social Impressions</p>
             </div>
           </div>
-        )}
+          <div className="mt-4 flex flex-wrap gap-2">
+            <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-[#acaaae] mr-2">Top Markets:</p>
+            {feedTheBlock.audienceProfile.topMarkets.map(m => (
+              <span key={m} className="text-xs text-[#f3f0f4] bg-[#19191d] px-2.5 py-1 rounded-full">{m}</span>
+            ))}
+          </div>
+        </div>
 
         {/* Feed the Block proof */}
         <div className="bg-[#19191d] rounded-xl p-8">
