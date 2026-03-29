@@ -17,9 +17,9 @@ export default async function InternalLayout({
   return (
     <div className={`${manrope.variable} min-h-screen bg-surface text-on-surface font-sans selection:bg-neon-violet-dim selection:text-white`}>
       <DashboardNav />
-      <div className="ml-56 pt-12">
+      <div className="lg:ml-56 pt-12">
         <main>{children}</main>
-        <footer className="py-6 mt-16 px-8">
+        <footer className="py-6 mt-16 px-4 lg:px-8">
           <div className="flex justify-between items-center text-[9px] text-on-surface-variant/30 uppercase tracking-[0.15em]">
             <span>CBM &middot; Pulse &middot; Secure</span>
             <span>Technical Auteur</span>

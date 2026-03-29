@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const navGroups = [
   {
@@ -46,11 +47,30 @@ const navGroups = [
 
 export function DashboardNav() {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+
+  const currentPage = navGroups.flatMap(g => g.items).find(i => i.href === pathname)?.label || "Dashboard";
 
   return (
     <>
+      {/* Mobile top bar */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/90 backdrop-blur-xl h-12 flex items-center justify-between px-4">
+        <button onClick={() => setOpen(!open)} className="text-on-surface p-1">
+          <div className="space-y-1.5">
+            <div className={`w-5 h-0.5 bg-on-surface transition-all ${open ? "rotate-45 translate-y-2" : ""}`} />
+            <div className={`w-5 h-0.5 bg-on-surface transition-all ${open ? "opacity-0" : ""}`} />
+            <div className={`w-5 h-0.5 bg-on-surface transition-all ${open ? "-rotate-45 -translate-y-2" : ""}`} />
+          </div>
+        </button>
+        <span className="text-xs font-bold uppercase tracking-[0.15em] text-on-surface-variant">{currentPage}</span>
+        <span className="w-2 h-2 rounded-full bg-neon-cyan animate-pulse" />
+      </div>
+
+      {/* Overlay */}
+      {open && <div className="lg:hidden fixed inset-0 bg-black/60 z-40" onClick={() => setOpen(false)} />}
+
       {/* Sidebar */}
-      <aside className="fixed left-0 top-0 bottom-0 w-56 bg-surface-container-lowest z-40 flex flex-col">
+      <aside className={`fixed left-0 top-0 bottom-0 w-56 bg-surface-container-lowest z-50 flex flex-col transition-transform lg:translate-x-0 ${open ? "translate-x-0" : "-translate-x-full"}`}>
         {/* Logo */}
         <div className="px-5 py-5">
           <Link href="/" className="text-sm font-black tracking-tighter text-on-surface hover:opacity-80 transition-opacity">
@@ -76,6 +96,7 @@ export function DashboardNav() {
                     <Link
                       key={item.href}
                       href={item.href}
+                      onClick={() => setOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all ${
                         active
                           ? "bg-neon-violet/10 text-neon-violet"
@@ -95,7 +116,6 @@ export function DashboardNav() {
           ))}
         </nav>
 
-        {/* Footer */}
         <div className="px-5 py-4">
           <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-on-surface-variant/30">
             Go Run Rabbit
@@ -103,14 +123,12 @@ export function DashboardNav() {
         </div>
       </aside>
 
-      {/* Top bar (minimal — just page context) */}
-      <header className="fixed top-0 left-56 right-0 z-30 bg-surface/80 backdrop-blur-xl h-12 flex items-center px-8">
+      {/* Desktop top bar */}
+      <header className="hidden lg:flex fixed top-0 left-56 right-0 z-30 bg-surface/80 backdrop-blur-xl h-12 items-center px-8">
         <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">
           <span>Corner Bar Management</span>
           <span className="text-outline-variant">/</span>
-          <span className="text-on-surface">
-            {navGroups.flatMap(g => g.items).find(i => i.href === pathname)?.label || "Dashboard"}
-          </span>
+          <span className="text-on-surface">{currentPage}</span>
         </div>
       </header>
     </>
