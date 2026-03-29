@@ -40,7 +40,6 @@ const navGroups = [
     items: [
       { href: "/dashboard/pipeline", label: "Pipeline", icon: "&#9679;" },
       { href: "/dashboard/inventory", label: "Inventory", icon: "&#9638;" },
-      { href: "/dashboard/agent", label: "Agent", icon: "&#9673;" },
       { href: "/dashboard/recaps", label: "Recaps", icon: "&#9993;" },
       { href: "/dashboard/pitch-links", label: "Pitch Links", icon: "&#9741;" },
     ],
