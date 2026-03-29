@@ -77,6 +77,32 @@ const tools: Anthropic.Tool[] = [
       properties: {},
     },
   },
+  {
+    name: "send_email",
+    description: "Send an email to someone. Use this when the user asks to email information, send a recap, or share data with someone. Compose a professional HTML email with the relevant data.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        to: { type: "string", description: "Recipient email address" },
+        subject: { type: "string", description: "Email subject line" },
+        body: { type: "string", description: "Email body content in markdown format. Will be rendered as HTML." },
+      },
+      required: ["to", "subject", "body"],
+    },
+  },
+  {
+    name: "send_recap_link",
+    description: "Generate and optionally email a brand recap link. Use when user asks to send a recap to someone.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        dealId: { type: "string", description: "The pipeline deal ID" },
+        type: { type: "string", description: "Recap type: 'post-event', 'quarterly', or 'annual'" },
+        recipientEmail: { type: "string", description: "Email to send the recap link to (optional)" },
+      },
+      required: ["dealId", "type"],
+    },
+  },
 ];
 
 async function executeTool(name: string, input: Record<string, unknown>): Promise<string> {
@@ -170,6 +196,78 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
         fillRate: totalSlots > 0 ? `${((soldSlots / totalSlots) * 100).toFixed(1)}%` : "0%",
         posRecords: posCount,
       });
+    }
+
+    case "send_email": {
+      if (!process.env.RESEND_API_KEY) return "Email not configured — Resend API key missing.";
+      try {
+        const { Resend } = await import("resend");
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        const markdown = input.body as string;
+        // Simple markdown to HTML
+        const html = markdown
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+          .replace(/`(.*?)`/g, '<code style="background:#25252a;padding:2px 6px;border-radius:4px;color:#aea2ff">$1</code>')
+          .replace(/^- (.*)/gm, '<li>$1</li>')
+          .replace(/(<li>[\s\S]*<\/li>)/, '<ul style="padding-left:20px">$1</ul>')
+          .replace(/\n\n/g, '</p><p>')
+          .replace(/\n/g, '<br>');
+
+        await resend.emails.send({
+          from: "Disco — CBM Dashboards <recaps@gorunrabbit.com>",
+          to: input.to as string,
+          subject: input.subject as string,
+          html: `<div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;color:#f3f0f4;background:#0e0e11;">
+            <p style="color:#00eefc;font-size:10px;font-weight:bold;letter-spacing:0.15em;text-transform:uppercase;">Corner Bar Management</p>
+            <p>${html}</p>
+            <hr style="border:none;border-top:1px solid #25252a;margin:24px 0">
+            <p style="color:#48474b;font-size:11px;">Sent by Disco — CBM Portfolio Agent<br>Go Run Rabbit LLC</p>
+          </div>`,
+        });
+        return `Email sent to ${input.to} with subject "${input.subject}"`;
+      } catch (e) {
+        return `Failed to send email: ${(e as Error).message}`;
+      }
+    }
+
+    case "send_recap_link": {
+      const deal = await prisma.pipelineDeal.findUnique({ where: { id: input.dealId as string } });
+      if (!deal) return "Deal not found";
+      const recapUrl = `https://cbm.claymoreandcolt.com/recap/brand/${deal.id}/${input.type}`;
+
+      await prisma.recapLog.create({
+        data: {
+          type: input.type as string,
+          sentTo: (input.recipientEmail as string) || "link-only",
+          data: JSON.stringify({ dealId: deal.id, brandName: deal.brandName }),
+        },
+      });
+
+      if (input.recipientEmail && process.env.RESEND_API_KEY) {
+        try {
+          const { Resend } = await import("resend");
+          const resend = new Resend(process.env.RESEND_API_KEY);
+          const typeLabel = input.type === "post-event" ? "Post-Event Recap" : input.type === "quarterly" ? "Quarterly Review" : "Annual Report";
+          await resend.emails.send({
+            from: "Disco — CBM Dashboards <recaps@gorunrabbit.com>",
+            to: input.recipientEmail as string,
+            subject: `${deal.brandName} — ${typeLabel}`,
+            html: `<div style="font-family:system-ui,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;color:#f3f0f4;background:#0e0e11;">
+              <p style="color:#00eefc;font-size:10px;font-weight:bold;letter-spacing:0.15em;text-transform:uppercase;">Corner Bar Management</p>
+              <h1 style="font-size:24px;margin:8px 0;">${deal.brandName} — ${typeLabel}</h1>
+              <p style="color:#acaaae;">Your partnership recap is ready.</p>
+              <a href="${recapUrl}" style="display:inline-block;background:#aea2ff;color:#1f0078;padding:12px 32px;border-radius:6px;font-weight:bold;text-decoration:none;margin:16px 0;">View Recap</a>
+              <p style="color:#48474b;font-size:12px;margin-top:32px;">Sent by Disco — CBM Portfolio Agent</p>
+            </div>`,
+          });
+          return `Recap link sent to ${input.recipientEmail}: ${recapUrl}`;
+        } catch (e) {
+          return `Recap generated but email failed: ${(e as Error).message}. Link: ${recapUrl}`;
+        }
+      }
+
+      return `Recap link generated: ${recapUrl}`;
     }
 
     default:

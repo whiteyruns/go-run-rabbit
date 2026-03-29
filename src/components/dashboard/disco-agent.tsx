@@ -58,12 +58,19 @@ export function DiscoAgent() {
   return (
     <>
       {/* Floating bubble */}
-      <button
-        onClick={() => setOpen(!open)}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full overflow-hidden shadow-lg shadow-[#aea2ff]/20 hover:scale-110 active:scale-95 transition-all ring-2 ${open ? "ring-neon-cyan" : "ring-neon-violet/50 hover:ring-neon-violet"}`}
-      >
-        <img src="/disco.jpg" alt="Disco" className="w-full h-full object-cover" />
-      </button>
+      <div className="fixed bottom-6 right-6 z-50 group">
+        <div className={`absolute bottom-16 right-0 bg-[#19191d] rounded-xl px-4 py-2.5 shadow-xl whitespace-nowrap pointer-events-none transition-all ${open ? "opacity-0" : "opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0"}`}>
+          <p className="text-[#f3f0f4] text-xs font-bold">Disco</p>
+          <p className="text-[#acaaae] text-[10px]">Ask me about deals, venues & inventory</p>
+          <div className="absolute -bottom-1.5 right-6 w-3 h-3 bg-[#19191d] rotate-45" />
+        </div>
+        <button
+          onClick={() => setOpen(!open)}
+          className={`w-14 h-14 rounded-full overflow-hidden shadow-lg shadow-[#aea2ff]/20 hover:scale-110 active:scale-95 transition-all ring-2 ${open ? "ring-neon-cyan" : "ring-neon-violet/50 hover:ring-neon-violet"}`}
+        >
+          <img src="/disco.jpg" alt="Disco" className="w-full h-full object-cover" />
+        </button>
+      </div>
 
       {/* Chat panel */}
       {open && (
