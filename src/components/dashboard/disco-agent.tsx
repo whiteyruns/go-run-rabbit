@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   role: "user" | "assistant";
@@ -104,7 +105,13 @@ export function DiscoAgent() {
                         ? "bg-[#aea2ff]/15 text-[#f3f0f4]"
                         : "bg-[#1f1f23] text-[#f3f0f4]"
                     }`}>
-                      <p className="text-xs leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+                      {msg.role === "assistant" ? (
+                        <div className="text-xs leading-relaxed prose prose-invert prose-xs max-w-none [&_p]:mb-1.5 [&_ul]:mb-1.5 [&_ul]:pl-4 [&_li]:mb-0.5 [&_strong]:text-[#00eefc] [&_h1]:text-sm [&_h2]:text-xs [&_h3]:text-xs [&_code]:text-[#aea2ff] [&_code]:bg-[#25252a] [&_code]:px-1 [&_code]:rounded">
+                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        </div>
+                      ) : (
+                        <p className="text-xs leading-relaxed">{msg.content}</p>
+                      )}
                     </div>
                   </div>
                 ))}
