@@ -12,13 +12,26 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Go Run Rabbit",
-  description: "Event production and camp management. We build community experiences.",
+  metadataBase: new URL("https://gorunrabbit.com"),
+  title: {
+    default: "Go Run Rabbit — Event Production & Hospitality Technology",
+    template: "%s | Go Run Rabbit",
+  },
+  description: "Event production, sponsorship platforms, and operations software for hospitality and live events. Las Vegas.",
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   openGraph: {
-    title: "Go Run Rabbit",
-    description: "Event production and camp management.",
+    type: "website",
+    siteName: "Go Run Rabbit",
+    title: "Go Run Rabbit — Event Production & Hospitality Technology",
+    description: "Event production + custom software for hospitality and live events.",
     images: ["/og-image.png"],
+    url: "https://gorunrabbit.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  alternates: {
+    canonical: "https://gorunrabbit.com",
   },
 };
 

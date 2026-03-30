@@ -6,16 +6,46 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope" });
 export const metadata = {
   title: "Keith White — Event Production & Hospitality Technology",
   description: "I build events, then I build the tech that runs them. Event production, sponsorship platforms, and operations software for hospitality and live events. Las Vegas.",
+  alternates: { canonical: "https://gorunrabbit.com" },
   openGraph: {
     title: "Keith White — Event Production & Hospitality Technology",
     description: "Event production + custom software for hospitality and live events.",
     images: ["/og-image.png"],
+    url: "https://gorunrabbit.com",
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      name: "Go Run Rabbit LLC",
+      url: "https://gorunrabbit.com",
+      logo: "https://gorunrabbit.com/grr-icon.png",
+      description: "Event production, sponsorship platforms, and operations software for hospitality and live events.",
+      address: { "@type": "PostalAddress", addressLocality: "Las Vegas", addressRegion: "NV", addressCountry: "US" },
+    },
+    {
+      "@type": "Person",
+      name: "Keith White",
+      jobTitle: "Founder",
+      worksFor: { "@type": "Organization", name: "Go Run Rabbit LLC" },
+      url: "https://gorunrabbit.com",
+      image: "https://gorunrabbit.com/keith-white.jpg",
+    },
+    {
+      "@type": "WebSite",
+      name: "Go Run Rabbit",
+      url: "https://gorunrabbit.com",
+    },
+  ],
 };
 
 export default function HomePage() {
   return (
     <div className={`${manrope.variable} min-h-screen bg-[#0e0e11] text-[#f3f0f4] font-[var(--font-manrope),system-ui,sans-serif] selection:bg-[#aea2ff] selection:text-[#1f0078]`}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* NAV */}
       <nav className="fixed top-0 w-full z-50 bg-[#0a0a0e]/60 backdrop-blur-xl">
@@ -29,9 +59,27 @@ export default function HomePage() {
             <a href="#about" className="text-gray-500 hover:text-gray-100 transition-all text-xs uppercase tracking-[0.2em]">About</a>
             <a href="#contact" className="text-gray-500 hover:text-gray-100 transition-all text-xs uppercase tracking-[0.2em]">Contact</a>
           </div>
-          <a href="#contact" className="bg-gradient-to-br from-[#7157ff] to-[#aea2ff] text-[#1f0078] px-6 py-2 rounded-md font-bold text-sm hover:opacity-90 active:scale-95 transition-all">
-            Connect
-          </a>
+          <div className="flex items-center gap-3">
+            <a href="#contact" className="bg-gradient-to-br from-[#7157ff] to-[#aea2ff] text-[#1f0078] px-6 py-2 rounded-md font-bold text-sm hover:opacity-90 active:scale-95 transition-all hidden md:inline-block">
+              Connect
+            </a>
+            {/* Mobile menu */}
+            <details className="md:hidden group relative">
+              <summary className="list-none cursor-pointer p-2">
+                <div className="space-y-1.5">
+                  <div className="w-5 h-0.5 bg-[#f3f0f4]" />
+                  <div className="w-5 h-0.5 bg-[#f3f0f4]" />
+                  <div className="w-5 h-0.5 bg-[#f3f0f4]" />
+                </div>
+              </summary>
+              <div className="absolute right-0 top-12 bg-[#19191d] rounded-xl p-4 flex flex-col gap-3 min-w-[180px] shadow-xl shadow-black/40">
+                <a href="#work" className="text-[#acaaae] hover:text-[#f3f0f4] text-sm font-medium py-1">Work</a>
+                <a href="#services" className="text-[#acaaae] hover:text-[#f3f0f4] text-sm font-medium py-1">Services</a>
+                <a href="#about" className="text-[#acaaae] hover:text-[#f3f0f4] text-sm font-medium py-1">About</a>
+                <a href="#contact" className="text-[#00eefc] text-sm font-bold py-1">Connect</a>
+              </div>
+            </details>
+          </div>
         </div>
       </nav>
 
