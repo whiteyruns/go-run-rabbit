@@ -210,13 +210,13 @@ export default function HomePage() {
             </h2>
             <div className="space-y-6 text-lg text-[#acaaae]">
               <p>
-                I&apos;m Keith White — a developer and event producer based in Las Vegas. I started in events, building theme camps at Burning Man and producing concerts on Fremont Street. The tools didn&apos;t exist, so I built them.
+                I&apos;m Keith White — 17 years in hospitality, events, and experiential marketing. Executive Director of Marketing at <span className="text-[#f3f0f4] font-bold">Wynn Resorts</span>. VP of Marketing at <span className="text-[#f3f0f4] font-bold">Life is Beautiful</span> (150K+ attendees). Artist ops and venue launches at <span className="text-[#f3f0f4] font-bold">Hakkasan Group</span>. National event production at Super Bowl, NBA All-Star, and EDC.
               </p>
               <p>
-                Now I do both. The CBM Sponsorship Dashboard started as a pitch deck and became a full analytics platform. Swan Forest&apos;s operations system started as a spreadsheet and became a real-time management tool with interactive maps and payment processing.
+                Along the way I became a developer. Now I build the software that powers the events — sponsorship intelligence platforms, camp operations systems, real-time analytics dashboards. The tools didn&apos;t exist, so I built them.
               </p>
               <p>
-                Under <span className="text-[#f3f0f4] font-bold">Go Run Rabbit</span>, I work with hospitality companies, event producers, and communities that need someone who can build the event AND build the software.
+                Under <span className="text-[#f3f0f4] font-bold">Go Run Rabbit</span>, I work with hospitality companies and event producers who need someone who understands both sides — the production floor and the codebase.
               </p>
             </div>
             <div className="mt-12 grid grid-cols-4 gap-6">
@@ -225,8 +225,8 @@ export default function HomePage() {
                 <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Venues</div>
               </div>
               <div>
-                <div className="text-3xl font-black text-[#aea2ff] mb-1">$450K</div>
-                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Sponsorship Closed</div>
+                <div className="text-3xl font-black text-[#aea2ff] mb-1">6</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Projects Shipped</div>
               </div>
               <div>
                 <div className="text-3xl font-black text-[#ff6b98] mb-1">100K+</div>
