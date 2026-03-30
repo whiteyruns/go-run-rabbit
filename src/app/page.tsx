@@ -219,14 +219,22 @@ export default function HomePage() {
                 Under <span className="text-[#f3f0f4] font-bold">Go Run Rabbit</span>, I work with hospitality companies, event producers, and communities that need someone who can build the event AND build the software.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-2 gap-8">
+            <div className="mt-12 grid grid-cols-4 gap-6">
               <div>
-                <div className="text-3xl font-black text-[#00eefc] mb-1">9</div>
-                <div className="text-xs uppercase tracking-widest font-bold opacity-50">Venues Managed</div>
+                <div className="text-3xl font-black text-[#00eefc] mb-1">16</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Venues</div>
+              </div>
+              <div>
+                <div className="text-3xl font-black text-[#aea2ff] mb-1">$450K</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Sponsorship Closed</div>
               </div>
               <div>
                 <div className="text-3xl font-black text-[#ff6b98] mb-1">100K+</div>
-                <div className="text-xs uppercase tracking-widest font-bold opacity-50">Event Attendees 2026</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Event Attendees</div>
+              </div>
+              <div>
+                <div className="text-3xl font-black text-[#00eefc] mb-1">5</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Platforms Built</div>
               </div>
             </div>
           </div>
