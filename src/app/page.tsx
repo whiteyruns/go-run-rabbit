@@ -22,7 +22,7 @@ export default function HomePage() {
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
           <Link href="/" className="text-xl font-black tracking-tighter">Keith White</Link>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#work" className="text-[#aea2ff] font-bold border-b-2 border-[#aea2ff] text-xs uppercase tracking-[0.2em]">Work</a>
+            <a href="#work" className="text-gray-500 hover:text-gray-100 transition-all text-xs uppercase tracking-[0.2em]">Work</a>
             <a href="#services" className="text-gray-500 hover:text-gray-100 transition-all text-xs uppercase tracking-[0.2em]">Services</a>
             <a href="#about" className="text-gray-500 hover:text-gray-100 transition-all text-xs uppercase tracking-[0.2em]">About</a>
             <a href="#contact" className="text-gray-500 hover:text-gray-100 transition-all text-xs uppercase tracking-[0.2em]">Contact</a>
@@ -73,7 +73,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
 
             {/* CBM Dashboard — Large */}
-            <div className="md:col-span-8 group cursor-pointer">
+            <a href="https://cbm.gorunrabbit.com" target="_blank" rel="noopener noreferrer" className="md:col-span-8 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/9]">
                 <img src="/projects/cbm-dashboard.jpg" alt="CBM Sponsorship Dashboard" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
@@ -87,10 +87,10 @@ export default function HomePage() {
                   <p className="text-[#acaaae] max-w-md">9-venue sponsorship intelligence platform for Corner Bar Management. POS analytics, case depletion modeling, brand pitch generation.</p>
                 </div>
               </div>
-            </div>
+            </a>
 
             {/* Swan Forest — Tall */}
-            <div className="md:col-span-4 group cursor-pointer">
+            <a href="https://swanforestcamp.com" target="_blank" rel="noopener noreferrer" className="md:col-span-4 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] h-full min-h-[300px]">
                 <img src="/projects/swan-forest-admin.jpg" alt="Swan Forest Camp Operations" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-80" />
@@ -102,10 +102,10 @@ export default function HomePage() {
                   <p className="text-[#acaaae] text-sm">Full operations platform — interactive grid maps, real-time tracking, Stripe payments, member management.</p>
                 </div>
               </div>
-            </div>
+            </a>
 
             {/* East Fremont District — Wide */}
-            <div className="md:col-span-7 group cursor-pointer">
+            <a href="https://eastfremontdistrict.com" target="_blank" rel="noopener noreferrer" className="md:col-span-7 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
                 <img src="/projects/efd.jpg" alt="East Fremont District platform" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
@@ -118,10 +118,10 @@ export default function HomePage() {
                   <p className="text-[#acaaae] text-sm">B2B marketing platform — &quot;Rent an Entire Entertainment District.&quot; 16 venues, activation tiers, inquiry pipeline.</p>
                 </div>
               </div>
-            </div>
+            </a>
 
             {/* Feed the Block */}
-            <div className="md:col-span-5 group cursor-pointer">
+            <a href="https://eastfremontdistrict.com" target="_blank" rel="noopener noreferrer" className="md:col-span-5 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
                 <img src="/projects/feed-the-block.jpg" alt="Feed the Block concert event" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
@@ -133,10 +133,10 @@ export default function HomePage() {
                   <p className="text-[#acaaae] text-sm">Concert series — Marshmello, Gryffin, Diplo. 100K+ projected 2026. $400K municipal sponsorship.</p>
                 </div>
               </div>
-            </div>
+            </a>
 
             {/* Forest House — Small */}
-            <div className="md:col-span-5 group cursor-pointer">
+            <a href="https://foresthou.se" target="_blank" rel="noopener noreferrer" className="md:col-span-5 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
                 <img src="/projects/forest-house.jpg" alt="Forest House Art Car" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
@@ -145,9 +145,9 @@ export default function HomePage() {
                   <p className="text-[#acaaae] text-sm">Mobile stage for Burning Man + EDC. Main stage for Feed the Block series.</p>
                 </div>
               </div>
-            </div>
+            </a>
 
-            {/* Prodigal Swan — Small */}
+            {/* Prodigal Swan */}
             <div className="md:col-span-7 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[21/10]">
                 <img src="/projects/prodigal-swan.jpg" alt="Prodigal Swan art installation" className="absolute inset-0 w-full h-full object-cover" />
@@ -257,15 +257,33 @@ export default function HomePage() {
 
       {/* FOOTER */}
       <footer className="border-t border-[#48474b]/20">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto py-12 px-8">
-          <div className="flex items-center gap-4">
-            <span className="font-black">Go Run Rabbit LLC</span>
-            <span className="text-[#48474b] text-sm">&copy; 2026</span>
+        <div className="max-w-7xl mx-auto py-12 px-8">
+          <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
+            <div>
+              <span className="font-black text-lg">Go Run Rabbit LLC</span>
+              <p className="text-[#48474b] text-xs mt-1">Event Production &middot; Hospitality Technology &middot; Las Vegas</p>
+            </div>
+            <div className="flex flex-col md:flex-row gap-8">
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#48474b] mb-3">Projects</p>
+                <div className="flex flex-col gap-2">
+                  <a href="https://swanforestcamp.com" target="_blank" rel="noopener noreferrer" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Swan Forest Camp</a>
+                  <a href="https://foresthou.se" target="_blank" rel="noopener noreferrer" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Forest House</a>
+                  <a href="https://eastfremontdistrict.com" target="_blank" rel="noopener noreferrer" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">F.E.E.D. — East Fremont District</a>
+                </div>
+              </div>
+              <div>
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#48474b] mb-3">Links</p>
+                <div className="flex flex-col gap-2">
+                  <a href="mailto:keith@gorunrabbit.com" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Contact</a>
+                  <a href="https://swanforestcamp.com/terms" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Terms</a>
+                  <a href="https://swanforestcamp.com/privacy" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Privacy</a>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-6">
-            <a href="mailto:keith@gorunrabbit.com" className="text-[#767579] text-xs uppercase tracking-widest hover:text-[#00eefc] transition-colors">Contact</a>
-            <a href="https://swanforestcamp.com/terms" className="text-[#767579] text-xs uppercase tracking-widest hover:text-[#00eefc] transition-colors">Terms</a>
-            <a href="https://swanforestcamp.com/privacy" className="text-[#767579] text-xs uppercase tracking-widest hover:text-[#00eefc] transition-colors">Privacy</a>
+          <div className="border-t border-[#48474b]/10 pt-6 text-[#48474b] text-xs">
+            &copy; 2026 Go Run Rabbit LLC
           </div>
         </div>
       </footer>
