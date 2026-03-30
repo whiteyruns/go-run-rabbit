@@ -259,11 +259,13 @@ export default function HomePage() {
       <footer className="border-t border-[#48474b]/20">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6 max-w-7xl mx-auto py-12 px-8">
           <div className="flex items-center gap-4">
-            <span className="font-black">Keith White.</span>
-            <span className="text-gray-600 text-sm">&copy; 2026 Go Run Rabbit LLC</span>
+            <span className="font-black">Go Run Rabbit LLC</span>
+            <span className="text-[#48474b] text-sm">&copy; 2026</span>
           </div>
-          <div className="flex gap-8">
-            <span className="text-gray-600 text-xs uppercase tracking-widest">Las Vegas, NV</span>
+          <div className="flex gap-6">
+            <a href="mailto:keith@gorunrabbit.com" className="text-[#767579] text-xs uppercase tracking-widest hover:text-[#00eefc] transition-colors">Contact</a>
+            <a href="https://swanforestcamp.com/terms" className="text-[#767579] text-xs uppercase tracking-widest hover:text-[#00eefc] transition-colors">Terms</a>
+            <a href="https://swanforestcamp.com/privacy" className="text-[#767579] text-xs uppercase tracking-widest hover:text-[#00eefc] transition-colors">Privacy</a>
           </div>
         </div>
       </footer>
