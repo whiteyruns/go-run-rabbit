@@ -167,7 +167,7 @@ export default function HomePage() {
           <div className="px-8 max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
               <div className="space-y-6">
-                <div className="text-[#00eefc] text-4xl">&#127902;</div>
+                <svg className="w-9 h-9 text-[#00eefc]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" /></svg>
                 <h3 className="text-2xl font-bold">Event Production</h3>
                 <p className="text-[#acaaae] leading-relaxed">
                   Large-scale festival and concert production. Theme camp buildout for Burning Man.
@@ -175,7 +175,7 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="space-y-6">
-                <div className="text-[#aea2ff] text-4xl">&#128200;</div>
+                <svg className="w-9 h-9 text-[#aea2ff]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" /></svg>
                 <h3 className="text-2xl font-bold">Hospitality Technology</h3>
                 <p className="text-[#acaaae] leading-relaxed">
                   POS analytics dashboards integrating Toast and SevenRooms. Sponsorship intelligence platforms.
@@ -183,7 +183,7 @@ export default function HomePage() {
                 </p>
               </div>
               <div className="space-y-6">
-                <div className="text-[#ff6b98] text-4xl">&#9881;</div>
+                <svg className="w-9 h-9 text-[#ff6b98]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17l-5.657-5.657a8 8 0 1111.314 0l-5.657 5.657zm0 0L12 21m-7.5-9h15M3.75 7.5h16.5" /></svg>
                 <h3 className="text-2xl font-bold">Operations Platforms</h3>
                 <p className="text-[#acaaae] leading-relaxed">
                   Camp management software with interactive maps and real-time tracking.
@@ -241,14 +241,9 @@ export default function HomePage() {
               <p className="text-xl text-[#acaaae] max-w-2xl mx-auto mb-12">
                 Whether it&apos;s a venue sponsorship strategy, a concert series, or a custom platform — let&apos;s talk.
               </p>
-              <div className="flex flex-col md:flex-row justify-center gap-6">
-                <a href="mailto:keith@gorunrabbit.com" className="bg-[#aea2ff] text-[#1f0078] px-10 py-5 rounded-md font-bold text-lg hover:bg-[#a092ff] transition-all">
-                  keith@gorunrabbit.com
-                </a>
-                <a href="https://swanforestcamp.com" target="_blank" rel="noopener noreferrer" className="px-10 py-5 border border-[#48474b] rounded-md font-bold text-lg hover:bg-[#19191d] transition-all">
-                  Swan Forest Camp
-                </a>
-              </div>
+              <a href="mailto:keith@gorunrabbit.com" className="bg-[#aea2ff] text-[#1f0078] px-10 py-5 rounded-md font-bold text-lg hover:bg-[#a092ff] transition-all inline-block">
+                keith@gorunrabbit.com
+              </a>
             </div>
           </div>
         </section>
