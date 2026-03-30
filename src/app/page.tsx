@@ -21,7 +21,7 @@ export default function HomePage() {
       <nav className="fixed top-0 w-full z-50 bg-[#0a0a0e]/60 backdrop-blur-xl">
         <div className="flex justify-between items-center px-8 py-4 max-w-7xl mx-auto">
           <Link href="/" className="hover:opacity-80 transition-opacity">
-            <img src="/grr-icon.png" alt="Go Run Rabbit" className="h-8" />
+            <img src="/grr-icon.png" alt="Go Run Rabbit" className="h-10" />
           </Link>
           <div className="hidden md:flex items-center gap-8">
             <a href="#work" className="text-gray-500 hover:text-gray-100 transition-all text-xs uppercase tracking-[0.2em]">Work</a>
@@ -257,7 +257,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto py-12 px-8">
           <div className="flex flex-col md:flex-row justify-between items-start gap-8 mb-8">
             <div>
-              <img src="/grr-wordmark.png" alt="Go Run Rabbit" className="h-6 mb-2" />
+              <img src="/grr-wordmark.png" alt="Go Run Rabbit" className="h-8 mb-2" />
               <p className="text-[#48474b] text-xs">Event Production &middot; Hospitality Technology &middot; Las Vegas</p>
             </div>
             <div className="flex flex-col md:flex-row gap-8">
