@@ -140,7 +140,7 @@ export default function BrandRecapPage() {
                       return venue ? (
                         <div key={vid} className="flex items-center gap-2 bg-[#25252a] rounded-full px-3 py-1">
                           <img src={`/venues/${vid}.jpg`} alt="" className="w-4 h-4 rounded-full object-cover" />
-                          <span className="text-xs">{venue.name}</span>
+                          <a href={`/venue/${vid}`} target="_blank" rel="noopener noreferrer" className="text-xs text-[#aea2ff] hover:text-[#00eefc] transition-colors">{venue.name}</a>
                         </div>
                       ) : null;
                     })}
@@ -191,7 +191,7 @@ export default function BrandRecapPage() {
                 <div key={v.id} className="bg-[#19191d] rounded-xl p-4 flex items-center gap-5">
                   <img src={`/venues/${v.id}.jpg`} alt={v.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
                   <div className="flex-1">
-                    <h4 className="font-bold text-sm">{v.name}</h4>
+                    <a href={`/venue/${v.id}`} target="_blank" rel="noopener noreferrer" className="font-bold text-sm text-[#aea2ff] hover:text-[#00eefc] transition-colors">{v.name}</a>
                     <p className="text-[#acaaae] text-xs">{v.type} &middot; {fmtNum(v.avgWeeklyFootTraffic)}/wk</p>
                   </div>
                   <div className="flex flex-wrap gap-1 justify-end">

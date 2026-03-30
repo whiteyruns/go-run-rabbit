@@ -126,7 +126,7 @@ export default function PitchPage() {
                 <img src={`/venues/${v.id}.jpg`} alt={v.name} className="w-24 h-24 rounded-xl object-cover flex-shrink-0" />
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
-                    <h4 className="text-[#f3f0f4] font-bold text-lg">{v.name}</h4>
+                    <a href={`/venue/${v.id}`} target="_blank" rel="noopener noreferrer" className="font-bold text-lg text-[#aea2ff] hover:text-[#00eefc] transition-colors">{v.name}</a>
                     <span className="text-[#acaaae] text-xs">{v.type}</span>
                   </div>
                   <p className="text-[#acaaae] text-xs mb-2">{v.address} &middot; {v.zone}</p>

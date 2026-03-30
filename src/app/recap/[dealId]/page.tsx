@@ -241,7 +241,7 @@ export default function RecapPage() {
                   <div key={v.id} className="bg-[#19191d] rounded-xl p-4 flex items-center gap-5">
                     <img src={`/venues/${v.id}.jpg`} alt={v.name} className="w-16 h-16 rounded-lg object-cover flex-shrink-0" />
                     <div className="flex-1">
-                      <h4 className="text-[#f3f0f4] font-bold">{v.name}</h4>
+                      <a href={`/venue/${v.id}`} target="_blank" rel="noopener noreferrer" className="font-bold text-[#aea2ff] hover:text-[#00eefc] transition-colors">{v.name}</a>
                       <p className="text-[#acaaae] text-xs">{v.type} &middot; Cap {fmtNum(v.capacity)} &middot; {fmtNum(v.avgWeeklyFootTraffic)}/wk</p>
                       {venuePoints.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 mt-1.5">
