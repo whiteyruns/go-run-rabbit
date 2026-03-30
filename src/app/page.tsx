@@ -76,15 +76,15 @@ export default function HomePage() {
             <a href="https://cbm.gorunrabbit.com" target="_blank" rel="noopener noreferrer" className="md:col-span-8 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/9]">
                 <img src="/projects/cbm-dashboard.jpg" alt="CBM Sponsorship Dashboard" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/70 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-[#aea2ff] text-[#1f0078] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Next.js</span>
                     <span className="bg-[#00eefc] text-[#005359] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Prisma</span>
                     <span className="bg-[#ff6b98] text-[#47001d] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Recharts</span>
                   </div>
-                  <h3 className="text-3xl font-bold mb-2">CBM Sponsorship Dashboard</h3>
-                  <p className="text-[#acaaae] max-w-md">9-venue sponsorship intelligence platform for Corner Bar Management. POS analytics, case depletion modeling, brand pitch generation.</p>
+                  <h3 className="text-3xl font-bold mb-2 drop-shadow-lg">CBM Sponsorship Dashboard</h3>
+                  <p className="text-[#d0cfd2] max-w-md drop-shadow-md">9-venue sponsorship intelligence platform for Corner Bar Management. POS analytics, case depletion modeling, brand pitch generation.</p>
                 </div>
               </div>
             </a>
@@ -93,13 +93,13 @@ export default function HomePage() {
             <a href="https://swanforestcamp.com" target="_blank" rel="noopener noreferrer" className="md:col-span-4 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] h-full min-h-[300px]">
                 <img src="/projects/swan-forest-admin.jpg" alt="Swan Forest Camp Operations" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-80" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/80 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-[#ff6b98] text-[#47001d] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Firebase</span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">Swan Forest Camp</h3>
-                  <p className="text-[#acaaae] text-sm">Full operations platform — interactive grid maps, real-time tracking, Stripe payments, member management.</p>
+                  <h3 className="text-2xl font-bold mb-2 drop-shadow-lg">Swan Forest Camp</h3>
+                  <p className="text-[#d0cfd2] text-sm drop-shadow-md">Full operations platform — interactive grid maps, real-time tracking, Stripe payments, member management.</p>
                 </div>
               </div>
             </a>
@@ -108,14 +108,14 @@ export default function HomePage() {
             <a href="https://eastfremontdistrict.com" target="_blank" rel="noopener noreferrer" className="md:col-span-7 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
                 <img src="/projects/efd.jpg" alt="East Fremont District platform" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/70 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-[#00eefc] text-[#005359] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Supabase</span>
                     <span className="bg-[#aea2ff] text-[#1f0078] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Resend</span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">F.E.E.D. — East Fremont District</h3>
-                  <p className="text-[#acaaae] text-sm">B2B marketing platform — &quot;Rent an Entire Entertainment District.&quot; 16 venues, activation tiers, inquiry pipeline.</p>
+                  <h3 className="text-2xl font-bold mb-2 drop-shadow-lg">F.E.E.D. — East Fremont District</h3>
+                  <p className="text-[#d0cfd2] text-sm drop-shadow-md">B2B marketing platform — &quot;Rent an Entire Entertainment District.&quot; 16 venues, activation tiers, inquiry pipeline.</p>
                 </div>
               </div>
             </a>
@@ -124,13 +124,13 @@ export default function HomePage() {
             <a href="https://eastfremontdistrict.com" target="_blank" rel="noopener noreferrer" className="md:col-span-5 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
                 <img src="/projects/feed-the-block.jpg" alt="Feed the Block concert event" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/70 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <div className="flex flex-wrap gap-2 mb-4">
                     <span className="bg-[#00eefc] text-[#005359] text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Production</span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">Feed the Block</h3>
-                  <p className="text-[#acaaae] text-sm">Concert series — Marshmello, Gryffin, Diplo. 100K+ projected 2026. $400K municipal sponsorship.</p>
+                  <h3 className="text-2xl font-bold mb-2 drop-shadow-lg">Feed the Block</h3>
+                  <p className="text-[#d0cfd2] text-sm drop-shadow-md">Concert series — Marshmello, Gryffin, Diplo. 100K+ projected 2026. $400K municipal sponsorship.</p>
                 </div>
               </div>
             </a>
@@ -139,10 +139,10 @@ export default function HomePage() {
             <a href="https://foresthou.se" target="_blank" rel="noopener noreferrer" className="md:col-span-5 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
                 <img src="/projects/forest-house.jpg" alt="Forest House Art Car" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/70 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8">
-                  <h3 className="text-2xl font-bold mb-2">Forest House Art Car</h3>
-                  <p className="text-[#acaaae] text-sm">Mobile stage for Burning Man + EDC. Main stage for Feed the Block series.</p>
+                  <h3 className="text-2xl font-bold mb-2 drop-shadow-lg">Forest House Art Car</h3>
+                  <p className="text-[#d0cfd2] text-sm drop-shadow-md">Mobile stage for Burning Man + EDC. Main stage for Feed the Block series.</p>
                 </div>
               </div>
             </a>
@@ -151,10 +151,10 @@ export default function HomePage() {
             <div className="md:col-span-7 group cursor-pointer">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[21/10]">
                 <img src="/projects/prodigal-swan.jpg" alt="Prodigal Swan art installation" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-transparent to-transparent opacity-60" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/70 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8">
-                  <h3 className="text-2xl font-bold mb-2">Prodigal Swan</h3>
-                  <p className="text-[#acaaae] text-sm">Large-scale art installation — Burning Man. Design, fabrication, and playa logistics.</p>
+                  <h3 className="text-2xl font-bold mb-2 drop-shadow-lg">Prodigal Swan</h3>
+                  <p className="text-[#d0cfd2] text-sm drop-shadow-md">Large-scale art installation — Burning Man. Design, fabrication, and playa logistics.</p>
                 </div>
               </div>
             </div>
