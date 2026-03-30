@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     try {
       const { Resend } = await import("resend");
       const resend = new Resend(process.env.RESEND_API_KEY);
-      const recapUrl = `${process.env.NEXT_PUBLIC_URL || "https://cbm.claymoreandcolt.com"}/recap/brand/${dealId}/${type}`;
+      const recapUrl = `${process.env.NEXT_PUBLIC_URL || "https://cbm.gorunrabbit.com"}/recap/brand/${dealId}/${type}`;
 
       await resend.emails.send({
         from: "CBM Dashboards <recaps@gorunrabbit.com>",

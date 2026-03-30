@@ -234,7 +234,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
     case "send_recap_link": {
       const deal = await prisma.pipelineDeal.findUnique({ where: { id: input.dealId as string } });
       if (!deal) return "Deal not found";
-      const recapUrl = `https://cbm.claymoreandcolt.com/recap/brand/${deal.id}/${input.type}`;
+      const recapUrl = `https://cbm.gorunrabbit.com/recap/brand/${deal.id}/${input.type}`;
 
       await prisma.recapLog.create({
         data: {
