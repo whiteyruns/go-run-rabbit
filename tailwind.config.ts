@@ -40,6 +40,23 @@ const config: Config = {
           DEFAULT: "#767579",
           variant: "#48474b",
         },
+        // Basin & Range — Mojave Monolith design system
+        "br-bg": "#12110f",
+        "br-surface": {
+          DEFAULT: "#12110f",
+          lowest: "#0c0b09",
+          low: "#1a1815",
+          container: "#252219",
+          high: "#332e24",
+          highest: "#3d3730",
+          bright: "#4a4238",
+        },
+        "br-primary": { DEFAULT: "#e5c276", container: "#c4a35a", dim: "#d4b05e" },
+        "br-on-primary": "#3f2e00",
+        "br-secondary": "#d5c5a9",
+        "br-tertiary": "#d3c4b2",
+        "br-on-surface": { DEFAULT: "#e6e1e1", variant: "#d0c5b4" },
+        "br-outline": { DEFAULT: "#9a9182", variant: "#584e3e" },
       },
       fontFamily: {
         sans: ["var(--font-manrope)", "system-ui", "sans-serif"],
