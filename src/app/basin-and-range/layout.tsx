@@ -33,7 +33,7 @@ export default function BasinRangeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${inter.variable} ${epilogue.variable} basin-range-scope`}>
+    <div className={`${inter.variable} ${epilogue.variable} basin-range-scope`} style={{ background: '#12110f', color: '#e6e1e1' }}>
       <style>{`
         .basin-range-scope {
           --color-bg: #12110f;
