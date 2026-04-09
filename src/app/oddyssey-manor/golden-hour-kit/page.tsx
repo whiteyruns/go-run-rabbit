@@ -130,7 +130,6 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-gh-sub">OPEN BAR</div>
                 <div className="mock-gh-time">10 PM &ndash; MIDNIGHT</div>
                 <div className="mock-gh-detail">
-                  Bandido Margarita &bull; Inside Job &bull; Bandido Lemonade<br />
                   <span>featuring El Bandido Tequila</span>
                 </div>
                 <div className="mock-gh-rsvp">RSVP = FREE ENTRY</div>
