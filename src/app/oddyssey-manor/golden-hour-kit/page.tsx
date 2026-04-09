@@ -67,7 +67,7 @@ export default function GoldenHourKitPage() {
             {
               num: "Post 1", type: "Launch Announcement",
               visual: "Dark, moody cocktail shot \u2022 El Bandido bottle visible \u2022 Text overlay: GOLDEN HOUR / OPEN BAR / 10 PM\u2013Midnight",
-              caption: `Something new starts this Friday. 🪩
+              caption: `Something new starts this Friday. ✨
 
 Golden Hour. Doors at 10. Open bar till midnight. @elbandidotequila cocktails on us — Palomas, Spicy Margaritas, Tequila Sodas — while supplies last.
 
@@ -88,12 +88,12 @@ Tequila Soda — lime, soda. Clean and fast.
 
 10 PM – Midnight. While supplies last. First come, first served.
 
-Save this for later so you know what to order. 🪩`,
+Save this for later so you know what to order. ✨`,
             },
             {
               num: "Post 3", type: "Saturday Replay",
               visual: "Friday night recap footage \u2022 Crowd energy, cocktails, performers",
-              caption: `Friday's Golden Hour ran dry in [XX] minutes. 🪩🖤
+              caption: `Friday's Golden Hour ran dry in [XX] minutes. ✨🖤
 
 Saturday's your second chance. Same deal. Open bar. 10 PM – Midnight. @elbandidotequila cocktails on us, while supplies last.
 
@@ -114,7 +114,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
           <p className="kit-note">5-story sequence to run day-of (Friday and Saturday)</p>
           <div className="kit-story-grid">
             {[
-              { slide: "1", visual: "Black screen, slow text reveal", text: "Tonight. 🪩" },
+              { slide: "1", visual: "Black screen, slow text reveal", text: "Tonight. ✨" },
               { slide: "2", visual: "Cocktail pour, slow-mo, moody", text: "Golden Hour. Open bar. 10 PM." },
               { slide: "3", visual: "Bartender lining up glasses", text: "Paloma. Spicy Marg. Tequila Soda. All @elbandidotequila. All free." },
               { slide: "4", visual: "Venue interior, performers, crowd", text: "Then Liquid Gold / Art in Motion takes over at midnight. 🖤" },
@@ -143,7 +143,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
             <CopyableBlock label="Email Body" text={`GOLDEN HOUR
 Open Bar featuring El Bandido Tequila
 
-Something new this Friday and Saturday at Oddyssey. 🪩
+Something new this Friday and Saturday at Oddyssey. ✨
 
 Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails — Palomas, Spicy Margaritas, Tequila Sodas — on us. While supplies last.
 
@@ -157,7 +157,7 @@ Doors: 10 PM | Golden Hour: 10 PM – Midnight | Oddyssey at AREA15 | 21+ only`}
             <div className="kit-email-body" style={{ padding: 0 }}>
               <h3 style={{ color: "#d4a574", fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 300, letterSpacing: 2, marginBottom: 8 }}>GOLDEN HOUR</h3>
               <p style={{ color: "#5a5650", fontSize: 12, letterSpacing: 2, marginBottom: 16 }}>Open Bar featuring El Bandido Tequila</p>
-              <p>Something new this Friday and Saturday at Oddyssey. 🪩</p>
+              <p>Something new this Friday and Saturday at Oddyssey. ✨</p>
               <p>Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails &mdash; Palomas, Spicy Margaritas, Tequila Sodas &mdash; on us. While supplies last.</p>
               <p>RSVP and you&rsquo;re in free. No ticket. No cover.</p>
               <p>The bar runs dry when it runs dry. No extensions. After midnight, the night evolves &mdash; Liquid Gold on Fridays, Art in Motion on Saturdays. Two dance floors. Performers in the crowd. DJs through close. 🖤</p>
