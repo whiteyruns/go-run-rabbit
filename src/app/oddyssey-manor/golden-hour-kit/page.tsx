@@ -108,6 +108,95 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
           ))}
         </div>
 
+        {/* Creative Mockups */}
+        <div className="kit-section">
+          <div className="kit-section-title">Creative Mockups</div>
+          <p className="kit-note">Visual direction for social assets. Screenshot or use as creative brief for design team.</p>
+
+          <div className="mock-grid">
+            {/* Golden Hour Main Promo */}
+            <div className="mock-card mock-golden-hour">
+              <div className="mock-overlay" />
+              <div className="mock-content">
+                <div className="mock-area15">AREA15 / DISTRICT</div>
+                <div className="mock-gh-title">GOLDEN<br />HOUR</div>
+                <div className="mock-gh-sub">OPEN BAR</div>
+                <div className="mock-gh-time">10 PM &ndash; MIDNIGHT</div>
+                <div className="mock-gh-detail">
+                  Paloma &bull; Spicy Margarita &bull; Tequila Soda<br />
+                  <span>featuring El Bandido Tequila</span>
+                </div>
+                <div className="mock-gh-rsvp">RSVP = FREE ENTRY</div>
+                <div className="mock-gh-nights">
+                  <span>Fridays: Liquid Gold ✨</span>
+                  <span>Saturdays: Art in Motion 🖤</span>
+                </div>
+                <div className="mock-gh-cta">while supplies last</div>
+              </div>
+            </div>
+
+            {/* Liquid Gold Friday */}
+            <div className="mock-card mock-liquid-gold">
+              <div className="mock-overlay" />
+              <div className="mock-content">
+                <div className="mock-tag-friday">FRIDAY 04.18</div>
+                <div className="mock-lg-title">LIQUID<br />GOLD</div>
+                <div className="mock-lg-dj">BERRI</div>
+                <div className="mock-lg-genre">House &bull; Electronic</div>
+                <div className="mock-lg-golden">
+                  Golden Hour 10 PM &ndash; Midnight<br />
+                  <span>Open bar &bull; Free entry with RSVP</span>
+                </div>
+                <div className="mock-lg-venue">AREA15 &bull; Oddyssey</div>
+              </div>
+            </div>
+
+            {/* Art in Motion Saturday */}
+            <div className="mock-card mock-art-in-motion">
+              <div className="mock-overlay" />
+              <div className="mock-content">
+                <div className="mock-tag-saturday">SATURDAY 04.19</div>
+                <div className="mock-aim-title">ART IN<br />MOTION</div>
+                <div className="mock-aim-dj">HECTOR ROMERO</div>
+                <div className="mock-aim-genre">Multi-genre &bull; Immersive</div>
+                <div className="mock-aim-golden">
+                  Golden Hour 10 PM &ndash; Midnight<br />
+                  <span>Open bar &bull; Free entry with RSVP</span>
+                </div>
+                <div className="mock-aim-venue">AREA15 &bull; Oddyssey</div>
+              </div>
+            </div>
+
+            {/* Weekend Lineup */}
+            <div className="mock-card mock-weekend">
+              <div className="mock-overlay" />
+              <div className="mock-content">
+                <div className="mock-wk-header">THIS WEEKEND</div>
+                <div className="mock-wk-golden">GOLDEN HOUR &bull; OPEN BAR &bull; 10 PM</div>
+                <div className="mock-wk-split">
+                  <div className="mock-wk-night mock-wk-fri">
+                    <div className="mock-wk-day">FRIDAY</div>
+                    <div className="mock-wk-name">Liquid Gold ✨</div>
+                    <div className="mock-wk-dj">BERRI</div>
+                    <div className="mock-wk-desc">House &bull; Electronic</div>
+                  </div>
+                  <div className="mock-wk-divider" />
+                  <div className="mock-wk-night mock-wk-sat">
+                    <div className="mock-wk-day">SATURDAY</div>
+                    <div className="mock-wk-name">Art in Motion 🖤</div>
+                    <div className="mock-wk-dj">HECTOR ROMERO</div>
+                    <div className="mock-wk-desc">Multi-genre &bull; Immersive</div>
+                  </div>
+                </div>
+                <div className="mock-wk-footer">
+                  RSVP = Free Entry &bull; Open Bar while supplies last<br />
+                  <span>AREA15 &bull; Oddyssey &bull; 10 PM &bull; 21+</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Story Sequence */}
         <div className="kit-section">
           <div className="kit-section-title">Instagram / TikTok Story Sequence</div>
@@ -357,6 +446,124 @@ const kitStyles = `
 .kit-table { width: 100%; border-collapse: collapse; }
 .kit-table th { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; text-align: left; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight: 500; }
 .kit-table td { padding: 14px 16px; font-size: 13px; color: #9a958d; border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+/* ═══ CREATIVE MOCKUPS ═══ */
+.mock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.mock-card {
+  aspect-ratio: 1/1; position: relative; overflow: hidden; display: flex;
+  align-items: center; justify-content: center;
+}
+.mock-overlay { position: absolute; inset: 0; z-index: 1; }
+.mock-content {
+  position: relative; z-index: 2; text-align: center; padding: 32px;
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+
+/* Golden Hour Main */
+.mock-golden-hour {
+  background: linear-gradient(160deg, #0c0906 0%, #1a140a 40%, #0d0808 100%);
+}
+.mock-golden-hour .mock-overlay {
+  background:
+    radial-gradient(ellipse at 50% 70%, rgba(212,165,116,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 30% 30%, rgba(201,168,76,0.06) 0%, transparent 50%);
+}
+.mock-area15 { font-size: 9px; letter-spacing: 4px; color: #5a5650; margin-bottom: 24px; }
+.mock-gh-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 52px; font-weight: 300;
+  letter-spacing: 6px; line-height: 1; color: #d4a574; margin-bottom: 12px;
+}
+.mock-gh-sub { font-size: 11px; letter-spacing: 5px; color: #e8e4dd; margin-bottom: 4px; }
+.mock-gh-time { font-size: 13px; letter-spacing: 3px; color: #9a958d; margin-bottom: 20px; }
+.mock-gh-detail { font-size: 11px; color: #9a958d; line-height: 1.8; margin-bottom: 20px; }
+.mock-gh-detail span { color: #d4a574; font-size: 10px; letter-spacing: 2px; }
+.mock-gh-rsvp {
+  font-size: 10px; letter-spacing: 3px; color: #0c0906; background: #d4a574;
+  padding: 10px 28px; margin-bottom: 20px;
+}
+.mock-gh-nights { font-size: 10px; letter-spacing: 1.5px; color: #5a5650; margin-bottom: 8px; }
+.mock-gh-nights span { display: block; margin: 4px 0; }
+.mock-gh-cta { font-size: 9px; letter-spacing: 3px; color: #5a5650; text-transform: uppercase; }
+
+/* Liquid Gold Friday */
+.mock-liquid-gold {
+  background:
+    linear-gradient(180deg, rgba(6,6,6,0.6), rgba(6,6,6,0.85)),
+    url('/oddyssey/liquid-gold-friday.webp') center/cover no-repeat;
+}
+.mock-tag-friday { font-size: 10px; letter-spacing: 4px; color: #d4a574; margin-bottom: 20px; }
+.mock-lg-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300;
+  letter-spacing: 5px; line-height: 1.05; color: #e8e4dd; margin-bottom: 16px;
+}
+.mock-lg-dj { font-size: 20px; letter-spacing: 4px; color: #d4a574; margin-bottom: 6px; }
+.mock-lg-genre { font-size: 11px; letter-spacing: 2px; color: #5a5650; margin-bottom: 24px; }
+.mock-lg-golden {
+  font-size: 10px; letter-spacing: 2px; color: #9a958d; line-height: 1.8;
+  padding: 12px 0; border-top: 1px solid rgba(212,165,116,0.15); border-bottom: 1px solid rgba(212,165,116,0.15);
+  margin-bottom: 16px;
+}
+.mock-lg-golden span { color: #d4a574; }
+.mock-lg-venue { font-size: 9px; letter-spacing: 3px; color: #5a5650; }
+
+/* Art in Motion Saturday */
+.mock-art-in-motion {
+  background:
+    linear-gradient(180deg, rgba(6,6,6,0.7), rgba(6,6,6,0.9)),
+    url('/oddyssey/oddyssey-noir-event.webp') center/cover no-repeat;
+}
+.mock-tag-saturday { font-size: 10px; letter-spacing: 4px; color: #9a958d; margin-bottom: 20px; }
+.mock-aim-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 300;
+  letter-spacing: 5px; line-height: 1.05; color: #e8e4dd; margin-bottom: 16px;
+}
+.mock-aim-dj { font-size: 20px; letter-spacing: 4px; color: #e8e4dd; margin-bottom: 6px; }
+.mock-aim-genre { font-size: 11px; letter-spacing: 2px; color: #5a5650; margin-bottom: 24px; }
+.mock-aim-golden {
+  font-size: 10px; letter-spacing: 2px; color: #9a958d; line-height: 1.8;
+  padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 16px;
+}
+.mock-aim-golden span { color: #c9a84c; }
+.mock-aim-venue { font-size: 9px; letter-spacing: 3px; color: #5a5650; }
+
+/* Weekend Lineup */
+.mock-weekend {
+  background: linear-gradient(180deg, #080608 0%, #0c0a08 50%, #080608 100%);
+  grid-column: 1 / -1; aspect-ratio: 2/1;
+}
+.mock-weekend .mock-overlay {
+  background: radial-gradient(ellipse at 50% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+}
+.mock-wk-header {
+  font-size: 12px; letter-spacing: 6px; color: #e8e4dd; margin-bottom: 8px;
+}
+.mock-wk-golden {
+  font-size: 9px; letter-spacing: 3px; color: #d4a574; margin-bottom: 28px;
+}
+.mock-wk-split { display: flex; gap: 0; align-items: center; width: 100%; margin-bottom: 28px; }
+.mock-wk-night { flex: 1; padding: 0 24px; }
+.mock-wk-divider { width: 1px; height: 80px; background: rgba(255,255,255,0.06); flex-shrink: 0; }
+.mock-wk-day { font-size: 10px; letter-spacing: 4px; color: #5a5650; margin-bottom: 8px; }
+.mock-wk-fri .mock-wk-day { color: #d4a574; }
+.mock-wk-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 300;
+  letter-spacing: 2px; margin-bottom: 8px;
+}
+.mock-wk-dj { font-size: 14px; letter-spacing: 3px; color: #e8e4dd; margin-bottom: 4px; }
+.mock-wk-desc { font-size: 10px; letter-spacing: 1.5px; color: #5a5650; }
+.mock-wk-footer { font-size: 10px; letter-spacing: 2px; color: #9a958d; line-height: 1.8; }
+.mock-wk-footer span { color: #5a5650; font-size: 9px; }
+
+@media (max-width: 600px) {
+  .mock-grid { grid-template-columns: 1fr; }
+  .mock-weekend { aspect-ratio: 1/1; }
+  .mock-wk-split { flex-direction: column; gap: 20px; }
+  .mock-wk-divider { width: 40px; height: 1px; }
+  .mock-gh-title, .mock-lg-title, .mock-aim-title { font-size: 36px; }
+  .mock-wk-name { font-size: 20px; }
+}
 
 .kit-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
