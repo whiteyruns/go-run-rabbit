@@ -117,7 +117,7 @@ function AuditContent() {
               <ul>
                 <li>Late-night club, 2 dance floors</li>
                 <li>Fri &amp; Sat, 10 PM&ndash;Late</li>
-                <li>GA from $21.80 / Tables $200&ndash;$350 min</li>
+                <li>GA from $20 / Tables $200&ndash;$350 min</li>
                 <li>Every Fri/Sat programmed through June &rsquo;26</li>
                 <li>Zero DJ names or talent on website</li>
               </ul>

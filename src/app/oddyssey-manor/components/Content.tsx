@@ -399,7 +399,7 @@ export default function OddysseyContent() {
             <div className="od-label" style={{ textAlign: "center" }}>Secure Your Entry</div>
             <h2 className="od-heading-2" style={{ textAlign: "center" }}>Select Tier</h2>
             <div className="od-ticket-tiers">
-              <TicketTier name="Early Entry" price="$21.80" features={["General admission access", "Both dance floors", "All themed rooms", "Early pricing — limited"]} outline />
+              <TicketTier name="Early Entry" price="$20" features={["General admission access", "Both dance floors", "All themed rooms", "Early pricing — limited"]} outline />
               <TicketTier name="General Admission" price="$35" features={["General admission access", "Both dance floors", "All themed rooms", "All performers & installations"]} featured />
               <TicketTier name="VIP Experience" price="$75" features={["Priority entry — skip the line", "Reserved seating area", "Complimentary welcome drink", "All access + backstage lounge"]} outline />
             </div>
