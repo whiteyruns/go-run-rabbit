@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-type PageName = "home" | "calendar" | "detail";
+type PageName = "home" | "calendar" | "detail" | "private";
 
 export default function OddysseyContent() {
   const [activePage, setActivePage] = useState<PageName>("home");
@@ -44,7 +44,7 @@ export default function OddysseyContent() {
         <ul className="od-nav-links">
           <li><a onClick={() => showPage("calendar")}>Events</a></li>
           <li><a onClick={() => scrollToId("od-experience")}>Manor Experience</a></li>
-          <li><a>Private Events</a></li>
+          <li><a onClick={() => showPage("private")}>Private Events</a></li>
           <li><a>About</a></li>
           <li><a>Visit</a></li>
           <li><a className="od-nav-cta" onClick={() => showPage("calendar")}>Get Tickets</a></li>
@@ -63,7 +63,7 @@ export default function OddysseyContent() {
           <a onClick={() => showPage("home")}>Home</a>
           <a onClick={() => showPage("calendar")}>Events</a>
           <a>Manor Experience</a>
-          <a>Private Events</a>
+          <a onClick={() => showPage("private")}>Private Events</a>
           <a>About</a>
           <a>Visit</a>
           <a onClick={() => showPage("calendar")} style={{ color: "var(--accent)" }}>Get Tickets</a>
@@ -72,13 +72,13 @@ export default function OddysseyContent() {
 
       {/* PAGE NAV */}
       <div className="od-page-nav">
-        {(["home", "calendar", "detail"] as PageName[]).map((p) => (
+        {(["home", "calendar", "detail", "private"] as PageName[]).map((p) => (
           <button
             key={p}
             className={activePage === p ? "active" : ""}
             onClick={() => showPage(p)}
           >
-            {p === "home" ? "Home" : p === "calendar" ? "Calendar" : "Event Detail"}
+            {{ home: "Home", calendar: "Calendar", detail: "Event Detail", private: "Private Events" }[p]}
           </button>
         ))}
       </div>
@@ -417,6 +417,179 @@ export default function OddysseyContent() {
           <section className="od-section-pad od-capture" style={{ borderTop: "1px solid var(--border-subtle)" }}>
             <h2 className="od-heading-2" style={{ marginBottom: 32 }}>Don&apos;t Miss This Night</h2>
             <a className="od-btn-primary">Get Tickets</a>
+          </section>
+
+          <Footer />
+        </div>
+      )}
+
+      {/* ════════ PRIVATE EVENTS ════════ */}
+      {activePage === "private" && (
+        <div>
+          {/* Hero */}
+          <section className="od-private-hero">
+            <div className="od-private-hero-bg" />
+            <div className="od-hero-texture" />
+            <div className="od-private-hero-content">
+              <div className="od-label" style={{ opacity: 0, animation: "odFadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.3s forwards" }}>Host at Oddyssey</div>
+              <h1 style={{ opacity: 0, animation: "odFadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.5s forwards" }}>Private<br />Events</h1>
+              <p className="od-private-hero-sub" style={{ opacity: 0, animation: "odFadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.8s forwards" }}>
+                Immersive venues for unforgettable experiences at AREA15
+              </p>
+            </div>
+          </section>
+
+          {/* Intro */}
+          <section className="od-section-pad" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+            <div style={{ maxWidth: 700 }}>
+              <h2 className="od-heading-2" style={{ marginBottom: 20 }}>Your Event,<br />Our World</h2>
+              <p style={{ fontSize: 15, fontWeight: 300, lineHeight: 1.8, color: "var(--text-secondary)" }}>
+                Transform Oddyssey into your own immersive venue. Whether it&apos;s a corporate
+                reception, product launch, birthday celebration, or bachelorette weekend &mdash;
+                our theatrical spaces, production capabilities, and creative team deliver
+                experiences that can&apos;t be replicated anywhere else in Las Vegas.
+              </p>
+            </div>
+          </section>
+
+          {/* Spaces */}
+          <section className="od-section-pad" style={{ background: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)" }}>
+            <div className="od-label">Available Spaces</div>
+            <h2 className="od-heading-2" style={{ marginBottom: 48 }}>Choose Your Venue</h2>
+            <div className="od-private-spaces">
+              <div className="od-private-space">
+                <div className="od-private-space-img od-private-space-manor" />
+                <div className="od-private-space-content">
+                  <h3>Oddyssey Manor</h3>
+                  <p className="od-private-space-type">Immersive Cocktail Theatre</p>
+                  <div className="od-private-space-details">
+                    <div className="od-private-detail-row">
+                      <span className="od-private-detail-label">Format</span>
+                      <span>Full buyout or sectional</span>
+                    </div>
+                    <div className="od-private-detail-row">
+                      <span className="od-private-detail-label">Ideal for</span>
+                      <span>Corporate receptions, launch events, milestone celebrations</span>
+                    </div>
+                    <div className="od-private-detail-row">
+                      <span className="od-private-detail-label">Includes</span>
+                      <span>Themed rooms, interactive performers, craft cocktail program</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="od-private-space">
+                <div className="od-private-space-img od-private-space-noir" />
+                <div className="od-private-space-content">
+                  <h3>Oddyssey Noir</h3>
+                  <p className="od-private-space-type">Late-Night Dance Environment</p>
+                  <div className="od-private-space-details">
+                    <div className="od-private-detail-row">
+                      <span className="od-private-detail-label">Format</span>
+                      <span>Full buyout or VIP sections</span>
+                    </div>
+                    <div className="od-private-detail-row">
+                      <span className="od-private-detail-label">Ideal for</span>
+                      <span>After-parties, brand activations, bachelorette &amp; birthday</span>
+                    </div>
+                    <div className="od-private-detail-row">
+                      <span className="od-private-detail-label">Includes</span>
+                      <span>Two dance floors, DJ, roaming performers, themed corridors</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Event Types */}
+          <section className="od-section-pad" style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+            <div className="od-label">Event Types</div>
+            <h2 className="od-heading-2" style={{ marginBottom: 48 }}>What We Host</h2>
+            <div className="od-private-types">
+              {[
+                { title: "Corporate", desc: "Receptions, team events, product launches, client entertainment" },
+                { title: "Celebrations", desc: "Birthdays, bachelorette & bachelor parties, anniversaries" },
+                { title: "Brand Activations", desc: "Immersive branded experiences, influencer events, press launches" },
+                { title: "Wedding Events", desc: "Rehearsal dinners, after-parties, non-traditional ceremonies" },
+                { title: "Holiday Parties", desc: "Company holiday events, New Year's Eve, themed seasonal gatherings" },
+                { title: "Full Buyouts", desc: "Exclusive access to Manor, Noir, or both for your group" },
+              ].map((t) => (
+                <div key={t.title} className="od-private-type">
+                  <h4>{t.title}</h4>
+                  <p>{t.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* What's Included */}
+          <section className="od-section-pad" style={{ background: "var(--bg-elevated)", borderBottom: "1px solid var(--border-subtle)" }}>
+            <div className="od-label">Services</div>
+            <h2 className="od-heading-2" style={{ marginBottom: 48 }}>What&apos;s Included</h2>
+            <div className="od-private-services">
+              {[
+                { title: "Production", items: ["Sound & lighting design", "4K projection mapping", "Custom branded content"] },
+                { title: "Entertainment", items: ["Curated DJ sets", "Roaming performers", "Interactive characters"] },
+                { title: "Food & Beverage", items: ["Custom cocktail menus", "Catering packages", "Bottle service & VIP tables"] },
+                { title: "Planning", items: ["Dedicated event coordinator", "Day-of production management", "Photography & videography"] },
+              ].map((s) => (
+                <div key={s.title} className="od-private-service">
+                  <h4>{s.title}</h4>
+                  <ul>
+                    {s.items.map((item) => <li key={item}>{item}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Inquiry Form */}
+          <section className="od-section-pad od-capture">
+            <div className="od-label">Get Started</div>
+            <h2 className="od-heading-2">Request a Consultation</h2>
+            <p className="od-capture-sub">Tell us about your event and our team will follow up within 24 hours.</p>
+            <form className="od-private-form" onSubmit={(e) => e.preventDefault()}>
+              <div className="od-private-form-grid">
+                <input type="text" placeholder="First name" />
+                <input type="text" placeholder="Last name" />
+                <input type="email" placeholder="Email" />
+                <input type="tel" placeholder="Phone" />
+                <input type="text" placeholder="Event date" />
+                <input type="text" placeholder="Guest count" />
+              </div>
+              <select defaultValue="">
+                <option value="" disabled>Event type</option>
+                <option>Corporate</option>
+                <option>Birthday / Celebration</option>
+                <option>Bachelorette / Bachelor</option>
+                <option>Brand Activation</option>
+                <option>Wedding Event</option>
+                <option>Holiday Party</option>
+                <option>Full Buyout</option>
+                <option>Other</option>
+              </select>
+              <textarea placeholder="Tell us about your vision" rows={4} />
+              <button type="submit" className="od-btn-primary" style={{ width: "100%", textAlign: "center" }}>Submit Inquiry</button>
+            </form>
+          </section>
+
+          {/* Info */}
+          <section className="od-section-pad od-info" style={{ borderTop: "1px solid var(--border-subtle)" }}>
+            <div className="od-info-grid">
+              <div className="od-info-item">
+                <h4>Location</h4>
+                <p>Oddyssey at AREA15<br />3202 W Desert Inn Rd<br />Las Vegas, NV 89102</p>
+              </div>
+              <div className="od-info-item">
+                <h4>Contact</h4>
+                <p>events@oddysseylv.com<br />702-846-7900</p>
+              </div>
+              <div className="od-info-item">
+                <h4>Requirements</h4>
+                <p>21+ events only<br />Minimum guest counts apply</p>
+              </div>
+            </div>
           </section>
 
           <Footer />
@@ -1001,6 +1174,110 @@ const styles = `
 .od-gallery-cell-5 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.png') 70% 30%/cover; filter: brightness(0.7); }
 .od-gallery-cell-6 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.png') center 80%/cover; filter: saturate(0.5) brightness(0.9); }
 @media (max-width: 600px) { .od-gallery-grid { grid-template-columns: 1fr 1fr; } }
+
+/* ═══ PRIVATE EVENTS ═══ */
+.od-private-hero {
+  position: relative; height: 55vh; min-height: 420px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: clamp(40px,6vw,100px); overflow: hidden;
+}
+.od-private-hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 70%, rgba(201,168,76,0.06) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(6,6,6,0.3) 0%, rgba(6,6,6,0.85) 100%),
+    url('/oddyssey/drink.png') center/cover no-repeat;
+}
+.od-private-hero-content { position: relative; z-index: 2; }
+.od-private-hero h1 {
+  font-family: var(--serif); font-size: clamp(40px,7vw,76px); font-weight: 300;
+  letter-spacing: clamp(3px,0.8vw,6px); text-transform: uppercase; line-height: 1.05; margin-bottom: 12px;
+}
+.od-private-hero-sub { font-size: 14px; color: var(--text-secondary); letter-spacing: 2px; }
+
+/* Spaces */
+.od-private-spaces { display: flex; flex-direction: column; gap: 1px; background: var(--border-subtle); }
+.od-private-space {
+  display: grid; grid-template-columns: 280px 1fr; background: var(--bg-elevated);
+  transition: background 0.4s;
+}
+.od-private-space:hover { background: var(--bg-card); }
+.od-private-space-img { min-height: 240px; }
+.od-private-space-manor {
+  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/drink.png') center/cover no-repeat;
+}
+.od-private-space-noir {
+  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/oddynoir.png') center/cover no-repeat;
+}
+.od-private-space-content { padding: 32px; }
+.od-private-space-content h3 {
+  font-family: var(--serif); font-size: 24px; font-weight: 400;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
+}
+.od-private-space-type { font-size: 12px; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; }
+.od-private-space-details { display: flex; flex-direction: column; }
+.od-private-detail-row {
+  display: flex; gap: 16px; padding: 10px 0; border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px; color: var(--text-secondary);
+}
+.od-private-detail-row:last-child { border-bottom: none; }
+.od-private-detail-label {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
+  font-weight: 500; min-width: 80px; padding-top: 2px; flex-shrink: 0;
+}
+@media (max-width: 768px) {
+  .od-private-space { grid-template-columns: 1fr; }
+  .od-private-space-img { min-height: 180px; }
+}
+
+/* Event Types */
+.od-private-types {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border-subtle);
+}
+.od-private-type {
+  background: var(--bg); padding: 28px; transition: background 0.3s;
+}
+.od-private-type:hover { background: var(--bg-card); }
+.od-private-type h4 {
+  font-family: var(--serif); font-size: 18px; font-weight: 400;
+  letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;
+}
+.od-private-type p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+@media (max-width: 768px) { .od-private-types { grid-template-columns: 1fr; } }
+
+/* Services */
+.od-private-services {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border-subtle);
+}
+.od-private-service {
+  background: var(--bg-elevated); padding: 28px;
+}
+.od-private-service h4 {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); font-weight: 500; margin-bottom: 16px;
+}
+.od-private-service ul { list-style: none; }
+.od-private-service li {
+  font-size: 13px; color: var(--text-secondary); padding: 6px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.od-private-service li:last-child { border-bottom: none; }
+@media (max-width: 768px) { .od-private-services { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .od-private-services { grid-template-columns: 1fr; } }
+
+/* Inquiry Form */
+.od-private-form { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 0; }
+.od-private-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.od-private-form input, .od-private-form select, .od-private-form textarea {
+  background: var(--bg); border: 1px solid var(--border-subtle); padding: 16px 20px;
+  font-family: var(--sans); font-size: 13px; font-weight: 300; color: var(--text);
+  outline: none; transition: border-color 0.3s; width: 100%;
+}
+.od-private-form input::placeholder, .od-private-form textarea::placeholder { color: var(--text-muted); }
+.od-private-form input:focus, .od-private-form select:focus, .od-private-form textarea:focus { border-color: var(--accent); }
+.od-private-form select { color: var(--text-muted); appearance: none; cursor: pointer; }
+.od-private-form textarea { resize: vertical; min-height: 100px; }
+@media (max-width: 500px) { .od-private-form-grid { grid-template-columns: 1fr; } }
 
 /* ═══ FOOTER ═══ */
 .od-footer {
