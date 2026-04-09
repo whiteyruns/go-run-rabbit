@@ -117,11 +117,11 @@ export default function OddysseyContent() {
             </div>
             <div className="od-event-cards">
               {[
-                { date: "Fri Apr 11", name: "Noir After\nHours", genre: "Techno" },
-                { date: "Sat Apr 12", name: "House of\nOddyssey", genre: "Melodic House" },
-                { date: "Fri Apr 18", name: "Noir After\nHours", genre: "Techno" },
+                { date: "Fri Apr 11", name: "Liquid\nGold", genre: "House · Electronic", night: "friday" },
+                { date: "Sat Apr 12", name: "Oddyssey\nNoir", genre: "Multi-genre · Immersive", night: "saturday" },
+                { date: "Fri Apr 18", name: "Liquid\nGold", genre: "House · Electronic", night: "friday" },
               ].map((evt, i) => (
-                <div key={i} className="od-event-card" onClick={() => showPage("detail")}>
+                <div key={i} className={`od-event-card od-event-card-${evt.night}`} onClick={() => showPage("detail")}>
                   <div className="od-event-date">{evt.date}</div>
                   <div className="od-event-name">{evt.name.split("\n").map((l, j) => <span key={j}>{l}<br /></span>)}</div>
                   <div className="od-event-genre">{evt.genre}</div>
@@ -138,13 +138,16 @@ export default function OddysseyContent() {
                 <div className="od-label">The Experience</div>
                 <h2 className="od-heading-2">What is<br />Oddyssey Noir</h2>
                 <p className="od-about-text">
-                  An immersive electronic music environment combining theatrical performance,
-                  underground sound, and unexpected spaces. Two high-energy dance floors,
-                  roaming performers, dystopian art installations, and themed rooms that shift
-                  through the night.
+                  A sensual maze and seductive living room with a pulse, tucked away inside
+                  the Oddyssey building at AREA15. Themed rooms and textured corridors open
+                  into dynamic dance floors designed for connection and community. Music drives
+                  the emotional arc of the night as performers move through the experience as
+                  living guides — the entire environment breathing, shifting, and responding
+                  in real time.
                 </p>
+                <p className="od-about-tagline">You&apos;ve Arrived.</p>
                 <ul className="od-about-features">
-                  {["Multi-room environments", "Rotating performers", "Curated DJs", "Immersive lighting design", "Late night programming"].map((f) => (
+                  {["Themed rooms & textured corridors", "Dynamic dance floors", "Performers as living guides", "Music-driven emotional arc", "Designed for connection & community"].map((f) => (
                     <li key={f}>{f}</li>
                   ))}
                 </ul>
@@ -277,32 +280,32 @@ export default function OddysseyContent() {
           <div className="od-calendar-list">
             <CalendarMonth title="April 2026" />
             {[
-              { date: "Fri Apr 11", name: "Noir After Hours", genre: "Techno" },
-              { date: "Sat Apr 12", name: "House of Oddyssey", genre: "Melodic House" },
-              { date: "Fri Apr 18", name: "Noir After Hours", genre: "Techno" },
-              { date: "Sat Apr 19", name: "House of Oddyssey", genre: "Melodic House" },
-              { date: "Fri Apr 25", name: "Noir After Hours", genre: "Techno · Deep" },
-              { date: "Sat Apr 26", name: "House of Oddyssey", genre: "Melodic House" },
+              { date: "Fri Apr 11", name: "Liquid Gold", genre: "House · Electronic" },
+              { date: "Sat Apr 12", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
+              { date: "Fri Apr 18", name: "Liquid Gold", genre: "House · Electronic" },
+              { date: "Sat Apr 19", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
+              { date: "Fri Apr 25", name: "Liquid Gold", genre: "House · Electronic" },
+              { date: "Sat Apr 26", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
 
             <CalendarMonth title="May 2026" />
             {[
-              { date: "Fri May 02", name: "Noir After Hours", genre: "Techno" },
-              { date: "Sat May 03", name: "House of Oddyssey", genre: "Melodic House" },
-              { date: "Fri May 09", name: "Noir After Hours", genre: "Techno · Warehouse" },
-              { date: "Sat May 10", name: "House of Oddyssey", genre: "Melodic House · Progressive" },
+              { date: "Fri May 02", name: "Liquid Gold", genre: "House · Electronic" },
+              { date: "Sat May 03", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
+              { date: "Fri May 09", name: "Liquid Gold", genre: "House · Electronic" },
+              { date: "Sat May 10", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
 
             <CalendarMonth title="June 2026" />
             {[
-              { date: "Fri Jun 06", name: "Noir After Hours", genre: "Techno" },
-              { date: "Sat Jun 07", name: "House of Oddyssey", genre: "Melodic House" },
-              { date: "Fri Jun 13", name: "Noir After Hours", genre: "Techno · Dark" },
-              { date: "Sat Jun 14", name: "House of Oddyssey", genre: "Melodic House · Afro" },
+              { date: "Fri Jun 06", name: "Liquid Gold", genre: "House · Electronic" },
+              { date: "Sat Jun 07", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
+              { date: "Fri Jun 13", name: "Liquid Gold", genre: "House · Electronic" },
+              { date: "Sat Jun 14", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
@@ -322,16 +325,16 @@ export default function OddysseyContent() {
             <div className="od-detail-hero-bg" />
             <div className="od-hero-texture" />
             <div className="od-detail-hero-content">
-              <div className="od-detail-date">Saturday, April 12, 2026</div>
-              <h1>House of<br />Oddyssey</h1>
-              <p className="od-detail-sub">A Melodic House Journey</p>
+              <div className="od-detail-date">Friday, April 11, 2026</div>
+              <h1>Liquid<br />Gold</h1>
+              <p className="od-detail-sub">Where style, sound, and self-expression collide</p>
             </div>
           </section>
 
           <section className="od-detail-info">
             <div className="od-detail-info-grid">
               {[
-                { label: "Genre", value: "Melodic House" },
+                { label: "Genre", value: "House · Electronic" },
                 { label: "Doors Open", value: "10:00 PM" },
                 { label: "Location", value: "AREA15" },
                 { label: "Age", value: "21+ Only" },
@@ -607,6 +610,12 @@ const styles = `
   transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
 }
 .od-event-card:hover::before { transform: scaleX(1); }
+.od-event-card-friday { background: linear-gradient(180deg, rgba(6,6,6,0.92) 0%, rgba(6,6,6,0.97) 100%), url('/oddyssey/liquid-gold-friday.webp') center/cover no-repeat; }
+.od-event-card-friday:hover { background: linear-gradient(180deg, rgba(6,6,6,0.82) 0%, rgba(6,6,6,0.92) 100%), url('/oddyssey/liquid-gold-friday.webp') center/cover no-repeat; }
+.od-event-card-friday::before { background: #d4a574 !important; }
+.od-event-card-friday .od-event-date { color: #d4a574; }
+.od-event-card-saturday { background: linear-gradient(180deg, rgba(6,6,6,0.92) 0%, rgba(6,6,6,0.97) 100%), url('/oddyssey/oddyssey-noir-event.webp') center/cover no-repeat; }
+.od-event-card-saturday:hover { background: linear-gradient(180deg, rgba(6,6,6,0.82) 0%, rgba(6,6,6,0.92) 100%), url('/oddyssey/oddyssey-noir-event.webp') center/cover no-repeat; }
 .od-event-date { font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
 .od-event-name { font-family: var(--serif); font-size: clamp(22px,2.5vw,32px); font-weight: 400; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; line-height: 1.2; }
 .od-event-genre { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 32px; }
@@ -624,7 +633,8 @@ const styles = `
   opacity: 0.03; pointer-events: none;
 }
 .od-about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px,6vw,100px); align-items: start; }
-.od-about-text { font-size: 15px; font-weight: 300; line-height: 1.8; color: var(--text-secondary); margin-bottom: 40px; margin-top: 24px; }
+.od-about-text { font-size: 15px; font-weight: 300; line-height: 1.8; color: var(--text-secondary); margin-bottom: 16px; margin-top: 24px; }
+.od-about-tagline { font-family: var(--serif); font-size: 24px; font-weight: 400; font-style: italic; color: var(--accent); letter-spacing: 2px; margin-bottom: 40px; }
 .od-about-features { list-style: none; display: flex; flex-direction: column; }
 .od-about-features li {
   font-size: 13px; font-weight: 300; letter-spacing: 1.5px; text-transform: uppercase;
@@ -811,9 +821,9 @@ const styles = `
 .od-detail-hero-bg {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 40% 70%, rgba(201,168,76,0.08) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(6,6,6,0.2) 0%, rgba(6,6,6,0.85) 100%),
-    url('/oddyssey/oddynoir.png') center/cover no-repeat;
+    radial-gradient(ellipse at 40% 70%, rgba(212,165,116,0.08) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(6,6,6,0.2) 0%, rgba(6,6,6,0.8) 100%),
+    url('/oddyssey/liquid-gold-friday.webp') center/cover no-repeat;
 }
 .od-detail-hero-content { position: relative; z-index: 2; }
 .od-detail-date {
