@@ -45,7 +45,7 @@ export default function OddysseyContent() {
           <li><a onClick={() => showPage("calendar")}>Events</a></li>
           <li><a onClick={() => scrollToId("od-experience")}>Manor Experience</a></li>
           <li><a onClick={() => showPage("private")}>Private Events</a></li>
-          <li><a>About</a></li>
+          <li><a onClick={() => scrollToId("od-about")}>About</a></li>
           <li><a>Visit</a></li>
           <li><a className="od-nav-cta" onClick={() => showPage("calendar")}>Get Tickets</a></li>
         </ul>
@@ -64,7 +64,7 @@ export default function OddysseyContent() {
           <a onClick={() => showPage("calendar")}>Events</a>
           <a>Manor Experience</a>
           <a onClick={() => showPage("private")}>Private Events</a>
-          <a>About</a>
+          <a onClick={() => scrollToId("od-about")}>About</a>
           <a>Visit</a>
           <a onClick={() => showPage("calendar")} style={{ color: "var(--accent)" }}>Get Tickets</a>
         </div>
@@ -179,7 +179,7 @@ export default function OddysseyContent() {
           </section>
 
           {/* About */}
-          <section className="od-section-pad od-about">
+          <section className="od-section-pad od-about" id="od-about">
             <div className="od-about-grid">
               <div>
                 <div className="od-label">The Experience</div>
