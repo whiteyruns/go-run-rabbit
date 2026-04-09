@@ -118,7 +118,7 @@ export default function OddysseyContent() {
                   </div>
                   <div className="od-golden-time">
                     <span className="od-golden-time-label">Menu</span>
-                    <span className="od-golden-time-value">Paloma &bull; Spicy Margarita &bull; Tequila Soda</span>
+                    <span className="od-golden-time-value">Bandido Margarita &bull; Inside Job &bull; Bandido Lemonade</span>
                   </div>
                   <div className="od-golden-time">
                     <span className="od-golden-time-label">Entry</span>

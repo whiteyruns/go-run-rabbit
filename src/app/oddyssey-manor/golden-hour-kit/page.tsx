@@ -69,7 +69,7 @@ export default function GoldenHourKitPage() {
               visual: "Dark, moody cocktail shot \u2022 El Bandido bottle visible \u2022 Text overlay: GOLDEN HOUR / OPEN BAR / 10 PM\u2013Midnight",
               caption: `Something new starts this Friday. ✨
 
-Golden Hour. Doors at 10. Open bar till midnight. @elbandidotequila cocktails on us — Palomas, Spicy Margaritas, Tequila Sodas — while supplies last.
+Golden Hour. Doors at 10. Open bar till midnight. @elbandidotequila cocktails on us — Bandido Margaritas, Inside Jobs, Bandido Lemonades — while supplies last.
 
 RSVP and you're in free. No ticket. No cover. Just show up.
 
@@ -82,9 +82,9 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
               visual: "3-slide carousel \u2022 Close-up of each cocktail \u2022 Atmospheric, moody lighting",
               caption: `The Golden Hour menu. All @elbandidotequila. All complimentary. 🖤
 
-Paloma — grapefruit, lime, soda. The one everyone starts with.
-Spicy Margarita — lime, agave, jalapeño. The one that finds you.
-Tequila Soda — lime, soda. Clean and fast.
+Bandido Margarita — Blanco, lime, agave. The one everyone starts with.
+Inside Job — Reposado, Braulio, vermouth, Chartreuse. The one that finds you.
+Bandido Lemonade — Blanco, coconut water, lemon. Light and easy.
 
 10 PM – Midnight. While supplies last. First come, first served.
 
@@ -130,7 +130,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-gh-sub">OPEN BAR</div>
                 <div className="mock-gh-time">10 PM &ndash; MIDNIGHT</div>
                 <div className="mock-gh-detail">
-                  Paloma &bull; Spicy Margarita &bull; Tequila Soda<br />
+                  Bandido Margarita &bull; Inside Job &bull; Bandido Lemonade<br />
                   <span>featuring El Bandido Tequila</span>
                 </div>
                 <div className="mock-gh-rsvp">RSVP = FREE ENTRY</div>
@@ -223,7 +223,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
             {[
               { slide: "1", visual: "Black screen, slow text reveal", text: "Tonight. ✨" },
               { slide: "2", visual: "Cocktail pour, slow-mo, moody", text: "Golden Hour. Open bar. 10 PM." },
-              { slide: "3", visual: "Bartender lining up glasses", text: "Paloma. Spicy Marg. Tequila Soda. All @elbandidotequila. All free." },
+              { slide: "3", visual: "Bartender lining up glasses", text: "Bandido Margarita. Inside Job. Bandido Lemonade. All @elbandidotequila. All free." },
               { slide: "4", visual: "Venue interior, performers, crowd", text: "Then Liquid Gold / Art in Motion takes over at midnight. 🖤" },
               { slide: "5", visual: "Swipe up / link sticker", text: "RSVP = free entry. Link in bio." },
             ].map(s => (
@@ -252,7 +252,7 @@ Open Bar featuring El Bandido Tequila
 
 Something new this Friday and Saturday at Oddyssey. ✨
 
-Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails — Palomas, Spicy Margaritas, Tequila Sodas — on us. While supplies last.
+Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails — Bandido Margaritas, Inside Jobs, Bandido Lemonades — on us. While supplies last.
 
 RSVP and you're in free. No ticket. No cover.
 
@@ -265,7 +265,7 @@ Doors: 10 PM | Golden Hour: 10 PM – Midnight | Oddyssey at AREA15 | 21+ only`}
               <h3 style={{ color: "#d4a574", fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 300, letterSpacing: 2, marginBottom: 8 }}>GOLDEN HOUR</h3>
               <p style={{ color: "#5a5650", fontSize: 12, letterSpacing: 2, marginBottom: 16 }}>Open Bar featuring El Bandido Tequila</p>
               <p>Something new this Friday and Saturday at Oddyssey. ✨</p>
-              <p>Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails &mdash; Palomas, Spicy Margaritas, Tequila Sodas &mdash; on us. While supplies last.</p>
+              <p>Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails &mdash; Bandido Margaritas, Inside Jobs, Bandido Lemonades &mdash; on us. While supplies last.</p>
               <p>RSVP and you&rsquo;re in free. No ticket. No cover.</p>
               <p>The bar runs dry when it runs dry. No extensions. After midnight, the night evolves &mdash; Liquid Gold on Fridays, Art in Motion on Saturdays. Two dance floors. Performers in the crowd. DJs through close. 🖤</p>
               <p>Show up early. You don&rsquo;t want to miss this one.</p>
@@ -283,7 +283,7 @@ Doors: 10 PM | Golden Hour: 10 PM – Midnight | Oddyssey at AREA15 | 21+ only`}
           <CopyableBlock label="Ticket Page Copy" text={`Golden Hour + Liquid Gold (Fri) / Art in Motion (Sat)
 Free entry with RSVP · Open bar featuring El Bandido Tequila
 
-The night starts with Golden Hour. El Bandido Tequila cocktails — Palomas, Spicy Margaritas, Tequila Sodas — on us from 10 PM to midnight. While supplies last. First come, first served.
+The night starts with Golden Hour. El Bandido Tequila cocktails — Bandido Margaritas, Inside Jobs, Bandido Lemonades — on us from 10 PM to midnight. While supplies last. First come, first served.
 
 RSVP and you're in free. No ticket, no cover.
 
@@ -295,7 +295,7 @@ Doors: 10 PM · Golden Hour: 10 PM – Midnight · Oddyssey at AREA15 · 21+ onl
             <p><strong>Golden Hour + Liquid Gold (Fri) / Art in Motion (Sat)</strong></p>
             <p style={{ color: "#5a5650", marginBottom: 16 }}>Free entry with RSVP &bull; Open bar featuring El Bandido Tequila</p>
             <div className="kit-caption-label">Description</div>
-            <p>The night starts with Golden Hour. El Bandido Tequila cocktails &mdash; Palomas, Spicy Margaritas, Tequila Sodas &mdash; on us from 10 PM to midnight. While supplies last. First come, first served.</p>
+            <p>The night starts with Golden Hour. El Bandido Tequila cocktails &mdash; Bandido Margaritas, Inside Jobs, Bandido Lemonades &mdash; on us from 10 PM to midnight. While supplies last. First come, first served.</p>
             <p>RSVP and you&rsquo;re in free. No ticket, no cover.</p>
             <p>After midnight, the night keeps going. Liquid Gold on Fridays. Art in Motion on Saturdays. Two dance floors, performers in the crowd, DJs through close. Your ticket gets you both &mdash; Golden Hour and the full Noir experience.</p>
             <div style={{ background: "#0d0d0d", padding: 16, marginTop: 12, fontSize: 12, color: "#9a958d" }}>

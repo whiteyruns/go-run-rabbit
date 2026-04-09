@@ -96,13 +96,13 @@ export default function SwotPortersPage() {
                 <li><strong>Golden Hour as audience engine</strong> &mdash; RSVP captures emails, free entry removes all objections</li>
                 <li><strong>AREA15 Zone 2 expansion</strong> &mdash; Boeing 747 venue, Museum of Ice Cream, growing ecosystem</li>
                 <li><strong>Artist-name SEO gap</strong> &mdash; DJs booked but not on website. Every search is uncaptured organic traffic</li>
-                <li><strong>CBM partnership potential</strong> &mdash; Oddwood cross-promo (pre-game &rarr; main event) rather than pure competition</li>
+                <li><strong>Oddwood cross-promotion</strong> &mdash; Oddwood (AREA15 cocktail bar) as pre-game feeder &rarr; Oddyssey main event pipeline</li>
               </ul>
             </div>
             <div className="sw-swot-card sw-threats">
               <h3>Threats</h3>
               <ul>
-                <li><strong>CBM dominance</strong> &mdash; 9+ venues, $25M/yr, controls 3 closest competitors AND has a venue inside AREA15</li>
+                <li><strong>CBM dominance</strong> &mdash; multiple Fremont East venues, controls 3 closest competitors (Discopussy, We All Scream, Commonwealth)</li>
                 <li><strong>AREA15 immersive fatigue</strong> &mdash; 5 closures signal format exhaustion, eroding consumer trust</li>
                 <li><strong>Discretionary spending decline</strong> &mdash; 2025 visitation down 7.5%, economic uncertainty, inflation</li>
                 <li><strong>Boeing 747 nightlife venue</strong> &mdash; 1,300-capacity competitor opening in AREA15 Zone 2</li>
@@ -155,7 +155,7 @@ export default function SwotPortersPage() {
               },
               {
                 name: "Competitive Rivalry", rating: 7, level: "High",
-                analysis: "CBM controls the alternative segment with 9+ venues and cross-promotion. At the Noir level, late-night club with DJs is commoditized. Fixed production costs create pressure to fill the room every night.",
+                analysis: "CBM controls the Fremont East alternative segment with multiple venues and cross-promotion. At the Noir level, late-night club with DJs is commoditized. Fixed production costs create pressure to fill the room every night.",
                 critical: "At the Manor level, rivalry is LOW — no direct competitor offers immersive cocktail theatre in Vegas. The dual-model is the moat."
               },
               {
@@ -166,7 +166,7 @@ export default function SwotPortersPage() {
               {
                 name: "Threat of New Entry", rating: 5, level: "Moderate",
                 analysis: "Capital barriers are high ($5-20M+ build-out). Limited AREA15 space deters casual entrants. Nevada licensing is not prohibitive.",
-                critical: "CBM has capital + AREA15 presence (Oddwood). Punchdrunk and international brands could enter. Boeing 747 venue is a real-time new entrant."
+                critical: "CBM has the capital and operational expertise. Punchdrunk and international brands could enter. Boeing 747 venue is a real-time new entrant."
               },
             ].map(f => (
               <div key={f.name} className="sw-force">

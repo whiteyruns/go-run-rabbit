@@ -187,7 +187,7 @@ export default function CompetitiveLandscapePage() {
           </div>
           <div className="cl-eco-grid">
             {[
-              { name: "Oddwood", role: "Feeder venue", note: "Craft cocktail lounge, same complex. Pre-game / wind-down. Operated by CBM." },
+              { name: "Oddwood", role: "Feeder venue", note: "Craft cocktail lounge, same complex. Pre-game / wind-down spot for Oddyssey guests." },
               { name: "Asylum Bar + Arcade", role: "Complementary", note: "Casual gaming bar. Earlier evening activity that could feed into Oddyssey." },
               { name: "Omega Mart", role: "Traffic driver", note: "1M+ annual visitors. Drives AREA15 foot traffic Oddyssey can convert." },
               { name: "Zone 2 Expansion", role: "Tailwind", note: "Boeing 747 nightlife venue (1,300 cap), Museum of Ice Cream. Growing ecosystem." },
@@ -205,13 +205,13 @@ export default function CompetitiveLandscapePage() {
         <div className="cl-section">
           <div className="cl-section-title">Corner Bar Management</div>
           <div className="cl-cbm">
-            <p>CBM (Ryan Doherty) is the dominant operator in Las Vegas alternative nightlife. They operate <strong>9+ venues</strong> generating ~<strong>$25M annually</strong> with <strong>6,000 weekly guests</strong>. Their portfolio includes Oddyssey&rsquo;s three closest competitors (Discopussy, We All Scream, Commonwealth) AND they have a venue inside AREA15 (Oddwood).</p>
+            <p>CBM (Ryan Doherty) is the dominant operator in Las Vegas alternative nightlife. They operate <strong>multiple venues</strong> on Fremont East generating significant annual revenue. Their portfolio includes Oddyssey&rsquo;s three closest competitors (Discopussy, We All Scream, Commonwealth).</p>
             <div className="cl-cbm-venues">
-              {["Discopussy", "We All Scream", "Commonwealth", "Oddwood (AREA15)", "Cheapshot", "Peyote", "Lucky Day", "Saginaw's", "Electric Mushroom"].map(v => (
+              {["Discopussy", "We All Scream", "Commonwealth", "Cheapshot", "Lucky Day"].map(v => (
                 <span key={v} className="cl-cbm-tag">{v}</span>
               ))}
             </div>
-            <p style={{ marginTop: 16 }}><strong>Implication:</strong> CBM&rsquo;s cross-promotion engine is a competitive moat Oddyssey can&rsquo;t replicate. However, Oddyssey&rsquo;s immersive theatre component is something CBM has never built. The AREA15 location also captures a different tourist flow than Fremont East.</p>
+            <p style={{ marginTop: 16 }}><strong>Implication:</strong> CBM&rsquo;s Fremont East cross-promotion engine is a competitive moat. However, Oddyssey&rsquo;s immersive theatre component is something CBM has never built, and the AREA15 location captures a different tourist flow than Fremont East.</p>
           </div>
         </div>
 

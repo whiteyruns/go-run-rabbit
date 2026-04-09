@@ -186,7 +186,7 @@ function AuditContent() {
                 <li>Midnight &ndash; Late: Full programming continues</li>
                 <li>RSVP = complimentary entry</li>
                 <li>Walk-ups pay standard GA</li>
-                <li>Menu: Paloma, Spicy Margarita, Tequila Soda</li>
+                <li>Menu: Bandido Margarita, Inside Job, Bandido Lemonade</li>
               </ul>
             </div>
             <div className="audit-state-card">

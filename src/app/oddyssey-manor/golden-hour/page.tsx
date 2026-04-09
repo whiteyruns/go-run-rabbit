@@ -121,9 +121,9 @@ export default function GoldenHourPage() {
           <div className="gh-section-title">Featured Cocktail Menu</div>
           <div className="gh-menu-grid">
             {[
-              { name: "Paloma", desc: "Tequila, grapefruit, lime, soda — refreshing, crowd-friendly" },
-              { name: "Spicy Margarita", desc: "Tequila, lime, agave, jalapeño — bold, Instagram-worthy" },
-              { name: "Tequila Soda", desc: "Tequila, soda, lime — simple, fast to pour, high throughput" },
+              { name: "Bandido Margarita", desc: "El Bandido Blanco, lime juice, agave nectar — the crowd-favorite, served on ice" },
+              { name: "Inside Job", desc: "El Bandido Reposado, Braulio, sweet vermouth, Yellow Chartreuse — bartender-forward, orange twist" },
+              { name: "Bandido Lemonade", desc: "El Bandido Blanco, coconut water, fresh lemon, lemonade — sugar rim, mint garnish" },
             ].map(c => (
               <div key={c.name} className="gh-menu-item">
                 <h4>{c.name}</h4>
