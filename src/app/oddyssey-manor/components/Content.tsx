@@ -106,6 +106,51 @@ export default function OddysseyContent() {
             </div>
           </section>
 
+          {/* Golden Hour */}
+          <section className="od-golden-hour">
+            <div className="od-golden-inner">
+              <div className="od-golden-content">
+                <div className="od-golden-eyebrow">Every Friday &amp; Saturday</div>
+                <h2 className="od-golden-title">Golden Hour</h2>
+                <p className="od-golden-sub">Open Bar featuring El Bandido Tequila</p>
+                <div className="od-golden-details">
+                  <div className="od-golden-time">
+                    <span className="od-golden-time-label">Open Bar</span>
+                    <span className="od-golden-time-value">10 PM &ndash; Midnight</span>
+                  </div>
+                  <div className="od-golden-time">
+                    <span className="od-golden-time-label">Menu</span>
+                    <span className="od-golden-time-value">Paloma &bull; Spicy Margarita &bull; Tequila Soda</span>
+                  </div>
+                  <div className="od-golden-time">
+                    <span className="od-golden-time-label">Entry</span>
+                    <span className="od-golden-time-value">Free with RSVP &bull; While supplies last</span>
+                  </div>
+                </div>
+                <div className="od-golden-flow">
+                  <div className="od-golden-flow-item">
+                    <span className="od-golden-flow-time">10 PM</span>
+                    <span className="od-golden-flow-dot" />
+                    <span className="od-golden-flow-text">Doors + Golden Hour</span>
+                  </div>
+                  <div className="od-golden-flow-line" />
+                  <div className="od-golden-flow-item">
+                    <span className="od-golden-flow-time">12 AM</span>
+                    <span className="od-golden-flow-dot" />
+                    <span className="od-golden-flow-text">Liquid Gold (Fri) / Art in Motion (Sat)</span>
+                  </div>
+                  <div className="od-golden-flow-line" />
+                  <div className="od-golden-flow-item">
+                    <span className="od-golden-flow-time">Late</span>
+                    <span className="od-golden-flow-dot" />
+                    <span className="od-golden-flow-text">Full programming through close</span>
+                  </div>
+                </div>
+                <a className="od-btn-golden">RSVP for Free Entry</a>
+              </div>
+            </div>
+          </section>
+
           {/* Upcoming Events */}
           <section className="od-section-pad od-events-preview">
             <div className="od-events-header">
@@ -117,15 +162,16 @@ export default function OddysseyContent() {
             </div>
             <div className="od-event-cards">
               {[
-                { date: "Fri Apr 11", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "Berri" },
-                { date: "Sat Apr 12", name: "Oddyssey\nNoir", genre: "Multi-genre · Immersive", night: "saturday", dj: "Hector Romero" },
-                { date: "Fri Apr 18", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "DJ Brynn Taylor" },
+                { date: "Fri Apr 18", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "Berri" },
+                { date: "Sat Apr 19", name: "Art in\nMotion", genre: "Multi-genre · Immersive", night: "saturday", dj: "Hector Romero" },
+                { date: "Fri Apr 25", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "DJ Brynn Taylor" },
               ].map((evt, i) => (
                 <div key={i} className={`od-event-card od-event-card-${evt.night}`} onClick={() => showPage("detail")}>
                   <div className="od-event-date">{evt.date}</div>
                   <div className="od-event-name">{evt.name.split("\n").map((l, j) => <span key={j}>{l}<br /></span>)}</div>
                   <div className="od-event-dj">{evt.dj}</div>
                   <div className="od-event-genre">{evt.genre}</div>
+                  <div className="od-event-golden-tag">Golden Hour &bull; Open Bar 10 PM&ndash;12 AM</div>
                   <span className="od-btn-primary od-btn-sm">Get Tickets</span>
                 </div>
               ))}
@@ -281,32 +327,30 @@ export default function OddysseyContent() {
           <div className="od-calendar-list">
             <CalendarMonth title="April 2026" />
             {[
-              { date: "Fri Apr 11", name: "Liquid Gold", genre: "House · Electronic", dj: "Berri" },
-              { date: "Sat Apr 12", name: "Oddyssey Noir", genre: "Multi-genre · Immersive", dj: "Hector Romero" },
-              { date: "Fri Apr 18", name: "Liquid Gold", genre: "House · Electronic", dj: "DJ Brynn Taylor" },
-              { date: "Sat Apr 19", name: "Oddyssey Noir", genre: "Multi-genre · Immersive", dj: "John Julius Knight" },
-              { date: "Fri Apr 25", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Apr 26", name: "Oddyssey Noir", genre: "Multi-genre · Immersive", dj: "TBA" },
+              { date: "Fri Apr 18", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "Berri" },
+              { date: "Sat Apr 19", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "Hector Romero" },
+              { date: "Fri Apr 25", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "DJ Brynn Taylor" },
+              { date: "Sat Apr 26", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "John Julius Knight" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
 
             <CalendarMonth title="May 2026" />
             {[
-              { date: "Fri May 02", name: "Liquid Gold", genre: "House · Electronic" },
-              { date: "Sat May 03", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
-              { date: "Fri May 09", name: "Liquid Gold", genre: "House · Electronic" },
-              { date: "Sat May 10", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
+              { date: "Fri May 02", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat May 03", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
+              { date: "Fri May 09", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat May 10", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
 
             <CalendarMonth title="June 2026" />
             {[
-              { date: "Fri Jun 06", name: "Liquid Gold", genre: "House · Electronic" },
-              { date: "Sat Jun 07", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
-              { date: "Fri Jun 13", name: "Liquid Gold", genre: "House · Electronic" },
-              { date: "Sat Jun 14", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
+              { date: "Fri Jun 06", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jun 07", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
+              { date: "Fri Jun 13", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jun 14", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
@@ -597,6 +641,75 @@ const styles = `
   animation: odScrollPulse 2s ease-in-out infinite;
 }
 @keyframes odScrollPulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+/* ═══ GOLDEN HOUR ═══ */
+.od-golden-hour {
+  position: relative; overflow: hidden;
+  border-top: 1px solid var(--border-subtle);
+  background: linear-gradient(180deg, #0c0906 0%, var(--bg) 100%);
+}
+.od-golden-inner {
+  padding: clamp(60px,10vw,120px) clamp(20px,6vw,120px);
+  position: relative;
+}
+.od-golden-inner::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 80%, rgba(212,165,116,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.od-golden-content { position: relative; z-index: 2; max-width: 680px; margin: 0 auto; text-align: center; }
+.od-golden-eyebrow {
+  font-size: 10px; font-weight: 500; letter-spacing: 4px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 16px;
+}
+.od-golden-title {
+  font-family: var(--serif); font-size: clamp(36px,6vw,64px); font-weight: 300;
+  letter-spacing: 4px; text-transform: uppercase; color: #d4a574; margin-bottom: 8px;
+}
+.od-golden-sub {
+  font-size: 13px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-secondary); margin-bottom: 40px;
+}
+.od-golden-details { margin-bottom: 40px; }
+.od-golden-time {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 0; border-bottom: 1px solid var(--border-subtle);
+}
+.od-golden-time:first-child { border-top: 1px solid var(--border-subtle); }
+.od-golden-time-label {
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: #d4a574; font-weight: 500;
+}
+.od-golden-time-value { font-size: 13px; color: var(--text-secondary); letter-spacing: 0.5px; }
+.od-golden-flow {
+  display: flex; align-items: center; justify-content: center; gap: 0;
+  margin-bottom: 40px; flex-wrap: wrap;
+}
+.od-golden-flow-item {
+  display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 20px;
+}
+.od-golden-flow-time {
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #d4a574; font-weight: 500;
+}
+.od-golden-flow-dot {
+  width: 8px; height: 8px; border: 1px solid #d4a574; transform: rotate(45deg);
+}
+.od-golden-flow-text { font-size: 11px; color: var(--text-secondary); letter-spacing: 0.5px; text-align: center; }
+.od-golden-flow-line { width: 40px; height: 1px; background: rgba(212,165,116,0.3); margin-top: 8px; }
+.od-btn-golden {
+  display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 3px;
+  text-transform: uppercase; color: #0c0906; background: #d4a574;
+  padding: 14px 40px; cursor: pointer; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.od-btn-golden:hover { background: #deb68a; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(212,165,116,0.2); }
+.od-event-golden-tag {
+  font-size: 10px; letter-spacing: 1.5px; color: #d4a574; margin-bottom: 16px;
+  padding: 6px 0; border-top: 1px solid rgba(212,165,116,0.15);
+}
+@media (max-width: 600px) {
+  .od-golden-flow-line { width: 1px; height: 20px; margin-top: 0; }
+  .od-golden-flow { flex-direction: column; gap: 8px; }
+}
 
 /* ═══ EVENTS PREVIEW ═══ */
 .od-events-preview { background: var(--bg); border-top: 1px solid var(--border-subtle); }
