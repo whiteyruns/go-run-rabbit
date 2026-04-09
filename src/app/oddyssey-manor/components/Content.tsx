@@ -46,7 +46,6 @@ export default function OddysseyContent() {
           <li><a onClick={() => scrollToId("od-experience")}>Manor Experience</a></li>
           <li><a onClick={() => showPage("private")}>Private Events</a></li>
           <li><a onClick={() => scrollToId("od-about")}>About</a></li>
-          <li><a>Visit</a></li>
           <li><a className="od-nav-cta" onClick={() => showPage("calendar")}>Get Tickets</a></li>
         </ul>
         <div
@@ -65,7 +64,6 @@ export default function OddysseyContent() {
           <a>Manor Experience</a>
           <a onClick={() => showPage("private")}>Private Events</a>
           <a onClick={() => scrollToId("od-about")}>About</a>
-          <a>Visit</a>
           <a onClick={() => showPage("calendar")} style={{ color: "var(--accent)" }}>Get Tickets</a>
         </div>
       )}
