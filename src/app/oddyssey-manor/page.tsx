@@ -65,7 +65,7 @@ const docs = [
   },
   {
     title: "Website Optimization Audit",
-    desc: "10 findings, 8 recommendations, homepage structure, and expected impact analysis.",
+    desc: "11 findings, 8 recommendations, Golden Hour integration, homepage structure, and expected impact analysis.",
     href: "/oddyssey-manor/audit",
     tag: "Report",
     tagColor: "#9a958d",
