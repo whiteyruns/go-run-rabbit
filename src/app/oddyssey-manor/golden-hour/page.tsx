@@ -108,12 +108,13 @@ export default function GoldenHourPage() {
             <table className="gh-table">
               <thead><tr><th>Component</th><th>Contribution</th><th>Yield</th></tr></thead>
               <tbody>
-                <tr><td>Venue purchase</td><td>2 cases</td><td>~50&ndash;80 cocktails</td></tr>
-                <tr><td>El Bandido contribution</td><td>1 case</td><td>~25&ndash;45 cocktails</td></tr>
-                <tr><td><strong>Total</strong></td><td><strong>3 cases</strong></td><td><strong>75&ndash;125 cocktails</strong></td></tr>
+                <tr><td>Venue purchase</td><td>2 cases (12 bottles)</td><td>~174 cocktails</td></tr>
+                <tr><td>El Bandido contribution</td><td>1 case (6 bottles)</td><td>~87 cocktails</td></tr>
+                <tr><td><strong>Total</strong></td><td><strong>3 cases (18 bottles)</strong></td><td><strong>~260 cocktails</strong></td></tr>
               </tbody>
             </table>
           </div>
+          <p className="gh-table-note">Based on 750ml bottles, 6 per case, avg 1.75oz pour per cocktail (~14.5 drinks/bottle). Featured cocktails are complimentary during Golden Hour. Full paid bar remains open for guests who prefer other drinks &mdash; all standard menu items available for purchase throughout the evening.</p>
         </div>
 
         {/* Menu */}
@@ -276,6 +277,7 @@ const ghStyles = `
 .gh-menu-item h4 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; letter-spacing: 1px; margin-bottom: 8px; color: #d4a574; }
 .gh-menu-item p { font-size: 12px; color: #5a5650; }
 .gh-menu-note { font-size: 12px; color: #5a5650; margin-top: 16px; font-style: italic; }
+.gh-table-note { font-size: 11px; color: #5a5650; margin-top: 16px; line-height: 1.6; font-style: italic; }
 
 .gh-rsvp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.06); }
 .gh-rsvp-item { background: #060606; padding: 24px; }
