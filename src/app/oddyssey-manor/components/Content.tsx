@@ -405,6 +405,83 @@ export default function OddysseyContent() {
             </div>
           </section>
 
+          {/* Bottles & Tables */}
+          <section className="od-section-pad od-bottles" style={{ background: "var(--bg)", borderBottom: "1px solid var(--border-subtle)" }}>
+            <div className="od-label" style={{ textAlign: "center" }}>Bottles &amp; Tables</div>
+            <h2 className="od-heading-2" style={{ textAlign: "center", marginBottom: 48 }}>Reserve a Table</h2>
+            <div className="od-bottle-grid">
+              <div className="od-bottle-card">
+                <div className="od-bottle-name">Standard Table</div>
+                <div className="od-bottle-price">$200</div>
+                <div className="od-bottle-min">beverage minimum</div>
+                <ul className="od-bottle-features">
+                  <li>Up to 4 guests</li>
+                  <li>Reserved seating area</li>
+                  <li>Dedicated server</li>
+                  <li>Choice of premium bottles</li>
+                </ul>
+                <a className="od-btn-outline" style={{ textAlign: "center", width: "100%" }}>Reserve</a>
+              </div>
+              <div className="od-bottle-card od-bottle-featured">
+                <div className="od-bottle-name">Private Table</div>
+                <div className="od-bottle-price">$350</div>
+                <div className="od-bottle-min">beverage minimum</div>
+                <ul className="od-bottle-features">
+                  <li>Up to 6 guests</li>
+                  <li>Premium location</li>
+                  <li>Dedicated server</li>
+                  <li>Priority entry for group</li>
+                  <li>Choice of premium bottles</li>
+                </ul>
+                <a className="od-btn-primary" style={{ textAlign: "center", width: "100%" }}>Reserve</a>
+              </div>
+              <div className="od-bottle-card">
+                <div className="od-bottle-name">VIP Buyout</div>
+                <div className="od-bottle-price">Inquire</div>
+                <div className="od-bottle-min">custom packages available</div>
+                <ul className="od-bottle-features">
+                  <li>8+ guests</li>
+                  <li>Exclusive section</li>
+                  <li>Dedicated host &amp; server</li>
+                  <li>Custom bottle selection</li>
+                  <li>Priority entry for full group</li>
+                </ul>
+                <a className="od-btn-outline" style={{ textAlign: "center", width: "100%" }}>Contact Us</a>
+              </div>
+            </div>
+
+            <div className="od-bottle-menu">
+              <div className="od-label" style={{ textAlign: "center", marginTop: 48 }}>Bottle Menu</div>
+              <div className="od-menu-grid">
+                <div className="od-menu-category">
+                  <h4>Vodka</h4>
+                  <div className="od-menu-item"><span>Grey Goose</span><span>$450</span></div>
+                  <div className="od-menu-item"><span>Belvedere</span><span>$425</span></div>
+                  <div className="od-menu-item"><span>Tito&apos;s</span><span>$375</span></div>
+                </div>
+                <div className="od-menu-category">
+                  <h4>Tequila</h4>
+                  <div className="od-menu-item"><span>El Bandido Reposado</span><span>$400</span></div>
+                  <div className="od-menu-item"><span>Casamigos Blanco</span><span>$450</span></div>
+                  <div className="od-menu-item"><span>Don Julio 1942</span><span>$650</span></div>
+                </div>
+                <div className="od-menu-category">
+                  <h4>Whiskey</h4>
+                  <div className="od-menu-item"><span>Jameson</span><span>$375</span></div>
+                  <div className="od-menu-item"><span>Hennessy VS</span><span>$450</span></div>
+                  <div className="od-menu-item"><span>Johnnie Walker Black</span><span>$425</span></div>
+                </div>
+                <div className="od-menu-category">
+                  <h4>Champagne</h4>
+                  <div className="od-menu-item"><span>Mo&euml;t Imp&eacute;rial</span><span>$400</span></div>
+                  <div className="od-menu-item"><span>Veuve Clicquot</span><span>$450</span></div>
+                  <div className="od-menu-item"><span>Dom P&eacute;rignon</span><span>$750</span></div>
+                </div>
+              </div>
+              <p className="od-menu-note">Placeholder pricing for wireframe purposes. All bottles include mixers, ice, and service.</p>
+            </div>
+          </section>
+
           <section className="od-section-pad od-detail-gallery">
             <div className="od-label" style={{ textAlign: "center" }}>The Atmosphere</div>
             <div className="od-gallery-grid">
@@ -1162,6 +1239,35 @@ const styles = `
 .od-tier-features li { font-size: 12px; color: var(--text-secondary); padding: 8px 0; border-bottom: 1px solid var(--border-subtle); letter-spacing: 0.5px; }
 .od-tier-features li:last-child { border-bottom: none; }
 @media (max-width: 768px) { .od-ticket-tiers { grid-template-columns: 1fr; } }
+
+/* ═══ BOTTLES & TABLES ═══ */
+.od-bottle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border-subtle); }
+.od-bottle-card {
+  background: var(--bg); padding: clamp(24px,3vw,40px); display: flex; flex-direction: column;
+  transition: background 0.4s; position: relative;
+}
+.od-bottle-card:hover { background: var(--bg-card); }
+.od-bottle-featured { background: var(--bg-card); }
+.od-bottle-featured::before {
+  content: 'POPULAR'; position: absolute; top: 0; left: 0; right: 0; padding: 8px;
+  font-size: 9px; letter-spacing: 3px; text-align: center; background: var(--accent);
+  color: var(--bg); font-weight: 500;
+}
+.od-bottle-name { font-family: var(--serif); font-size: 22px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.od-bottle-price { font-family: var(--serif); font-size: 36px; font-weight: 300; color: var(--accent); margin-bottom: 4px; }
+.od-bottle-min { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 24px; }
+.od-bottle-features { list-style: none; margin-bottom: 28px; flex: 1; }
+.od-bottle-features li { font-size: 12px; color: var(--text-secondary); padding: 7px 0; border-bottom: 1px solid var(--border-subtle); }
+.od-bottle-features li:last-child { border-bottom: none; }
+
+.od-menu-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border-subtle); margin-top: 16px; }
+.od-menu-category { background: var(--bg); padding: 24px; }
+.od-menu-category h4 { font-family: var(--serif); font-size: 16px; font-weight: 400; letter-spacing: 1px; color: var(--accent); margin-bottom: 16px; }
+.od-menu-item { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
+.od-menu-item:last-child { border-bottom: none; }
+.od-menu-note { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 16px; font-style: italic; }
+@media (max-width: 768px) { .od-bottle-grid { grid-template-columns: 1fr; } .od-menu-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .od-menu-grid { grid-template-columns: 1fr; } }
 
 /* ═══ GALLERY ═══ */
 .od-detail-gallery { border-bottom: 1px solid var(--border-subtle); }
