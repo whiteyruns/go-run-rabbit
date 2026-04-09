@@ -55,58 +55,6 @@ export default function OddysseyHubPage() {
   return <HubContent />;
 }
 
-const docs = [
-  {
-    title: "Website Wireframes",
-    desc: "Homepage, event calendar, event detail, and private events — built with Oddyssey brand assets.",
-    href: "/oddyssey-manor/wireframes",
-    tag: "Interactive",
-    tagColor: "#c9a84c",
-  },
-  {
-    title: "Website Optimization Audit",
-    desc: "11 findings, 8 recommendations, Golden Hour integration, homepage structure, and expected impact analysis.",
-    href: "/oddyssey-manor/audit",
-    tag: "Report",
-    tagColor: "#9a958d",
-  },
-  {
-    title: "Golden Hour Proposal",
-    desc: "Brand partnership & traffic catalyst program — executive summary, structure, value exchange, pilot plan.",
-    href: "/oddyssey-manor/golden-hour",
-    tag: "Proposal",
-    tagColor: "#d4a574",
-  },
-  {
-    title: "Competitive Landscape",
-    desc: "Direct competitors, market context, AREA15 ecosystem, positioning map, white space analysis.",
-    href: "/oddyssey-manor/competitive-landscape",
-    tag: "Intelligence",
-    tagColor: "#3498db",
-  },
-  {
-    title: "SEO Audit",
-    desc: "Structured data, meta tags, technical SEO, content analysis, Ticketure integration, and priority action items.",
-    href: "/oddyssey-manor/seo-audit",
-    tag: "Technical",
-    tagColor: "#e74c3c",
-  },
-  {
-    title: "SWOT & Porter's Five Forces",
-    desc: "7 strengths, 7 weaknesses, 7 opportunities, 7 threats. Five forces rated with industry attractiveness score.",
-    href: "/oddyssey-manor/swot-porters",
-    tag: "Strategy",
-    tagColor: "#27ae60",
-  },
-  {
-    title: "Golden Hour Marketing Kit",
-    desc: "Social media posts, story sequences, email blasts, ticket page copy, TikTok concepts, and content calendar.",
-    href: "/oddyssey-manor/golden-hour-kit",
-    tag: "Marketing",
-    tagColor: "#d4a574",
-  },
-];
-
 function HubContent() {
   return (
     <div style={{ background: "#060606", color: "#e8e4dd", minHeight: "100vh" }}>
@@ -116,22 +64,92 @@ function HubContent() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="hub-logo" />
           <div className="hub-label">Client Portal</div>
-          <p className="hub-sub">Prepared by Go Run Rabbit &bull; April 2026</p>
+          <p className="hub-sub">Go Run Rabbit &bull; April 2026</p>
         </div>
 
-        <div className="hub-grid">
-          {docs.map((doc) => (
-            <Link key={doc.href} href={doc.href} className="hub-card">
-              <div className="hub-card-tag" style={{ color: doc.tagColor, borderColor: doc.tagColor }}>{doc.tag}</div>
-              <h3>{doc.title}</h3>
-              <p>{doc.desc}</p>
+        {/* Website & Design */}
+        <div className="hub-group">
+          <div className="hub-group-header">
+            <div className="hub-group-num">01</div>
+            <div>
+              <h2>Website &amp; Design</h2>
+              <p>Wireframes, optimization audit, and technical SEO analysis</p>
+            </div>
+          </div>
+          <div className="hub-grid hub-grid-3">
+            <Link href="/oddyssey-manor/wireframes" className="hub-card hub-card-featured">
+              <div className="hub-card-tag" style={{ color: "#c9a84c", borderColor: "#c9a84c" }}>Interactive</div>
+              <h3>Website Wireframes</h3>
+              <p>Homepage, event calendar, event detail, private events &mdash; 4 pages with brand assets, Golden Hour, bottles &amp; tables.</p>
               <span className="hub-card-link">View &rarr;</span>
             </Link>
-          ))}
+            <Link href="/oddyssey-manor/audit" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#9a958d", borderColor: "#9a958d" }}>Report</div>
+              <h3>Optimization Audit</h3>
+              <p>11 findings, 8 recommendations, Golden Hour integration, homepage structure.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/oddyssey-manor/seo-audit" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#e74c3c", borderColor: "#e74c3c" }}>Technical</div>
+              <h3>SEO Audit</h3>
+              <p>Structured data, meta tags, content analysis, Ticketure integration, 16 action items.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Market Intelligence */}
+        <div className="hub-group">
+          <div className="hub-group-header">
+            <div className="hub-group-num">02</div>
+            <div>
+              <h2>Market Intelligence</h2>
+              <p>Competitive positioning, strategic analysis, and market context</p>
+            </div>
+          </div>
+          <div className="hub-grid">
+            <Link href="/oddyssey-manor/competitive-landscape" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#3498db", borderColor: "#3498db" }}>Intelligence</div>
+              <h3>Competitive Landscape</h3>
+              <p>6 direct competitors, CBM analysis, AREA15 ecosystem, positioning map, white space, cited sources.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/oddyssey-manor/swot-porters" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#27ae60", borderColor: "#27ae60" }}>Strategy</div>
+              <h3>SWOT &amp; Porter&rsquo;s Five Forces</h3>
+              <p>28-point SWOT, cross-analysis, five forces rated, industry attractiveness score: 5.2/10.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Golden Hour Program */}
+        <div className="hub-group">
+          <div className="hub-group-header">
+            <div className="hub-group-num">03</div>
+            <div>
+              <h2>Golden Hour Program</h2>
+              <p>Open bar concept with El Bandido Tequila &mdash; proposal and marketing assets</p>
+            </div>
+          </div>
+          <div className="hub-grid">
+            <Link href="/oddyssey-manor/golden-hour" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#d4a574", borderColor: "#d4a574" }}>Proposal</div>
+              <h3>Golden Hour Proposal</h3>
+              <p>Executive summary, inventory model (~260 cocktails/night), value exchange, 4-week pilot plan.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/oddyssey-manor/golden-hour-kit" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#d4a574", borderColor: "#d4a574" }}>Marketing</div>
+              <h3>Marketing Asset Kit</h3>
+              <p>3 IG posts, story sequence, email blast, ticket copy, TikTok concepts, creative mockups, content calendar.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+          </div>
         </div>
 
         <div className="hub-footer">
-          <p>Oddyssey Manor & Noir &bull; AREA15 &bull; Las Vegas</p>
+          <p>Oddyssey Manor &amp; Noir &bull; AREA15 &bull; Las Vegas</p>
         </div>
       </div>
     </div>
@@ -139,15 +157,23 @@ function HubContent() {
 }
 
 const hubStyles = `
-.hub-page { max-width: 900px; margin: 0 auto; padding: 80px 40px; font-family: 'Inter', -apple-system, sans-serif; font-weight: 300; }
-.hub-header { text-align: center; margin-bottom: 60px; }
+.hub-page { max-width: 960px; margin: 0 auto; padding: 80px 40px; font-family: 'Inter', -apple-system, sans-serif; font-weight: 300; }
+.hub-header { text-align: center; margin-bottom: 72px; }
 .hub-logo { height: 48px; width: auto; margin: 0 auto 24px; display: block; }
 .hub-label { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #c9a84c; font-weight: 500; margin-bottom: 8px; }
 .hub-sub { font-size: 12px; color: #5a5650; letter-spacing: 1.5px; }
 
+.hub-group { margin-bottom: 56px; }
+.hub-group-header { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 24px; }
+.hub-group-num { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 300; color: rgba(201,168,76,0.3); line-height: 1; min-width: 36px; }
+.hub-group-header h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+.hub-group-header p { font-size: 12px; color: #5a5650; letter-spacing: 1px; }
+
 .hub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.06); }
+.hub-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+.hub-card-featured { grid-row: 1 / 1; }
 .hub-card {
-  background: #060606; padding: 36px; display: flex; flex-direction: column;
+  background: #060606; padding: 32px; display: flex; flex-direction: column;
   text-decoration: none; color: #e8e4dd; transition: background 0.4s cubic-bezier(0.16,1,0.3,1);
   position: relative; cursor: pointer;
 }
@@ -172,5 +198,6 @@ const hubStyles = `
 .hub-footer { margin-top: 60px; text-align: center; }
 .hub-footer p { font-size: 10px; color: #5a5650; letter-spacing: 2px; text-transform: uppercase; }
 
-@media (max-width: 600px) { .hub-grid { grid-template-columns: 1fr; } .hub-page { padding: 40px 20px; } }
+@media (max-width: 768px) { .hub-grid-3 { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .hub-grid { grid-template-columns: 1fr; } .hub-page { padding: 40px 20px; } .hub-group-num { display: none; } }
 `;
