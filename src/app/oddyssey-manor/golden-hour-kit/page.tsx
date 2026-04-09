@@ -468,7 +468,7 @@ const kitStyles = `
 /* ═══ CREATIVE MOCKUPS ═══ */
 .mock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .mock-card {
-  aspect-ratio: 1/1; position: relative; overflow: hidden; display: flex;
+  min-height: 420px; position: relative; overflow: hidden; display: flex;
   align-items: center; justify-content: center;
 }
 .mock-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
@@ -573,7 +573,7 @@ const kitStyles = `
 /* Weekend Lineup */
 .mock-weekend {
   background: linear-gradient(180deg, #080608 0%, #0c0a08 50%, #080608 100%);
-  grid-column: 1 / -1; aspect-ratio: 2/1;
+  grid-column: 1 / -1; min-height: 360px;
 }
 .mock-weekend .mock-overlay {
   background: radial-gradient(ellipse at 50% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
@@ -600,7 +600,7 @@ const kitStyles = `
 
 @media (max-width: 600px) {
   .mock-grid { grid-template-columns: 1fr; }
-  .mock-weekend { aspect-ratio: 1/1; }
+  .mock-weekend { min-height: 400px; }
   .mock-wk-split { flex-direction: column; gap: 20px; }
   .mock-wk-divider { width: 40px; height: 1px; }
   .mock-gh-title, .mock-lg-title, .mock-aim-title { font-size: 36px; }
