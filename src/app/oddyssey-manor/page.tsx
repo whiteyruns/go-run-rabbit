@@ -85,6 +85,13 @@ const docs = [
     tagColor: "#3498db",
   },
   {
+    title: "SEO Audit",
+    desc: "Structured data, meta tags, technical SEO, content analysis, Ticketure integration, and priority action items.",
+    href: "/oddyssey-manor/seo-audit",
+    tag: "Technical",
+    tagColor: "#e74c3c",
+  },
+  {
     title: "SWOT & Porter's Five Forces",
     desc: "7 strengths, 7 weaknesses, 7 opportunities, 7 threats. Five forces rated with industry attractiveness score.",
     href: "/oddyssey-manor/swot-porters",
