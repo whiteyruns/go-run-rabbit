@@ -275,6 +275,35 @@ export default function CompetitiveLandscapePage() {
           </div>
         </div>
 
+        {/* Sources */}
+        <div className="cl-section">
+          <div className="cl-section-title">Sources</div>
+          <div className="cl-sources">
+            {[
+              { label: "AREA15 surpasses 15M visitors", url: "nevadabusiness.com/2025/08/area15-surpasses-15-million-visitors" },
+              { label: "AREA15 Zone 2 expansion details", url: "area15.com/zone2" },
+              { label: "Las Vegas 2025 visitation down 7.5%", url: "reviewjournal.com/business/tourism/las-vegas-closes-the-book-on-2025-visitation-down-7-5" },
+              { label: "Las Vegas 2026 tourism recovery projected", url: "travelweekly.com — Las Vegas tourism recovery expected in 2026" },
+              { label: "Illuminarium at AREA15 closing permanently", url: "fox5vegas.com/2026/03/05/illuminarium-area15-las-vegas-close-permanently" },
+              { label: "Las Vegas immersive venue closures trend", url: "casino.org/news/tourists-less-immersed-in-las-vegas-trend" },
+              { label: "Corner Bar Management portfolio & revenue", url: "lasvegasmagazine.com/entertainment/2022/aug/12/corner-bar-management" },
+              { label: "Fremont East district evolution", url: "lasvegasweekly.com/nightlife/2025/oct/16/fremont-east-evolves" },
+              { label: "Global immersive entertainment market size", url: "grandviewresearch.com/industry-analysis/immersive-entertainment-market-report" },
+              { label: "Oddyssey signals new era of Vegas nightlife", url: "yahoo.com/entertainment/articles/area15-oddyssey-signals-era-vegas-020022338" },
+              { label: "Discopussy official", url: "discopussydtlv.com" },
+              { label: "We All Scream official", url: "weallscream.com" },
+              { label: "Commonwealth official", url: "commonwealthlv.com" },
+              { label: "Meow Wolf Omega Mart", url: "meowwolf.com/visit/las-vegas" },
+              { label: "Lost Spirits Distillery (closed)", url: "yelp.com/biz/lost-spirits-distillery-las-vegas-2" },
+            ].map((s, i) => (
+              <div key={i} className="cl-source">
+                <span className="cl-source-num">{i + 1}</span>
+                <span className="cl-source-text">{s.label} &mdash; <span className="cl-source-url">{s.url}</span></span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="cl-footer">
           <Link href="/oddyssey-manor" className="cl-back">&larr; All Documents</Link>
           <span>Go Run Rabbit &bull; April 2026</span>
@@ -353,6 +382,11 @@ const clStyles = `
 .cl-ws-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: #c9a84c; }
 .cl-ws-card h4 { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #c9a84c; font-weight: 500; margin-bottom: 8px; }
 .cl-ws-card p { font-size: 13px; color: #9a958d; line-height: 1.6; }
+
+.cl-sources { display: flex; flex-direction: column; gap: 0; }
+.cl-source { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; color: #9a958d; }
+.cl-source-num { font-size: 10px; color: #5a5650; min-width: 20px; font-weight: 500; }
+.cl-source-url { color: #5a5650; font-style: italic; }
 
 .cl-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 

@@ -85,6 +85,13 @@ const docs = [
     tagColor: "#3498db",
   },
   {
+    title: "SWOT & Porter's Five Forces",
+    desc: "7 strengths, 7 weaknesses, 7 opportunities, 7 threats. Five forces rated with industry attractiveness score.",
+    href: "/oddyssey-manor/swot-porters",
+    tag: "Strategy",
+    tagColor: "#27ae60",
+  },
+  {
     title: "Golden Hour Marketing Kit",
     desc: "Social media posts, story sequences, email blasts, ticket page copy, TikTok concepts, and content calendar.",
     href: "/oddyssey-manor/golden-hour-kit",
