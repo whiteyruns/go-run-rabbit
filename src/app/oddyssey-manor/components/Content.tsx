@@ -770,7 +770,7 @@ const styles = `
     radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 60%),
     radial-gradient(ellipse at 80% 20%, rgba(13,8,18,0.8) 0%, transparent 50%),
     linear-gradient(180deg, rgba(6,6,6,0.15) 0%, rgba(6,6,6,0.4) 50%, rgba(6,6,6,0.85) 100%),
-    url('/oddyssey/gal6.webp') center/cover no-repeat;
+    url('/oddyssey/gal7.webp') center 20%/cover no-repeat;
 }
 .od-hero-texture {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;

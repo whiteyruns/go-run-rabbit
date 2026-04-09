@@ -78,6 +78,13 @@ const docs = [
     tagColor: "#d4a574",
   },
   {
+    title: "Competitive Landscape",
+    desc: "Direct competitors, market context, AREA15 ecosystem, positioning map, white space analysis.",
+    href: "/oddyssey-manor/competitive-landscape",
+    tag: "Intelligence",
+    tagColor: "#3498db",
+  },
+  {
     title: "Golden Hour Marketing Kit",
     desc: "Social media posts, story sequences, email blasts, ticket page copy, TikTok concepts, and content calendar.",
     href: "/oddyssey-manor/golden-hour-kit",
