@@ -230,7 +230,7 @@ export default function OddysseyContent() {
                 <div className="od-exp-bg od-exp-bg-manor" />
                 <div className="od-exp-content">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/oddyssey/manor.png" alt="Manor" className="od-exp-logo" />
+                  <img src="/oddyssey/manor.webp" alt="Manor" className="od-exp-logo" />
                   <div className="od-label">Theatre</div>
                   <h3>Oddyssey Manor</h3>
                   <p>Immersive cocktail theatre. A guided journey through velvet-draped rooms, interactive characters, circus performance, and craft cocktails.</p>
@@ -244,7 +244,7 @@ export default function OddysseyContent() {
                 <div className="od-exp-bg od-exp-bg-noir" />
                 <div className="od-exp-content">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/oddyssey/noir.png" alt="Noir" className="od-exp-logo" />
+                  <img src="/oddyssey/noir.webp" alt="Noir" className="od-exp-logo" />
                   <div className="od-label">Nightclub</div>
                   <h3>Oddyssey Noir</h3>
                   <p>Late-night electronic music environment. Two dance floors, dystopian art, roaming performers, and curated underground sound.</p>
@@ -772,7 +772,7 @@ const styles = `
     radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 60%),
     radial-gradient(ellipse at 80% 20%, rgba(13,8,18,0.8) 0%, transparent 50%),
     linear-gradient(180deg, rgba(6,6,6,0.15) 0%, rgba(6,6,6,0.4) 50%, rgba(6,6,6,0.85) 100%),
-    url('/oddyssey/oddynoir.png') center/cover no-repeat;
+    url('/oddyssey/oddynoir.webp') center/cover no-repeat;
 }
 .od-hero-texture {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -946,7 +946,7 @@ const styles = `
   background:
     radial-gradient(ellipse at 30% 70%, rgba(201,168,76,0.1) 0%, transparent 50%),
     linear-gradient(160deg, rgba(13,10,8,0.3) 0%, rgba(10,8,13,0.4) 100%),
-    url('/oddyssey/drink.png') center/cover no-repeat;
+    url('/oddyssey/drink.webp') center/cover no-repeat;
   display: flex; align-items: center; justify-content: center;
 }
 .od-about-visual-text {
@@ -966,7 +966,7 @@ const styles = `
   background:
     radial-gradient(ellipse at 50% 60%, rgba(201,168,76,0.05) 0%, transparent 50%),
     linear-gradient(180deg, var(--bg) 0%, rgba(6,6,6,0.5) 30%, rgba(6,6,6,0.5) 70%, var(--bg) 100%),
-    url('/oddyssey/oddynoir.png') center 30%/cover no-repeat;
+    url('/oddyssey/oddynoir.webp') center 30%/cover no-repeat;
   filter: saturate(0.6) brightness(0.4);
 }
 .od-video-play {
@@ -991,12 +991,12 @@ const styles = `
 .od-exp-bg-manor {
   background: radial-gradient(ellipse at 30% 80%, rgba(201,168,76,0.08) 0%, transparent 60%),
     linear-gradient(180deg, rgba(6,6,6,0.7), rgba(6,6,6,0.9)),
-    url('/oddyssey/drink.png') center/cover no-repeat;
+    url('/oddyssey/drink.webp') center/cover no-repeat;
 }
 .od-exp-bg-noir {
   background: radial-gradient(ellipse at 70% 80%, rgba(80,40,100,0.08) 0%, transparent 60%),
     linear-gradient(180deg, rgba(6,6,6,0.6), rgba(6,6,6,0.85)),
-    url('/oddyssey/oddynoir.png') center/cover no-repeat;
+    url('/oddyssey/oddynoir.webp') center/cover no-repeat;
 }
 .od-exp-content { position: relative; z-index: 2; }
 .od-exp-logo { height: 60px; width: auto; margin-bottom: 20px; opacity: 0.9; filter: brightness(1.1); }
@@ -1018,14 +1018,14 @@ const styles = `
 .od-proof-cell { position: relative; overflow: hidden; }
 .od-proof-cell-inner { position: absolute; inset: 0; transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); }
 .od-proof-cell:hover .od-proof-cell-inner { transform: scale(1.05); }
-.od-proof-cell-1 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.png') center/cover; }
-.od-proof-cell-2 .od-proof-cell-inner { background: url('/oddyssey/drink.png') center/cover; }
-.od-proof-cell-3 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.png') 20% 40%/cover; filter: saturate(0.7) brightness(0.8); }
-.od-proof-cell-4 .od-proof-cell-inner { background: linear-gradient(135deg, rgba(13,10,8,0.6), rgba(10,8,13,0.8)), url('/oddyssey/drink.png') 80% center/cover; }
-.od-proof-cell-5 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.png') 60% 80%/cover; filter: hue-rotate(20deg) brightness(0.7); }
-.od-proof-cell-6 .od-proof-cell-inner { background: url('/oddyssey/drink.png') 30% 60%/cover; filter: saturate(1.2); }
-.od-proof-cell-7 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.png') 80% 20%/cover; filter: saturate(0.5) brightness(0.6); }
-.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.png') center 60%/cover; filter: hue-rotate(-10deg) brightness(0.9); }
+.od-proof-cell-1 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.webp') center/cover; }
+.od-proof-cell-2 .od-proof-cell-inner { background: url('/oddyssey/drink.webp') center/cover; }
+.od-proof-cell-3 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.webp') 20% 40%/cover; filter: saturate(0.7) brightness(0.8); }
+.od-proof-cell-4 .od-proof-cell-inner { background: linear-gradient(135deg, rgba(13,10,8,0.6), rgba(10,8,13,0.8)), url('/oddyssey/drink.webp') 80% center/cover; }
+.od-proof-cell-5 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.webp') 60% 80%/cover; filter: hue-rotate(20deg) brightness(0.7); }
+.od-proof-cell-6 .od-proof-cell-inner { background: url('/oddyssey/drink.webp') 30% 60%/cover; filter: saturate(1.2); }
+.od-proof-cell-7 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.webp') 80% 20%/cover; filter: saturate(0.5) brightness(0.6); }
+.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/oddynoir.webp') center 60%/cover; filter: hue-rotate(-10deg) brightness(0.9); }
 .od-proof-cell-label {
   position: absolute; bottom: 12px; left: 12px; font-size: 9px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--text-muted); opacity: 0; transform: translateY(8px);
@@ -1171,12 +1171,12 @@ const styles = `
 .od-gallery-cell { aspect-ratio: 4/3; overflow: hidden; position: relative; }
 .od-gallery-cell-inner { position: absolute; inset: 0; transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); }
 .od-gallery-cell:hover .od-gallery-cell-inner { transform: scale(1.08); }
-.od-gallery-cell-1 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.png') center/cover; }
-.od-gallery-cell-2 .od-gallery-cell-inner { background: url('/oddyssey/drink.png') center/cover; }
-.od-gallery-cell-3 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.png') 30% 60%/cover; filter: saturate(0.6) brightness(0.8); }
-.od-gallery-cell-4 .od-gallery-cell-inner { background: url('/oddyssey/drink.png') 60% center/cover; filter: hue-rotate(10deg); }
-.od-gallery-cell-5 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.png') 70% 30%/cover; filter: brightness(0.7); }
-.od-gallery-cell-6 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.png') center 80%/cover; filter: saturate(0.5) brightness(0.9); }
+.od-gallery-cell-1 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.webp') center/cover; }
+.od-gallery-cell-2 .od-gallery-cell-inner { background: url('/oddyssey/drink.webp') center/cover; }
+.od-gallery-cell-3 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.webp') 30% 60%/cover; filter: saturate(0.6) brightness(0.8); }
+.od-gallery-cell-4 .od-gallery-cell-inner { background: url('/oddyssey/drink.webp') 60% center/cover; filter: hue-rotate(10deg); }
+.od-gallery-cell-5 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.webp') 70% 30%/cover; filter: brightness(0.7); }
+.od-gallery-cell-6 .od-gallery-cell-inner { background: url('/oddyssey/oddynoir.webp') center 80%/cover; filter: saturate(0.5) brightness(0.9); }
 @media (max-width: 600px) { .od-gallery-grid { grid-template-columns: 1fr 1fr; } }
 
 /* ═══ PRIVATE EVENTS ═══ */
@@ -1190,7 +1190,7 @@ const styles = `
   background:
     radial-gradient(ellipse at 30% 70%, rgba(201,168,76,0.06) 0%, transparent 50%),
     linear-gradient(180deg, rgba(6,6,6,0.3) 0%, rgba(6,6,6,0.85) 100%),
-    url('/oddyssey/drink.png') center/cover no-repeat;
+    url('/oddyssey/drink.webp') center/cover no-repeat;
 }
 .od-private-hero-content { position: relative; z-index: 2; }
 .od-private-hero h1 {
@@ -1208,10 +1208,10 @@ const styles = `
 .od-private-space:hover { background: var(--bg-card); }
 .od-private-space-img { min-height: 240px; }
 .od-private-space-manor {
-  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/drink.png') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/drink.webp') center/cover no-repeat;
 }
 .od-private-space-noir {
-  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/oddynoir.png') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/oddynoir.webp') center/cover no-repeat;
 }
 .od-private-space-content { padding: 32px; }
 .od-private-space-content h3 {

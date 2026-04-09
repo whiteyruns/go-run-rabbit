@@ -95,7 +95,7 @@ function HubContent() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="hub-logo" />
           <div className="hub-label">Client Portal</div>
-          <p className="hub-sub">Prepared by Claymore & Colt &bull; April 2026</p>
+          <p className="hub-sub">Prepared by Go Run Rabbit &bull; April 2026</p>
         </div>
 
         <div className="hub-grid">

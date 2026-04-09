@@ -228,7 +228,7 @@ export default function GoldenHourPage() {
 
         <div className="gh-footer">
           <Link href="/oddyssey-manor" className="gh-back">&larr; All Documents</Link>
-          <span>Claymore & Colt &bull; April 2026</span>
+          <span>Go Run Rabbit &bull; April 2026</span>
         </div>
       </div>
     </div>

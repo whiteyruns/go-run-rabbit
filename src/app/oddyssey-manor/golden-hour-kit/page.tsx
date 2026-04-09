@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 
 const ACCESS_CODE = "oddyssey2026";
@@ -63,49 +63,49 @@ export default function GoldenHourKitPage() {
         <div className="kit-section">
           <div className="kit-section-title">Instagram Feed Posts</div>
 
-          <div className="kit-post">
-            <div className="kit-post-header">
-              <span className="kit-post-num">Post 1</span>
-              <span className="kit-post-type">Launch Announcement</span>
-            </div>
-            <div className="kit-post-visual">Dark, moody cocktail shot &bull; El Bandido bottle visible &bull; Text overlay: GOLDEN HOUR / OPEN BAR / 10 PM&ndash;Midnight</div>
-            <div className="kit-post-caption">
-              <div className="kit-caption-label">Caption</div>
-              <p>GOLDEN HOUR. This Friday at Liquid Gold.</p>
-              <p>RSVP and get in free. Then we&rsquo;re opening the bar at 10PM with complimentary El Bandido Tequila cocktails &mdash; Palomas, Spicy Margaritas, and Tequila Sodas &mdash; while supplies last.</p>
-              <p>Free entry. Free drinks. 10 PM &ndash; Midnight. Then Liquid Gold takes over.</p>
-              <p style={{ color: "#5a5650", fontSize: 11 }}>Doors: 10:00 PM &bull; Golden Hour: 10 PM &ndash; Midnight &bull; Paid Bar: Midnight &ndash; Late</p>
-              <p style={{ color: "#5a5650", fontSize: 11 }}>#OddysseyLV #GoldenHour #OpenBar #LasVegasNightlife #AREA15 #ElBandidoTequila</p>
-            </div>
-          </div>
+          {[
+            {
+              num: "Post 1", type: "Launch Announcement",
+              visual: "Dark, moody cocktail shot \u2022 El Bandido bottle visible \u2022 Text overlay: GOLDEN HOUR / OPEN BAR / 10 PM\u2013Midnight",
+              caption: `Something new starts this Friday. 🪩
 
-          <div className="kit-post">
-            <div className="kit-post-header">
-              <span className="kit-post-num">Post 2</span>
-              <span className="kit-post-type">Cocktail Feature Carousel</span>
-            </div>
-            <div className="kit-post-visual">3-slide carousel &bull; Close-up of each cocktail &bull; Atmospheric, stylized</div>
-            <div className="kit-post-caption">
-              <div className="kit-caption-label">Caption</div>
-              <p>The Golden Hour menu, powered by El Bandido Tequila:</p>
-              <p>Paloma &mdash; grapefruit, lime, soda<br />Spicy Margarita &mdash; lime, agave, jalape&ntilde;o<br />Tequila Soda &mdash; lime, soda, simplicity</p>
-              <p>All complimentary. 10 PM &ndash; Midnight. While supplies last. Don&rsquo;t be late.</p>
-            </div>
-          </div>
+Golden Hour. Doors at 10. Open bar till midnight. @elbandidotequila cocktails on us — Palomas, Spicy Margaritas, Tequila Sodas — while supplies last.
 
-          <div className="kit-post">
-            <div className="kit-post-header">
-              <span className="kit-post-num">Post 3</span>
-              <span className="kit-post-type">Saturday FOMO</span>
-            </div>
-            <div className="kit-post-visual">Recap photo/video from Friday night &bull; Urgency tone</div>
-            <div className="kit-post-caption">
-              <div className="kit-caption-label">Caption</div>
-              <p>Friday&rsquo;s Golden Hour sold through in [XX] minutes.</p>
-              <p>Saturday&rsquo;s your second chance. Open bar. 10 PM &ndash; Midnight. El Bandido Tequila cocktails on us, while supplies last.</p>
-              <p>RSVP = free entry. Then Art in Motion takes over at midnight. Doors at 10. Don&rsquo;t sleep.</p>
-            </div>
-          </div>
+RSVP and you're in free. No ticket. No cover. Just show up.
+
+Then Liquid Gold takes over at midnight. You already know. ✨
+
+Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
+            },
+            {
+              num: "Post 2", type: "Cocktail Feature Carousel",
+              visual: "3-slide carousel \u2022 Close-up of each cocktail \u2022 Atmospheric, moody lighting",
+              caption: `The Golden Hour menu. All @elbandidotequila. All complimentary. 🖤
+
+Paloma — grapefruit, lime, soda. The one everyone starts with.
+Spicy Margarita — lime, agave, jalapeño. The one that finds you.
+Tequila Soda — lime, soda. Clean and fast.
+
+10 PM – Midnight. While supplies last. First come, first served.
+
+Save this for later so you know what to order. 🪩`,
+            },
+            {
+              num: "Post 3", type: "Saturday Replay",
+              visual: "Friday night recap footage \u2022 Crowd energy, cocktails, performers",
+              caption: `Friday's Golden Hour ran dry in [XX] minutes. 🪩🖤
+
+Saturday's your second chance. Same deal. Open bar. 10 PM – Midnight. @elbandidotequila cocktails on us, while supplies last.
+
+RSVP = free entry. Then Art in Motion takes over at midnight.
+
+Doors at 10. Don't be late this time.
+
+Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
+            },
+          ].map((post) => (
+            <CopyablePost key={post.num} num={post.num} type={post.type} visual={post.visual} caption={post.caption} />
+          ))}
         </div>
 
         {/* Story Sequence */}
@@ -114,11 +114,11 @@ export default function GoldenHourKitPage() {
           <p className="kit-note">5-story sequence to run day-of (Friday and Saturday)</p>
           <div className="kit-story-grid">
             {[
-              { slide: "1", visual: "Black screen, slow text reveal", text: "Tonight." },
-              { slide: "2", visual: "Cocktail pour (slow-mo)", text: "GOLDEN HOUR / Open Bar / 10 PM–Midnight" },
-              { slide: "3", visual: "Menu card or bartender prep", text: "Paloma · Spicy Marg · Tequila Soda / While supplies last" },
-              { slide: "4", visual: "Venue interior / moody lighting", text: "Then Liquid Gold (Fri) / Art in Motion (Sat) takes over" },
-              { slide: "5", visual: "Swipe up / link sticker", text: "RSVP for free entry / Link in bio" },
+              { slide: "1", visual: "Black screen, slow text reveal", text: "Tonight. 🪩" },
+              { slide: "2", visual: "Cocktail pour, slow-mo, moody", text: "Golden Hour. Open bar. 10 PM." },
+              { slide: "3", visual: "Bartender lining up glasses", text: "Paloma. Spicy Marg. Tequila Soda. All @elbandidotequila. All free." },
+              { slide: "4", visual: "Venue interior, performers, crowd", text: "Then Liquid Gold / Art in Motion takes over at midnight. 🖤" },
+              { slide: "5", visual: "Swipe up / link sticker", text: "RSVP = free entry. Link in bio." },
             ].map(s => (
               <div key={s.slide} className="kit-story-card">
                 <div className="kit-story-num">{s.slide}</div>
@@ -135,37 +135,67 @@ export default function GoldenHourKitPage() {
           <div className="kit-email">
             <div className="kit-email-subjects">
               <div className="kit-caption-label">Subject Line Options (A/B Test)</div>
-              <p>A: Golden Hour this Friday. Open bar featuring El Bandido Tequila.</p>
-              <p>B: Free entry + free cocktails. RSVP for Golden Hour.</p>
-              <p>C: Oddyssey just opened the bar.</p>
-              <p style={{ color: "#5a5650", fontSize: 11, marginTop: 8 }}>Preview: Complimentary El Bandido Tequila cocktails, 10 PM &ndash; Midnight, while supplies last.</p>
+              <p>A: We just opened the bar.</p>
+              <p>B: Free entry. Free drinks. This Friday.</p>
+              <p>C: Golden Hour starts at 10. RSVP and you&rsquo;re in free.</p>
+              <p style={{ color: "#5a5650", fontSize: 11, marginTop: 8 }}>Preview: Open bar 10 PM &ndash; Midnight. El Bandido Tequila cocktails, while supplies last.</p>
             </div>
-            <div className="kit-email-body">
-              <div className="kit-caption-label">Email Body</div>
+            <CopyableBlock label="Email Body" text={`GOLDEN HOUR
+Open Bar featuring El Bandido Tequila
+
+Something new this Friday and Saturday at Oddyssey. 🪩
+
+Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails — Palomas, Spicy Margaritas, Tequila Sodas — on us. While supplies last.
+
+RSVP and you're in free. No ticket. No cover.
+
+The bar runs dry when it runs dry. No extensions. After midnight, the night evolves — Liquid Gold on Fridays, Art in Motion on Saturdays. Two dance floors. Performers in the crowd. DJs through close. 🖤
+
+Show up early. You don't want to miss this one.
+
+Doors: 10 PM | Golden Hour: 10 PM – Midnight | Oddyssey at AREA15 | 21+ only`}>
+            <div className="kit-email-body" style={{ padding: 0 }}>
               <h3 style={{ color: "#d4a574", fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 300, letterSpacing: 2, marginBottom: 8 }}>GOLDEN HOUR</h3>
               <p style={{ color: "#5a5650", fontSize: 12, letterSpacing: 2, marginBottom: 16 }}>Open Bar featuring El Bandido Tequila</p>
-              <p>We&rsquo;re starting the weekend early. And if you RSVP, you&rsquo;re in free.</p>
-              <p>This Friday and Saturday, Oddyssey is kicking off Golden Hour at 10 PM &mdash; complimentary El Bandido Tequila cocktails including Palomas, Spicy Margaritas, and Tequila Sodas, served while supplies last.</p>
-              <p>RSVP now and entry is on us. Show up early. The bar runs dry when it runs dry. No extensions, no exceptions.</p>
-              <p>After midnight, the night evolves into Liquid Gold (Fridays) or Art in Motion (Saturdays) with paid bar service &mdash; two dance floors, live performers, and DJs through close.</p>
+              <p>Something new this Friday and Saturday at Oddyssey. 🪩</p>
+              <p>Golden Hour. Doors at 10. Open bar till midnight. El Bandido Tequila cocktails &mdash; Palomas, Spicy Margaritas, Tequila Sodas &mdash; on us. While supplies last.</p>
+              <p>RSVP and you&rsquo;re in free. No ticket. No cover.</p>
+              <p>The bar runs dry when it runs dry. No extensions. After midnight, the night evolves &mdash; Liquid Gold on Fridays, Art in Motion on Saturdays. Two dance floors. Performers in the crowd. DJs through close. 🖤</p>
+              <p>Show up early. You don&rsquo;t want to miss this one.</p>
               <div style={{ background: "#0d0d0d", padding: 20, marginTop: 16, fontSize: 12, color: "#9a958d" }}>
-                Doors: 10:00 PM<br />Golden Hour: 10:00 PM &ndash; Midnight<br />Where: Oddyssey at AREA15<br />Age: 21+ only
+                Doors: 10 PM<br />Golden Hour: 10 PM &ndash; Midnight<br />Oddyssey at AREA15<br />21+ only | Link below
               </div>
             </div>
+            </CopyableBlock>
           </div>
         </div>
 
         {/* Ticket Page */}
         <div className="kit-section">
           <div className="kit-section-title">Ticket Page Copy</div>
+          <CopyableBlock label="Ticket Page Copy" text={`Golden Hour + Liquid Gold (Fri) / Art in Motion (Sat)
+Free entry with RSVP · Open bar featuring El Bandido Tequila
+
+The night starts with Golden Hour. El Bandido Tequila cocktails — Palomas, Spicy Margaritas, Tequila Sodas — on us from 10 PM to midnight. While supplies last. First come, first served.
+
+RSVP and you're in free. No ticket, no cover.
+
+After midnight, the night keeps going. Liquid Gold on Fridays. Art in Motion on Saturdays. Two dance floors, performers in the crowd, DJs through close. Your ticket gets you both — Golden Hour and the full Noir experience.
+
+Doors: 10 PM · Golden Hour: 10 PM – Midnight · Oddyssey at AREA15 · 21+ only`}>
           <div className="kit-ticket">
-            <div className="kit-caption-label">Event Title</div>
+            <div className="kit-caption-label" style={{ marginBottom: 8 }}>Event Title</div>
             <p><strong>Golden Hour + Liquid Gold (Fri) / Art in Motion (Sat)</strong></p>
-            <p style={{ color: "#5a5650", marginBottom: 16 }}>Complimentary Entry with RSVP + Open Bar featuring El Bandido Tequila</p>
+            <p style={{ color: "#5a5650", marginBottom: 16 }}>Free entry with RSVP &bull; Open bar featuring El Bandido Tequila</p>
             <div className="kit-caption-label">Description</div>
-            <p>The night starts with Golden Hour &mdash; complimentary El Bandido Tequila cocktails from 10 PM &ndash; Midnight, served while supplies last. Choose from Palomas, Spicy Margaritas, or Tequila Sodas at the featured bar.</p>
-            <p>Doors open at 10:00 PM. First come, first served. After midnight, the night evolves into Liquid Gold (Fridays) or Art in Motion (Saturdays) with paid bar service &mdash; two dance floors, roaming performers, and DJs through close.</p>
+            <p>The night starts with Golden Hour. El Bandido Tequila cocktails &mdash; Palomas, Spicy Margaritas, Tequila Sodas &mdash; on us from 10 PM to midnight. While supplies last. First come, first served.</p>
+            <p>RSVP and you&rsquo;re in free. No ticket, no cover.</p>
+            <p>After midnight, the night keeps going. Liquid Gold on Fridays. Art in Motion on Saturdays. Two dance floors, performers in the crowd, DJs through close. Your ticket gets you both &mdash; Golden Hour and the full Noir experience.</p>
+            <div style={{ background: "#0d0d0d", padding: 16, marginTop: 12, fontSize: 12, color: "#9a958d" }}>
+              Doors: 10 PM &bull; Golden Hour: 10 PM &ndash; Midnight &bull; Oddyssey at AREA15 &bull; 21+ only
+            </div>
           </div>
+          </CopyableBlock>
         </div>
 
         {/* TikTok */}
@@ -173,9 +203,9 @@ export default function GoldenHourKitPage() {
           <div className="kit-section-title">TikTok Video Concepts</div>
           <div className="kit-tiktok-grid">
             {[
-              { title: "Announcement", format: "15–30 sec", hook: "POV: You just found out about free entry AND free El Bandido Tequila cocktails in Vegas this Friday", visual: "Quick cuts of cocktail prep, venue lighting, bartender shake, pour" },
-              { title: "Day-Of Hype", format: "10–15 sec", hook: "Golden Hour starts tonight at 10. Open bar till midnight.", visual: "Countdown-style: bartender lining up glasses, bottles, doors opening" },
-              { title: "Post-Event Recap", format: "15–30 sec", hook: "Golden Hour lasted [XX] minutes last night", visual: "Crowd shots, cocktail close-ups, vibes. End: 'Saturday. Same deal.'" },
+              { title: "Announcement", format: "15–30 sec", hook: "Free entry and free drinks every Friday in Vegas and nobody's talking about it yet", visual: "Quick cuts: cocktail pour, venue lighting, bartender shake, crowd arriving. End card: Golden Hour / 10 PM / Oddyssey / Link in bio" },
+              { title: "Day-Of Hype", format: "10–15 sec", hook: "Golden Hour starts in 6 hours. Open bar till midnight. Don't be late.", visual: "Fast cuts: glasses lining up, bottles on display, ice hitting glass, doors about to open" },
+              { title: "Recap + FOMO", format: "15–30 sec", hook: "The bar ran dry in [XX] minutes last night", visual: "Friday crowd montage, cocktail close-ups, energy. Hard cut to black: 'Saturday. Same deal. Don't sleep.'" },
             ].map(v => (
               <div key={v.title} className="kit-tiktok-card">
                 <div className="kit-tiktok-title">{v.title}</div>
@@ -210,9 +240,62 @@ export default function GoldenHourKitPage() {
 
         <div className="kit-footer">
           <Link href="/oddyssey-manor" className="kit-back">&larr; All Documents</Link>
-          <span>Claymore & Colt &bull; April 2026</span>
+          <span>Go Run Rabbit &bull; April 2026</span>
         </div>
       </div>
+    </div>
+  );
+}
+
+function CopyablePost({ num, type, visual, caption }: { num: string; type: string; visual: string; caption: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(caption).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [caption]);
+
+  return (
+    <div className="kit-post">
+      <div className="kit-post-header">
+        <span className="kit-post-num">{num}</span>
+        <span className="kit-post-type">{type}</span>
+      </div>
+      <div className="kit-post-visual">{visual}</div>
+      <div className="kit-post-caption">
+        <div className="kit-caption-header">
+          <span className="kit-caption-label">Caption</span>
+          <button className={`kit-copy-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
+            {copied ? "Copied!" : "Copy Caption"}
+          </button>
+        </div>
+        {caption.split("\n\n").map((para, i) => (
+          <p key={i}>{para}</p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CopyableBlock({ label, text, children }: { label: string; text: string; children: React.ReactNode }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, [text]);
+
+  return (
+    <div style={{ position: "relative" }}>
+      <div className="kit-caption-header">
+        <span className="kit-caption-label">{label}</span>
+        <button className={`kit-copy-btn ${copied ? "copied" : ""}`} onClick={handleCopy}>
+          {copied ? "Copied!" : "Copy"}
+        </button>
+      </div>
+      {children}
     </div>
   );
 }
@@ -239,7 +322,15 @@ const kitStyles = `
 .kit-post-type { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; }
 .kit-post-visual { padding: 16px 20px; font-size: 12px; color: #5a5650; font-style: italic; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .kit-post-caption { padding: 20px; }
-.kit-caption-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; font-weight: 500; margin-bottom: 8px; }
+.kit-caption-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.kit-caption-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; font-weight: 500; margin-bottom: 0; }
+.kit-copy-btn {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #c9a84c;
+  background: transparent; border: 1px solid rgba(201,168,76,0.2); padding: 6px 14px;
+  cursor: pointer; transition: all 0.3s; font-family: inherit; font-weight: 500;
+}
+.kit-copy-btn:hover { border-color: #c9a84c; background: rgba(201,168,76,0.08); }
+.kit-copy-btn.copied { color: #27ae60; border-color: rgba(39,174,96,0.3); }
 .kit-post-caption p { font-size: 13px; color: #9a958d; margin-bottom: 10px; }
 
 .kit-story-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: rgba(255,255,255,0.06); }

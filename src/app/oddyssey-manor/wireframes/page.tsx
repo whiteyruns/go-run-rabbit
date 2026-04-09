@@ -129,7 +129,7 @@ export default function OddysseyManorPage() {
           className="mt-16 text-xs tracking-[0.15em] uppercase"
           style={{ color: "#5a5650", letterSpacing: "2px" }}
         >
-          Prepared by Claymore & Colt
+          Presented by Go Run Rabbit
         </p>
       </div>
     </div>

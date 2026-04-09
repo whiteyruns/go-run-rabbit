@@ -46,7 +46,7 @@ export default function AuditPage() {
             {error && <p className="text-xs tracking-widest uppercase" style={{ color: "#c0392b" }}>Invalid access code</p>}
             <button type="submit" className="w-full py-4 text-xs uppercase tracking-widest font-medium" style={{ background: "#c9a84c", color: "#060606", letterSpacing: "3px" }}>Enter</button>
           </form>
-          <p className="mt-16 text-xs tracking-[0.15em] uppercase" style={{ color: "#5a5650", letterSpacing: "2px" }}>Prepared by Claymore & Colt</p>
+          <p className="mt-16 text-xs tracking-[0.15em] uppercase" style={{ color: "#5a5650", letterSpacing: "2px" }}>Presented by Go Run Rabbit</p>
         </div>
       </div>
     );
@@ -328,7 +328,7 @@ function AuditContent() {
         {/* FOOTER */}
         <div className="audit-footer">
           <div>Prepared for Oddyssey LV &bull; April 2026</div>
-          <div>Claymore &amp; Colt</div>
+          <div>Go Run Rabbit</div>
         </div>
       </div>
     </div>
