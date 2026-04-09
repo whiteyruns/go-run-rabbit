@@ -183,18 +183,22 @@ export default function OddysseyContent() {
             <div className="od-about-grid">
               <div>
                 <div className="od-label">The Experience</div>
-                <h2 className="od-heading-2">What is<br />Oddyssey Noir</h2>
+                <h2 className="od-heading-2">What is<br />Oddyssey</h2>
                 <p className="od-about-text">
-                  A sensual maze and seductive living room with a pulse, tucked away inside
-                  the Oddyssey building at AREA15. Themed rooms and textured corridors open
-                  into dynamic dance floors designed for connection and community. Music drives
-                  the emotional arc of the night as performers move through the experience as
-                  living guides — the entire environment breathing, shifting, and responding
-                  in real time.
+                  A premier immersive theatre and alternative nightlife destination born from
+                  the fusion of AREA15&apos;s hidden lore and the mythic journey of Homer&apos;s Odyssey.
+                  Sirens, shapeshifters, and eccentric hosts invite you to explore velvet-draped
+                  rooms, interactive installations, and craft cocktails that blur the line
+                  between theatre and nightlife.
                 </p>
-                <p className="od-about-tagline">You&apos;ve Arrived.</p>
+                <p className="od-about-text" style={{ marginBottom: 8 }}>
+                  By day, <strong>Oddyssey Manor</strong> offers immersive performances and decadent
+                  food &amp; beverage. By night, the space transforms into <strong>Oddyssey Noir</strong> &mdash;
+                  a carniv&aacute;l noir warehouse rave of DJs, circus acts, and underground intrigue.
+                </p>
+                <p className="od-about-tagline">Every guest becomes part of the myth.</p>
                 <ul className="od-about-features">
-                  {["Themed rooms & textured corridors", "Dynamic dance floors", "Performers as living guides", "Music-driven emotional arc", "Designed for connection & community"].map((f) => (
+                  {["Velvet-draped rooms & interactive installations", "Sirens, shapeshifters & eccentric hosts", "Craft cocktails & decadent food", "DJs, circus acts & underground intrigue", "Two dance floors through close"].map((f) => (
                     <li key={f}>{f}</li>
                   ))}
                 </ul>
