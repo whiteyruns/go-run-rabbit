@@ -117,13 +117,14 @@ export default function OddysseyContent() {
             </div>
             <div className="od-event-cards">
               {[
-                { date: "Fri Apr 11", name: "Liquid\nGold", genre: "House · Electronic", night: "friday" },
-                { date: "Sat Apr 12", name: "Oddyssey\nNoir", genre: "Multi-genre · Immersive", night: "saturday" },
-                { date: "Fri Apr 18", name: "Liquid\nGold", genre: "House · Electronic", night: "friday" },
+                { date: "Fri Apr 11", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "Berri" },
+                { date: "Sat Apr 12", name: "Oddyssey\nNoir", genre: "Multi-genre · Immersive", night: "saturday", dj: "Hector Romero" },
+                { date: "Fri Apr 18", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "DJ Brynn Taylor" },
               ].map((evt, i) => (
                 <div key={i} className={`od-event-card od-event-card-${evt.night}`} onClick={() => showPage("detail")}>
                   <div className="od-event-date">{evt.date}</div>
                   <div className="od-event-name">{evt.name.split("\n").map((l, j) => <span key={j}>{l}<br /></span>)}</div>
+                  <div className="od-event-dj">{evt.dj}</div>
                   <div className="od-event-genre">{evt.genre}</div>
                   <span className="od-btn-primary od-btn-sm">Get Tickets</span>
                 </div>
@@ -280,12 +281,12 @@ export default function OddysseyContent() {
           <div className="od-calendar-list">
             <CalendarMonth title="April 2026" />
             {[
-              { date: "Fri Apr 11", name: "Liquid Gold", genre: "House · Electronic" },
-              { date: "Sat Apr 12", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
-              { date: "Fri Apr 18", name: "Liquid Gold", genre: "House · Electronic" },
-              { date: "Sat Apr 19", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
-              { date: "Fri Apr 25", name: "Liquid Gold", genre: "House · Electronic" },
-              { date: "Sat Apr 26", name: "Oddyssey Noir", genre: "Multi-genre · Immersive" },
+              { date: "Fri Apr 11", name: "Liquid Gold", genre: "House · Electronic", dj: "Berri" },
+              { date: "Sat Apr 12", name: "Oddyssey Noir", genre: "Multi-genre · Immersive", dj: "Hector Romero" },
+              { date: "Fri Apr 18", name: "Liquid Gold", genre: "House · Electronic", dj: "DJ Brynn Taylor" },
+              { date: "Sat Apr 19", name: "Oddyssey Noir", genre: "Multi-genre · Immersive", dj: "John Julius Knight" },
+              { date: "Fri Apr 25", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Apr 26", name: "Oddyssey Noir", genre: "Multi-genre · Immersive", dj: "TBA" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
@@ -328,6 +329,7 @@ export default function OddysseyContent() {
               <div className="od-detail-date">Friday, April 11, 2026</div>
               <h1>Liquid<br />Gold</h1>
               <p className="od-detail-sub">Where style, sound, and self-expression collide</p>
+              <div className="od-detail-artist">Featuring: Berri</div>
             </div>
           </section>
 
@@ -404,12 +406,13 @@ function CalendarMonth({ title }: { title: string }) {
   );
 }
 
-function CalendarEvent({ date, name, genre, onClick }: { date: string; name: string; genre: string; onClick: () => void }) {
+function CalendarEvent({ date, name, genre, dj, onClick }: { date: string; name: string; genre: string; dj?: string; onClick: () => void }) {
   return (
     <div className="od-cal-event" onClick={onClick}>
       <div className="od-cal-date">{date}</div>
       <div className="od-cal-info">
         <h4>{name}</h4>
+        {dj && <span className="od-cal-dj">{dj}</span>}
         <span className="od-cal-genre">{genre}</span>
       </div>
       <div className="od-cal-time">Doors 10 PM</div>
@@ -618,6 +621,7 @@ const styles = `
 .od-event-card-saturday:hover { background: linear-gradient(180deg, rgba(6,6,6,0.82) 0%, rgba(6,6,6,0.92) 100%), url('/oddyssey/oddyssey-noir-event.webp') center/cover no-repeat; }
 .od-event-date { font-size: 11px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
 .od-event-name { font-family: var(--serif); font-size: clamp(22px,2.5vw,32px); font-weight: 400; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; line-height: 1.2; }
+.od-event-dj { font-family: var(--serif); font-size: 16px; font-weight: 400; color: var(--text); letter-spacing: 1px; margin-bottom: 8px; }
 .od-event-genre { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 32px; }
 .od-event-card .od-btn-primary { margin-top: auto; align-self: flex-start; }
 @media (max-width: 900px) { .od-event-cards { grid-template-columns: 1fr; } }
@@ -804,6 +808,7 @@ const styles = `
   font-family: var(--serif); font-size: clamp(18px,2vw,26px); font-weight: 400;
   letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
 }
+.od-cal-dj { display: block; font-family: var(--serif); font-size: 15px; font-weight: 400; color: var(--text); letter-spacing: 1px; margin-bottom: 4px; }
 .od-cal-genre { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
 .od-cal-time { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-align: right; }
 @media (max-width: 768px) {
@@ -837,6 +842,10 @@ const styles = `
 .od-detail-sub {
   font-family: var(--serif); font-size: clamp(16px,2vw,24px); font-weight: 300;
   font-style: italic; color: var(--text-secondary); letter-spacing: 2px;
+}
+.od-detail-artist {
+  font-size: 13px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(201,168,76,0.2);
 }
 .od-detail-info { border-bottom: 1px solid var(--border-subtle); }
 .od-detail-info-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border-subtle); }
