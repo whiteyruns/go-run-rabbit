@@ -119,6 +119,13 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
               <div className="mock-overlay" />
               <div className="mock-content">
                 <div className="mock-area15">AREA15 / DISTRICT</div>
+                <svg className="mock-starburst" viewBox="0 0 60 60" width="40" height="40">
+                  <line x1="30" y1="0" x2="30" y2="60" stroke="#d4a574" strokeWidth="0.5" opacity="0.4"/>
+                  <line x1="0" y1="30" x2="60" y2="30" stroke="#d4a574" strokeWidth="0.5" opacity="0.4"/>
+                  <line x1="8" y1="8" x2="52" y2="52" stroke="#d4a574" strokeWidth="0.5" opacity="0.3"/>
+                  <line x1="52" y1="8" x2="8" y2="52" stroke="#d4a574" strokeWidth="0.5" opacity="0.3"/>
+                  <circle cx="30" cy="30" r="4" stroke="#d4a574" strokeWidth="0.5" fill="none" opacity="0.5"/>
+                </svg>
                 <div className="mock-gh-title">GOLDEN<br />HOUR</div>
                 <div className="mock-gh-sub">OPEN BAR</div>
                 <div className="mock-gh-time">10 PM &ndash; MIDNIGHT</div>
@@ -128,8 +135,8 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 </div>
                 <div className="mock-gh-rsvp">RSVP = FREE ENTRY</div>
                 <div className="mock-gh-nights">
-                  <span>Fridays: Liquid Gold ✨</span>
-                  <span>Saturdays: Art in Motion 🖤</span>
+                  <span>Fridays: Liquid Gold <svg className="mock-icon" viewBox="0 0 16 16" width="10" height="10"><path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2Z" fill="#d4a574"/></svg></span>
+                  <span>Saturdays: Art in Motion <svg className="mock-icon" viewBox="0 0 12 12" width="8" height="8"><rect x="2" y="2" width="8" height="8" transform="rotate(45 6 6)" stroke="#9a958d" strokeWidth="1" fill="none"/></svg></span>
                 </div>
                 <div className="mock-gh-cta">while supplies last</div>
               </div>
@@ -140,6 +147,12 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
               <div className="mock-overlay" />
               <div className="mock-content">
                 <div className="mock-tag-friday">FRIDAY 04.18</div>
+                <svg className="mock-deco-diamond" viewBox="0 0 40 40" width="24" height="24">
+                  <rect x="8" y="8" width="24" height="24" transform="rotate(45 20 20)" stroke="#d4a574" strokeWidth="0.5" fill="none" opacity="0.5"/>
+                  <rect x="13" y="13" width="14" height="14" transform="rotate(45 20 20)" stroke="#d4a574" strokeWidth="0.5" fill="none" opacity="0.3"/>
+                  <line x1="20" y1="4" x2="20" y2="36" stroke="#d4a574" strokeWidth="0.3" opacity="0.2"/>
+                  <line x1="4" y1="20" x2="36" y2="20" stroke="#d4a574" strokeWidth="0.3" opacity="0.2"/>
+                </svg>
                 <div className="mock-lg-title">LIQUID<br />GOLD</div>
                 <div className="mock-lg-dj">BERRI</div>
                 <div className="mock-lg-genre">House &bull; Electronic</div>
@@ -156,6 +169,11 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
               <div className="mock-overlay" />
               <div className="mock-content">
                 <div className="mock-tag-saturday">SATURDAY 04.19</div>
+                <svg className="mock-deco-arch" viewBox="0 0 60 30" width="48" height="24">
+                  <path d="M0 30 Q30 -5 60 30" stroke="#9a958d" strokeWidth="0.5" fill="none" opacity="0.4"/>
+                  <path d="M8 30 Q30 2 52 30" stroke="#9a958d" strokeWidth="0.5" fill="none" opacity="0.25"/>
+                  <line x1="30" y1="0" x2="30" y2="30" stroke="#9a958d" strokeWidth="0.3" opacity="0.15"/>
+                </svg>
                 <div className="mock-aim-title">ART IN<br />MOTION</div>
                 <div className="mock-aim-dj">HECTOR ROMERO</div>
                 <div className="mock-aim-genre">Multi-genre &bull; Immersive</div>
@@ -176,14 +194,14 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-wk-split">
                   <div className="mock-wk-night mock-wk-fri">
                     <div className="mock-wk-day">FRIDAY</div>
-                    <div className="mock-wk-name">Liquid Gold ✨</div>
+                    <div className="mock-wk-name">Liquid Gold <svg className="mock-icon" viewBox="0 0 16 16" width="10" height="10"><path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2Z" fill="#d4a574"/></svg></div>
                     <div className="mock-wk-dj">BERRI</div>
                     <div className="mock-wk-desc">House &bull; Electronic</div>
                   </div>
                   <div className="mock-wk-divider" />
                   <div className="mock-wk-night mock-wk-sat">
                     <div className="mock-wk-day">SATURDAY</div>
-                    <div className="mock-wk-name">Art in Motion 🖤</div>
+                    <div className="mock-wk-name">Art in Motion <svg className="mock-icon" viewBox="0 0 12 12" width="8" height="8"><rect x="2" y="2" width="8" height="8" transform="rotate(45 6 6)" stroke="#9a958d" strokeWidth="1" fill="none"/></svg></div>
                     <div className="mock-wk-dj">HECTOR ROMERO</div>
                     <div className="mock-wk-desc">Multi-genre &bull; Immersive</div>
                   </div>
@@ -453,7 +471,7 @@ const kitStyles = `
   aspect-ratio: 1/1; position: relative; overflow: hidden; display: flex;
   align-items: center; justify-content: center;
 }
-.mock-overlay { position: absolute; inset: 0; z-index: 1; }
+.mock-overlay { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
 .mock-content {
   position: relative; z-index: 2; text-align: center; padding: 32px;
   width: 100%; height: 100%; display: flex; flex-direction: column;
@@ -466,10 +484,38 @@ const kitStyles = `
 }
 .mock-golden-hour .mock-overlay {
   background:
-    radial-gradient(ellipse at 50% 70%, rgba(212,165,116,0.12) 0%, transparent 60%),
-    radial-gradient(ellipse at 30% 30%, rgba(201,168,76,0.06) 0%, transparent 50%);
+    radial-gradient(ellipse at 50% 70%, rgba(212,165,116,0.08) 0%, transparent 60%);
+  border: 1px solid rgba(212,165,116,0.1);
 }
-.mock-area15 { font-size: 9px; letter-spacing: 4px; color: #5a5650; margin-bottom: 24px; }
+.mock-golden-hour .mock-overlay::before {
+  content: ''; position: absolute; inset: 12px;
+  border: 1px solid rgba(212,165,116,0.08);
+}
+.mock-liquid-gold .mock-overlay {
+  border: 1px solid rgba(212,165,116,0.1);
+  background: radial-gradient(ellipse at 50% 60%, rgba(212,165,116,0.06) 0%, transparent 60%);
+}
+.mock-liquid-gold .mock-overlay::before {
+  content: ''; position: absolute; inset: 12px;
+  border: 1px solid rgba(212,165,116,0.06);
+}
+.mock-art-in-motion .mock-overlay {
+  border: 1px solid rgba(154,149,141,0.08);
+  background: radial-gradient(ellipse at 50% 60%, rgba(154,149,141,0.04) 0%, transparent 60%);
+}
+.mock-art-in-motion .mock-overlay::before {
+  content: ''; position: absolute; inset: 12px;
+  border: 1px solid rgba(154,149,141,0.06);
+}
+.mock-weekend .mock-overlay {
+  border: 1px solid rgba(201,168,76,0.06);
+  background: radial-gradient(ellipse at 50% 80%, rgba(201,168,76,0.03) 0%, transparent 50%);
+}
+.mock-icon { display: inline-block; vertical-align: middle; margin-left: 4px; }
+.mock-starburst { margin-bottom: 16px; }
+.mock-deco-diamond { margin: 12px 0; }
+.mock-deco-arch { margin: 12px 0; }
+.mock-area15 { font-size: 9px; letter-spacing: 4px; color: #5a5650; margin-bottom: 16px; }
 .mock-gh-title {
   font-family: 'Cormorant Garamond', serif; font-size: 52px; font-weight: 300;
   letter-spacing: 6px; line-height: 1; color: #d4a574; margin-bottom: 12px;
@@ -488,9 +534,7 @@ const kitStyles = `
 
 /* Liquid Gold Friday */
 .mock-liquid-gold {
-  background:
-    linear-gradient(180deg, rgba(6,6,6,0.6), rgba(6,6,6,0.85)),
-    url('/oddyssey/liquid-gold-friday.webp') center/cover no-repeat;
+  background: linear-gradient(160deg, #0c0906 0%, #14100a 40%, #0a0808 100%);
 }
 .mock-tag-friday { font-size: 10px; letter-spacing: 4px; color: #d4a574; margin-bottom: 20px; }
 .mock-lg-title {
@@ -509,9 +553,7 @@ const kitStyles = `
 
 /* Art in Motion Saturday */
 .mock-art-in-motion {
-  background:
-    linear-gradient(180deg, rgba(6,6,6,0.7), rgba(6,6,6,0.9)),
-    url('/oddyssey/oddyssey-noir-event.webp') center/cover no-repeat;
+  background: linear-gradient(160deg, #080608 0%, #0c0a0e 40%, #080808 100%);
 }
 .mock-tag-saturday { font-size: 10px; letter-spacing: 4px; color: #9a958d; margin-bottom: 20px; }
 .mock-aim-title {
