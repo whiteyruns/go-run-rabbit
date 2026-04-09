@@ -298,11 +298,15 @@ const ghStyles = `
 .gh-insight p { font-size: 15px; color: #9a958d; line-height: 1.7; }
 .gh-insight strong { color: #e8e4dd; font-weight: 500; }
 
-.gh-footer { margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
+.gh-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
 @media (max-width: 700px) {
   .gh-page { padding: 24px 20px 60px; }
   .gh-two-col, .gh-menu-grid, .gh-rsvp-grid, .gh-value-grid { grid-template-columns: 1fr; }
   .gh-metrics { grid-template-columns: 1fr 1fr; }
+  .gh-timeline-row { grid-template-columns: 70px 16px 1fr; gap: 8px; }
+  .gh-timeline-time { font-size: 10px; }
+  .gh-header h1 { font-size: 40px; }
+  .gh-footer { flex-direction: column; gap: 12px; text-align: center; }
 }
 `;

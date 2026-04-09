@@ -721,8 +721,8 @@ const styles = `
 .od-page-nav button:hover { color: var(--text); }
 .od-page-nav button.active { background: var(--accent); color: var(--bg); }
 @media (max-width: 600px) {
-  .od-page-nav { bottom: 12px; padding: 4px; }
-  .od-page-nav button { padding: 8px 12px; font-size: 8px; letter-spacing: 1px; }
+  .od-page-nav { bottom: 12px; padding: 3px; left: 8px; right: 8px; transform: none; }
+  .od-page-nav button { padding: 8px 8px; font-size: 7px; letter-spacing: 0.5px; flex: 1; }
 }
 
 /* ═══ SHARED ═══ */
@@ -1283,7 +1283,7 @@ const styles = `
 
 /* ═══ FOOTER ═══ */
 .od-footer {
-  padding: 60px clamp(20px,6vw,120px); border-top: 1px solid var(--border-subtle);
+  padding: 60px clamp(20px,6vw,120px) 80px; border-top: 1px solid var(--border-subtle);
   display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
 }
 .od-footer-links { display: flex; gap: 32px; list-style: none; }
