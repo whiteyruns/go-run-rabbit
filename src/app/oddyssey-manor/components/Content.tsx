@@ -126,7 +126,7 @@ export default function OddysseyContent() {
                   </div>
                   <div className="od-golden-time">
                     <span className="od-golden-time-label">Entry</span>
-                    <span className="od-golden-time-value">Free (database invite) &bull; $18 door</span>
+                    <span className="od-golden-time-value">Doors at 10 PM</span>
                   </div>
                 </div>
                 <div className="od-golden-flow">
@@ -148,7 +148,7 @@ export default function OddysseyContent() {
                     <span className="od-golden-flow-text">Full programming through close</span>
                   </div>
                 </div>
-                <a className="od-btn-golden">Buy Tickets &mdash; $18</a>
+                <a className="od-btn-golden">Get Tickets</a>
               </div>
             </div>
           </section>
