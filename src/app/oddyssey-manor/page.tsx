@@ -129,20 +129,26 @@ function HubContent() {
             <div className="hub-group-num">03</div>
             <div>
               <h2>Golden Hour Program</h2>
-              <p>Open bar concept with El Bandido Tequila &mdash; proposal and marketing assets</p>
+              <p>Open bar concept with El Bandido Tequila &mdash; venue proposal, brand pitch, and marketing assets</p>
             </div>
           </div>
-          <div className="hub-grid">
+          <div className="hub-grid hub-grid-3">
             <Link href="/oddyssey-manor/golden-hour" className="hub-card">
               <div className="hub-card-tag" style={{ color: "#d4a574", borderColor: "#d4a574" }}>Proposal</div>
               <h3>Golden Hour Proposal</h3>
-              <p>Executive summary, inventory model (~260 cocktails/night), value exchange, 4-week pilot plan.</p>
+              <p>Venue-facing pitch &mdash; executive summary, inventory model, value exchange, 4-week pilot plan.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/oddyssey-manor/bandido-partnership" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#d4a574", borderColor: "#d4a574" }}>Brand Pitch</div>
+              <h3>El Bandido Partnership</h3>
+              <p>Brand-facing pitch &mdash; what El Bandido gets: LV market anchor, weekly exposure, ROI model, cocktail program.</p>
               <span className="hub-card-link">View &rarr;</span>
             </Link>
             <Link href="/oddyssey-manor/golden-hour-kit" className="hub-card">
               <div className="hub-card-tag" style={{ color: "#d4a574", borderColor: "#d4a574" }}>Marketing</div>
               <h3>Marketing Asset Kit</h3>
-              <p>3 IG posts, story sequence, email blast, ticket copy, TikTok concepts, creative mockups, content calendar.</p>
+              <p>3 IG posts, story sequence, email blast, TikTok concepts, creative mockups, content calendar.</p>
               <span className="hub-card-link">View &rarr;</span>
             </Link>
           </div>
