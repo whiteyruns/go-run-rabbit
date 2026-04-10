@@ -250,15 +250,22 @@ export default function SeoAuditPage() {
         {/* Ticketure */}
         <div className="seo-section">
           <div className="seo-section-title">Ticketure Integration</div>
+
+          <div className="seo-insight" style={{ borderLeftColor: "#c0392b" }}>
+            <p><strong>Ticketure&rsquo;s API is closed and gated.</strong> No public documentation, no developer portal, no self-serve access. The endpoint <code>api.ticketure.com/v1/assets/&#123;tenant&#125;/</code> exists but returns <code>not_authorized</code> without credentials. API keys are generated inside Ticketure&rsquo;s dashboard and require their team to activate. There is no embed widget SDK, no JS library, and no structured data output of any kind.</p>
+          </div>
+
           <div className="seo-two-col">
             <div className="seo-col">
               <h4>What Ticketure Provides</h4>
               <ul>
-                <li>Ticket pricing &amp; availability API</li>
-                <li>Calendar/date selection widget</li>
-                <li>Embedded checkout flow (not external redirect)</li>
+                <li>Ticket pricing &amp; availability API (gated)</li>
+                <li>Embedded checkout flow (inline, not redirect)</li>
                 <li>Capacity &amp; inventory management</li>
                 <li>Event session data with dates &amp; times</li>
+                <li>Push API: <code>ticket_audit</code> + <code>gateway_audit</code> events</li>
+                <li>Salesforce connector (tickets, memberships, donors)</li>
+                <li>mParticle feed integration (customer data)</li>
               </ul>
             </div>
             <div className="seo-col">
@@ -268,12 +275,28 @@ export default function SeoAuditPage() {
                 <li>OG tags for social sharing</li>
                 <li>Meta descriptions per event</li>
                 <li>Performer/DJ structured data</li>
+                <li>Public API documentation or developer portal</li>
+                <li>Embed widget or JS SDK</li>
                 <li>Any SEO benefit whatsoever</li>
               </ul>
             </div>
           </div>
+
+          <h3 className="seo-sub-title" style={{ marginTop: 32 }}>Ticketure vs. Competitors</h3>
+          <div className="seo-table-wrap">
+            <table className="seo-table">
+              <thead><tr><th>Platform</th><th>Event Schema</th><th>Public API</th><th>Embed Widget</th><th>Rich Results</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Ticketure</strong></td><td style={{ color: "#c0392b" }}>No</td><td style={{ color: "#c0392b" }}>No (gated)</td><td style={{ color: "#c0392b" }}>No</td><td style={{ color: "#c0392b" }}>No</td></tr>
+                <tr><td>Eventbrite</td><td style={{ color: "#27ae60" }}>Auto-generated</td><td style={{ color: "#27ae60" }}>Yes</td><td style={{ color: "#27ae60" }}>Yes</td><td style={{ color: "#27ae60" }}>Yes (&ldquo;Buy Tickets&rdquo; in SERP)</td></tr>
+                <tr><td>Ticketmaster</td><td style={{ color: "#27ae60" }}>Yes</td><td style={{ color: "#27ae60" }}>Full developer portal</td><td style={{ color: "#27ae60" }}>Yes</td><td style={{ color: "#27ae60" }}>Yes</td></tr>
+                <tr><td>Ticket Tailor</td><td style={{ color: "#27ae60" }}>Yes</td><td style={{ color: "#27ae60" }}>Yes</td><td style={{ color: "#27ae60" }}>Yes</td><td style={{ color: "#f39c12" }}>Partial</td></tr>
+              </tbody>
+            </table>
+          </div>
+
           <div className="seo-insight" style={{ marginTop: 20, borderLeftColor: "#f39c12" }}>
-            <p>Ticketure has all the event data (dates, prices, availability) that <strong>should be feeding Event schema automatically</strong>, but it&rsquo;s not wired up. The site team needs to either pull from Ticketure&rsquo;s API to generate Event schema, or add it manually per event.</p>
+            <p><strong>Two paths forward:</strong> (1) Request Ticketure API credentials through AREA15/Oddyssey&rsquo;s account &mdash; then pull event data and generate Event schema server-side on oddysseylv.com. (2) Build Event schema manually per event page &mdash; less dynamic but solves the Google visibility gap immediately. Either way, <strong>every competitor using Eventbrite gets free Event rich results in Google. Oddyssey gets nothing.</strong></p>
           </div>
         </div>
 

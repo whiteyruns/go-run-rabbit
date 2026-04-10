@@ -285,7 +285,6 @@ export default function BandidoPartnershipPage() {
         <div className="bp-section bp-cta-section">
           <h2>Let&rsquo;s Build This Together</h2>
           <p>El Bandido Yankee gets a Las Vegas anchor. Oddyssey gets a packed room. Guests get free drinks in an unforgettable setting. Everyone wins.</p>
-          <p className="bp-cta-contact">Contact: Go Run Rabbit</p>
         </div>
 
         <div className="bp-footer">
