@@ -190,7 +190,7 @@ export default function CompetitiveLandscapePage() {
               { name: "Oddwood", role: "Feeder venue", note: "Craft cocktail lounge, same complex. Pre-game / wind-down spot for Oddyssey guests." },
               { name: "Asylum Bar + Arcade", role: "Complementary", note: "Casual gaming bar. Earlier evening activity that could feed into Oddyssey." },
               { name: "Omega Mart", role: "Traffic driver", note: "1M+ annual visitors. Drives AREA15 foot traffic Oddyssey can convert." },
-              { name: "Zone 2 Expansion", role: "Tailwind", note: "Boeing 747 nightlife venue (1,300 cap), Museum of Ice Cream. Growing ecosystem." },
+              { name: "Zone 2 Expansion", role: "Tailwind", note: "District 747 (1,300-cap immersive nightlife venue in a decommissioned 747 fuselage), Museum of Ice Cream. Growing ecosystem." },
             ].map(e => (
               <div key={e.name} className="cl-eco-card">
                 <h4>{e.name}</h4>

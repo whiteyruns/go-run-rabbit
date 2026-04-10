@@ -82,15 +82,16 @@ export default function ContestConceptPage() {
             </div>
             <div className="cc-prize-card cc-prize-exclusive">
               <div className="cc-prize-tag" style={{ color: "#d4a574", borderColor: "#d4a574" }}>Exclusive</div>
-              <h3>Boeing 747 Grand Opening</h3>
+              <h3>District 747 Grand Opening</h3>
               <ul>
-                <li>VIP invite for two to the 747 venue grand opening</li>
-                <li>One of the first to experience AREA15&rsquo;s newest nightlife venue</li>
-                <li>1,300-capacity venue &mdash; exclusive guest list only</li>
+                <li>VIP invite for two to the District 747 grand opening (date TBD)</li>
+                <li>AREA15&rsquo;s 1,300-capacity immersive nightlife venue built inside a decommissioned Boeing 747 fuselage</li>
+                <li>Originally a Burning Man art piece, later acquired by Tony Hsieh &mdash; now the centerpiece of AREA15 Zone 2</li>
+                <li>Cocktail bar, DJ booths, projection mapping, dining &mdash; exclusive guest list only</li>
               </ul>
             </div>
           </div>
-          <p className="cc-note">Prize package components require AREA15 coordination and approval. 747 grand opening date TBD.</p>
+          <p className="cc-note">Prize package components require AREA15 coordination and approval. District 747 grand opening date TBD &mdash; the venue (Zone 2) is in rolling debut phase. Originally a Burning Man art piece transported to AREA15 in February 2025.</p>
         </div>
 
         {/* How It Works */}
@@ -136,7 +137,7 @@ export default function ContestConceptPage() {
           <div className="cc-section-title">Suggested Timeline</div>
           <div className="cc-timeline">
             {[
-              { date: "Week of 4/7", event: "Get AREA15 approval on prize package", note: "Confirm Omega Mart tickets, dining, 747 invite" },
+              { date: "Week of 4/7", event: "Get AREA15 approval on prize package", note: "Confirm Omega Mart tickets, dining, District 747 invite" },
               { date: "4/8–9", event: "Build landing page + contest post creative", note: "Landing page hosted, IG post designed" },
               { date: "4/10", event: "Launch contest", note: "IG post goes live, landing page opens" },
               { date: "4/10–16", event: "Contest runs (7 days)", note: "Daily stories driving entries, engagement" },
@@ -166,7 +167,7 @@ export default function ContestConceptPage() {
               <div className="cc-mockup-content">
                 <div className="cc-mockup-eyebrow">Win the Ultimate AREA15 Experience</div>
                 <h2>Oddyssey<br />Giveaway</h2>
-                <p className="cc-mockup-prize">AREA15 experience for two + VIP invite to the Boeing 747 grand opening + Golden Hour VIP access</p>
+                <p className="cc-mockup-prize">AREA15 experience for two + VIP invite to the District 747 grand opening + Golden Hour VIP access</p>
 
                 <div className="cc-mockup-form">
                   <div className="cc-mockup-form-row">
@@ -203,7 +204,7 @@ export default function ContestConceptPage() {
               <p>The prize:<br />
               &bull; Omega Mart tickets for two<br />
               &bull; Dinner + drinks at AREA15<br />
-              &bull; VIP invite to the Boeing 747 grand opening<br />
+              &bull; VIP invite to the District 747 grand opening<br />
               &bull; Golden Hour VIP at Oddyssey Noir</p>
               <p>How to enter:<br />
               1. Follow @oddysseylv<br />
@@ -222,7 +223,7 @@ export default function ContestConceptPage() {
             {[
               { item: "Omega Mart tickets (2)", status: "Needs approval", note: "Could be comped or purchased at group rate" },
               { item: "Dining credit at AREA15", status: "Needs approval", note: "The Beast, Kaia, or Oddwood — TBD" },
-              { item: "Boeing 747 grand opening invite", status: "Needs approval", note: "Date TBD — may need to be issued closer to opening" },
+              { item: "District 747 grand opening invite", status: "Needs approval", note: "Date TBD — may need to be issued closer to opening" },
               { item: "Golden Hour VIP access", status: "Oddyssey decision", note: "Skip-the-line + reserved section on launch weekend" },
               { item: "Landing page hosting", status: "Ready to build", note: "Can host on gorunrabbit.com or oddysseylv.com" },
               { item: "Contest rules / legal", status: "Needs review", note: "Standard giveaway terms — no purchase necessary, 21+, void where prohibited" },
@@ -271,7 +272,7 @@ export default function ContestConceptPage() {
             <div className="cc-rule-group">
               <h4>Prize</h4>
               <ul>
-                <li>One (1) AREA15 Experience Package for two, including: Omega Mart tickets (2), dining credit at AREA15, Golden Hour VIP access, and VIP invite to the Boeing 747 grand opening (date TBD).</li>
+                <li>One (1) AREA15 Experience Package for two, including: Omega Mart tickets (2), dining credit at AREA15, Golden Hour VIP access, and VIP invite to the District 747 grand opening (date TBD).</li>
                 <li>Approximate retail value: $[TBD].</li>
                 <li>Prize is non-transferable and may not be exchanged for cash or credit.</li>
                 <li>Oddyssey reserves the right to substitute a prize of equal or greater value.</li>

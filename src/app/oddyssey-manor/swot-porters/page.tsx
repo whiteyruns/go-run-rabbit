@@ -94,7 +94,7 @@ export default function SwotPortersPage() {
                 <li><strong>Immersive market explosion</strong> &mdash; $137B globally, 26-30% CAGR, 70% of Gen Z prioritizes experiences</li>
                 <li><strong>Private events vacuum</strong> &mdash; no immersive venue in Vegas offers corporate/bachelorette packages at this level</li>
                 <li><strong>Golden Hour as audience engine</strong> &mdash; RSVP captures emails, free entry removes all objections</li>
-                <li><strong>AREA15 Zone 2 expansion</strong> &mdash; Boeing 747 venue, Museum of Ice Cream, growing ecosystem</li>
+                <li><strong>AREA15 Zone 2 expansion</strong> &mdash; District 747 venue, Museum of Ice Cream, growing ecosystem</li>
                 <li><strong>Artist-name SEO gap</strong> &mdash; DJs booked but not on website. Every search is uncaptured organic traffic</li>
                 <li><strong>Oddwood cross-promotion</strong> &mdash; Oddwood (AREA15 cocktail bar) as pre-game feeder &rarr; Oddyssey main event pipeline</li>
               </ul>
@@ -105,7 +105,7 @@ export default function SwotPortersPage() {
                 <li><strong>CBM dominance</strong> &mdash; multiple Fremont East venues, controls 3 closest competitors (Discopussy, We All Scream, Commonwealth)</li>
                 <li><strong>AREA15 immersive fatigue</strong> &mdash; 5 closures signal format exhaustion, eroding consumer trust</li>
                 <li><strong>Discretionary spending decline</strong> &mdash; 2025 visitation down 7.5%, economic uncertainty, inflation</li>
-                <li><strong>Boeing 747 nightlife venue</strong> &mdash; 1,300-capacity competitor opening in AREA15 Zone 2</li>
+                <li><strong>District 747</strong> &mdash; 1,300-capacity competitor opening in AREA15 Zone 2</li>
                 <li><strong>Punchdrunk rumored Vegas project</strong> &mdash; Sleep No More creators could enter at globally recognized brand level</li>
                 <li><strong>DJ talent poaching</strong> &mdash; if CBM or Strip clubs offer bigger guarantees, programming quality erodes</li>
                 <li><strong>Algorithm dependency</strong> &mdash; no owned audience means one platform shift craters visibility overnight</li>
@@ -166,7 +166,7 @@ export default function SwotPortersPage() {
               {
                 name: "Threat of New Entry", rating: 5, level: "Moderate",
                 analysis: "Capital barriers are high ($5-20M+ build-out). Limited AREA15 space deters casual entrants. Nevada licensing is not prohibitive.",
-                critical: "CBM has the capital and operational expertise. Punchdrunk and international brands could enter. Boeing 747 venue is a real-time new entrant."
+                critical: "CBM has the capital and operational expertise. Punchdrunk and international brands could enter. District 747 venue is a real-time new entrant."
               },
             ].map(f => (
               <div key={f.name} className="sw-force">
