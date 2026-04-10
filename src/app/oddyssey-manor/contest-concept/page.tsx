@@ -50,6 +50,16 @@ export default function ContestConceptPage() {
       <div className="cc-page">
         <Link href="/oddyssey-manor" className="cc-back">&larr; All Documents</Link>
 
+        <div className="cc-top-bar no-print">
+          <button className="cc-pdf-btn" onClick={() => window.print()}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Save as PDF
+          </button>
+        </div>
+
         <div className="cc-header">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="cc-logo" />
@@ -57,6 +67,7 @@ export default function ContestConceptPage() {
           <h1>Contest &amp;<br />Giveaway</h1>
           <p className="cc-subtitle">Build the Email + SMS Database Before Golden Hour Launch</p>
           <div className="cc-meta">Requires AREA15 Approval</div>
+          <div className="cc-print-meta print-only">Prepared by Go Run Rabbit &bull; April 2026</div>
         </div>
 
         {/* Strategy */}
@@ -447,6 +458,18 @@ const ccStyles = `
 .cc-rule-group li { font-size: 12px; color: #9a958d; padding: 5px 0 5px 16px; position: relative; line-height: 1.6; }
 .cc-rule-group li::before { content: ''; position: absolute; left: 0; top: 11px; width: 4px; height: 4px; border: 1px solid rgba(201,168,76,0.4); transform: rotate(45deg); }
 
+/* PDF Button */
+.cc-top-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.cc-pdf-btn {
+  display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: #9a958d; background: transparent;
+  border: 1px solid rgba(255,255,255,0.06); padding: 10px 20px;
+  cursor: pointer; transition: all 0.3s; font-family: inherit; font-weight: 500;
+}
+.cc-pdf-btn:hover { color: #c9a84c; border-color: rgba(201,168,76,0.3); }
+.print-only { display: none; }
+.cc-print-meta { font-size: 11px; color: #5a5650; letter-spacing: 1.5px; margin-top: 12px; }
+
 .cc-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
 @media (max-width: 700px) {
@@ -455,5 +478,84 @@ const ccStyles = `
   .cc-timeline-row { grid-template-columns: 80px 16px 1fr; }
   .cc-mockup-form-row { grid-template-columns: 1fr; }
   .cc-footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  body { background: #fff !important; color: #111 !important; }
+  .cc-page { padding: 0; max-width: none; }
+
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  .cc-back { display: none !important; }
+  .cc-footer { display: none !important; }
+
+  .cc-header { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid #ddd; }
+  .cc-logo { filter: invert(1); height: 36px; }
+  .cc-label { color: #333; }
+  .cc-header h1 { color: #111; font-size: 36px; }
+  .cc-subtitle { color: #555; }
+  .cc-meta { color: #c0392b; }
+  .cc-print-meta { color: #888; }
+
+  .cc-section { margin-bottom: 28px; page-break-inside: avoid; }
+  .cc-section-title { color: #333; font-size: 18px; border-bottom: 1px solid #ddd; margin-bottom: 16px; padding-bottom: 8px; }
+
+  .cc-insight { background: #f8f8f8 !important; border: 1px solid #ddd; border-left: 3px solid #333; }
+  .cc-insight p { color: #333; font-size: 12px; }
+  .cc-insight strong { color: #111; }
+
+  .cc-prize-grid, .cc-value-grid, .cc-approval-grid { background: #ddd; }
+  .cc-prize-card, .cc-value-card, .cc-approval-card { background: #fff !important; }
+  .cc-prize-tag { color: #333 !important; border-color: #999 !important; }
+  .cc-prize-card h3 { color: #111; }
+  .cc-prize-card li { color: #333; border-color: #eee; }
+  .cc-prize-card li::before { border-color: #999; }
+  .cc-note { color: #888; }
+
+  .cc-step-num { color: #ccc; }
+  .cc-step-content h4 { color: #111; }
+  .cc-step-content p { color: #555; }
+  .cc-step { border-color: #eee; }
+
+  .cc-value-card::before { background: #333; }
+  .cc-value-card h4 { color: #333; }
+  .cc-value-card p { color: #555; }
+
+  .cc-timeline-date { color: #333; }
+  .cc-timeline-dot { border-color: #999; }
+  .cc-timeline-content { color: #555; }
+  .cc-timeline-content strong { color: #111; }
+  .cc-timeline-row { border-color: #eee; }
+
+  .cc-mockup { page-break-inside: avoid; }
+  .cc-mockup-inner { background: #f5f5f5 !important; border: 1px solid #ddd; }
+  .cc-mockup-overlay { display: none; }
+  .cc-mockup-eyebrow { color: #888; }
+  .cc-mockup-content h2 { color: #111; font-size: 32px; }
+  .cc-mockup-prize { color: #555; }
+  .cc-mockup-input { background: #fff !important; border: 1px solid #ccc !important; color: #888; }
+  .cc-mockup-btn { background: #333 !important; color: #fff !important; }
+  .cc-mockup-rules { color: #888; }
+
+  .cc-post { background: #f8f8f8 !important; border: 1px solid #ddd; }
+  .cc-post-header { border-color: #ddd; }
+  .cc-post-label { color: #333; }
+  .cc-post-type { color: #888; }
+  .cc-post-visual { color: #888; border-color: #ddd; }
+  .cc-post-caption p { color: #333; }
+  .cc-caption-label { color: #888; }
+
+  .cc-approval-status { font-size: 8px; }
+  .cc-status-pending { color: #c0392b !important; border-color: #c0392b !important; }
+  .cc-status-oddyssey { color: #2980b9 !important; border-color: #2980b9 !important; }
+  .cc-status-ready { color: #27ae60 !important; border-color: #27ae60 !important; }
+  .cc-approval-card h4 { color: #111; }
+  .cc-approval-card p { color: #666; }
+
+  .cc-rule-group { page-break-inside: avoid; border-color: #eee; }
+  .cc-rule-group h4 { color: #111; }
+  .cc-rule-group li { color: #333; }
+  .cc-rule-group li::before { border-color: #999; }
 }
 `;
