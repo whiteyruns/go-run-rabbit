@@ -50,6 +50,16 @@ export default function BandidoPartnershipPage() {
       <div className="bp-page">
         <Link href="/oddyssey-manor" className="bp-back">&larr; All Documents</Link>
 
+        <div className="bp-top-bar no-print">
+          <button className="bp-pdf-btn" onClick={() => window.print()}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Save as PDF
+          </button>
+        </div>
+
         <div className="bp-header">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="bp-logo" />
@@ -368,11 +378,94 @@ const bpStyles = `
 
 .bp-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
+/* PDF Button */
+.bp-top-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.bp-pdf-btn {
+  display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: #9a958d; background: transparent;
+  border: 1px solid rgba(255,255,255,0.06); padding: 10px 20px;
+  cursor: pointer; transition: all 0.3s; font-family: inherit; font-weight: 500;
+}
+.bp-pdf-btn:hover { color: #c9a84c; border-color: rgba(201,168,76,0.3); }
+
 @media (max-width: 768px) {
   .bp-page { padding: 24px 20px 60px; }
   .bp-value-grid, .bp-why-grid, .bp-cocktail-grid { grid-template-columns: 1fr; }
   .bp-two-col { grid-template-columns: 1fr; }
   .bp-roi-grid { grid-template-columns: 1fr 1fr; }
   .bp-footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+
+@media print {
+  body, html, div, section { background: #fff !important; color: #111 !important; }
+
+  .bp-page, .bp-header, .bp-section, .bp-insight, .bp-two-col, .bp-col,
+  .bp-cocktail-grid, .bp-cocktail, .bp-value-grid, .bp-value-card,
+  .bp-roi-grid, .bp-roi-card, .bp-why-grid, .bp-why-card,
+  .bp-timeline-row, .bp-timeline-content, .bp-cta-section { background: #fff !important; color: #111 !important; }
+
+  .bp-page { padding: 20px 40px; max-width: none; }
+  .no-print, .bp-back, .bp-footer { display: none !important; }
+
+  .bp-header { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 2px solid #111; }
+  .bp-logo { filter: invert(1); height: 36px; }
+  .bp-presents { color: #555 !important; }
+  .bp-header h1 { color: #111 !important; font-size: 36px; }
+  .bp-subtitle { color: #333 !important; }
+  .bp-meta { color: #888 !important; }
+
+  .bp-section { margin-bottom: 28px; }
+  .bp-section-title { color: #111 !important; font-size: 18px; border-bottom: 2px solid #111; margin-bottom: 16px; padding-bottom: 8px; }
+  .bp-body { color: #333 !important; }
+  .bp-body strong { color: #000 !important; }
+  .bp-note { color: #888 !important; }
+
+  .bp-insight { background: #f5f5f5 !important; border: 1px solid #ccc !important; border-left: 3px solid #111 !important; }
+  .bp-insight p { color: #333 !important; }
+  .bp-insight strong { color: #000 !important; }
+
+  .bp-timeline-row { border-color: #ddd !important; }
+  .bp-timeline-time { color: #111 !important; }
+  .bp-timeline-dot { border-color: #999 !important; }
+  .bp-timeline-content { color: #555 !important; }
+  .bp-timeline-content strong { color: #111 !important; }
+
+  .bp-cocktail-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .bp-cocktail { background: #fff !important; border-bottom: 1px solid #eee; }
+  .bp-cocktail h4 { color: #111 !important; }
+  .bp-spirit { color: #333 !important; }
+  .bp-cocktail p { color: #555 !important; }
+
+  .bp-value-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .bp-value-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .bp-value-card h4 { color: #111 !important; }
+  .bp-value-card p { color: #555 !important; }
+  .bp-value-icon svg { stroke: #333 !important; }
+
+  .bp-two-col { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .bp-col { background: #fff !important; border-bottom: 1px solid #eee; }
+  .bp-col h4 { color: #111 !important; }
+  .bp-col li { color: #333 !important; border-color: #eee !important; }
+  .bp-col li::before { border-color: #999 !important; }
+
+  .bp-table th { color: #555 !important; border-color: #ccc !important; }
+  .bp-table td { color: #333 !important; border-color: #ddd !important; }
+  .bp-table strong { color: #000 !important; }
+
+  .bp-roi-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .bp-roi-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .bp-roi-num { color: #111 !important; }
+  .bp-roi-label { color: #333 !important; }
+  .bp-roi-sub { color: #888 !important; }
+
+  .bp-why-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .bp-why-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .bp-why-card::before { background: #111 !important; }
+  .bp-why-card h4 { color: #111 !important; }
+  .bp-why-card p { color: #555 !important; }
+
+  .bp-cta-section { background: #f5f5f5 !important; border: 1px solid #ccc !important; }
+  .bp-cta-section h2 { color: #111 !important; }
+  .bp-cta-section p { color: #333 !important; }
 }
 `;

@@ -50,6 +50,16 @@ export default function GoldenHourKitPage() {
       <div className="kit-page">
         <Link href="/oddyssey-manor" className="kit-back">&larr; All Documents</Link>
 
+        <div className="kit-top-bar no-print">
+          <button className="kit-pdf-btn" onClick={() => window.print()}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Save as PDF
+          </button>
+        </div>
+
         <div className="kit-header">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="kit-logo" />
@@ -613,10 +623,112 @@ const kitStyles = `
 
 .kit-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
+/* PDF Button */
+.kit-top-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.kit-pdf-btn {
+  display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: #9a958d; background: transparent;
+  border: 1px solid rgba(255,255,255,0.06); padding: 10px 20px;
+  cursor: pointer; transition: all 0.3s; font-family: inherit; font-weight: 500;
+}
+.kit-pdf-btn:hover { color: #c9a84c; border-color: rgba(201,168,76,0.3); }
+
 @media (max-width: 700px) {
   .kit-page { padding: 24px 20px 60px; }
   .kit-story-grid { grid-template-columns: repeat(3, 1fr); }
   .kit-email, .kit-tiktok-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 500px) { .kit-story-grid { grid-template-columns: 1fr 1fr; } }
+
+@media print {
+  body, html, div, section { background: #fff !important; color: #111 !important; }
+
+  .kit-page, .kit-header, .kit-section,
+  .kit-post, .kit-post-header, .kit-post-visual, .kit-post-caption,
+  .kit-story-grid, .kit-story-card, .kit-email, .kit-email > div,
+  .kit-ticket, .kit-tiktok-grid, .kit-tiktok-card,
+  .mock-card, .mock-content, .mock-overlay, .mock-golden-hour,
+  .mock-liquid-gold, .mock-art-in-motion, .mock-weekend,
+  .mock-grid { background: #fff !important; color: #111 !important; }
+
+  .kit-page { padding: 20px 40px; max-width: none; }
+  .no-print, .kit-back, .kit-footer { display: none !important; }
+
+  .kit-header { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 2px solid #111; }
+  .kit-logo { filter: invert(1); height: 36px; }
+  .kit-presents { color: #333 !important; }
+  .kit-header h1 { color: #111 !important; font-size: 36px; }
+  .kit-subtitle { color: #555 !important; }
+  .kit-meta { color: #888 !important; }
+
+  .kit-section { margin-bottom: 28px; }
+  .kit-section-title { color: #111 !important; font-size: 18px; border-bottom: 2px solid #111; margin-bottom: 16px; padding-bottom: 8px; }
+  .kit-note { color: #888 !important; }
+
+  .kit-post { background: #fff !important; border: 1px solid #ccc !important; }
+  .kit-post-header { border-color: #ddd !important; background: #fff !important; }
+  .kit-post-num { color: #333 !important; }
+  .kit-post-type { color: #888 !important; }
+  .kit-post-visual { color: #888 !important; border-color: #ddd !important; background: #fff !important; }
+  .kit-post-caption { background: #fff !important; }
+  .kit-post-caption p { color: #333 !important; }
+  .kit-caption-label { color: #888 !important; }
+  .kit-copy-btn { display: none !important; }
+  .kit-caption-header { margin-bottom: 8px; }
+
+  .kit-story-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .kit-story-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .kit-story-num { color: #111 !important; }
+  .kit-story-visual { color: #888 !important; }
+  .kit-story-text { color: #333 !important; }
+
+  .kit-email { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .kit-email > div { background: #fff !important; border-bottom: 1px solid #eee; }
+  .kit-email p { color: #333 !important; }
+  .kit-email-subjects p { color: #333 !important; }
+  .kit-email-body h3 { color: #111 !important; }
+
+  .kit-ticket { background: #f5f5f5 !important; border: 1px solid #ccc !important; }
+  .kit-ticket p { color: #333 !important; }
+  .kit-ticket strong { color: #000 !important; }
+
+  .kit-tiktok-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .kit-tiktok-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .kit-tiktok-title { color: #111 !important; }
+  .kit-tiktok-format { color: #888 !important; }
+  .kit-tiktok-card p { color: #333 !important; }
+
+  .kit-table th { color: #555 !important; border-color: #ccc !important; }
+  .kit-table td { color: #333 !important; border-color: #ddd !important; }
+
+  /* Mockups */
+  .mock-card { min-height: auto !important; border: 1px solid #ccc !important; page-break-inside: avoid; }
+  .mock-overlay { display: none !important; }
+  .mock-area15 { color: #888 !important; }
+  .mock-gh-title { color: #111 !important; }
+  .mock-gh-sub { color: #333 !important; }
+  .mock-gh-time { color: #555 !important; }
+  .mock-gh-detail { color: #555 !important; }
+  .mock-gh-detail span { color: #333 !important; }
+  .mock-gh-rsvp { background: #111 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .mock-gh-nights { color: #555 !important; }
+  .mock-gh-cta { color: #888 !important; }
+  .mock-tag-friday { color: #333 !important; }
+  .mock-tag-saturday { color: #555 !important; }
+  .mock-lg-title, .mock-aim-title { color: #111 !important; }
+  .mock-lg-dj, .mock-aim-dj { color: #111 !important; }
+  .mock-lg-genre, .mock-aim-genre { color: #555 !important; }
+  .mock-lg-golden, .mock-aim-golden { color: #555 !important; border-color: #ddd !important; }
+  .mock-lg-golden span, .mock-aim-golden span { color: #333 !important; }
+  .mock-lg-venue, .mock-aim-venue { color: #888 !important; }
+  .mock-wk-header { color: #111 !important; }
+  .mock-wk-golden { color: #333 !important; }
+  .mock-wk-divider { background: #ddd !important; }
+  .mock-wk-day { color: #555 !important; }
+  .mock-wk-name { color: #111 !important; }
+  .mock-wk-dj { color: #111 !important; }
+  .mock-wk-desc { color: #555 !important; }
+  .mock-wk-footer { color: #555 !important; }
+  .mock-wk-footer span { color: #888 !important; }
+}
 `;

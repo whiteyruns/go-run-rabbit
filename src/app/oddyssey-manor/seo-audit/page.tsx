@@ -50,6 +50,16 @@ export default function SeoAuditPage() {
       <div className="seo-page">
         <Link href="/oddyssey-manor" className="seo-back">&larr; All Documents</Link>
 
+        <div className="seo-top-bar no-print">
+          <button className="seo-pdf-btn" onClick={() => window.print()}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Save as PDF
+          </button>
+        </div>
+
         <div className="seo-header">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="seo-logo" />
@@ -422,6 +432,16 @@ const seoStyles = `
 
 .seo-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
+/* PDF Button */
+.seo-top-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.seo-pdf-btn {
+  display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: #9a958d; background: transparent;
+  border: 1px solid rgba(255,255,255,0.06); padding: 10px 20px;
+  cursor: pointer; transition: all 0.3s; font-family: inherit; font-weight: 500;
+}
+.seo-pdf-btn:hover { color: #c9a84c; border-color: rgba(201,168,76,0.3); }
+
 @media (max-width: 700px) {
   .seo-page { padding: 24px 20px 60px; }
   .seo-scores { grid-template-columns: 1fr; }
@@ -429,5 +449,73 @@ const seoStyles = `
   .seo-content-bar { grid-template-columns: 1fr; gap: 4px; }
   .seo-bar-status { text-align: left; }
   .seo-footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+
+@media print {
+  body, html, div, section { background: #fff !important; color: #111 !important; }
+
+  .seo-page, .seo-header, .seo-section, .seo-insight,
+  .seo-scores, .seo-score-card, .seo-two-col, .seo-col,
+  .seo-missing-grid, .seo-missing-card, .seo-content-bar,
+  .seo-actions, .seo-action-group { background: #fff !important; color: #111 !important; }
+
+  .seo-page { padding: 20px 40px; max-width: none; }
+  .no-print, .seo-back, .seo-footer { display: none !important; }
+
+  .seo-header { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 2px solid #111; }
+  .seo-logo { filter: invert(1); height: 36px; }
+  .seo-label { color: #333 !important; }
+  .seo-header h1 { color: #111 !important; font-size: 36px; }
+  .seo-subtitle { color: #555 !important; }
+  .seo-meta { color: #888 !important; }
+
+  .seo-section { margin-bottom: 28px; }
+  .seo-section-title { color: #111 !important; font-size: 18px; border-bottom: 2px solid #111; margin-bottom: 16px; padding-bottom: 8px; }
+  .seo-sub-title { color: #111 !important; }
+  .seo-note { color: #888 !important; }
+
+  .seo-insight { background: #f5f5f5 !important; border: 1px solid #ccc !important; border-left: 3px solid #111 !important; }
+  .seo-insight p { color: #333 !important; }
+  .seo-insight strong { color: #000 !important; }
+  .seo-insight code { color: #333 !important; }
+
+  .seo-scores { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .seo-score-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .seo-score-grade { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .seo-score-info h4 { color: #111 !important; }
+  .seo-score-info p { color: #555 !important; }
+
+  .seo-table th { color: #555 !important; border-color: #ccc !important; }
+  .seo-table td { color: #333 !important; border-color: #ddd !important; }
+  .seo-table strong { color: #000 !important; }
+  .seo-table code { color: #333 !important; }
+
+  .seo-missing-card { background: #f5f5f5 !important; border: 1px solid #ccc !important; }
+  .seo-schema-name { color: #111 !important; }
+  .seo-missing-card p { color: #333 !important; }
+  .seo-impact { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .seo-impact-critical { color: #c0392b !important; border-color: #c0392b !important; }
+  .seo-impact-high { color: #f39c12 !important; border-color: #f39c12 !important; }
+  .seo-impact-medium { color: #27ae60 !important; border-color: #27ae60 !important; }
+
+  .seo-two-col { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .seo-col { background: #fff !important; border-bottom: 1px solid #eee; }
+  .seo-col h4 { color: #111 !important; }
+  .seo-col li { color: #333 !important; border-color: #eee !important; }
+  .seo-col li::before { border-color: #999 !important; }
+  .seo-col li code { color: #333 !important; }
+
+  .seo-bar-track { background: #ddd !important; }
+  .seo-bar-fill { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .seo-bar-label { color: #333 !important; }
+  .seo-bar-label code { color: #333 !important; }
+  .seo-bar-label span { color: #888 !important; }
+  .seo-bar-status { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  .seo-action-group { background: #f5f5f5 !important; border: 1px solid #ccc !important; }
+  .seo-action-priority { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .seo-action-label { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .seo-action-group li { color: #333 !important; border-color: #eee !important; }
+  .seo-action-group li::before { border-color: #999 !important; }
 }
 `;

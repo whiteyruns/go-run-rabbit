@@ -62,6 +62,16 @@ function AuditContent() {
       <div className="audit-page">
         <a href="/oddyssey-manor" className="audit-back">&larr; All Documents</a>
 
+        <div className="audit-top-bar no-print">
+          <button className="audit-pdf-btn" onClick={() => window.print()}>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            Save as PDF
+          </button>
+        </div>
+
         {/* HEADER */}
         <div className="audit-header">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -421,9 +431,98 @@ const auditStyles = `
 .audit-back:hover { color: #c9a84c; }
 .audit-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
+/* PDF Button */
+.audit-top-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.audit-pdf-btn {
+  display: flex; align-items: center; gap: 8px; font-size: 10px; letter-spacing: 2px;
+  text-transform: uppercase; color: #9a958d; background: transparent;
+  border: 1px solid rgba(255,255,255,0.06); padding: 10px 20px;
+  cursor: pointer; transition: all 0.3s; font-family: inherit; font-weight: 500;
+}
+.audit-pdf-btn:hover { color: #c9a84c; border-color: rgba(201,168,76,0.3); }
+
 @media (max-width: 700px) {
   .audit-page { padding: 32px 20px; }
   .audit-state-grid, .audit-night-grid, .audit-rec-grid { grid-template-columns: 1fr; }
   .audit-impact-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media print {
+  body, html, div, section { background: #fff !important; color: #111 !important; }
+
+  .audit-page, .audit-header, .audit-section, .audit-insight,
+  .audit-night-grid, .audit-night-card, .audit-night-friday, .audit-night-saturday,
+  .audit-state-grid, .audit-state-card, .audit-rec-grid, .audit-rec,
+  .audit-impact-grid, .audit-impact-card, .audit-flow-item, .audit-flow-content,
+  .audit-wireframe-banner, .audit-example { background: #fff !important; color: #111 !important; }
+
+  .audit-page { padding: 20px 40px; max-width: none; }
+  .no-print, .audit-back, .audit-footer { display: none !important; }
+
+  .audit-header { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 2px solid #111; }
+  .audit-header-logo { filter: invert(1); height: 36px; }
+  .audit-label { color: #333 !important; }
+  .audit-header h2 { color: #555 !important; }
+  .audit-header-meta { color: #888 !important; }
+
+  .audit-section { margin-bottom: 28px; }
+  .audit-section-title { color: #111 !important; font-size: 18px; border-bottom: 2px solid #111; margin-bottom: 16px; padding-bottom: 8px; }
+
+  .audit-insight { background: #f5f5f5 !important; border: 1px solid #ccc !important; border-left: 3px solid #111 !important; }
+  .audit-insight::before { background: #fff !important; color: #333 !important; }
+  .audit-insight p { color: #333 !important; }
+  .audit-insight strong { color: #000 !important; }
+
+  .audit-night-friday, .audit-night-saturday { background: #fff !important; }
+  .audit-night-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .audit-night-tag { color: #333 !important; }
+  .audit-night-name { color: #111 !important; }
+  .audit-night-genre { color: #555 !important; }
+  .audit-night-desc { color: #555 !important; }
+  .audit-night-talent { color: #333 !important; }
+  .audit-status { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .audit-status-exists { color: #27ae60 !important; border-color: #27ae60 !important; }
+  .audit-status-partial { color: #f39c12 !important; border-color: #f39c12 !important; }
+  .audit-status-missing { color: #c0392b !important; border-color: #c0392b !important; }
+
+  .audit-state-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .audit-state-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .audit-state-card h4 { color: #111 !important; }
+  .audit-card-icon { color: #333 !important; }
+  .audit-state-card li { color: #333 !important; }
+  .audit-state-card li::before { border-color: #999 !important; }
+  .audit-tech-tag { background: #f0f0f0 !important; color: #333 !important; border-color: #ccc !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  .audit-table th { color: #555 !important; border-color: #ccc !important; }
+  .audit-table td { color: #333 !important; border-color: #ddd !important; }
+  .audit-table tr:hover { background: #fff !important; }
+  .audit-priority-critical { color: #c0392b !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .audit-priority-high { color: #f39c12 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .audit-priority-medium { color: #27ae60 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .audit-impact { color: #888 !important; }
+
+  .audit-rec-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .audit-rec { background: #fff !important; border-bottom: 1px solid #eee; }
+  .audit-rec::before { background: #111 !important; }
+  .audit-rec-num { color: #333 !important; }
+  .audit-rec h4 { color: #111 !important; }
+  .audit-rec p { color: #555 !important; }
+  .audit-example { background: #f5f5f5 !important; border: 1px solid #ccc !important; color: #333 !important; }
+  .audit-example-label { color: #888 !important; }
+
+  .audit-flow-dot { border-color: #999 !important; }
+  .audit-flow-connector { background: #ddd !important; }
+  .audit-flow-content h5 { color: #111 !important; }
+  .audit-flow-content p { color: #555 !important; }
+
+  .audit-impact-grid { background: #fff !important; gap: 0 !important; border: 1px solid #ccc; }
+  .audit-impact-card { background: #fff !important; border-bottom: 1px solid #eee; }
+  .audit-impact-arrow { color: #111 !important; }
+  .audit-impact-label { color: #555 !important; }
+
+  .audit-wireframe-banner { background: #f5f5f5 !important; border: 1px solid #ccc !important; }
+  .audit-wireframe-banner h4 { color: #111 !important; }
+  .audit-wireframe-banner p { color: #555 !important; }
+  .audit-wireframe-link { background: #111 !important; color: #fff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
 `;
