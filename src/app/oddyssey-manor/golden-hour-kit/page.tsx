@@ -132,7 +132,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-gh-detail">
                   <span>Tequila &bull; Champagne &bull; Caviar</span>
                 </div>
-                <div className="mock-gh-rsvp">$18 DOOR &bull; FREE W/ INVITE</div>
+                <div className="mock-gh-rsvp">$18 Door</div>
                 <div className="mock-gh-nights">
                   <span>Fridays: Liquid Gold <svg className="mock-icon" viewBox="0 0 16 16" width="10" height="10"><path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2Z" fill="#d4a574"/></svg></span>
                   <span>Saturdays: Art in Motion <svg className="mock-icon" viewBox="0 0 12 12" width="8" height="8"><rect x="2" y="2" width="8" height="8" transform="rotate(45 6 6)" stroke="#9a958d" strokeWidth="1" fill="none"/></svg></span>
@@ -157,7 +157,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-lg-genre">House &bull; Electronic</div>
                 <div className="mock-lg-golden">
                   Golden Hour 10 PM &ndash; Midnight<br />
-                  <span>Open bar &bull; $18 door &bull; Free w/ invite</span>
+                  <span>Open Bar &bull; $18 Door</span>
                 </div>
                 <div className="mock-lg-venue">AREA15 &bull; Oddyssey</div>
               </div>
@@ -178,7 +178,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-aim-genre">Multi-genre &bull; Immersive</div>
                 <div className="mock-aim-golden">
                   Golden Hour 10 PM &ndash; Midnight<br />
-                  <span>Open bar &bull; Champagne &bull; Caviar &bull; $18 door</span>
+                  <span>Open Bar &bull; Champagne &bull; Caviar &bull; $18 Door</span>
                 </div>
                 <div className="mock-aim-venue">AREA15 &bull; Oddyssey</div>
               </div>
@@ -206,7 +206,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                   </div>
                 </div>
                 <div className="mock-wk-footer">
-                  $18 Door &bull; Free w/ Invite &bull; Open Bar while supplies last<br />
+                  $18 Door &bull; Open Bar While Supplies Last<br />
                   <span>AREA15 &bull; Oddyssey &bull; 10 PM &bull; 21+</span>
                 </div>
               </div>
