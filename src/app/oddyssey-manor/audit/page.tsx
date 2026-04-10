@@ -185,7 +185,7 @@ function AuditContent() {
               <ul>
                 <li>10 PM &ndash; Midnight: Open bar (while supplies last)</li>
                 <li>Midnight &ndash; Late: Paid bar, full programming continues</li>
-                <li>Entry: Free (database), $10 RSVP, $18 walk-up</li>
+                <li>Entry: Free (database invite) or $18 walk-up</li>
                 <li>Fri: El Bandido Reposado &bull; Sat: Telson</li>
                 <li>KU Champagne (Red Room) + $10 Caviar Bumps (Sat)</li>
               </ul>

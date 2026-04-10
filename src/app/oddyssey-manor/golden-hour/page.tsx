@@ -62,7 +62,7 @@ export default function GoldenHourPage() {
         {/* Executive Summary */}
         <div className="gh-section">
           <div className="gh-section-title">Executive Summary</div>
-          <p>Golden Hour is a 2-hour open bar program designed to pack Oddyssey Noir from the moment doors open. Tequila cocktails, champagne, and caviar bumps &mdash; all included in an $18 cover (discounted to $10 with RSVP, free for existing database). The program fills the room before peak hours and transitions seamlessly into Liquid Gold (Fridays) and Art in Motion (Saturdays).</p>
+          <p>Golden Hour is a 2-hour open bar program designed to pack Oddyssey Noir from the moment doors open. Tequila cocktails, champagne, and caviar bumps &mdash; $18 cover at the door, free for existing database via email invite. The program fills the room before peak hours and transitions seamlessly into Liquid Gold (Fridays) and Art in Motion (Saturdays).</p>
           <p>Each night features a different tequila brand partner: <strong>El Bandido Reposado (Fridays)</strong> and <strong>Telson (Saturdays)</strong>, alongside <strong>KU Champagne</strong> served in the Red Room. The program launches as a <strong>4-week pilot</strong> on April 17&ndash;18, 2026.</p>
         </div>
 
@@ -74,7 +74,7 @@ export default function GoldenHourPage() {
           </div>
           <div className="gh-col">
             <div className="gh-col-label" style={{ color: "#27ae60" }}>The Solution</div>
-            <p>A 2-hour open bar with a tiered entry model: free for existing database, $10 with RSVP (captures new emails), $18 walk-up. Tequila cocktails at both bars, champagne in the Red Room, caviar bumps on Saturdays. Not a happy hour teaser &mdash; a full commitment.</p>
+            <p>A 2-hour open bar: $18 at the door, free for existing database contacts via email invite. Tequila cocktails at both bars, champagne in the Red Room, caviar bumps on Saturdays. The email blast drives early RSVPs and captures attendance data. Not a happy hour teaser &mdash; a full commitment.</p>
           </div>
         </div>
 
@@ -188,12 +188,12 @@ export default function GoldenHourPage() {
 
         {/* RSVP */}
         <div className="gh-section">
-          <div className="gh-section-title">Tiered Entry Model</div>
+          <div className="gh-section-title">Entry Model</div>
           <div className="gh-rsvp-grid">
             {[
-              { title: "Existing Database — Free", desc: "Email blast to current contacts gets them in free. Rewards loyalty, guarantees a base crowd, and reactivates lapsed guests." },
-              { title: "RSVP — $10", desc: "New signups get discounted entry. Every RSVP captures a name and email — building the owned audience for future events, paid nights, and Manor upsells." },
-              { title: "Walk-up — $18", desc: "Standard door price includes open bar access. Creates urgency to RSVP early (save $8) while generating revenue from spontaneous guests." },
+              { title: "Database Invite — Free", desc: "Email blast to existing contacts gets them in free. Rewards loyalty, guarantees a base crowd, reactivates lapsed guests, and captures RSVP data for future marketing." },
+              { title: "Walk-up — $18", desc: "Standard door price includes open bar access. Generates revenue from spontaneous guests and tourists. All walk-ups still get the full Golden Hour experience." },
+              { title: "Email Capture", desc: "Every database invite is a trackable RSVP. Over the 4-week pilot, this builds an owned audience list for future events, paid nights, and Manor upsells." },
             ].map(item => (
               <div key={item.title} className="gh-rsvp-item">
                 <h4>{item.title}</h4>

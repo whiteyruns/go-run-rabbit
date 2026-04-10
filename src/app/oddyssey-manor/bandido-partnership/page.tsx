@@ -70,7 +70,7 @@ export default function BandidoPartnershipPage() {
         {/* What is Golden Hour */}
         <div className="bp-section">
           <div className="bp-section-title">What is Golden Hour</div>
-          <p className="bp-body">Golden Hour is a 2-hour open bar program running every Friday and Saturday at Oddyssey Noir from 10 PM to midnight. Entry is $18 at the door, $10 with RSVP, or free for existing database contacts. On Fridays, three featured cocktails &mdash; all built on El Bandido Yankee Reposado &mdash; are served at both bars while supplies last. KU Champagne is served in the Red Room. After midnight, the night evolves into Liquid Gold with paid bar service through close.</p>
+          <p className="bp-body">Golden Hour is a 2-hour open bar program running every Friday and Saturday at Oddyssey Noir from 10 PM to midnight. Entry is $18 at the door or free for existing database contacts via email invite. On Fridays, three featured cocktails &mdash; all built on El Bandido Yankee Reposado &mdash; are served at both bars while supplies last. KU Champagne is served in the Red Room. After midnight, the night evolves into Liquid Gold with paid bar service through close.</p>
           <div className="bp-timeline">
             {[
               { time: "10 PM", event: "Doors + Golden Hour begins", note: "El Bandido featured cocktails flowing" },
