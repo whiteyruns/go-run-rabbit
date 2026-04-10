@@ -148,7 +148,7 @@ export default function OddysseyContent() {
                     <span className="od-golden-flow-text">Full programming through close</span>
                   </div>
                 </div>
-                <a className="od-btn-golden">Get on the List</a>
+                <a className="od-btn-golden">Buy Tickets &mdash; $18</a>
               </div>
             </div>
           </section>

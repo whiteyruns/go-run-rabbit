@@ -71,7 +71,7 @@ export default function GoldenHourKitPage() {
 
 Golden Hour at Oddyssey Noir. Doors at 10. Open bar till midnight.
 
-Tequila cocktails. Champagne. While supplies last. $18 at the door — or get on the list and you're in free.
+Tequila cocktails. Champagne. While supplies last. $18 at the door. Received our invite? You're in free.
 
 Then Liquid Gold takes over at midnight. You already know.
 
@@ -97,7 +97,7 @@ Save this. You'll want it Friday.`,
 
 Saturday's your second chance. Open bar. Champagne. Caviar bumps. 10 PM – Midnight.
 
-$18 at the door. Get on the list and you're in free. Then Art in Motion takes over at midnight.
+$18 at the door. Got the invite? You're in free. Then Art in Motion takes over at midnight.
 
 Doors at 10. Don't be late this time.
 
@@ -132,7 +132,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-gh-detail">
                   <span>Tequila &bull; Champagne &bull; Caviar</span>
                 </div>
-                <div className="mock-gh-rsvp">$18 DOOR &bull; FREE W/ LIST</div>
+                <div className="mock-gh-rsvp">$18 DOOR &bull; FREE W/ INVITE</div>
                 <div className="mock-gh-nights">
                   <span>Fridays: Liquid Gold <svg className="mock-icon" viewBox="0 0 16 16" width="10" height="10"><path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2Z" fill="#d4a574"/></svg></span>
                   <span>Saturdays: Art in Motion <svg className="mock-icon" viewBox="0 0 12 12" width="8" height="8"><rect x="2" y="2" width="8" height="8" transform="rotate(45 6 6)" stroke="#9a958d" strokeWidth="1" fill="none"/></svg></span>
@@ -157,7 +157,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                 <div className="mock-lg-genre">House &bull; Electronic</div>
                 <div className="mock-lg-golden">
                   Golden Hour 10 PM &ndash; Midnight<br />
-                  <span>Open bar &bull; $18 door &bull; Free w/ list</span>
+                  <span>Open bar &bull; $18 door &bull; Free w/ invite</span>
                 </div>
                 <div className="mock-lg-venue">AREA15 &bull; Oddyssey</div>
               </div>
@@ -206,7 +206,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
                   </div>
                 </div>
                 <div className="mock-wk-footer">
-                  $18 Door &bull; Free w/ List &bull; Open Bar while supplies last<br />
+                  $18 Door &bull; Free w/ Invite &bull; Open Bar while supplies last<br />
                   <span>AREA15 &bull; Oddyssey &bull; 10 PM &bull; 21+</span>
                 </div>
               </div>
@@ -224,7 +224,7 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
               { slide: "2", visual: "Cocktail pour + champagne, slow-mo", text: "Golden Hour. Open bar. 10 PM." },
               { slide: "3", visual: "Bartender lining up glasses, champagne station", text: "Tequila cocktails. Champagne. While supplies last." },
               { slide: "4", visual: "Venue interior, performers, crowd", text: "Then Liquid Gold / Art in Motion takes over at midnight." },
-              { slide: "5", visual: "Swipe up / link sticker", text: "$18 at the door. Get on the list — free entry. Link in bio." },
+              { slide: "5", visual: "Swipe up / link sticker", text: "$18 at the door. Got the email? You're in free." },
             ].map(s => (
               <div key={s.slide} className="kit-story-card">
                 <div className="kit-story-num">{s.slide}</div>
@@ -242,14 +242,14 @@ Every Friday & Saturday | AREA15, Oddyssey | Link in bio`,
             <div className="kit-email-subjects">
               <div className="kit-caption-label">Subject Line Options (A/B Test)</div>
               <p>A: We just opened the bar.</p>
-              <p>B: You&rsquo;re on the list. Free entry this Friday.</p>
+              <p>B: This email is your ticket. Free entry this Friday.</p>
               <p>C: Golden Hour starts at 10. You&rsquo;re in free.</p>
               <p style={{ color: "#5a5650", fontSize: 11, marginTop: 8 }}>Preview: Open bar 10 PM &ndash; Midnight. Tequila cocktails, champagne, while supplies last.</p>
             </div>
             <CopyableBlock label="Email Body" text={`GOLDEN HOUR
 Open Bar at Oddyssey Noir
 
-You're on the list. You're in free. 🖤
+This email is your invite. You're in free. 🖤
 
 This Friday and Saturday, Golden Hour kicks off at 10 PM. Open bar till midnight — tequila cocktails at both bars, champagne in the Red Room. While supplies last.
 
@@ -264,7 +264,7 @@ Doors: 10 PM | Golden Hour: 10 PM – Midnight | Oddyssey at AREA15 | 21+ only`}
             <div className="kit-email-body" style={{ padding: 0 }}>
               <h3 style={{ color: "#d4a574", fontFamily: "'Cormorant Garamond', serif", fontSize: 28, fontWeight: 300, letterSpacing: 2, marginBottom: 8 }}>GOLDEN HOUR</h3>
               <p style={{ color: "#5a5650", fontSize: 12, letterSpacing: 2, marginBottom: 16 }}>Open Bar at Oddyssey Noir</p>
-              <p>You&rsquo;re on the list. You&rsquo;re in free. 🖤</p>
+              <p>This email is your invite. You&rsquo;re in free. 🖤</p>
               <p>This Friday and Saturday, Golden Hour kicks off at 10 PM. Open bar till midnight &mdash; tequila cocktails at both bars, champagne in the Red Room. While supplies last.</p>
               <p><strong style={{ color: "#d4a574" }}>Friday:</strong> El Bandido Reposado cocktails + KU Champagne<br /><strong>Saturday:</strong> Telson cocktails + KU Champagne + $10 caviar bumps</p>
               <p>The bar runs dry when it runs dry. No extensions. After midnight, the night evolves &mdash; Liquid Gold on Fridays, Art in Motion on Saturdays. Two dance floors. Performers in the crowd. DJs through close.</p>
@@ -281,14 +281,14 @@ Doors: 10 PM | Golden Hour: 10 PM – Midnight | Oddyssey at AREA15 | 21+ only`}
         <div className="kit-section">
           <div className="kit-section-title">Ticket Page Copy</div>
           <CopyableBlock label="Ticket Page Copy" text={`Golden Hour + Liquid Gold (Fri) / Art in Motion (Sat)
-$18 cover includes open bar · Free entry for guest list
+$18 cover includes open bar · Free entry with email invite
 
 The night starts with Golden Hour — open bar from 10 PM to midnight. Tequila cocktails at both bars, champagne in the Red Room. While supplies last. First come, first served.
 
 Friday: El Bandido Reposado cocktails + KU Champagne
 Saturday: Telson cocktails + KU Champagne + $10 caviar bumps
 
-$18 at the door. Guest list = free entry. All other drinks at regular price.
+$18 at the door. Email invite = free entry. All other drinks at regular price.
 
 After midnight, the night keeps going. Liquid Gold on Fridays. Art in Motion on Saturdays. Two dance floors, performers in the crowd, DJs through close. Your ticket gets you both — Golden Hour and the full Noir experience.
 
@@ -296,11 +296,11 @@ Doors: 10 PM · Golden Hour: 10 PM – Midnight · Oddyssey at AREA15 · 21+ onl
           <div className="kit-ticket">
             <div className="kit-caption-label" style={{ marginBottom: 8 }}>Event Title</div>
             <p><strong>Golden Hour + Liquid Gold (Fri) / Art in Motion (Sat)</strong></p>
-            <p style={{ color: "#5a5650", marginBottom: 16 }}>$18 cover includes open bar &bull; Free entry for guest list</p>
+            <p style={{ color: "#5a5650", marginBottom: 16 }}>$18 cover includes open bar &bull; Free entry with email invite</p>
             <div className="kit-caption-label">Description</div>
             <p>The night starts with Golden Hour &mdash; open bar from 10 PM to midnight. Tequila cocktails at both bars, champagne in the Red Room. While supplies last.</p>
             <p><strong style={{ color: "#d4a574" }}>Friday:</strong> El Bandido Reposado cocktails + KU Champagne<br /><strong>Saturday:</strong> Telson cocktails + KU Champagne + $10 caviar bumps</p>
-            <p>$18 at the door. Guest list = free entry. All other drinks at regular price.</p>
+            <p>$18 at the door. Email invite = free entry. All other drinks at regular price.</p>
             <p>After midnight, the night keeps going. Liquid Gold on Fridays. Art in Motion on Saturdays. Two dance floors, performers in the crowd, DJs through close.</p>
             <div style={{ background: "#0d0d0d", padding: 16, marginTop: 12, fontSize: 12, color: "#9a958d" }}>
               Doors: 10 PM &bull; Golden Hour: 10 PM &ndash; Midnight &bull; Oddyssey at AREA15 &bull; 21+ only
