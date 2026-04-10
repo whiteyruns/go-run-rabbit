@@ -60,6 +60,7 @@ function AuditContent() {
     <div style={{ background: "#060606", color: "#e8e4dd" }}>
       <style>{auditStyles}</style>
       <div className="audit-page">
+        <a href="/oddyssey-manor" className="audit-back">&larr; All Documents</a>
 
         {/* HEADER */}
         <div className="audit-header">
@@ -322,14 +323,14 @@ function AuditContent() {
           <div className="audit-wireframe-banner">
             <h4>Interactive Wireframes</h4>
             <p>Full homepage, event calendar, event detail, and private events wireframes built with Oddyssey brand assets.</p>
-            <a href="/oddyssey-manor" className="audit-wireframe-link">View Wireframes &rarr;</a>
+            <a href="/oddyssey-manor/wireframes" className="audit-wireframe-link">View Wireframes &rarr;</a>
           </div>
         </div>
 
         {/* FOOTER */}
         <div className="audit-footer">
-          <div>Prepared for Oddyssey LV &bull; April 2026</div>
-          <div>Go Run Rabbit</div>
+          <a href="/oddyssey-manor" className="audit-back">&larr; All Documents</a>
+          <span>Go Run Rabbit &bull; April 2026</span>
         </div>
       </div>
     </div>
@@ -416,7 +417,9 @@ const auditStyles = `
 .audit-wireframe-link { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: #060606; background: #c9a84c; padding: 14px 36px; text-decoration: none; transition: background 0.3s; }
 .audit-wireframe-link:hover { background: #d4b85e; }
 
-.audit-footer { margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
+.audit-back { display: inline-block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #5a5650; text-decoration: none; margin-bottom: 40px; transition: color 0.3s; }
+.audit-back:hover { color: #c9a84c; }
+.audit-footer { margin-top: 60px; padding-top: 30px; padding-bottom: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #5a5650; letter-spacing: 1.5px; }
 
 @media (max-width: 700px) {
   .audit-page { padding: 32px 20px; }

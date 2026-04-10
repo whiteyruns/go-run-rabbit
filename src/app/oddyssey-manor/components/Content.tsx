@@ -372,7 +372,7 @@ export default function OddysseyContent() {
             <div className="od-detail-hero-bg" />
             <div className="od-hero-texture" />
             <div className="od-detail-hero-content">
-              <div className="od-detail-date">Friday, April 11, 2026</div>
+              <div className="od-detail-date">Friday, April 17, 2026</div>
               <h1>Liquid<br />Gold</h1>
               <p className="od-detail-sub">Where style, sound, and self-expression collide</p>
               <div className="od-detail-artist">Featuring: Berri</div>

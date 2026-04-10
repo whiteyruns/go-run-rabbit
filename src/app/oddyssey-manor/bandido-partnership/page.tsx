@@ -230,7 +230,7 @@ export default function BandidoPartnershipPage() {
               { metric: "~520", label: "Cocktails served / week", sub: "with your spirit exclusively" },
               { metric: "400–800", label: "Qualified tastings / week", sub: "21+, in premium setting" },
               { metric: "8", label: "Nights in pilot", sub: "4 weekends, Fri + Sat" },
-              { metric: "~2,080", label: "Total cocktails in pilot", sub: "from 24 cases contributed" },
+              { metric: "~2,080", label: "Total cocktails in pilot", sub: "24 total cases (8 from El Bandido)" },
             ].map(m => (
               <div key={m.label} className="bp-roi-card">
                 <div className="bp-roi-num">{m.metric}</div>
