@@ -167,7 +167,13 @@ function HubContent() {
             <Link href="/oddyssey-manor/contest-concept" className="hub-card">
               <div className="hub-card-tag" style={{ color: "#e67e22", borderColor: "#e67e22" }}>Concept</div>
               <h3>Contest &amp; Giveaway</h3>
-              <p>AREA15 experience package giveaway &mdash; builds email + phone database, IG followers, and social reach before Golden Hour launch. Requires AREA15 approval.</p>
+              <p>Strategy, prize package, timeline, contest rules, data policy. Requires AREA15 approval. Exportable as PDF.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/oddyssey-manor/contest-landing" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#c9a84c", borderColor: "#c9a84c" }}>Design</div>
+              <h3>Landing Page Preview</h3>
+              <p>Stitch-designed contest registration page &mdash; editorial noir aesthetic, mobile-first, art-deco line art, real gallery imagery.</p>
               <span className="hub-card-link">View &rarr;</span>
             </Link>
           </div>
