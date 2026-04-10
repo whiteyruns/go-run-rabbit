@@ -154,6 +154,25 @@ function HubContent() {
           </div>
         </div>
 
+        {/* Growth */}
+        <div className="hub-group">
+          <div className="hub-group-header">
+            <div className="hub-group-num">04</div>
+            <div>
+              <h2>Audience Growth</h2>
+              <p>Database building, social growth, and email capture strategies</p>
+            </div>
+          </div>
+          <div className="hub-grid">
+            <Link href="/oddyssey-manor/contest-concept" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#e67e22", borderColor: "#e67e22" }}>Concept</div>
+              <h3>Contest &amp; Giveaway</h3>
+              <p>AREA15 experience package giveaway &mdash; builds email + phone database, IG followers, and social reach before Golden Hour launch. Requires AREA15 approval.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+          </div>
+        </div>
+
         <div className="hub-footer">
           <p>Oddyssey Manor &amp; Noir &bull; AREA15 &bull; Las Vegas</p>
         </div>
