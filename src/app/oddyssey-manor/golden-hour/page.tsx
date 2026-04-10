@@ -62,8 +62,8 @@ export default function GoldenHourPage() {
         {/* Executive Summary */}
         <div className="gh-section">
           <div className="gh-section-title">Executive Summary</div>
-          <p>Golden Hour is a 2-hour open bar program designed to pack Oddyssey Noir from the moment doors open. By offering complimentary El Bandido Tequila cocktails from 10 PM to Midnight, Golden Hour removes the #1 barrier to early nightlife attendance &mdash; drink cost &mdash; fills the room before peak hours, and transitions seamlessly into Liquid Gold (Fridays) and Art in Motion (Saturdays).</p>
-          <p>The program launches as a <strong>4-week pilot</strong> on April 17&ndash;18, 2026. The &ldquo;while supplies last&rdquo; mechanic creates urgency and controls cost exposure, while the full-evening format maximizes dwell time and brand impressions.</p>
+          <p>Golden Hour is a 2-hour open bar program designed to pack Oddyssey Noir from the moment doors open. Tequila cocktails, champagne, and caviar bumps &mdash; all included in an $18 cover (discounted to $10 with RSVP, free for existing database). The program fills the room before peak hours and transitions seamlessly into Liquid Gold (Fridays) and Art in Motion (Saturdays).</p>
+          <p>Each night features a different tequila brand partner: <strong>El Bandido Reposado (Fridays)</strong> and <strong>Telson (Saturdays)</strong>, alongside <strong>KU Champagne</strong> served in the Red Room. The program launches as a <strong>4-week pilot</strong> on April 17&ndash;18, 2026.</p>
         </div>
 
         {/* Problem / Solution */}
@@ -74,7 +74,7 @@ export default function GoldenHourPage() {
           </div>
           <div className="gh-col">
             <div className="gh-col-label" style={{ color: "#27ae60" }}>The Solution</div>
-            <p>A supply-limited complimentary cocktail experience running from doors open (10 PM) through midnight. Not a 30-minute happy hour teaser &mdash; a full commitment that says: show up, the drinks are on us, experience what Oddyssey is all about.</p>
+            <p>A 2-hour open bar with a tiered entry model: free for existing database, $10 with RSVP (captures new emails), $18 walk-up. Tequila cocktails at both bars, champagne in the Red Room, caviar bumps on Saturdays. Not a happy hour teaser &mdash; a full commitment.</p>
           </div>
         </div>
 
@@ -83,11 +83,11 @@ export default function GoldenHourPage() {
           <div className="gh-section-title">Event Timeline</div>
           <div className="gh-timeline">
             {[
-              { time: "10:00 PM", event: "Doors open — Golden Hour begins", note: "Open bar + Noir programming" },
-              { time: "10–12 AM", event: "El Bandido Tequila cocktails flowing", note: "While supplies last" },
+              { time: "10:00 PM", event: "Doors open — Golden Hour begins", note: "Open bar: tequila cocktails (both bars) + KU Champagne (Red Room)" },
+              { time: "10–12 AM", event: "Open bar flowing — while supplies last", note: "Fri: El Bandido Reposado · Sat: Telson + $10 caviar bumps" },
               { time: "11:30 PM", event: "Last call on Golden Hour", note: "If supplies remain" },
-              { time: "12:00 AM", event: "Golden Hour ends — paid bar begins", note: "Revenue window opens" },
-              { time: "12–2+ AM", event: "Liquid Gold (Fri) / Art in Motion (Sat)", note: "Peak late-night hours" },
+              { time: "12:00 AM", event: "Golden Hour ends — all bars return to paid", note: "Full revenue window opens" },
+              { time: "12–2+ AM", event: "Liquid Gold (Fri) / Art in Motion (Sat)", note: "Paid bar through close" },
             ].map((item, i) => (
               <div key={i} className="gh-timeline-row">
                 <div className="gh-timeline-time">{item.time}</div>
@@ -119,12 +119,14 @@ export default function GoldenHourPage() {
 
         {/* Menu */}
         <div className="gh-section">
-          <div className="gh-section-title">Featured Cocktail Menu</div>
+          <div className="gh-section-title">Golden Hour Menu</div>
+
+          <h3 style={{ fontSize: 13, fontWeight: 500, letterSpacing: 1, marginBottom: 16, color: "#d4a574" }}>Friday &mdash; El Bandido Reposado (Both Bars)</h3>
           <div className="gh-menu-grid">
             {[
-              { name: "Bandido Margarita", desc: "El Bandido Blanco, lime juice, agave nectar — the crowd-favorite, served on ice" },
-              { name: "Inside Job", desc: "El Bandido Reposado, Braulio, sweet vermouth, Yellow Chartreuse — bartender-forward, orange twist" },
-              { name: "Bandido Lemonade", desc: "El Bandido Blanco, coconut water, fresh lemon, lemonade — sugar rim, mint garnish" },
+              { name: "Bandido Margarita", desc: "El Bandido Blanco, lime juice, agave nectar — served on ice" },
+              { name: "Inside Job", desc: "El Bandido Reposado, Braulio, sweet vermouth, Yellow Chartreuse — orange twist" },
+              { name: "Bandido Lemonade", desc: "El Bandido Blanco, coconut water, fresh lemon, lemonade — sugar rim, mint" },
             ].map(c => (
               <div key={c.name} className="gh-menu-item">
                 <h4>{c.name}</h4>
@@ -132,7 +134,34 @@ export default function GoldenHourPage() {
               </div>
             ))}
           </div>
-          <p className="gh-menu-note">All cocktails feature El Bandido Tequila as the base spirit.</p>
+
+          <h3 style={{ fontSize: 13, fontWeight: 500, letterSpacing: 1, marginBottom: 16, marginTop: 32, color: "#9a958d" }}>Saturday &mdash; Telson (Both Bars)</h3>
+          <div className="gh-menu-grid">
+            {[
+              { name: "Telson Margarita", desc: "Telson tequila, lime juice, agave nectar — served on ice" },
+              { name: "Telson Paloma", desc: "Telson tequila, grapefruit, lime, soda — refreshing, crowd-friendly" },
+              { name: "Telson Soda", desc: "Telson tequila, soda, lime — clean, fast pour, high throughput" },
+            ].map(c => (
+              <div key={c.name} className="gh-menu-item">
+                <h4>{c.name}</h4>
+                <p>{c.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <h3 style={{ fontSize: 13, fontWeight: 500, letterSpacing: 1, marginBottom: 16, marginTop: 32 }}>Red Room &mdash; Both Nights</h3>
+          <div className="gh-menu-grid" style={{ gridTemplateColumns: "1fr 1fr" }}>
+            {[
+              { name: "KU Champagne", desc: "Served in the Red Room — complimentary during Golden Hour, both nights" },
+              { name: "Caviar Bumps", desc: "$10 — served at the champagne station in the Red Room (Saturday only)" },
+            ].map(c => (
+              <div key={c.name} className="gh-menu-item">
+                <h4>{c.name}</h4>
+                <p>{c.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="gh-menu-note">All other bar offerings at regular price during Golden Hour. All bars return to fully paid at midnight.</p>
         </div>
 
         {/* Night Integration */}
@@ -140,26 +169,31 @@ export default function GoldenHourPage() {
           <div className="gh-section-title">Themed Night Integration</div>
           <div className="gh-two-col">
             <div className="gh-col gh-col-friday">
-              <div className="gh-col-label" style={{ color: "#d4a574" }}>Friday</div>
-              <p><strong>10 PM&ndash;12 AM:</strong> Golden Hour &mdash; Open Bar</p>
-              <p><strong>12 AM&ndash;Late:</strong> Liquid Gold &mdash; paid bar, deep house & techno</p>
+              <div className="gh-col-label" style={{ color: "#d4a574" }}>Friday &mdash; Liquid Gold</div>
+              <p><strong>Tequila:</strong> El Bandido Reposado (both bars)</p>
+              <p><strong>Champagne:</strong> KU (Red Room)</p>
+              <p><strong>10 PM&ndash;12 AM:</strong> Golden Hour open bar</p>
+              <p><strong>12 AM&ndash;Late:</strong> Paid bar, deep house &amp; techno</p>
             </div>
             <div className="gh-col gh-col-saturday">
-              <div className="gh-col-label">Saturday</div>
-              <p><strong>10 PM&ndash;12 AM:</strong> Golden Hour &mdash; Open Bar</p>
-              <p><strong>12 AM&ndash;Late:</strong> Art in Motion &mdash; paid bar, rotating genres</p>
+              <div className="gh-col-label">Saturday &mdash; Art in Motion</div>
+              <p><strong>Tequila:</strong> Telson (both bars)</p>
+              <p><strong>Champagne:</strong> KU (Red Room)</p>
+              <p><strong>Caviar:</strong> $10 caviar bumps (Red Room champagne station)</p>
+              <p><strong>10 PM&ndash;12 AM:</strong> Golden Hour open bar</p>
+              <p><strong>12 AM&ndash;Late:</strong> Paid bar, rotating genres</p>
             </div>
           </div>
         </div>
 
         {/* RSVP */}
         <div className="gh-section">
-          <div className="gh-section-title">Complimentary Entry for RSVPs</div>
+          <div className="gh-section-title">Tiered Entry Model</div>
           <div className="gh-rsvp-grid">
             {[
-              { title: "Guaranteed Headcount", desc: "RSVPs give the venue a predictable floor for attendance and inventory planning." },
-              { title: "Zero-Barrier Entry", desc: "Free drinks AND free entry — removes every objection and makes Golden Hour the obvious Friday/Saturday choice." },
-              { title: "Data Capture", desc: "Every RSVP is a name and email. Builds an owned audience for future events, paid nights, and Manor upsells." },
+              { title: "Existing Database — Free", desc: "Email blast to current contacts gets them in free. Rewards loyalty, guarantees a base crowd, and reactivates lapsed guests." },
+              { title: "RSVP — $10", desc: "New signups get discounted entry. Every RSVP captures a name and email — building the owned audience for future events, paid nights, and Manor upsells." },
+              { title: "Walk-up — $18", desc: "Standard door price includes open bar access. Creates urgency to RSVP early (save $8) while generating revenue from spontaneous guests." },
             ].map(item => (
               <div key={item.title} className="gh-rsvp-item">
                 <h4>{item.title}</h4>

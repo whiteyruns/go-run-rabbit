@@ -110,19 +110,23 @@ export default function OddysseyContent() {
               <div className="od-golden-content">
                 <div className="od-golden-eyebrow">Every Friday &amp; Saturday</div>
                 <h2 className="od-golden-title">Golden Hour</h2>
-                <p className="od-golden-sub">Open Bar featuring El Bandido Tequila</p>
+                <p className="od-golden-sub">Tequila Cocktails &bull; KU Champagne &bull; Caviar Bumps</p>
                 <div className="od-golden-details">
                   <div className="od-golden-time">
                     <span className="od-golden-time-label">Open Bar</span>
-                    <span className="od-golden-time-value">10 PM &ndash; Midnight</span>
+                    <span className="od-golden-time-value">10 PM &ndash; Midnight &bull; While supplies last</span>
                   </div>
                   <div className="od-golden-time">
-                    <span className="od-golden-time-label">Menu</span>
-                    <span className="od-golden-time-value">Bandido Margarita &bull; Inside Job &bull; Bandido Lemonade</span>
+                    <span className="od-golden-time-label">Friday</span>
+                    <span className="od-golden-time-value">El Bandido Reposado &bull; KU Champagne</span>
+                  </div>
+                  <div className="od-golden-time">
+                    <span className="od-golden-time-label">Saturday</span>
+                    <span className="od-golden-time-value">Telson &bull; KU Champagne &bull; $10 Caviar Bumps</span>
                   </div>
                   <div className="od-golden-time">
                     <span className="od-golden-time-label">Entry</span>
-                    <span className="od-golden-time-value">Free with RSVP &bull; While supplies last</span>
+                    <span className="od-golden-time-value">Free (database) &bull; $10 RSVP &bull; $18 door</span>
                   </div>
                 </div>
                 <div className="od-golden-flow">
@@ -144,7 +148,7 @@ export default function OddysseyContent() {
                     <span className="od-golden-flow-text">Full programming through close</span>
                   </div>
                 </div>
-                <a className="od-btn-golden">RSVP for Free Entry</a>
+                <a className="od-btn-golden">RSVP &mdash; $10 Entry</a>
               </div>
             </div>
           </section>

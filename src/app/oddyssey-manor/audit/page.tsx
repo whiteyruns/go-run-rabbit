@@ -184,10 +184,10 @@ function AuditContent() {
               <h4>The Format</h4>
               <ul>
                 <li>10 PM &ndash; Midnight: Open bar (while supplies last)</li>
-                <li>Midnight &ndash; Late: Full programming continues</li>
-                <li>RSVP = complimentary entry</li>
-                <li>Walk-ups pay standard GA</li>
-                <li>Menu: Bandido Margarita, Inside Job, Bandido Lemonade</li>
+                <li>Midnight &ndash; Late: Paid bar, full programming continues</li>
+                <li>Entry: Free (database), $10 RSVP, $18 walk-up</li>
+                <li>Fri: El Bandido Reposado &bull; Sat: Telson</li>
+                <li>KU Champagne (Red Room) + $10 Caviar Bumps (Sat)</li>
               </ul>
             </div>
             <div className="audit-state-card">

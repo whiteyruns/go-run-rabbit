@@ -55,22 +55,22 @@ export default function BandidoPartnershipPage() {
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="bp-logo" />
           <div className="bp-presents">Brand Partnership Proposal</div>
           <h1>El Bandido Yankee<br />&times; Oddyssey</h1>
-          <p className="bp-subtitle">Golden Hour &mdash; Featured Spirit Program</p>
-          <div className="bp-meta">Las Vegas &bull; AREA15 &bull; Every Friday &amp; Saturday</div>
+          <p className="bp-subtitle">Golden Hour &mdash; Friday Night Featured Spirit</p>
+          <div className="bp-meta">Las Vegas &bull; AREA15 &bull; Every Friday &bull; Liquid Gold</div>
         </div>
 
         {/* The Opportunity */}
         <div className="bp-section">
           <div className="bp-section-title">The Opportunity</div>
           <div className="bp-insight">
-            <p><strong>El Bandido Yankee gets a Las Vegas on-premise anchor</strong> inside one of the city&rsquo;s most talked-about immersive entertainment venues. Oddyssey at AREA15 draws from 15M+ visitors annually, 69% under 35 &mdash; exactly the demographic building brand loyalty in the ultra-premium tequila category. <strong>This isn&rsquo;t a one-night sampling event. It&rsquo;s a weekly, recurring featured spirit program</strong> with your brand at the center of every Friday and Saturday night.</p>
+            <p><strong>El Bandido Yankee gets a Las Vegas on-premise anchor</strong> inside one of the city&rsquo;s most talked-about immersive entertainment venues. Oddyssey at AREA15 draws from 15M+ visitors annually, 69% under 35 &mdash; exactly the demographic building brand loyalty in the ultra-premium tequila category. <strong>This isn&rsquo;t a one-night sampling event. It&rsquo;s a weekly, recurring featured spirit program</strong> with El Bandido Reposado as the exclusive tequila every Friday night during Golden Hour.</p>
           </div>
         </div>
 
         {/* What is Golden Hour */}
         <div className="bp-section">
           <div className="bp-section-title">What is Golden Hour</div>
-          <p className="bp-body">Golden Hour is a 2-hour complimentary cocktail program running every Friday and Saturday at Oddyssey Noir from 10 PM to midnight. Guests who RSVP receive free entry. Three featured cocktails &mdash; all built on El Bandido Yankee &mdash; are served while supplies last. After midnight, the night evolves into Liquid Gold (Fridays) or Art in Motion (Saturdays) with paid bar service through close.</p>
+          <p className="bp-body">Golden Hour is a 2-hour open bar program running every Friday and Saturday at Oddyssey Noir from 10 PM to midnight. Entry is $18 at the door, $10 with RSVP, or free for existing database contacts. On Fridays, three featured cocktails &mdash; all built on El Bandido Yankee Reposado &mdash; are served at both bars while supplies last. KU Champagne is served in the Red Room. After midnight, the night evolves into Liquid Gold with paid bar service through close.</p>
           <div className="bp-timeline">
             {[
               { time: "10 PM", event: "Doors + Golden Hour begins", note: "El Bandido featured cocktails flowing" },
@@ -213,13 +213,12 @@ export default function BandidoPartnershipPage() {
               <tbody>
                 <tr><td>Oddyssey purchases</td><td>2 cases / night (12 bottles)</td><td>~174 cocktails</td></tr>
                 <tr><td><strong>El Bandido contributes</strong></td><td><strong>1 case / night (6 bottles)</strong></td><td><strong>~87 cocktails</strong></td></tr>
-                <tr><td>Total per night</td><td>3 cases (18 bottles)</td><td>~260 cocktails</td></tr>
-                <tr><td>Weekly (Fri + Sat)</td><td>6 cases (36 bottles)</td><td>~520 cocktails</td></tr>
-                <tr><td><strong>4-week pilot total</strong></td><td><strong>24 cases (144 bottles)</strong></td><td><strong>~2,080 cocktails</strong></td></tr>
+                <tr><td>Total per Friday</td><td>3 cases (18 bottles)</td><td>~260 cocktails</td></tr>
+                <tr><td><strong>4-week pilot (4 Fridays)</strong></td><td><strong>12 cases (72 bottles)</strong></td><td><strong>~1,040 cocktails</strong></td></tr>
               </tbody>
             </table>
           </div>
-          <p className="bp-note">Based on 750ml bottles, 6 per case, avg 1.75oz pour per cocktail. El Bandido&rsquo;s contribution: 1 case per night (6 bottles) &mdash; approximately $270&ndash;330 wholesale value per night.</p>
+          <p className="bp-note">Based on 750ml bottles, 6 per case, avg 1.75oz pour per cocktail. El Bandido&rsquo;s contribution: 1 case per Friday (6 bottles) &mdash; approximately $270&ndash;330 wholesale value per night. Saturdays feature a different tequila partner.</p>
         </div>
 
         {/* What El Bandido Gets Per Dollar */}
@@ -227,10 +226,10 @@ export default function BandidoPartnershipPage() {
           <div className="bp-section-title">Return on Investment</div>
           <div className="bp-roi-grid">
             {[
-              { metric: "~520", label: "Cocktails served / week", sub: "with your spirit exclusively" },
-              { metric: "400–800", label: "Qualified tastings / week", sub: "21+, in premium setting" },
-              { metric: "8", label: "Nights in pilot", sub: "4 weekends, Fri + Sat" },
-              { metric: "~2,080", label: "Total cocktails in pilot", sub: "24 total cases (8 from El Bandido)" },
+              { metric: "~260", label: "Cocktails served / Friday", sub: "El Bandido exclusively" },
+              { metric: "200–400", label: "Qualified tastings / Friday", sub: "21+, in premium setting" },
+              { metric: "4", label: "Fridays in pilot", sub: "4/17, 4/24, 5/1, 5/8" },
+              { metric: "~1,040", label: "Total cocktails in pilot", sub: "12 cases total (4 from El Bandido)" },
             ].map(m => (
               <div key={m.label} className="bp-roi-card">
                 <div className="bp-roi-num">{m.metric}</div>
@@ -240,7 +239,7 @@ export default function BandidoPartnershipPage() {
             ))}
           </div>
           <div className="bp-insight" style={{ marginTop: 24 }}>
-            <p>At ~$300/night wholesale for 1 case, El Bandido&rsquo;s pilot investment is approximately <strong>$2,400 over 4 weeks</strong> (8 nights). In return: <strong>~2,080 cocktails served, 3,200&ndash;6,400 brand impressions, weekly social content, email list exposure, and a Las Vegas on-premise anchor account</strong> &mdash; all in the market you&rsquo;re actively expanding into.</p>
+            <p>At ~$300 wholesale per case, El Bandido&rsquo;s pilot investment is approximately <strong>$1,200 over 4 Fridays</strong> (4 cases). In return: <strong>~1,040 cocktails served, 800&ndash;1,600 brand impressions, weekly social content, email list exposure, and a Las Vegas on-premise anchor account</strong> &mdash; all in the market you&rsquo;re actively expanding into.</p>
           </div>
         </div>
 
@@ -269,12 +268,12 @@ export default function BandidoPartnershipPage() {
           <div className="bp-section-title">4-Week Pilot</div>
           <div className="bp-table-wrap">
             <table className="bp-table">
-              <thead><tr><th>Week</th><th>Dates</th><th>El Bandido Contribution</th><th>Focus</th></tr></thead>
+              <thead><tr><th>Week</th><th>Date</th><th>El Bandido Contribution</th><th>Focus</th></tr></thead>
               <tbody>
-                <tr><td>1</td><td>Fri 4/17 &amp; Sat 4/18</td><td>2 cases</td><td>Launch &mdash; baseline attendance &amp; burn rate</td></tr>
-                <tr><td>2</td><td>Fri 4/24 &amp; Sat 4/25</td><td>2 cases</td><td>Optimize pour strategy &amp; inventory</td></tr>
-                <tr><td>3</td><td>Fri 5/1 &amp; Sat 5/2</td><td>2 cases</td><td>Scale if demand warrants</td></tr>
-                <tr><td>4</td><td>Fri 5/8 &amp; Sat 5/9</td><td>2 cases</td><td>Final measurement &amp; evaluation</td></tr>
+                <tr><td>1</td><td>Fri 4/17</td><td>1 case</td><td>Launch &mdash; baseline attendance &amp; burn rate</td></tr>
+                <tr><td>2</td><td>Fri 4/24</td><td>1 case</td><td>Optimize pour strategy &amp; inventory</td></tr>
+                <tr><td>3</td><td>Fri 5/1</td><td>1 case</td><td>Scale if demand warrants</td></tr>
+                <tr><td>4</td><td>Fri 5/8</td><td>1 case</td><td>Final measurement &amp; evaluation</td></tr>
               </tbody>
             </table>
           </div>
