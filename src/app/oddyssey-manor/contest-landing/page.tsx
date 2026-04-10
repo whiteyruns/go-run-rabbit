@@ -168,15 +168,15 @@ export default function ContestLandingPage() {
           </div>
           <div className="cl-prizes-grid">
             <div className="cl-prize-card">
-              <div className="cl-prize-img" style={{ backgroundImage: "url('/oddyssey/gal6.webp')" }} />
+              <div className="cl-prize-img" style={{ backgroundImage: "url('/oddyssey/gal17.webp')" }} />
               <div className="cl-prize-overlay" />
               <div className="cl-prize-content">
                 <h3>The AREA15 Experience</h3>
                 <p>Omega Mart tickets for two &middot; Dinner + drinks at AREA15 &middot; Golden Hour VIP access</p>
               </div>
             </div>
-            <div className="cl-prize-card cl-prize-offset">
-              <div className="cl-prize-img" style={{ backgroundImage: "url('/oddyssey/gal14.webp')" }} />
+            <div className="cl-prize-card">
+              <div className="cl-prize-img" style={{ backgroundImage: "url('/oddyssey/gal5.webp')" }} />
               <div className="cl-prize-overlay" />
               <div className="cl-prize-content">
                 <h3>District 747 Grand Opening</h3>
@@ -297,7 +297,6 @@ const landingStyles = `
 .cl-prizes-line { width: 96px; height: 1px; background: #c9a84c; }
 .cl-prizes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
 .cl-prize-card { position: relative; aspect-ratio: 4/5; overflow: hidden; }
-.cl-prize-offset { margin-top: 80px; }
 .cl-prize-img { position: absolute; inset: 0; background-size: cover; background-position: center; filter: grayscale(1) brightness(0.6); transition: all 0.7s; }
 .cl-prize-card:hover .cl-prize-img { filter: grayscale(0) brightness(0.7); transform: scale(1.05); }
 .cl-prize-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(14,14,14,0.9), transparent 60%); }
