@@ -63,7 +63,7 @@ export default function ContestConceptPage() {
         <div className="cc-section">
           <div className="cc-section-title">The Strategy</div>
           <div className="cc-insight">
-            <p><strong>Golden Hour&rsquo;s free entry relies on emailing the existing database &mdash; but the database is small.</strong> A contest/giveaway builds the email and phone list before launch, creates organic social reach through IG tagging, and drives followers to @oddysseylv. Run it 1&ndash;2 weeks before the 4/17 launch so the first Golden Hour email blast reaches a meaningfully larger audience.</p>
+            <p><strong>Golden Hour&rsquo;s free entry relies on emailing the existing database &mdash; but the database is small.</strong> A 30-day contest builds the email and phone list continuously, creates organic social reach through IG tagging, and drives followers to @oddysseylv. Launching alongside Golden Hour means each weekend amplifies the contest &mdash; attendees share, tag friends, and drive more entries. By the time the contest closes (5/10), the database has grown across the entire 4-week Golden Hour pilot.</p>
           </div>
         </div>
 
@@ -140,9 +140,10 @@ export default function ContestConceptPage() {
               { date: "Week of 4/7", event: "Get AREA15 approval on prize package", note: "Confirm Omega Mart tickets, dining, District 747 invite" },
               { date: "4/8–9", event: "Build landing page + contest post creative", note: "Landing page hosted, IG post designed" },
               { date: "4/10", event: "Launch contest", note: "IG post goes live, landing page opens" },
-              { date: "4/10–16", event: "Contest runs (7 days)", note: "Daily stories driving entries, engagement" },
-              { date: "4/16", event: "Winner announced", note: "Story + post, winner notified via DM" },
-              { date: "4/17", event: "Golden Hour launches", note: "Email blast to full database (original + contest entries)" },
+              { date: "4/10–5/10", event: "Contest runs (30 days)", note: "Weekly stories + posts driving entries, cross-promo with Golden Hour" },
+              { date: "4/17", event: "Golden Hour launches (Week 1)", note: "Email blast to database — contest entries start receiving invites" },
+              { date: "Weekly", event: "Golden Hour fuels contest visibility", note: "Each weekend drives more entries as attendees share + tag" },
+              { date: "5/10", event: "Contest closes + winner announced", note: "Story + post, winner notified via DM. Aligns with end of Golden Hour pilot" },
             ].map((t, i) => (
               <div key={i} className="cc-timeline-row">
                 <div className="cc-timeline-date">{t.date}</div>
@@ -182,7 +183,7 @@ export default function ContestConceptPage() {
 
                 <div className="cc-mockup-rules">
                   <p>To enter: Follow @oddysseylv on Instagram &bull; Tag 2 friends on the contest post &bull; Register above</p>
-                  <p>Winner announced 4/16. Must be 21+. One entry per person.</p>
+                  <p>Contest runs 4/10 &ndash; 5/10. Winner announced 5/10. Must be 21+. One entry per person.</p>
                 </div>
               </div>
             </div>
@@ -210,7 +211,7 @@ export default function ContestConceptPage() {
               1. Follow @oddysseylv<br />
               2. Tag 2 friends in the comments<br />
               3. Register at the link in bio</p>
-              <p>Winner announced 4/16. Something big starts 4/17.</p>
+              <p>Winner announced 5/10. You have 30 days. Don&rsquo;t wait.</p>
               <p style={{ color: "#5a5650", fontSize: 11 }}>Must be 21+. One entry per person. Link in bio.</p>
             </div>
           </div>
