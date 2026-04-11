@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 180">
+  <!-- No background — transparent, blends with dark site -->
+
+  <!-- "LAS" in bordered box -->
+  <rect x="192" y="8" width="62" height="34" rx="3" stroke="#fff" stroke-width="2.5" fill="none"/>
+  <text x="223" y="33" text-anchor="middle" font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif" font-weight="900" font-size="20" fill="#fff" letter-spacing="3">LAS</text>
+
+  <!-- "Vegas" large script -->
+  <text x="200" y="105" text-anchor="middle" font-family="'Brush Script MT', 'Segoe Script', 'Apple Chancery', cursive" font-size="90" fill="#fff">Vegas</text>
+
+  <!-- Underline flourish -->
+  <line x1="60" y1="112" x2="340" y2="112" stroke="#fff" stroke-width="0.8" opacity="0.3"/>
+
+  <!-- "CONVENTION AND VISITORS AUTHORITY" -->
+  <text x="200" y="138" text-anchor="middle" font-family="'Arial', 'Helvetica Neue', sans-serif" font-weight="700" font-size="12.5" fill="#fff" letter-spacing="3.5">CONVENTION AND VISITORS AUTHORITY</text>
+</svg>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sponsorship Opportunities — Feed The Block</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,700;0,800;0,900;1,700;1,800;1,900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "background": "#0e0e0e",
+        "surface": "#0e0e0e",
+        "surface-container": "#1a1919",
+        "surface-container-low": "#131313",
+        "surface-container-high": "#201f1f",
+        "surface-container-highest": "#262626",
+        "surface-variant": "#262626",
+        "surface-bright": "#2c2c2c",
+        "on-surface": "#ffffff",
+        "on-surface-variant": "#adaaaa",
+        "outline-variant": "#494847",
+        "primary": "#ffe792",
+        "primary-fixed": "#ffd709",
+        "primary-container": "#ffd709",
+        "on-primary-container": "#5b4b00",
+        "secondary": "#ff7524",
+        "secondary-container": "#a04100",
+        "tertiary": "#ff68a7",
+        "tertiary-container": "#fc0d90",
+      },
+      fontFamily: {
+        headline: ["Epilogue"],
+        body: ["Inter"],
+      }
+    }
+  }
+}
+</script>
+<style>
+body { background-color: #0e0e0e; color: #ffffff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+.text-gradient { background: linear-gradient(to right, #ffe792, #ff68a7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.glass { background: rgba(38, 38, 38, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.glow-hover:hover { box-shadow: 0 0 30px rgba(255, 107, 0, 0.15); }
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.mobile-nav { display: none; }
+.mobile-nav.open { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 bg-black/40 backdrop-blur-xl border-b border-white/10 flex justify-between items-center px-8 py-4 shadow-[0_0_30px_rgba(255,107,0,0.1)]">
+  <a href="/feed-the-block" target="_top"><img src="img/logo-nav.png" alt="Feed The Block" class="h-10"></a>
+  <div class="hidden md:flex items-center gap-8">
+    <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white/60 hover:text-white transition-colors text-sm" href="#why">The Opportunity</a>
+    <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white/60 hover:text-white transition-colors text-sm" href="#tiers">Packages</a>
+    <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white/60 hover:text-white transition-colors text-sm" href="#headliners">Track Record</a>
+    <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white/60 hover:text-white transition-colors text-sm" href="#inquiry">Inquire</a>
+  </div>
+  <a href="#inquiry" class="bg-gradient-to-r from-primary-fixed to-tertiary-container text-black font-bold py-2 px-6 rounded-full active:scale-95 transition-transform font-['Epilogue'] uppercase tracking-tight text-sm hidden md:block">
+    Get Started
+  </a>
+  <button id="mobileMenuBtn" class="md:hidden flex flex-col gap-1.5">
+    <span class="block w-6 h-0.5 bg-white"></span>
+    <span class="block w-6 h-0.5 bg-white"></span>
+    <span class="block w-6 h-0.5 bg-white"></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobileNav" class="mobile-nav fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex-col items-center justify-center gap-8 pt-24">
+  <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white text-2xl" href="#why" onclick="closeMobile()">The Opportunity</a>
+  <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white text-2xl" href="#tiers" onclick="closeMobile()">Packages</a>
+  <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white text-2xl" href="#headliners" onclick="closeMobile()">Track Record</a>
+  <a class="font-['Epilogue'] tracking-tighter uppercase font-bold text-white text-2xl" href="#inquiry" onclick="closeMobile()">Inquire</a>
+</div>
+
+<main>
+
+<!-- Hero -->
+<section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img src="img/crowd-aerial-4.jpg" alt="Feed the Block crowd" class="w-full h-full object-cover opacity-40 scale-105" loading="lazy">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-[#0e0e0e]"></div>
+  </div>
+  <div class="relative z-10 text-center px-4 max-w-4xl pt-24 pb-16 reveal">
+    <a href="/feed-the-block" target="_top" class="inline-flex items-center gap-2 text-white/40 text-sm hover:text-primary transition-colors mb-8 font-['Epilogue'] uppercase tracking-widest">&larr; Back to Feed the Block</a>
+    <h1 class="text-[40px] md:text-[80px] leading-[0.9] font-black italic tracking-tighter text-white uppercase font-['Epilogue'] mb-6">
+      SPONSORSHIP <br><span class="text-gradient">OPPORTUNITIES</span>
+    </h1>
+    <p class="text-on-surface-variant text-lg md:text-xl max-w-2xl mx-auto opacity-70 leading-relaxed">
+      Align your brand with Downtown Las Vegas' signature street festival. 10 events. 15,000+ attendees per night. A cultural platform, not a one-off activation.
+    </p>
+  </div>
+</section>
+
+<!-- Why Feed the Block -->
+<section id="why" class="py-24 px-8 max-w-7xl mx-auto">
+  <div class="mb-12 reveal">
+    <p class="text-tertiary font-bold uppercase tracking-widest text-sm mb-4">THE OPPORTUNITY</p>
+    <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter text-white uppercase font-['Epilogue']">WHY <span class="text-gradient">FEED THE BLOCK?</span></h2>
+  </div>
+  <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+    <div class="lg:col-span-3 reveal">
+      <p class="text-on-surface-variant text-lg leading-relaxed opacity-70 mb-8">
+        Feed the Block is the only recurring, large-scale street festival on Fremont East — a block-long cultural takeover that merges live music, nightlife, culinary experiences, and brand activations into a single high-energy night. With a young, diverse, high-spending audience and deep integration across seven unique venues, sponsors don't just get impressions — they get moments.
+      </p>
+      <div class="space-y-0">
+        <div class="flex items-start gap-3 py-4 border-b border-white/5">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">15,000+ attendees per event across 7 unique venues</span>
+        </div>
+        <div class="flex items-start gap-3 py-4 border-b border-white/5">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">Ages 21-44, 54% Hispanic/Latino, strong female skew</span>
+        </div>
+        <div class="flex items-start gap-3 py-4 border-b border-white/5">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">65% dwell time over 45 minutes</span>
+        </div>
+        <div class="flex items-start gap-3 py-4 border-b border-white/5">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">10,000+ casino crossover per event</span>
+        </div>
+        <div class="flex items-start gap-3 py-4 border-b border-white/5">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">125K+ social followers, 2.45M video views</span>
+        </div>
+        <div class="flex items-start gap-3 py-4 border-b border-white/5">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">296.6M earned media impressions — CBS, NBC, FOX5, LVRJ</span>
+        </div>
+        <div class="flex items-start gap-3 py-4 border-b border-white/5">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">On-site activations: pop-ups, sampling, branded moments, VIP</span>
+        </div>
+        <div class="flex items-start gap-3 py-4">
+          <span class="text-primary font-bold mt-0.5">&rarr;</span>
+          <span class="text-white/75 text-sm">Content inclusion in $25K-$30K/event professional production</span>
+        </div>
+      </div>
+    </div>
+    <div class="lg:col-span-2 flex flex-col gap-6 reveal">
+      <button onclick="alert('Sponsorship deck download coming soon. Contact us directly for the full deck.')" class="bg-gradient-to-r from-primary-fixed to-secondary text-black font-black py-5 px-8 rounded-full text-sm uppercase tracking-tight hover:scale-105 transition-all font-['Epilogue'] flex items-center justify-center gap-3">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Sponsorship Deck
+      </button>
+      <p class="text-on-surface-variant text-sm opacity-50 leading-relaxed">Full deck includes audience data, venue maps, media case studies, and sample activation builds.</p>
+      <div class="glass rounded-xl p-6 border border-white/5 mt-4">
+        <img src="img/dtlv-wide-2.jpg" alt="Downtown Las Vegas" class="w-full rounded-lg mb-4 opacity-80" loading="lazy">
+        <p class="text-white/50 text-xs uppercase tracking-widest">6th & Fremont, Downtown Las Vegas</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Sponsorship Tiers -->
+<section id="tiers" class="py-24 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto">
+    <div class="mb-16 reveal">
+      <p class="text-tertiary font-bold uppercase tracking-widest text-sm mb-4">PACKAGES</p>
+      <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter text-white uppercase font-['Epilogue']">SPONSORSHIP <span class="text-gradient">TIERS</span></h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="group relative bg-surface-container-high rounded-xl overflow-hidden glow-hover transition-all reveal">
+        <div class="h-1 w-full bg-primary absolute top-0 z-10"></div>
+        <div class="p-8">
+          <h5 class="text-xl font-bold font-['Epilogue'] text-primary uppercase mb-4">Title Sponsor</h5>
+          <p class="text-on-surface-variant text-sm opacity-70 leading-relaxed">Headline branding across all events. Main stage naming rights, inclusion in all content and media, full category exclusivity, and priority VIP integration.</p>
+        </div>
+      </div>
+      <div class="group relative bg-surface-container-high rounded-xl overflow-hidden glow-hover transition-all reveal">
+        <div class="h-1 w-full bg-secondary absolute top-0 z-10"></div>
+        <div class="p-8">
+          <h5 class="text-xl font-bold font-['Epilogue'] text-secondary uppercase mb-4">Presenting Sponsor</h5>
+          <p class="text-on-surface-variant text-sm opacity-70 leading-relaxed">Co-branded presence across the festival footprint. Dedicated VIP Village activation zone, stage mentions, and content features throughout the series.</p>
+        </div>
+      </div>
+      <div class="group relative bg-surface-container-high rounded-xl overflow-hidden glow-hover transition-all reveal">
+        <div class="h-1 w-full bg-tertiary absolute top-0 z-10"></div>
+        <div class="p-8">
+          <h5 class="text-xl font-bold font-['Epilogue'] text-tertiary uppercase mb-4">Category Sponsor</h5>
+          <p class="text-on-surface-variant text-sm opacity-70 leading-relaxed">Exclusive industry ownership — fashion, beauty, CPG, tech, auto, and more. Own a vertical across the entire 10-event season with tailored activations.</p>
+        </div>
+      </div>
+      <div class="group relative bg-surface-container-high rounded-xl overflow-hidden glow-hover transition-all reveal">
+        <div class="h-1 w-full bg-primary absolute top-0 z-10"></div>
+        <div class="p-8">
+          <h5 class="text-xl font-bold font-['Epilogue'] text-primary uppercase mb-4">Activation Partner</h5>
+          <p class="text-on-surface-variant text-sm opacity-70 leading-relaxed">Pop-up experiences, product sampling, branded photo moments, and interactive installations embedded directly into the festival experience.</p>
+        </div>
+      </div>
+      <div class="group relative bg-surface-container-high rounded-xl overflow-hidden glow-hover transition-all reveal">
+        <div class="h-1 w-full bg-secondary absolute top-0 z-10"></div>
+        <div class="p-8">
+          <h5 class="text-xl font-bold font-['Epilogue'] text-secondary uppercase mb-4">Digital Partner</h5>
+          <p class="text-on-surface-variant text-sm opacity-70 leading-relaxed">Content series sponsorship, social media takeovers, influencer integration, and branded digital moments across 125K+ followers and 2.45M+ video views.</p>
+        </div>
+      </div>
+      <div class="group relative bg-surface-container-high rounded-xl overflow-hidden border border-dashed border-white/10 transition-all reveal flex items-center justify-center">
+        <div class="p-8 text-center">
+          <p class="text-on-surface-variant text-sm opacity-50 italic">Custom packages available — every activation tailored to brand objectives.</p>
+          <a href="#inquiry" class="inline-block mt-4 text-xs font-bold uppercase tracking-widest text-primary border border-primary/40 px-4 py-2 rounded-full hover:bg-primary/10 transition-all">Let's Talk</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Past Headliners -->
+<section id="headliners" class="py-24 px-8 max-w-7xl mx-auto">
+  <div class="mb-16 reveal">
+    <p class="text-tertiary font-bold uppercase tracking-widest text-sm mb-4">TRACK RECORD</p>
+    <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter text-white uppercase font-['Epilogue']">PAST <span class="text-gradient">HEADLINERS</span></h2>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div class="group rounded-xl overflow-hidden bg-surface-container-high glow-hover transition-all reveal">
+      <div class="aspect-[4/5] overflow-hidden">
+        <img src="img/crowd-aerial-1.jpg" alt="Marshmello" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
+      </div>
+      <div class="p-5">
+        <h4 class="text-lg font-bold font-['Epilogue'] text-white uppercase">Marshmello</h4>
+        <p class="text-on-surface-variant text-xs uppercase tracking-widest mt-1 opacity-60">April 2026</p>
+      </div>
+    </div>
+    <div class="group rounded-xl overflow-hidden bg-surface-container-high glow-hover transition-all reveal">
+      <div class="aspect-[4/5] overflow-hidden">
+        <img src="img/crowd-aerial-3.jpg" alt="Diplo" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
+      </div>
+      <div class="p-5">
+        <h4 class="text-lg font-bold font-['Epilogue'] text-white uppercase">Diplo</h4>
+        <p class="text-on-surface-variant text-xs uppercase tracking-widest mt-1 opacity-60">October 2025</p>
+      </div>
+    </div>
+    <div class="group rounded-xl overflow-hidden bg-surface-container-high glow-hover transition-all reveal">
+      <div class="aspect-[4/5] overflow-hidden">
+        <img src="img/major-lazer-1.jpg" alt="Major Lazer" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
+      </div>
+      <div class="p-5">
+        <h4 class="text-lg font-bold font-['Epilogue'] text-white uppercase">Major Lazer</h4>
+        <p class="text-on-surface-variant text-xs uppercase tracking-widest mt-1 opacity-60">September 2025</p>
+      </div>
+    </div>
+    <div class="group rounded-xl overflow-hidden bg-surface-container-high glow-hover transition-all reveal">
+      <div class="aspect-[4/5] overflow-hidden">
+        <img src="img/gryffin-dj.jpg" alt="Gryffin" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" loading="lazy">
+      </div>
+      <div class="p-5">
+        <h4 class="text-lg font-bold font-['Epilogue'] text-white uppercase">Gryffin</h4>
+        <p class="text-on-surface-variant text-xs uppercase tracking-widest mt-1 opacity-60">April 2025</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Press Coverage -->
+<section class="py-16 px-8 bg-surface-container-low">
+  <div class="max-w-7xl mx-auto text-center">
+    <p class="text-on-surface-variant uppercase tracking-[0.3em] text-xs font-bold mb-12 opacity-40 reveal">AS SEEN IN</p>
+    <div class="flex flex-wrap justify-center items-center gap-8 md:gap-12 reveal">
+      <div class="text-lg font-bold text-white/30 hover:text-white/60 transition-colors font-['Epilogue']">Las Vegas Review-Journal</div>
+      <div class="text-lg font-bold text-white/30 hover:text-white/60 transition-colors font-['Epilogue']">KLAS (CBS)</div>
+      <div class="text-lg font-bold text-white/30 hover:text-white/60 transition-colors font-['Epilogue']">KSNV (NBC)</div>
+      <div class="text-lg font-bold text-white/30 hover:text-white/60 transition-colors font-['Epilogue']">FOX5</div>
+      <div class="text-lg font-bold text-white/30 hover:text-white/60 transition-colors font-['Epilogue']">Yahoo Entertainment</div>
+    </div>
+  </div>
+</section>
+
+<!-- Sponsorship Inquiry Form -->
+<section id="inquiry" class="py-24 px-8">
+  <div class="max-w-3xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <p class="text-tertiary font-bold uppercase tracking-widest text-sm mb-4">GET STARTED</p>
+      <h2 class="text-4xl md:text-6xl font-black italic tracking-tighter text-white uppercase font-['Epilogue']">SPONSORSHIP <span class="text-gradient">INQUIRY</span></h2>
+    </div>
+    <div class="glass rounded-xl p-8 md:p-10 border border-white/5 reveal" id="inquiryForm">
+      <form id="sponsorForm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs uppercase tracking-widest text-white/40 font-bold" for="company">Company Name</label>
+            <input type="text" id="company" name="company" placeholder="Your company" required class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors placeholder:text-white/20">
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-xs uppercase tracking-widest text-white/40 font-bold" for="contact">Contact Name</label>
+            <input type="text" id="contact" name="contact" placeholder="Full name" required class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors placeholder:text-white/20">
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs uppercase tracking-widest text-white/40 font-bold" for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@company.com" required class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors placeholder:text-white/20">
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="text-xs uppercase tracking-widest text-white/40 font-bold" for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors placeholder:text-white/20">
+          </div>
+        </div>
+        <div class="mb-4">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs uppercase tracking-widest text-white/40 font-bold" for="category">Sponsorship Category</label>
+            <select id="category" name="category" required class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors appearance-none cursor-pointer">
+              <option value="" disabled selected>Select a category</option>
+              <option value="fashion">Fashion / Apparel</option>
+              <option value="beauty">Beauty / Cosmetics</option>
+              <option value="cpg">CPG / Food &amp; Beverage (Non-Alcohol)</option>
+              <option value="tech">Tech / Electronics</option>
+              <option value="auto">Automotive</option>
+              <option value="energy">Energy / Lifestyle</option>
+              <option value="cannabis">Cannabis</option>
+              <option value="financial">Financial Services</option>
+              <option value="hospitality">Hospitality / Travel</option>
+              <option value="media">Media / Entertainment</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="mb-6">
+          <div class="flex flex-col gap-2">
+            <label class="text-xs uppercase tracking-widest text-white/40 font-bold" for="message">What are you looking for?</label>
+            <textarea id="message" name="message" rows="4" placeholder="Tell us about your brand goals, activation ideas, or questions..." class="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-primary transition-colors placeholder:text-white/20 resize-vertical"></textarea>
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-gradient-to-r from-primary-fixed to-tertiary-container text-black font-black py-4 rounded-full text-sm uppercase tracking-tight hover:scale-[1.02] transition-all font-['Epilogue']">Submit Inquiry</button>
+      </form>
+    </div>
+    <div id="formSuccess" class="hidden text-center py-16">
+      <h4 class="text-3xl font-black italic text-gradient font-['Epilogue'] mb-4">We'll be in touch.</h4>
+      <p class="text-on-surface-variant opacity-60">Thanks for your interest in Feed the Block. Our sponsorship team will reach out within 48 hours.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Partners -->
+<section class="py-16 px-8 text-center">
+  <div class="max-w-7xl mx-auto">
+    <p class="text-on-surface-variant uppercase tracking-[0.3em] text-xs font-bold mb-8 opacity-40 reveal">PRODUCED BY</p>
+    <div class="flex flex-wrap justify-center items-center gap-12 mb-4 reveal">
+      <img src="img/cornerbar-logo.png" alt="Corner Bar Management" class="h-12 brightness-0 invert opacity-70">
+      <div class="text-3xl font-black text-white font-['Epilogue'] italic opacity-70">WYNN</div>
+    </div>
+    <p class="text-on-surface-variant text-sm opacity-40 mb-12 reveal">Corner Bar Management in partnership with Wynn Las Vegas</p>
+
+    <p class="text-on-surface-variant uppercase tracking-[0.3em] text-xs font-bold mb-8 opacity-40 reveal">WITH SUPPORT FROM</p>
+    <div class="flex flex-wrap justify-center items-center gap-16 mb-12 reveal">
+      <div class="flex flex-col items-center gap-3">
+        <img src="logos/city-of-las-vegas-seal.svg" alt="City of Las Vegas" class="h-20 opacity-70">
+        <span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-40">City of Las Vegas</span>
+      </div>
+      <div class="flex flex-col items-center gap-3">
+        <img src="logos/lvcva-logo.svg" alt="LVCVA" class="h-16 opacity-70">
+        <span class="text-on-surface-variant text-xs font-bold uppercase tracking-widest opacity-40">LVCVA</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-surface-container-low w-full pt-16 pb-10 px-8 flex flex-col items-center text-center">
+  <div class="flex gap-6 mb-8 reveal">
+    <a href="https://instagram.com/feedtheblock" class="w-12 h-12 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-tertiary hover:border-tertiary/40 transition-all" aria-label="Instagram">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+    </a>
+    <a href="#" class="w-12 h-12 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-tertiary hover:border-tertiary/40 transition-all" aria-label="TikTok">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 00-.79-.05A6.34 6.34 0 003.15 15.2a6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.73a8.19 8.19 0 004.76 1.52V6.8a4.84 4.84 0 01-1-.11z"/></svg>
+    </a>
+    <a href="#" class="w-12 h-12 rounded-full border border-white/15 flex items-center justify-center text-white/60 hover:text-tertiary hover:border-tertiary/40 transition-all" aria-label="X / Twitter">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+    </a>
+  </div>
+  <div class="flex flex-wrap gap-8 mb-8">
+    <a class="text-white/40 hover:text-tertiary transition-colors font-['Epilogue'] uppercase tracking-widest text-xs" href="/feed-the-block" target="_top">Home</a>
+    <a class="text-white/40 hover:text-tertiary transition-colors font-['Epilogue'] uppercase tracking-widest text-xs" href="#">Press Kit</a>
+    <a class="text-white/40 hover:text-tertiary transition-colors font-['Epilogue'] uppercase tracking-widest text-xs" href="#">Contact</a>
+  </div>
+  <div class="font-['Epilogue'] uppercase tracking-widest text-[10px] text-white/20">
+    &copy; 2026 FEED THE BLOCK. CORNER BAR MANAGEMENT. ALL RIGHTS RESERVED.
+  </div>
+</footer>
+
+<script>
+// Mobile menu
+document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+  document.getElementById('mobileNav').classList.toggle('open');
+});
+function closeMobile() { document.getElementById('mobileNav').classList.remove('open'); }
+
+// Scroll reveal
+var reveals = document.querySelectorAll('.reveal');
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      var siblings = entry.target.parentElement.querySelectorAll('.reveal');
+      var idx = Array.from(siblings).indexOf(entry.target);
+      setTimeout(function() { entry.target.classList.add('visible'); }, idx * 80);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+reveals.forEach(function(el) { observer.observe(el); });
+
+// Form submission
+document.getElementById('sponsorForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  document.getElementById('inquiryForm').style.display = 'none';
+  document.getElementById('formSuccess').classList.remove('hidden');
+});
+</script>
+</body>
+</html>

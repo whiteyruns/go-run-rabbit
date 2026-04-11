@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 160">
+  <!-- FEED -->
+  <text x="0" y="72" font-family="'Arial Black', 'Helvetica Neue', Impact, sans-serif" font-weight="900" font-size="78" fill="#fff" letter-spacing="6" text-transform="uppercase">FEED</text>
+  <!-- THE (smaller, in gold) -->
+  <text x="290" y="52" font-family="'Arial', 'Helvetica Neue', sans-serif" font-weight="800" font-size="28" fill="#FFD700" letter-spacing="8" text-transform="uppercase">THE</text>
+  <!-- BLOCK -->
+  <text x="0" y="145" font-family="'Arial Black', 'Helvetica Neue', Impact, sans-serif" font-weight="900" font-size="78" fill="#fff" letter-spacing="6" text-transform="uppercase">BLOCK</text>
+  <!-- Accent bar -->
+  <rect x="0" y="82" width="100" height="4" rx="2" fill="url(#grad)"/>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FFD700"/>
+      <stop offset="50%" stop-color="#FF6B00"/>
+      <stop offset="100%" stop-color="#FF1493"/>
+    </linearGradient>
+  </defs>
+</svg>
