@@ -112,22 +112,13 @@ function HubContent() {
               <p>Event concepts, wireframes, and sponsorship strategy</p>
             </div>
           </div>
-          <div className="cbm-hub-grid cbm-hub-grid-2">
-            <Link href="/corner-bar-management/feed-the-block" className="cbm-hub-card">
+          <div className="cbm-hub-grid">
+            <Link href="/corner-bar-management/feed-the-block" className="cbm-hub-card cbm-hub-card-featured">
               <div className="cbm-hub-card-tag" style={{ color: "#aea2ff", borderColor: "#aea2ff" }}>Wireframe</div>
               <h3>Feed the Block</h3>
               <p>
                 Free open-air block party series at 6th &amp; Fremont &mdash; Wynn Nightlife x CBM.
                 40K+ attendance in 2025, expanding to 10 events in 2026.
-              </p>
-              <span className="cbm-hub-card-link">View &rarr;</span>
-            </Link>
-            <Link href="/dashboard/block-party" className="cbm-hub-card">
-              <div className="cbm-hub-card-tag" style={{ color: "#ff6b98", borderColor: "#ff6b98" }}>Dashboard</div>
-              <h3>FTB Sponsorship</h3>
-              <p>
-                2025 actuals, 2026 projections, confirmed sponsors, audience profile,
-                social metrics, sponsorship tiers, $1.46M revenue potential.
               </p>
               <span className="cbm-hub-card-link">View &rarr;</span>
             </Link>
