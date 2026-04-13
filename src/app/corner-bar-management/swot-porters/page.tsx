@@ -88,8 +88,8 @@ const opportunities = [
     detail: "TPG/Acadia's $275M acquisition shifts LINQ toward real estate ROI, not experiential activation. Reduces competitive pressure in the brand activation space on the Strip.",
   },
   {
-    title: "Life is Beautiful Void",
-    detail: "LIB scaling down from 18-block festival to smaller \"block party\" format. Leaves a void in large-scale downtown experiential events that EFD can fill year-round.",
+    title: "Downtown Las Vegas Renaissance",
+    detail: "DTLV is experiencing a cultural and investment surge — new restaurants, art installations, and residential development are driving foot traffic and repositioning downtown as a credible alternative to the Strip for experiential events.",
   },
   {
     title: "84% of Marketers Increasing Event Spend",

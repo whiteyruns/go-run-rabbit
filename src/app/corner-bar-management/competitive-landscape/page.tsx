@@ -175,27 +175,6 @@ const vegasCompetitors: Competitor[] = [
       "$188M multi-phase renovation",
     ],
   },
-  {
-    name: "Life is Beautiful",
-    type: "Annual Festival",
-    capacity: "~50,000",
-    privateBuyout: "No",
-    multiVenue: false,
-    experiential: "High",
-    threat: "LOW",
-    description:
-      "Annual music/art/culinary festival across 18 blocks of DTLV. Scaling down to smaller \"block party\" format. Not a bookable venue — public streets requiring city permits.",
-    strengths: [
-      "Proved DTLV blocks can be activated at scale",
-      "Strong brand recognition",
-    ],
-    weaknesses: [
-      "Not a bookable venue",
-      "Once per year only",
-      "Scaling down suggests financial challenges",
-    ],
-    recentMoves: ["Format shift to smaller \"Big Beautiful Block Party\""],
-  },
 ];
 
 interface NationalPlayer {
