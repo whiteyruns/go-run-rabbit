@@ -27,7 +27,7 @@ const navGroups = [
       { href: "/dashboard/journey", label: "Guest Journey", icon: "&#10132;" },
     ],
   },
-  {
+{
     label: "Strategy",
     items: [
       { href: "/dashboard/block-party", label: "Feed the Block", icon: "&#9835;" },

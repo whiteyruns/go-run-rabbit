@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,7 +17,7 @@ export default function LoginPage() {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ password }),
     });
 
     const data = await res.json();
@@ -29,11 +28,7 @@ export default function LoginPage() {
       return;
     }
 
-    if (data.user.role === "admin") {
-      router.push("/dashboard");
-    } else {
-      router.push("/client/overview");
-    }
+    router.push("/dashboard");
   }
 
   return (
@@ -54,17 +49,6 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="bg-[#1f1f23] rounded-xl p-8 space-y-5">
           <div>
-            <label className="text-[#acaaae] text-[10px] font-bold uppercase tracking-[0.15em] block mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#131316] border-0 border-b border-[#48474b]/30 rounded-lg px-4 py-3 text-[#f3f0f4] text-sm focus:outline-none focus:border-[#aea2ff] focus:border-b-2 transition-all placeholder:text-[#48474b]"
-              placeholder="you@gorunrabbit.com"
-              required
-            />
-          </div>
-          <div>
             <label className="text-[#acaaae] text-[10px] font-bold uppercase tracking-[0.15em] block mb-2">Password</label>
             <input
               type="password"
@@ -72,6 +56,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-[#131316] border-0 border-b border-[#48474b]/30 rounded-lg px-4 py-3 text-[#f3f0f4] text-sm focus:outline-none focus:border-[#aea2ff] focus:border-b-2 transition-all placeholder:text-[#48474b]"
               placeholder="Enter password"
+              autoFocus
               required
             />
           </div>
