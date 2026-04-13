@@ -43,8 +43,8 @@ export default function LoginPage() {
             <span className="text-[#00eefc] text-[10px] font-bold uppercase tracking-[0.2em]">Secure Access</span>
             <span className="w-8 h-[1px] bg-[#00eefc]" />
           </div>
-          <h1 className="text-[#f3f0f4] text-2xl font-extrabold tracking-tight">CBM Dashboards</h1>
-          <p className="text-[#acaaae] text-sm mt-2">Sponsorship Intelligence Platform</p>
+          <h1 className="text-[#f3f0f4] text-2xl font-extrabold tracking-tight">CBM Dashboard</h1>
+          <p className="text-[#acaaae] text-sm mt-2">Portfolio Intelligence Platform</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-[#1f1f23] rounded-xl p-8 space-y-5">
