@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 
 interface Lead {
@@ -49,7 +49,6 @@ const stageColor = (s: string) => {
 
 export default function LeadDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params.id as string;
 
   const [lead, setLead] = useState<Lead | null>(null);
