@@ -90,13 +90,22 @@ function HubContent() {
               <p>Competitive positioning, market analysis, and strategic context</p>
             </div>
           </div>
-          <div className="cbm-hub-grid">
-            <Link href="/corner-bar-management/competitive-landscape" className="cbm-hub-card cbm-hub-card-featured">
+          <div className="cbm-hub-grid cbm-hub-grid-2">
+            <Link href="/corner-bar-management/competitive-landscape" className="cbm-hub-card">
               <div className="cbm-hub-card-tag" style={{ color: "#00eefc", borderColor: "#00eefc" }}>Intelligence</div>
               <h3>Competitive Landscape</h3>
               <p>
                 Bain-style report &mdash; 7 Vegas competitors, 8 national players, positioning matrix,
                 white space analysis, threat assessments, $55.5B market overview.
+              </p>
+              <span className="cbm-hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/corner-bar-management/swot-porters" className="cbm-hub-card">
+              <div className="cbm-hub-card-tag" style={{ color: "#aea2ff", borderColor: "#aea2ff" }}>Strategy</div>
+              <h3>SWOT &amp; Porter&rsquo;s Five Forces</h3>
+              <p>
+                28-point SWOT, cross-analysis (SO strategies + WT risks), five forces rated,
+                industry attractiveness: 5.0/10, 6 strategic imperatives.
               </p>
               <span className="cbm-hub-card-link">View &rarr;</span>
             </Link>
