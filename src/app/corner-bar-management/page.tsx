@@ -152,13 +152,22 @@ function HubContent() {
               <p>Executive dashboards, POS analytics, pipeline, and venue intelligence</p>
             </div>
           </div>
-          <div className="cbm-hub-grid">
-            <Link href="/dashboard" className="cbm-hub-card cbm-hub-card-featured">
+          <div className="cbm-hub-grid cbm-hub-grid-2">
+            <Link href="/dashboard" className="cbm-hub-card">
               <div className="cbm-hub-card-tag" style={{ color: "#00eefc", borderColor: "#00eefc" }}>Live</div>
               <h3>Portfolio Intelligence</h3>
               <p>
                 Live portfolio metrics &mdash; 8 venues, revenue projections, sponsorship categories,
                 capture rates, and the full addressable opportunity.
+              </p>
+              <span className="cbm-hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/dashboard/efd-pipeline" className="cbm-hub-card">
+              <div className="cbm-hub-card-tag" style={{ color: "#aea2ff", borderColor: "#aea2ff" }}>CRM</div>
+              <h3>EFD Lead Pipeline</h3>
+              <p>
+                Kanban pipeline tracking every lead from inquiry to close &mdash;
+                drag-and-drop stages, cold-lead alerts, activity timeline, notes.
               </p>
               <span className="cbm-hub-card-link">View &rarr;</span>
             </Link>
