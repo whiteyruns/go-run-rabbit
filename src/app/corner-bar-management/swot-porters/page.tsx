@@ -37,8 +37,8 @@ const strengths = [
 
 const weaknesses = [
   {
-    title: "No Unified Booking Platform",
-    detail: "Lacks the cross-venue booking technology that UrVenue provides for Hakkasan/Tao/Zouk. No dynamic pricing, 3D maps, or unified cart for multi-venue packages.",
+    title: "No Dynamic Pricing or Self-Service Cart",
+    detail: "East Fremont District site handles inquiries and showcases inventory, but lacks UrVenue-style dynamic pricing, real-time availability, or a self-service package builder that corporate planners increasingly expect.",
   },
   {
     title: "Production Capability Gap",
@@ -151,8 +151,8 @@ const soStrategies = [
 
 const wtRisks = [
   {
-    match: "No Booking Platform + Area15 Expansion",
-    risk: "Area15's growing scale + potential for sophisticated booking tech could lock EFD out of corporate RFPs that require online self-service. Urgent need to build or license a booking engine.",
+    match: "No Dynamic Pricing + Area15 Expansion",
+    risk: "Area15's growing scale + potential for sophisticated self-service booking could create friction in corporate RFPs. EFD's inquiry-based flow works but may need real-time availability and package configuration to stay competitive.",
   },
   {
     match: "Production Gap + Resort Takeovers",
@@ -525,8 +525,8 @@ export default function SwotPortersPage() {
               },
               {
                 priority: "2",
-                title: "Build the Booking Engine",
-                body: "The biggest weakness is operationally solvable. Build or license a cross-venue booking platform with dynamic pricing, 3D walkthroughs, and self-service RFP capability. This is table stakes for corporate buyers.",
+                title: "Enhance EFD with Dynamic Pricing",
+                body: "The East Fremont District site already handles inquiries and showcases inventory. Next level: add real-time availability, dynamic pricing for peak dates, and a self-service package configurator so corporate planners can scope events without a phone call.",
                 accent: "#aea2ff",
               },
               {
