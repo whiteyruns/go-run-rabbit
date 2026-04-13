@@ -373,7 +373,7 @@ export default function CompetitiveLandscapePage() {
                 East Fremont District — Competitive Moat
               </h3>
               <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-neon-cyan mt-1">
-                16 venues &middot; 1 city block &middot; 20K+ proven capacity
+                8 venues &middot; 1 city block &middot; 20K+ proven capacity
               </p>
             </div>
           </div>

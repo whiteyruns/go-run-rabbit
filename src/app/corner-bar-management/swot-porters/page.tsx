@@ -10,8 +10,8 @@ const strengths = [
     detail: "No other operator offers a multi-venue, street-level district that can be privately activated end-to-end. Area15 is closest but is indoor-only and art-focused.",
   },
   {
-    title: "16 Venues Under One Operator",
-    detail: "Corner Bar Management controls 16 venues on a single city block — enabling unified pricing, coordinated programming, and seamless full-district buyouts with a single contract.",
+    title: "8 Venues Under One Operator",
+    detail: "Corner Bar Management controls 8 venues on a single city block — enabling unified pricing, coordinated programming, and seamless full-district buyouts with a single contract.",
   },
   {
     title: "Wynn Nightlife Partnership",
@@ -62,7 +62,7 @@ const weaknesses = [
   },
   {
     title: "Limited Consumer Data Infrastructure",
-    detail: "No centralized CRM, email capture system, or first-party data platform across the 16 venues. Audience insights rely on event-specific signups rather than persistent profiles.",
+    detail: "No centralized CRM, email capture system, or first-party data platform across the 8 venues. Audience insights rely on event-specific signups rather than persistent profiles.",
   },
 ];
 
@@ -550,7 +550,7 @@ export default function SwotPortersPage() {
               {
                 priority: "6",
                 title: "Capture First-Party Data",
-                body: "Implement a unified CRM across all 16 venues. Every event signup, QR scan, and WiFi login should feed a central profile. This data becomes the moat — it compounds over time and makes sponsorship ROI provable.",
+                body: "Implement a unified CRM across all 8 venues. Every event signup, QR scan, and WiFi login should feed a central profile. This data becomes the moat — it compounds over time and makes sponsorship ROI provable.",
                 accent: "#ff6b98",
               },
             ].map((item) => (

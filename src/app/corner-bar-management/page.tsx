@@ -90,7 +90,7 @@ function HubContent() {
               <p>Competitive positioning, market analysis, and strategic context</p>
             </div>
           </div>
-          <div className="cbm-hub-grid cbm-hub-grid-2">
+          <div className="cbm-hub-grid cbm-hub-grid-3">
             <Link href="/corner-bar-management/competitive-landscape" className="cbm-hub-card">
               <div className="cbm-hub-card-tag" style={{ color: "#00eefc", borderColor: "#00eefc" }}>Intelligence</div>
               <h3>Competitive Landscape</h3>
@@ -106,6 +106,15 @@ function HubContent() {
               <p>
                 28-point SWOT, cross-analysis (SO strategies + WT risks), five forces rated,
                 industry attractiveness: 5.0/10, 6 strategic imperatives.
+              </p>
+              <span className="cbm-hub-card-link">View &rarr;</span>
+            </Link>
+            <Link href="/corner-bar-management/platform-audit" className="cbm-hub-card">
+              <div className="cbm-hub-card-tag" style={{ color: "#ff6b98", borderColor: "#ff6b98" }}>Operations</div>
+              <h3>Platform Audit</h3>
+              <p>
+                Inquiry-to-close pipeline &mdash; 8 platforms evaluated, 3 recommended stacks,
+                pipeline stage mapping from inquiry to confirmed booking.
               </p>
               <span className="cbm-hub-card-link">View &rarr;</span>
             </Link>
@@ -148,7 +157,7 @@ function HubContent() {
               <div className="cbm-hub-card-tag" style={{ color: "#00eefc", borderColor: "#00eefc" }}>Live</div>
               <h3>Portfolio Intelligence</h3>
               <p>
-                Live portfolio metrics &mdash; 16 venues, revenue projections, sponsorship categories,
+                Live portfolio metrics &mdash; 8 venues, revenue projections, sponsorship categories,
                 capture rates, and the full addressable opportunity.
               </p>
               <span className="cbm-hub-card-link">View &rarr;</span>
@@ -209,6 +218,7 @@ const hubStyles = `
 
 .cbm-hub-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: rgba(255,255,255,0.04); border-radius: 12px; overflow: hidden; }
 .cbm-hub-grid-2 { grid-template-columns: 1fr 1fr; }
+.cbm-hub-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
 .cbm-hub-card {
   background: #1a1a1f; padding: 32px; display: flex; flex-direction: column;
   text-decoration: none; color: #f3f0f4; transition: background 0.4s cubic-bezier(0.16,1,0.3,1);
@@ -234,6 +244,9 @@ const hubStyles = `
 .cbm-hub-footer { margin-top: 60px; text-align: center; }
 .cbm-hub-footer p { font-size: 10px; color: #48474b; letter-spacing: 2px; text-transform: uppercase; }
 
+@media (max-width: 768px) {
+  .cbm-hub-grid-3 { grid-template-columns: 1fr; }
+}
 @media (max-width: 600px) {
   .cbm-hub-grid-2 { grid-template-columns: 1fr; }
   .cbm-hub-page { padding: 40px 20px; }
