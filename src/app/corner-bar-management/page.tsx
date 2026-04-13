@@ -144,7 +144,7 @@ function HubContent() {
             </div>
           </div>
           <div className="cbm-hub-grid">
-            <Link href="/corner-bar-management/dashboard" className="cbm-hub-card cbm-hub-card-featured">
+            <Link href="/dashboard" className="cbm-hub-card cbm-hub-card-featured">
               <div className="cbm-hub-card-tag" style={{ color: "#00eefc", borderColor: "#00eefc" }}>Live</div>
               <h3>Portfolio Intelligence</h3>
               <p>
