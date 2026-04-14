@@ -361,10 +361,10 @@ async function scrapeCustomURL(config: Record<string, string>): Promise<Record<s
     const html = await res.text();
 
     // Extract emails
-    const emails = [...new Set(html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || [])];
+    const emails = (html.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g) || []).filter((v, i, a) => a.indexOf(v) === i);
 
     // Extract phone numbers
-    const phones = [...new Set(html.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g) || [])];
+    const phones = (html.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g) || []).filter((v, i, a) => a.indexOf(v) === i);
 
     // Extract company-like names from headings
     const headingMatches = matchAllRegex(html, /<(?:h[1-4]|strong)[^>]*>([^<]{3,60})<\/(?:h[1-4]|strong)>/gi);
