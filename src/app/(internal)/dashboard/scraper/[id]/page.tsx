@@ -49,12 +49,14 @@ export default function ScrapeJobDetailPage() {
   const [enrichResult, setEnrichResult] = useState<string | null>(null);
   const [deduping, setDeduping] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [pipelineEmails, setPipelineEmails] = useState<Record<string, string>>({}); // email -> status
 
   const fetchData = useCallback(async () => {
-    const [jobRes, resultsRes, campaignsRes] = await Promise.all([
+    const [jobRes, resultsRes, campaignsRes, leadsRes] = await Promise.all([
       fetch("/api/scraper"),
       fetch(`/api/scraper/results?job_id=${jobId}`),
       fetch("/api/efd-outbound/campaigns"),
+      fetch("/api/efd-leads"),
     ]);
 
     if (jobRes.ok) {
@@ -63,6 +65,14 @@ export default function ScrapeJobDetailPage() {
     }
     if (resultsRes.ok) setResults(await resultsRes.json());
     if (campaignsRes.ok) setCampaigns(await campaignsRes.json());
+    if (leadsRes.ok) {
+      const leads = await leadsRes.json();
+      const emailMap: Record<string, string> = {};
+      for (const l of leads) {
+        if (l.email) emailMap[l.email.toLowerCase()] = l.status;
+      }
+      setPipelineEmails(emailMap);
+    }
     setLoading(false);
   }, [jobId]);
 
@@ -316,6 +326,7 @@ export default function ScrapeJobDetailPage() {
               <th className="text-left py-3 px-3">Email</th>
               <th className="text-left py-3 px-3">Phone</th>
               <th className="text-left py-3 px-3">Category</th>
+              <th className="text-left py-3 px-3">Pipeline</th>
               <th className="text-left py-3 px-3">Status</th>
             </tr>
           </thead>
@@ -358,6 +369,21 @@ export default function ScrapeJobDetailPage() {
                   <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">
                     {r.category || "—"}
                   </span>
+                </td>
+                <td className="py-3 px-3">
+                  {r.email && pipelineEmails[r.email.toLowerCase()] ? (
+                    <span className={`text-[9px] font-bold uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-full ${
+                      ["confirmed", "completed", "contract_signed", "accepted"].includes(pipelineEmails[r.email.toLowerCase()])
+                        ? "bg-neon-cyan/15 text-neon-cyan"
+                        : ["lost", "cancelled"].includes(pipelineEmails[r.email.toLowerCase()])
+                          ? "bg-neon-pink/15 text-neon-pink"
+                          : "bg-neon-violet/15 text-neon-violet"
+                    }`}>
+                      {pipelineEmails[r.email.toLowerCase()].replace(/_/g, " ")}
+                    </span>
+                  ) : (
+                    <span className="text-[9px] text-on-surface-variant">—</span>
+                  )}
                 </td>
                 <td className="py-3 px-3">
                   {r.exported ? (
