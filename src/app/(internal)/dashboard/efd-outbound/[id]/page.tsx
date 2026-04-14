@@ -48,6 +48,8 @@ export default function CampaignDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showAddTarget, setShowAddTarget] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<string | null>(null);
 
   const fetchCampaign = useCallback(async () => {
     const res = await fetch("/api/efd-outbound/campaigns");
@@ -107,6 +109,37 @@ export default function CampaignDetailPage() {
 
     setImporting(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  async function sendOutreach() {
+    setSending(true);
+    setSendResult("Sending...");
+    let totalSent = 0;
+    let totalFailed = 0;
+    let batch = 1;
+
+    // Send in batches until no more pending targets with emails
+    while (batch <= 10) {
+      const res = await fetch("/api/efd-outbound/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ campaign_id: campaignId }),
+      });
+      if (!res.ok) {
+        setSendResult(`Batch ${batch} failed — ${totalSent} sent so far`);
+        break;
+      }
+      const data = await res.json();
+      totalSent += data.sent || 0;
+      totalFailed += data.failed || 0;
+      if ((data.sent || 0) === 0) break; // No more to send
+      setSendResult(`Batch ${batch}: ${totalSent} sent, ${totalFailed} failed`);
+      await fetchTargets();
+      batch++;
+    }
+    setSendResult(`Done: ${totalSent} emails sent${totalFailed > 0 ? `, ${totalFailed} failed` : ""}`);
+    await fetchTargets();
+    setSending(false);
   }
 
   async function updateCampaignStatus(status: string) {
@@ -196,8 +229,22 @@ export default function CampaignDetailPage() {
               Pause
             </button>
           )}
+          <button
+            onClick={sendOutreach}
+            disabled={sending || stats.pending === 0}
+            className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-violet/15 text-neon-violet hover:bg-neon-violet/25 transition-colors disabled:opacity-40"
+          >
+            {sending ? "Sending..." : `Send Outreach (${targets.filter(t => t.status === "pending" && t.email).length} ready)`}
+          </button>
         </div>
       </div>
+
+      {/* Send result */}
+      {sendResult && (
+        <div className="bg-surface-container rounded-xl p-4 mb-4">
+          <p className="text-neon-violet text-sm">{sendResult}</p>
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-6 gap-3 mb-8">
