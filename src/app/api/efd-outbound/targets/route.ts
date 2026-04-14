@@ -6,7 +6,15 @@ function generateToken(): string {
   return randomBytes(16).toString("hex");
 }
 
-const EFD_BASE_URL = process.env.EFD_BASE_URL || "https://eastfremontdistrict.com";
+const TEMPLATE_URLS: Record<string, string> = {
+  efd: (process.env.EFD_BASE_URL || "https://eastfremontdistrict.com") + "/outreach",
+  doberman: (process.env.CBM_BASE_URL || "https://cbm.gorunrabbit.com") + "/doberman-outreach",
+};
+
+function getOutreachUrl(template: string, token: string): string {
+  const base = TEMPLATE_URLS[template] || TEMPLATE_URLS.efd;
+  return `${base}/${token}`;
+}
 
 export async function GET(request: NextRequest) {
   const campaignId = request.nextUrl.searchParams.get("campaign_id");
@@ -35,6 +43,9 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
   const supabase = getSupabase();
 
+  // Get campaign template
+  const template = body.template || "efd";
+
   // Handle CSV batch import
   if (Array.isArray(body.targets)) {
     const targets = body.targets.map((t: Record<string, string>) => {
@@ -46,7 +57,7 @@ export async function POST(request: NextRequest) {
         email: t.email || t.Email || null,
         phone: t.phone || t.Phone || null,
         magic_link_token: token,
-        magic_link_url: `${EFD_BASE_URL}/outreach/${token}`,
+        magic_link_url: getOutreachUrl(template, token),
         status: "pending",
         personalization: {
           event_type: t.event_type || null,
@@ -79,7 +90,7 @@ export async function POST(request: NextRequest) {
       email: body.email || null,
       phone: body.phone || null,
       magic_link_token: token,
-      magic_link_url: `${EFD_BASE_URL}/outreach/${token}`,
+      magic_link_url: getOutreachUrl(template, token),
       status: "pending",
       personalization: body.personalization || {},
     })

@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
       name: body.name,
       description: body.description || null,
       target_type: body.target_type || null,
+      outreach_template: body.outreach_template || "efd",
       status: "draft",
     })
     .select()

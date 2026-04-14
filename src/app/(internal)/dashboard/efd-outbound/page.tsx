@@ -38,7 +38,7 @@ export default function EfdOutboundPage() {
 
   useEffect(() => { fetchCampaigns(); }, [fetchCampaigns]);
 
-  async function createCampaign(form: { name: string; description: string; target_type: string }) {
+  async function createCampaign(form: { name: string; description: string; target_type: string; outreach_template: string }) {
     const res = await fetch("/api/efd-outbound/campaigns", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -131,10 +131,10 @@ function CreateCampaignForm({
   onSave,
   onCancel,
 }: {
-  onSave: (form: { name: string; description: string; target_type: string }) => Promise<void>;
+  onSave: (form: { name: string; description: string; target_type: string; outreach_template: string }) => Promise<void>;
   onCancel: () => void;
 }) {
-  const [form, setForm] = useState({ name: "", description: "", target_type: "" });
+  const [form, setForm] = useState({ name: "", description: "", target_type: "", outreach_template: "efd" });
   const [saving, setSaving] = useState(false);
 
   const inputClass =
@@ -146,7 +146,7 @@ function CreateCampaignForm({
         <h3 className="text-on-surface font-bold">New Campaign</h3>
         <button onClick={onCancel} className="text-on-surface-variant text-xs hover:text-on-surface">Cancel</button>
       </div>
-      <div className="grid grid-cols-3 gap-3 mb-3">
+      <div className="grid grid-cols-4 gap-3 mb-3">
         <input className={inputClass} placeholder="Campaign name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <input className={inputClass} placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         <select className={inputClass} value={form.target_type} onChange={(e) => setForm({ ...form, target_type: e.target.value })}>
@@ -155,6 +155,10 @@ function CreateCampaignForm({
           <option value="corporate">Corporate Event Teams</option>
           <option value="convention">Convention Adjacent</option>
           <option value="agency">Agency</option>
+        </select>
+        <select className={inputClass} value={form.outreach_template} onChange={(e) => setForm({ ...form, outreach_template: e.target.value })}>
+          <option value="efd">EFD — District Activation</option>
+          <option value="doberman">Doberman — Membership</option>
         </select>
       </div>
       <button
