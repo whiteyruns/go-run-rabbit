@@ -180,6 +180,15 @@ function HubContent() {
               </p>
               <span className="cbm-hub-card-link">View &rarr;</span>
             </Link>
+            <Link href="/dashboard/scraper" className="cbm-hub-card">
+              <div className="cbm-hub-card-tag" style={{ color: "#00eefc", borderColor: "#00eefc" }}>Tool</div>
+              <h3>Scraper</h3>
+              <p>
+                Lead scraping tool &mdash; DMC directories, CES exhibitors, business directories
+                by category and zip. Export to campaigns or CSV.
+              </p>
+              <span className="cbm-hub-card-link">View &rarr;</span>
+            </Link>
           </div>
         </div>
 

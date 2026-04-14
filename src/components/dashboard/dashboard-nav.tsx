@@ -44,6 +44,12 @@ const navGroups = [
     ],
   },
   {
+    label: "CBM Tools",
+    items: [
+      { href: "/corner-bar-management", label: "Strategy Hub", icon: "&#9670;" },
+    ],
+  },
+  {
     label: "Operations",
     items: [
       { href: "/dashboard/pipeline", label: "Pipeline", icon: "&#9679;" },
