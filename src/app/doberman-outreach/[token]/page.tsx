@@ -74,7 +74,7 @@ export default function DobermanOutreachPage() {
   }, [token]);
 
   if (!loaded) {
-    return <div style={{ background: "#0c0a08", minHeight: "100vh" }} />;
+    return <div style={{ background: "#0a0f1a", minHeight: "100vh" }} />;
   }
 
   const firstName = target?.contact_name?.split(" ")[0] || "";
@@ -89,7 +89,7 @@ export default function DobermanOutreachPage() {
   }
 
   return (
-    <div style={{ background: "#0c0a08", color: "#e8e4dd", minHeight: "100vh", fontFamily: "'Georgia', 'Times New Roman', serif" }}>
+    <div style={{ background: "#0a0f1a", color: "#e8e4dd", minHeight: "100vh", fontFamily: "'Georgia', 'Times New Roman', serif" }}>
       <style>{styles}</style>
 
       {/* Hero Image */}
@@ -258,7 +258,7 @@ const styles = `
   .dob-detail-label { color: #c9a84c; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; font-family: -apple-system, sans-serif; font-weight: 600; }
   .dob-detail p { color: #9a958d; font-size: 14px; line-height: 1.6; }
 
-  .dob-membership { background: #0f0d0a; border-radius: 16px; padding: 48px; margin-top: 24px; }
+  .dob-membership { background: #0d1322; border-radius: 16px; padding: 48px; margin-top: 24px; }
   .dob-pricing { text-align: center; margin-bottom: 40px; }
   .dob-price-card { display: inline-block; }
   .dob-price-label { color: #c9a84c; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; font-family: -apple-system, sans-serif; }
@@ -267,7 +267,7 @@ const styles = `
   .dob-price-note { color: #5a5650; font-size: 13px; margin-top: 4px; font-family: -apple-system, sans-serif; }
 
   .dob-benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .dob-benefit { padding: 20px; border: 1px solid #1a1812; border-radius: 10px; }
+  .dob-benefit { padding: 20px; border: 1px solid #1a2035; border-radius: 10px; }
   .dob-benefit h4 { font-size: 15px; font-weight: 400; margin-bottom: 6px; color: #e8e4dd; }
   .dob-benefit p { color: #9a958d; font-size: 13px; line-height: 1.5; font-family: -apple-system, sans-serif; }
 
@@ -277,7 +277,7 @@ const styles = `
   .dob-prog-card p { color: #9a958d; font-size: 12px; font-family: -apple-system, sans-serif; }
 
   .dob-press { display: grid; grid-template-columns: 1fr; gap: 12px; }
-  .dob-press-card { padding: 20px; border-bottom: 1px solid #1a1812; }
+  .dob-press-card { padding: 20px; border-bottom: 1px solid #1a2035; }
   .dob-press-pub { color: #c9a84c; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px; font-family: -apple-system, sans-serif; font-weight: 600; }
   .dob-press-quote { color: #9a958d; font-size: 15px; line-height: 1.6; font-style: italic; }
 
@@ -286,14 +286,14 @@ const styles = `
   .dob-btn-primary {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 16px 32px; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-    background: #c9a84c; color: #0c0a08; text-decoration: none; border-radius: 4px;
+    background: #c9a84c; color: #0a0f1a; text-decoration: none; border-radius: 4px;
     font-family: -apple-system, sans-serif; transition: opacity 0.2s;
   }
   .dob-btn-primary:hover { opacity: 0.85; }
   .dob-btn-secondary {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 16px 32px; font-size: 13px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
-    border: 1px solid #2a2520; color: #e8e4dd; text-decoration: none; border-radius: 4px;
+    border: 1px solid #2a3050; color: #e8e4dd; text-decoration: none; border-radius: 4px;
     font-family: -apple-system, sans-serif; transition: border-color 0.2s;
   }
   .dob-btn-secondary:hover { border-color: #c9a84c; }
