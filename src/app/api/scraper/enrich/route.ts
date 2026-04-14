@@ -138,32 +138,24 @@ async function strategyWebsiteScrape(website: string, domain: string, contactNam
 
 /* ── Strategy 2: Google dork for email ────────────────────────────── */
 async function strategyGoogleDork(contactName: string, companyName: string | null, domain: string | null): Promise<string | null> {
-  // Search for the person's email on the web
+  // REQUIRE a domain — without one we can't filter results and get junk
+  if (!domain) return null;
+
   const queries = [
-    `"${contactName}" email ${domain || companyName || ""}`,
-    domain ? `"${contactName}" "@${domain}"` : null,
-  ].filter(Boolean) as string[];
+    `"${contactName}" "@${domain}"`,
+    `"${contactName}" email ${domain}`,
+  ];
 
   for (const query of queries) {
     try {
-      // Use a search engine scrape
       const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
       const html = await fetchPage(searchUrl);
       if (!html) continue;
 
       const emails = extractEmails(html);
 
-      // HARD FILTER: never return emails from search engines or directories
-      const BLOCKED_DOMAINS = ["duckduckgo.com", "google.com", "bing.com", "yahoo.com",
-        "yandex.com", "avvo.com", "justia.com", "yelp.com", "yellowpages.com",
-        "findlaw.com", "martindale.com", "lawyers.com", "facebook.com", "linkedin.com",
-        "twitter.com", "instagram.com", "reddit.com", "wikipedia.org"];
-      const clean = emails.filter((e) => !BLOCKED_DOMAINS.some((d) => e.endsWith(`@${d}`)));
-
-      // Filter for domain match if we have one
-      const relevant = domain
-        ? clean.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e))
-        : clean.filter((e) => !isGenericEmail(e));
+      // ONLY accept emails matching the company domain
+      const relevant = emails.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e));
 
       if (relevant.length > 0) {
         const scored = relevant
@@ -181,21 +173,24 @@ async function strategyGoogleDork(contactName: string, companyName: string | nul
   return null;
 }
 
-/* ── Strategy 3: Yelp/Google business listing ─────────────────────── */
-async function strategyBusinessListing(companyName: string, contactName: string | null): Promise<string | null> {
-  const query = encodeURIComponent(`${companyName} Las Vegas email`);
+/* ── Strategy 3: Business listing search (requires domain) ────────── */
+async function strategyBusinessListing(companyName: string, contactName: string | null, domain: string | null): Promise<string | null> {
+  // Without a domain we can't filter search results reliably
+  if (!domain) return null;
+
+  const query = encodeURIComponent(`${companyName} email @${domain}`);
 
   try {
     const html = await fetchPage(`https://html.duckduckgo.com/html/?q=${query}`);
     if (!html) return null;
 
-    const emails = extractEmails(html).filter((e) => !isGenericEmail(e));
+    // ONLY accept emails matching the company domain
+    const emails = extractEmails(html).filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e));
     if (emails.length > 0) {
       const scored = emails
-        .map((e) => ({ email: e, score: scoreEmail(e, null, contactName) }))
-        .filter((e) => e.score > -50)
+        .map((e) => ({ email: e, score: scoreEmail(e, domain, contactName) }))
         .sort((a, b) => b.score - a.score);
-      if (scored.length > 0) return scored[0].email;
+      if (scored[0].score > 0) return scored[0].email;
     }
   } catch {
     // ignore
@@ -325,7 +320,7 @@ export async function POST(request: NextRequest) {
 
         case "business-listing":
           if (result.company_name) {
-            foundEmail = await strategyBusinessListing(result.company_name, result.contact_name);
+            foundEmail = await strategyBusinessListing(result.company_name, result.contact_name, domain);
             if (foundEmail) method = "business-listing";
           }
           break;
