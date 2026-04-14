@@ -50,6 +50,9 @@ export default function CampaignDetailPage() {
   const [importing, setImporting] = useState(false);
   const [sending, setSending] = useState(false);
   const [sendResult, setSendResult] = useState<string | null>(null);
+  const [scrapeJobs, setScrapeJobs] = useState<{ id: string; name: string; result_count: number }[]>([]);
+  const [selectedScrapeJob, setSelectedScrapeJob] = useState("");
+  const [importingScrape, setImportingScrape] = useState(false);
 
   const fetchCampaign = useCallback(async () => {
     const res = await fetch("/api/efd-outbound/campaigns");
@@ -69,6 +72,8 @@ export default function CampaignDetailPage() {
   useEffect(() => {
     fetchCampaign();
     fetchTargets();
+    // Fetch scrape jobs for import
+    fetch("/api/scraper").then(r => r.ok ? r.json() : []).then(d => setScrapeJobs(d || []));
   }, [fetchCampaign, fetchTargets]);
 
   async function addTarget(form: { company_name: string; contact_name: string; email: string }) {
@@ -140,6 +145,23 @@ export default function CampaignDetailPage() {
     setSendResult(`Done: ${totalSent} emails sent${totalFailed > 0 ? `, ${totalFailed} failed` : ""}`);
     await fetchTargets();
     setSending(false);
+  }
+
+  async function importFromScraper() {
+    if (!selectedScrapeJob) return;
+    setImportingScrape(true);
+    const res = await fetch("/api/scraper/results", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_id: selectedScrapeJob, campaign_id: campaignId }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setSendResult(`Imported ${data.exported} targets from scraper`);
+      await fetchTargets();
+    }
+    setImportingScrape(false);
+    setSelectedScrapeJob("");
   }
 
   async function updateCampaignStatus(status: string) {
@@ -264,7 +286,7 @@ export default function CampaignDetailPage() {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-3 mb-4 flex-wrap">
         <button
           onClick={() => setShowAddTarget(!showAddTarget)}
           className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-violet/15 text-neon-violet hover:bg-neon-violet/25 transition-colors"
@@ -282,6 +304,28 @@ export default function CampaignDetailPage() {
             disabled={importing}
           />
         </label>
+      </div>
+
+      {/* Import from Scraper */}
+      <div className="flex items-center gap-3 mb-6 bg-surface-container rounded-xl p-4">
+        <span className="text-on-surface-variant text-xs">Import from scraper:</span>
+        <select
+          value={selectedScrapeJob}
+          onChange={(e) => setSelectedScrapeJob(e.target.value)}
+          className="bg-surface-container-high border-0 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none flex-1"
+        >
+          <option value="">Select a scrape job...</option>
+          {scrapeJobs.map((j) => (
+            <option key={j.id} value={j.id}>{j.name} ({j.result_count} results)</option>
+          ))}
+        </select>
+        <button
+          onClick={importFromScraper}
+          disabled={!selectedScrapeJob || importingScrape}
+          className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-cyan/15 text-neon-cyan hover:bg-neon-cyan/25 transition-colors disabled:opacity-40"
+        >
+          {importingScrape ? "Importing..." : "Import"}
+        </button>
       </div>
 
       {/* Add Target Form */}
