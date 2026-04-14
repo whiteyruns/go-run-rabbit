@@ -12,7 +12,9 @@ interface Target {
 }
 
 const IMAGES = {
-  hero: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/bd139425-77e5-4d2b-ba9d-9aeeb51a78a5/P1641079+%284%29.jpg",
+  hero: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/35196dbf-2466-433a-bc9b-44b3d13cdedc/DB+Anniversary+Party+Mood+Board+2026.JPG",
+  cocktails: "https://res.cloudinary.com/the-infatuation/image/upload/q_auto,f_auto/images/PR_Doberman_Bar_Menu_Selections_credit_Jose_Salinas_whl9kx",
+  exterior: "https://www.vegas4locals.com/wp-content/uploads/2025/08/doberman-drawing-room-cocktail-bar-las-vegas-arts-district.webp",
   logo: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/e49dad38-b8a7-4807-981b-2bc70e91654a/Doberman.png",
   anniversary: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/9f5adad2-3672-4329-b278-bb222b260acf/2026-4-15---One-Year-Anniversary---Invitation.jpg",
   moodBoard: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/35196dbf-2466-433a-bc9b-44b3d13cdedc/DB+Anniversary+Party+Mood+Board+2026.JPG",
@@ -143,11 +145,11 @@ export default function DobermanOutreachPage() {
       <section className="dob-section">
         <div className="dob-gallery">
           {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={IMAGES.cocktails} alt="Doberman cocktails" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={IMAGES.menu1} alt="Doberman cocktail menu" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={IMAGES.menu3} alt="Doberman interior" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={IMAGES.nibbles} alt="Doberman nibbles" />
+          <img src={IMAGES.exterior} alt="Doberman Drawing Room" />
         </div>
       </section>
 
