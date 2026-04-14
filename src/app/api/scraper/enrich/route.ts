@@ -112,7 +112,7 @@ function extractEmails(html: string): string[] {
 }
 
 /* ── Strategy 0: Playwright headless browser (bypasses 403s) ──────── */
-const PLAYWRIGHT_URL = "http://localhost:3110/scrape";
+const PLAYWRIGHT_URL = "http://localhost:3115/scrape";
 
 async function strategyPlaywright(website: string, domain: string, contactName: string | null): Promise<string | null> {
   try {
