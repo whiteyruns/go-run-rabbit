@@ -5,7 +5,7 @@ const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || "fallback-dev-secret"
 );
 
-const PUBLIC_PATHS = ["/", "/login", "/pitch", "/basin-and-range", "/apache-springs", "/canyon-expedition", "/oddyssey-manor", "/corner-bar-management", "/feed-the-block", "/api/auth/login"];
+const PUBLIC_PATHS = ["/", "/login", "/pitch", "/basin-and-range", "/apache-springs", "/canyon-expedition", "/oddyssey-manor", "/corner-bar-management", "/efd-outbound-overview", "/feed-the-block", "/api/auth/login"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
