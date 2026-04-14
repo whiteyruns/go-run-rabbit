@@ -39,7 +39,7 @@ const TEMPLATES: Record<string, {
     `,
   },
   doberman: {
-    from: "Doberman Drawing Room <membership@cornerbarmgmt.com>",
+    from: "Doberman Drawing Room <membership@dobermandtlv.com>",
     subject: (t) => `${t.contact_name ? t.contact_name.split(" ")[0] + ", " : ""}a private invitation to Doberman`,
     html: (t) => `
       <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #e8e4dd; padding: 32px; border-radius: 8px;">
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
       const { error: sendError } = await resend.emails.send({
         from: template.from,
         to: target.email,
-        replyTo: templateKey === "doberman" ? "membership@dobermandtlv.com" : "partnerships@feedtheblock.com",
+        replyTo: templateKey === "doberman" ? "info@dobermandtlv.com" : "partnerships@feedtheblock.com",
         subject: template.subject(target),
         html: template.html(target),
       });
