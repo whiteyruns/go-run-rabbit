@@ -103,6 +103,25 @@ export async function POST(request: NextRequest) {
   }
 }
 
+export async function DELETE(request: NextRequest) {
+  const id = request.nextUrl.searchParams.get("id");
+  if (!id) {
+    return NextResponse.json({ error: "id required" }, { status: 400 });
+  }
+
+  const supabase = getSupabase();
+
+  // Delete results first (cascade should handle it, but be explicit)
+  await supabase.from("cbm_scrape_results").delete().eq("job_id", id);
+  const { error } = await supabase.from("cbm_scrape_jobs").delete().eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true });
+}
+
 /* ── Helpers ───────────────────────────────────────────────────────── */
 
 function matchAllRegex(str: string, regex: RegExp): RegExpExecArray[] {

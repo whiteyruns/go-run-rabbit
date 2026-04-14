@@ -89,13 +89,12 @@ export default function ScraperPage() {
       ) : (
         <div className="space-y-3">
           {jobs.map((job) => (
-            <Link
+            <div
               key={job.id}
-              href={`/dashboard/scraper/${job.id}`}
-              className="block bg-surface-container-high rounded-xl p-6 hover:bg-surface-bright transition-colors"
+              className="bg-surface-container-high rounded-xl p-6 hover:bg-surface-bright transition-colors"
             >
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+                <Link href={`/dashboard/scraper/${job.id}`} className="flex items-center gap-4 flex-1">
                   <h3 className="text-on-surface font-bold text-lg">{job.name}</h3>
                   <span className={`text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full ${statusColor(job.status)}`}>
                     {job.status}
@@ -103,12 +102,23 @@ export default function ScraperPage() {
                   <span className="text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">
                     {sourceLabel[job.source_type] || job.source_type}
                   </span>
-                </div>
-                <div className="flex items-center gap-6 text-sm text-on-surface-variant">
+                </Link>
+                <div className="flex items-center gap-4 text-sm text-on-surface-variant">
                   <span>
                     <span className="text-on-surface font-mono font-bold">{job.result_count}</span> results
                   </span>
                   <span>{new Date(job.created_at).toLocaleDateString()}</span>
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation();
+                      if (!confirm(`Delete "${job.name}" and all its results?`)) return;
+                      await fetch(`/api/scraper?id=${job.id}`, { method: "DELETE" });
+                      await fetchJobs();
+                    }}
+                    className="text-[10px] text-on-surface-variant hover:text-neon-pink transition-colors px-2 py-1"
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
               {job.description && (
@@ -117,7 +127,7 @@ export default function ScraperPage() {
               {job.error_message && (
                 <p className="text-neon-pink text-xs mt-2">{job.error_message}</p>
               )}
-            </Link>
+            </div>
           ))}
         </div>
       )}
