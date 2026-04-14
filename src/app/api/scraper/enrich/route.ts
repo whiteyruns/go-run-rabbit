@@ -14,6 +14,7 @@ const GENERIC_PREFIXES = new Set([
   "mailer", "notifications", "alerts", "webmaster", "postmaster",
   "abuse", "spam", "security", "legal", "compliance", "press", "media",
   "pr", "feedback", "service", "customerservice", "customer.service",
+  "error-lite", "error", "privacy", "terms", "copyright", "dmca",
 ]);
 
 function isGenericEmail(email: string): boolean {
