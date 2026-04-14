@@ -40,31 +40,99 @@ const TEMPLATES: Record<string, {
   },
   doberman: {
     from: "Doberman Drawing Room <membership@send.dobermandtlv.com>",
-    subject: (t) => `${t.contact_name ? t.contact_name.split(" ")[0] + ", " : ""}a private invitation to Doberman`,
+    subject: (t) => `${t.contact_name ? t.contact_name.split(" ")[0] + ", " : ""}you've been selected`,
     html: (t) => `
-      <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #e8e4dd; padding: 32px; border-radius: 8px;">
-        <p style="color: #c9a84c; font-size: 11px; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; font-family: -apple-system, sans-serif;">A Private Invitation</p>
-        <h1 style="font-size: 24px; font-weight: 400; margin-bottom: 16px; line-height: 1.3;">
-          ${t.contact_name ? `${t.contact_name.split(" ")[0]}, you're` : "You're"} invited to join
-          <span style="color: #c9a84c;">Doberman Drawing Room</span>
-        </h1>
-        <p style="color: #9a958d; font-size: 14px; line-height: 1.7; margin-bottom: 8px; font-style: italic;">
-          A social club for the intellectually curious — handcrafted cocktails, intimate conversation,
-          and a membership designed for professionals who value substance over spectacle.
-        </p>
-        ${t.category ? `<p style="color: #9a958d; font-size: 13px; margin-bottom: 24px;">We're selectively inviting ${t.category.toLowerCase()} professionals in the Arts District to experience the room.</p>` : ""}
-        <div style="border-left: 2px solid #c9a84c30; padding-left: 16px; margin-bottom: 24px;">
-          <p style="font-size: 14px; margin-bottom: 4px;">Annual Membership: <span style="color: #c9a84c;">$3,000/year</span></p>
-          <p style="color: #9a958d; font-size: 12px; font-family: -apple-system, sans-serif;">Includes concierge, exclusive events, rare spirits menu, monthly gifts, VIP seating, guest passes, and complimentary valet.</p>
+      <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #e8e4dd; border-radius: 8px; overflow: hidden;">
+
+        <!-- Hero image -->
+        <div style="position: relative;">
+          <img src="https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/e497b3b6-e823-4884-b54d-7db48c17e79a/Doberman+5+-+Anthony+Mair.jpg" alt="Doberman Drawing Room" style="width: 100%; height: 220px; object-fit: cover; display: block;" />
         </div>
-        <a href="${t.magic_link_url}" style="display: inline-block; background: #c9a84c; color: #0a0f1a; font-weight: 600; font-size: 13px; padding: 14px 28px; text-decoration: none; border-radius: 4px; letter-spacing: 1px; text-transform: uppercase; font-family: -apple-system, sans-serif;">
-          View Your Invitation
-        </a>
-        <p style="color: #5a5650; font-size: 11px; margin-top: 32px; line-height: 1.5; font-family: -apple-system, sans-serif;">
-          Doberman Drawing Room<br />
-          1025 South 1st Street — Las Vegas Arts District<br />
-          Monday–Sunday, 5 PM – 2 AM
-        </p>
+
+        <div style="padding: 32px;">
+          <!-- Logo -->
+          <img src="https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/e49dad38-b8a7-4807-981b-2bc70e91654a/Doberman.png" alt="Doberman" style="width: 100px; margin-bottom: 24px;" />
+
+          <p style="color: #c9a84c; font-size: 10px; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; font-family: -apple-system, sans-serif;">A Private Invitation</p>
+
+          <h1 style="font-size: 26px; font-weight: 400; margin-bottom: 16px; line-height: 1.3; letter-spacing: 0.01em;">
+            ${t.contact_name ? `${t.contact_name.split(" ")[0]}, we'd like` : "We'd like"} to invite you<br />
+            into <span style="color: #c9a84c;">the room</span>.
+          </h1>
+
+          <p style="color: #9a958d; font-size: 14px; line-height: 1.7; margin-bottom: 24px; font-style: italic;">
+            Doberman Drawing Room is a social club in the Las Vegas Arts District for people
+            who prefer conversation over commotion, and craft over convenience. We're
+            selectively extending membership to a small number of professionals in the area.
+          </p>
+
+          <!-- What's inside -->
+          <table style="width: 100%; margin-bottom: 24px; border-collapse: collapse;">
+            <tr>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #e8e4dd; font-size: 13px; font-family: -apple-system, sans-serif;">Rare spirits & allocated wines</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #c9a84c; font-size: 12px; text-align: right; font-family: -apple-system, sans-serif;">Members only</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #e8e4dd; font-size: 13px; font-family: -apple-system, sans-serif;">Private events & curated programming</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #c9a84c; font-size: 12px; text-align: right; font-family: -apple-system, sans-serif;">Members only</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #e8e4dd; font-size: 13px; font-family: -apple-system, sans-serif;">Guaranteed VIP seating — no waitlist</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #c9a84c; font-size: 12px; text-align: right; font-family: -apple-system, sans-serif;">Members only</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #e8e4dd; font-size: 13px; font-family: -apple-system, sans-serif;">Complimentary valet, every visit</td>
+              <td style="padding: 12px 0; border-bottom: 1px solid #1a2035; color: #c9a84c; font-size: 12px; text-align: right; font-family: -apple-system, sans-serif;">Members only</td>
+            </tr>
+            <tr>
+              <td style="padding: 12px 0; color: #e8e4dd; font-size: 13px; font-family: -apple-system, sans-serif;">Curated monthly gift delivered to you</td>
+              <td style="padding: 12px 0; color: #c9a84c; font-size: 12px; text-align: right; font-family: -apple-system, sans-serif;">Members only</td>
+            </tr>
+          </table>
+
+          <!-- Press quote -->
+          <div style="border-left: 2px solid #c9a84c40; padding-left: 16px; margin-bottom: 28px;">
+            <p style="color: #9a958d; font-size: 13px; font-style: italic; line-height: 1.6; margin-bottom: 6px;">
+              "A moody cocktail bar and members club with drinks that taste like dinner and dessert."
+            </p>
+            <p style="color: #c9a84c; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; font-family: -apple-system, sans-serif;">— Forbes</p>
+          </div>
+
+          <!-- Cocktail images -->
+          <table style="width: 100%; margin-bottom: 28px; border-collapse: collapse;">
+            <tr>
+              <td style="width: 33%; padding-right: 4px;">
+                <img src="https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/65c7f78e-4fdc-4663-b7cb-005e8cb90d67/The+Sahara.jpg" alt="The Sahara" style="width: 100%; height: 140px; object-fit: cover; border-radius: 4px; display: block;" />
+              </td>
+              <td style="width: 33%; padding: 0 2px;">
+                <img src="https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/d3f2ccad-401a-4625-b9c4-0e812add0b4b/Doberman+6+-+Anthony+Mair.jpg" alt="Interior" style="width: 100%; height: 140px; object-fit: cover; border-radius: 4px; display: block;" />
+              </td>
+              <td style="width: 33%; padding-left: 4px;">
+                <img src="https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/8150ea7f-d3b0-40a6-b518-6b78c133404c/Peter+Pepper.jpg" alt="Peter Pepper" style="width: 100%; height: 140px; object-fit: cover; border-radius: 4px; display: block;" />
+              </td>
+            </tr>
+          </table>
+
+          <!-- CTA -->
+          <div style="text-align: center; margin-bottom: 32px;">
+            <a href="${t.magic_link_url}" style="display: inline-block; background: #c9a84c; color: #0a0f1a; font-weight: 700; font-size: 13px; padding: 16px 40px; text-decoration: none; border-radius: 4px; letter-spacing: 2px; text-transform: uppercase; font-family: -apple-system, sans-serif;">
+              View Your Invitation
+            </a>
+            <p style="color: #5a5650; font-size: 11px; margin-top: 12px; font-family: -apple-system, sans-serif;">
+              Membership is by application only
+            </p>
+          </div>
+
+          <!-- Footer -->
+          <div style="border-top: 1px solid #1a2035; padding-top: 20px;">
+            <p style="color: #5a5650; font-size: 10px; line-height: 1.6; font-family: -apple-system, sans-serif; text-align: center;">
+              Doberman Drawing Room<br />
+              1025 South 1st Street — Las Vegas Arts District<br />
+              Monday–Sunday, 5 PM – 2 AM<br /><br />
+              No photography. No laptops. Be present.
+            </p>
+          </div>
+        </div>
       </div>
     `,
   },
