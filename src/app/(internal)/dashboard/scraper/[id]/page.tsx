@@ -43,6 +43,8 @@ export default function ScrapeJobDetailPage() {
   const [selectedCampaign, setSelectedCampaign] = useState("");
   const [exporting, setExporting] = useState(false);
   const [exportResult, setExportResult] = useState<string | null>(null);
+  const [enriching, setEnriching] = useState(false);
+  const [enrichResult, setEnrichResult] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     const [jobRes, resultsRes, campaignsRes] = await Promise.all([
@@ -76,6 +78,29 @@ export default function ScrapeJobDetailPage() {
       await fetchData();
     }
     setExporting(false);
+  }
+
+  async function enrichResults() {
+    setEnriching(true);
+    setEnrichResult(null);
+    try {
+      const res = await fetch("/api/scraper/enrich", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ job_id: jobId }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setEnrichResult(`Found ${data.emails_found} emails across ${data.processed} results`);
+        await fetchData();
+      } else {
+        const err = await res.json();
+        setEnrichResult(`Error: ${err.error || "enrichment failed"}`);
+      }
+    } catch {
+      setEnrichResult("Enrichment request failed");
+    }
+    setEnriching(false);
   }
 
   function downloadCSV() {
@@ -140,12 +165,21 @@ export default function ScrapeJobDetailPage() {
             </span>
           </div>
         </div>
-        <button
-          onClick={downloadCSV}
-          className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors"
-        >
-          Download CSV
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={enrichResults}
+            disabled={enriching}
+            className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-violet/15 text-neon-violet hover:bg-neon-violet/25 transition-colors disabled:opacity-40"
+          >
+            {enriching ? "Enriching..." : "Enrich Emails"}
+          </button>
+          <button
+            onClick={downloadCSV}
+            className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors"
+          >
+            Download CSV
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -192,6 +226,13 @@ export default function ScrapeJobDetailPage() {
           <span className="text-neon-cyan text-xs">{exportResult}</span>
         )}
       </div>
+
+      {/* Enrich result */}
+      {enrichResult && (
+        <div className="bg-surface-container rounded-xl p-4 mb-6">
+          <p className="text-neon-violet text-sm">{enrichResult}</p>
+        </div>
+      )}
 
       {/* Results table */}
       <div className="bg-surface-container rounded-xl overflow-hidden">
