@@ -153,17 +153,23 @@ async function strategyGoogleDork(contactName: string, companyName: string | nul
 
       const emails = extractEmails(html);
 
+      // HARD FILTER: never return emails from search engines or directories
+      const BLOCKED_DOMAINS = ["duckduckgo.com", "google.com", "bing.com", "yahoo.com",
+        "yandex.com", "avvo.com", "justia.com", "yelp.com", "yellowpages.com",
+        "findlaw.com", "martindale.com", "lawyers.com", "facebook.com", "linkedin.com",
+        "twitter.com", "instagram.com", "reddit.com", "wikipedia.org"];
+      const clean = emails.filter((e) => !BLOCKED_DOMAINS.some((d) => e.endsWith(`@${d}`)));
+
       // Filter for domain match if we have one
       const relevant = domain
-        ? emails.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e))
-        : emails.filter((e) => !isGenericEmail(e));
+        ? clean.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e))
+        : clean.filter((e) => !isGenericEmail(e));
 
       if (relevant.length > 0) {
         const scored = relevant
           .map((e) => ({ email: e, score: scoreEmail(e, domain, contactName) }))
           .sort((a, b) => b.score - a.score);
         if (scored[0].score > 0) return scored[0].email;
-        return relevant[0]; // Return best available
       }
 
       await new Promise((r) => setTimeout(r, 500));
