@@ -39,7 +39,7 @@ const TEMPLATES: Record<string, {
     `,
   },
   doberman: {
-    from: "Doberman Drawing Room <membership@dobermandtlv.com>",
+    from: "Doberman Drawing Room <membership@send.dobermandtlv.com>",
     subject: (t) => `${t.contact_name ? t.contact_name.split(" ")[0] + ", " : ""}a private invitation to Doberman`,
     html: (t) => `
       <div style="font-family: Georgia, 'Times New Roman', serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #e8e4dd; padding: 32px; border-radius: 8px;">
