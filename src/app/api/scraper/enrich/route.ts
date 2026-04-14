@@ -25,7 +25,13 @@ function isJunkEmail(email: string): boolean {
   if (isGenericEmail(lower)) return true;
   const junkDomains = ["example.com", "sentry.io", "wixpress.com", "schema.org", "w3.org",
     "googleusercontent.com", "cloudflare.com", "googleapis.com", "gstatic.com",
-    "gravatar.com", "wordpress.org", "wp.com", "squarespace.com"];
+    "gravatar.com", "wordpress.org", "wp.com", "squarespace.com",
+    "duckduckgo.com", "google.com", "bing.com", "yahoo.com", "yandex.com",
+    "baidu.com", "facebook.com", "twitter.com", "instagram.com", "linkedin.com",
+    "youtube.com", "tiktok.com", "pinterest.com", "reddit.com",
+    "yelp.com", "yellowpages.com", "bbb.org", "avvo.com", "justia.com",
+    "findlaw.com", "martindale.com", "lawyers.com", "nolo.com",
+    "vercel.app", "netlify.app", "herokuapp.com", "github.com"];
   for (const d of junkDomains) { if (lower.includes(d)) return true; }
   if (lower.endsWith(".png") || lower.endsWith(".jpg") || lower.endsWith(".svg")) return true;
   if (lower.length > 50) return true;
@@ -274,8 +280,8 @@ export async function POST(request: NextRequest) {
   let genericsCleaned = 0;
   if (genericResults) {
     for (const r of genericResults) {
-      if (r.email && isGenericEmail(r.email)) {
-        await supabase.from("cbm_scrape_results").update({ email: null }).eq("id", r.id);
+      if (r.email && (isGenericEmail(r.email) || isJunkEmail(r.email))) {
+        await supabase.from("cbm_scrape_results").update({ email: null, email_status: null, email_method: null }).eq("id", r.id);
         genericsCleaned++;
       }
     }
