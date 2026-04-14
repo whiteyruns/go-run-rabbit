@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
       const { error: sendError } = await resend.emails.send({
         from: template.from,
         to: target.email,
-        replyTo: templateKey === "doberman" ? "info@dobermandtlv.com" : "partnerships@feedtheblock.com",
+        replyTo: templateKey === "doberman" ? "andrew@dobermandtlv.com" : "partnerships@feedtheblock.com",
         subject: template.subject(target),
         html: template.html(target),
       });
