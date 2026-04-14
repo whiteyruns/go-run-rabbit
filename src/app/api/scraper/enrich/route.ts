@@ -3,9 +3,8 @@ import { getSupabase } from "@/lib/supabase";
 import { extractDomain, parseName, generatePermutations } from "@/lib/email-finder";
 
 const EMAIL_REGEX = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
-const CONTACT_PATHS = ["", "/contact", "/contact-us", "/about", "/about-us", "/team", "/attorneys", "/our-team", "/staff", "/people"];
+const CONTACT_PATHS = ["", "/contact", "/contact-us", "/about", "/about-us", "/team", "/attorneys", "/our-team", "/staff", "/people", "/lawyers", "/our-lawyers"];
 
-// Generic emails to ALWAYS skip — these won't get answered
 const GENERIC_PREFIXES = new Set([
   "info", "contact", "hello", "office", "admin", "support", "help",
   "reception", "frontdesk", "front.desk", "general", "mail", "email",
@@ -18,23 +17,16 @@ const GENERIC_PREFIXES = new Set([
 ]);
 
 function isGenericEmail(email: string): boolean {
-  const localPart = email.split("@")[0].toLowerCase();
-  return GENERIC_PREFIXES.has(localPart);
+  return GENERIC_PREFIXES.has(email.split("@")[0].toLowerCase());
 }
 
 function isJunkEmail(email: string): boolean {
   const lower = email.toLowerCase();
   if (isGenericEmail(lower)) return true;
-  if (lower.includes("example.com")) return true;
-  if (lower.includes("sentry.io")) return true;
-  if (lower.includes("wixpress.com")) return true;
-  if (lower.includes("schema.org")) return true;
-  if (lower.includes("w3.org")) return true;
-  if (lower.includes("googleusercontent")) return true;
-  if (lower.includes("cloudflare")) return true;
-  if (lower.includes("googleapis.com")) return true;
-  if (lower.includes("gstatic.com")) return true;
-  if (lower.includes("facebook.com") && !lower.includes("@facebook.com")) return true;
+  const junkDomains = ["example.com", "sentry.io", "wixpress.com", "schema.org", "w3.org",
+    "googleusercontent.com", "cloudflare.com", "googleapis.com", "gstatic.com",
+    "gravatar.com", "wordpress.org", "wp.com", "squarespace.com"];
+  for (const d of junkDomains) { if (lower.includes(d)) return true; }
   if (lower.endsWith(".png") || lower.endsWith(".jpg") || lower.endsWith(".svg")) return true;
   if (lower.length > 50) return true;
   return false;
@@ -45,151 +37,196 @@ function scoreEmail(email: string, domain: string | null, contactName: string | 
   const emailDomain = email.split("@")[1]?.toLowerCase();
   let score = 0;
 
-  // Must match company domain
   if (domain && emailDomain === domain) score += 20;
-  else if (domain) return -100; // wrong domain = useless
-
-  // Generic = skip entirely
+  else if (domain) return -100;
   if (isGenericEmail(email)) return -100;
 
-  // Match against contact name
   if (contactName) {
     const name = parseName(contactName);
     if (name) {
       const f = name.firstName.toLowerCase();
       const l = name.lastName.toLowerCase();
-      // Exact first.last match
       if (localPart === `${f}.${l}` || localPart === `${f}${l}`) score += 50;
-      // First initial + last
       if (localPart === `${f[0]}${l}`) score += 40;
-      // Contains first or last name
       if (localPart.includes(f) && localPart.includes(l)) score += 30;
       if (localPart.includes(l)) score += 15;
       if (localPart.includes(f)) score += 10;
     }
   }
 
-  // Personal-looking patterns
   if (/^[a-z]+\.[a-z]+$/.test(localPart)) score += 5;
-  if (/^[a-z][a-z]+$/.test(localPart) && localPart.length > 3) score += 3;
-
   return score;
 }
 
-async function scrapePageEmails(url: string): Promise<string[]> {
+async function fetchPage(url: string): Promise<string> {
   try {
     const res = await fetch(url, {
       signal: AbortSignal.timeout(6000),
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      },
+      headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
       redirect: "follow",
     });
-    if (!res.ok) return [];
-    const html = await res.text();
-    const found = html.match(EMAIL_REGEX) || [];
-    return found
-      .map((e) => e.toLowerCase().trim())
-      .filter((e) => !isJunkEmail(e))
-      .filter((v, i, a) => a.indexOf(v) === i);
+    if (!res.ok) return "";
+    return await res.text();
   } catch {
-    return [];
+    return "";
   }
 }
 
-async function findEmailForResult(result: {
-  id: string;
-  website: string | null;
-  company_name: string | null;
-  contact_name: string | null;
-}): Promise<{ email: string | null; method: string }> {
-  if (!result.website) return { email: null, method: "no-website" };
+function extractEmails(html: string): string[] {
+  // Standard regex extraction
+  const found = html.match(EMAIL_REGEX) || [];
 
-  const domain = extractDomain(result.website);
-  if (!domain) return { email: null, method: "bad-domain" };
+  // Also decode mailto: links
+  const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/gi) || [];
+  for (const m of mailtoMatches) {
+    found.push(m.replace(/^mailto:/i, ""));
+  }
 
-  const baseUrl = result.website.replace(/\/$/, "");
-  const allEmails: string[] = [];
+  // Decode HTML entities: &#64; = @, &#46; = .
+  const decoded = html.replace(/&#64;/g, "@").replace(/&#46;/g, ".").replace(/&#x40;/g, "@").replace(/&#x2e;/g, ".");
+  const decodedEmails = decoded.match(EMAIL_REGEX) || [];
+  found.push(...decodedEmails);
 
-  // Scrape website pages for emails
+  // Check for [at] and [dot] obfuscation
+  const deobf = html.replace(/\s*\[at\]\s*/gi, "@").replace(/\s*\(at\)\s*/gi, "@")
+    .replace(/\s*\[dot\]\s*/gi, ".").replace(/\s*\(dot\)\s*/gi, ".");
+  const deobfEmails = deobf.match(EMAIL_REGEX) || [];
+  found.push(...deobfEmails);
+
+  return found
+    .map((e) => e.toLowerCase().trim())
+    .filter((e) => !isJunkEmail(e))
+    .filter((v, i, a) => a.indexOf(v) === i);
+}
+
+/* ── Strategy 1: Scrape company website ───────────────────────────── */
+async function strategyWebsiteScrape(website: string, domain: string, contactName: string | null): Promise<string | null> {
+  const baseUrl = website.replace(/\/$/, "");
+
   for (const path of CONTACT_PATHS) {
     const url = path ? `${baseUrl}${path}` : baseUrl;
-    const emails = await scrapePageEmails(url);
-    allEmails.push(...emails);
+    const html = await fetchPage(url);
+    if (!html) continue;
 
-    // If we found personal emails from the company domain, stop
-    const domainMatches = emails.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e));
-    if (domainMatches.length > 0) break;
+    const emails = extractEmails(html);
+    const domainEmails = emails.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e));
+
+    if (domainEmails.length > 0) {
+      const scored = domainEmails
+        .map((e) => ({ email: e, score: scoreEmail(e, domain, contactName) }))
+        .sort((a, b) => b.score - a.score);
+      if (scored[0].score > 0) return scored[0].email;
+    }
 
     await new Promise((r) => setTimeout(r, 200));
   }
 
-  // Deduplicate
-  const unique = allEmails.filter((v, i, a) => a.indexOf(v) === i);
+  return null;
+}
 
-  if (unique.length === 0) {
-    // No emails found on website — generate best guess from name
-    if (result.contact_name) {
-      const name = parseName(result.contact_name);
-      if (name) {
-        const perms = generatePermutations(name.firstName, name.lastName, domain);
-        // Return the most common pattern as a best guess (marked as unverified)
-        const personalPerms = perms.filter((e) => !isGenericEmail(e));
-        if (personalPerms.length > 0) {
-          return { email: personalPerms[0], method: "pattern-guess" };
-        }
+/* ── Strategy 2: Google dork for email ────────────────────────────── */
+async function strategyGoogleDork(contactName: string, companyName: string | null, domain: string | null): Promise<string | null> {
+  // Search for the person's email on the web
+  const queries = [
+    `"${contactName}" email ${domain || ""}`,
+    `"${contactName}" ${companyName || ""} email`,
+    domain ? `site:${domain} "${contactName}"` : null,
+    domain ? `site:${domain} email` : null,
+    `"${contactName}" "@${domain}"`,
+  ].filter(Boolean) as string[];
+
+  for (const query of queries) {
+    try {
+      // Use a search engine scrape
+      const searchUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(query)}`;
+      const html = await fetchPage(searchUrl);
+      if (!html) continue;
+
+      const emails = extractEmails(html);
+
+      // Filter for domain match if we have one
+      const relevant = domain
+        ? emails.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e))
+        : emails.filter((e) => !isGenericEmail(e));
+
+      if (relevant.length > 0) {
+        const scored = relevant
+          .map((e) => ({ email: e, score: scoreEmail(e, domain, contactName) }))
+          .sort((a, b) => b.score - a.score);
+        if (scored[0].score > 0) return scored[0].email;
+        return relevant[0]; // Return best available
       }
-    }
-    return { email: null, method: "none-found" };
-  }
 
-  // Score and pick the best personal email
-  const scored = unique
-    .map((e) => ({ email: e, score: scoreEmail(e, domain, result.contact_name) }))
-    .filter((e) => e.score > 0)
-    .sort((a, b) => b.score - a.score);
-
-  if (scored.length > 0) {
-    return { email: scored[0].email, method: "website-personal" };
-  }
-
-  // No personal match — try any domain-matching email that's not generic
-  const domainEmails = unique.filter((e) => e.endsWith(`@${domain}`) && !isGenericEmail(e));
-  if (domainEmails.length > 0) {
-    return { email: domainEmails[0], method: "website-domain-match" };
-  }
-
-  // Last resort — pattern guess from name
-  if (result.contact_name) {
-    const name = parseName(result.contact_name);
-    if (name) {
-      const perms = generatePermutations(name.firstName, name.lastName, domain);
-      const personalPerms = perms.filter((e) => !isGenericEmail(e));
-      if (personalPerms.length > 0) {
-        return { email: personalPerms[0], method: "pattern-guess" };
-      }
+      await new Promise((r) => setTimeout(r, 500));
+    } catch {
+      continue;
     }
   }
 
-  return { email: null, method: "only-generic" };
+  return null;
+}
+
+/* ── Strategy 3: Yelp/Google business listing ─────────────────────── */
+async function strategyBusinessListing(companyName: string, contactName: string | null): Promise<string | null> {
+  const query = encodeURIComponent(`${companyName} Las Vegas email`);
+
+  try {
+    const html = await fetchPage(`https://html.duckduckgo.com/html/?q=${query}`);
+    if (!html) return null;
+
+    const emails = extractEmails(html).filter((e) => !isGenericEmail(e));
+    if (emails.length > 0) {
+      const scored = emails
+        .map((e) => ({ email: e, score: scoreEmail(e, null, contactName) }))
+        .filter((e) => e.score > -50)
+        .sort((a, b) => b.score - a.score);
+      if (scored.length > 0) return scored[0].email;
+    }
+  } catch {
+    // ignore
+  }
+
+  return null;
+}
+
+/* ── Strategy 4: Pattern guess (last resort) ──────────────────────── */
+function strategyPatternGuess(contactName: string, domain: string): string | null {
+  const name = parseName(contactName);
+  if (!name) return null;
+  const perms = generatePermutations(name.firstName, name.lastName, domain);
+  const personal = perms.filter((e) => !isGenericEmail(e));
+  return personal[0] || null;
+}
+
+/* ── Main enrichment endpoint ─────────────────────────────────────── */
+
+interface EnrichDetail {
+  id: string;
+  email: string | null;
+  method: string;
+  strategies_tried: string[];
 }
 
 export async function POST(request: NextRequest) {
-  const { job_id, result_ids, batch_size } = await request.json();
+  const { job_id, result_ids, batch_size, strategy } = await request.json();
 
   if (!job_id) {
     return NextResponse.json({ error: "job_id required" }, { status: 400 });
   }
 
   const supabase = getSupabase();
-  const limit = batch_size || 15; // Process in small batches to avoid timeout
+  const limit = batch_size || 10;
+
+  // Which strategies to run
+  const strategies = strategy
+    ? [strategy]
+    : ["website-scrape", "google-dork", "business-listing", "pattern-guess"];
 
   let query = supabase
     .from("cbm_scrape_results")
     .select("id, website, company_name, contact_name, phone, email")
     .eq("job_id", job_id)
     .is("email", null)
-    .not("website", "is", null)
     .limit(limit);
 
   if (result_ids?.length) {
@@ -208,37 +245,20 @@ export async function POST(request: NextRequest) {
   }
 
   if (!results || results.length === 0) {
-    return NextResponse.json({ message: "No results to enrich (all have emails or no websites)", enriched: 0, remaining: 0 });
+    return NextResponse.json({ message: "No results to enrich", enriched: 0, remaining: 0 });
   }
 
-  // Count remaining without email for progress
   const { count } = await supabase
     .from("cbm_scrape_results")
     .select("id", { count: "exact", head: true })
     .eq("job_id", job_id)
-    .is("email", null)
-    .not("website", "is", null);
+    .is("email", null);
 
   let enriched = 0;
   let emailsFound = 0;
-  const details: { id: string; email: string | null; method: string }[] = [];
+  const details: EnrichDetail[] = [];
 
-  for (const result of results) {
-    const { email, method } = await findEmailForResult(result);
-
-    if (email) {
-      await supabase
-        .from("cbm_scrape_results")
-        .update({ email })
-        .eq("id", result.id);
-      enriched++;
-      emailsFound++;
-    }
-
-    details.push({ id: result.id, email, method });
-  }
-
-  // Also clean up any existing generic emails
+  // Clean existing generic emails first
   const { data: genericResults } = await supabase
     .from("cbm_scrape_results")
     .select("id, email")
@@ -249,13 +269,71 @@ export async function POST(request: NextRequest) {
   if (genericResults) {
     for (const r of genericResults) {
       if (r.email && isGenericEmail(r.email)) {
-        await supabase
-          .from("cbm_scrape_results")
-          .update({ email: null })
-          .eq("id", r.id);
+        await supabase.from("cbm_scrape_results").update({ email: null }).eq("id", r.id);
         genericsCleaned++;
       }
     }
+  }
+
+  for (const result of results) {
+    let foundEmail: string | null = null;
+    let method = "none";
+    const triedStrategies: string[] = [];
+
+    const domain = result.website ? extractDomain(result.website) : null;
+
+    // Run strategies in order until one finds an email
+    for (const strat of strategies) {
+      if (foundEmail) break;
+      triedStrategies.push(strat);
+
+      switch (strat) {
+        case "website-scrape":
+          if (result.website && domain) {
+            foundEmail = await strategyWebsiteScrape(result.website, domain, result.contact_name);
+            if (foundEmail) method = "website-scrape";
+          }
+          break;
+
+        case "google-dork":
+          if (result.contact_name) {
+            foundEmail = await strategyGoogleDork(result.contact_name, result.company_name, domain);
+            if (foundEmail) method = "google-dork";
+          }
+          break;
+
+        case "business-listing":
+          if (result.company_name) {
+            foundEmail = await strategyBusinessListing(result.company_name, result.contact_name);
+            if (foundEmail) method = "business-listing";
+          }
+          break;
+
+        case "pattern-guess":
+          if (result.contact_name && domain) {
+            foundEmail = strategyPatternGuess(result.contact_name, domain);
+            if (foundEmail) method = "pattern-guess";
+          }
+          break;
+      }
+
+      // Small delay between strategies
+      await new Promise((r) => setTimeout(r, 200));
+    }
+
+    if (foundEmail) {
+      await supabase
+        .from("cbm_scrape_results")
+        .update({ email: foundEmail })
+        .eq("id", result.id);
+      enriched++;
+      emailsFound++;
+    }
+
+    details.push({ id: result.id, email: foundEmail, method, strategies_tried: triedStrategies });
+
+    // Delay between results
+    await new Promise((r) => setTimeout(r, 300));
   }
 
   return NextResponse.json({
@@ -264,6 +342,7 @@ export async function POST(request: NextRequest) {
     emails_found: emailsFound,
     generics_cleaned: genericsCleaned,
     remaining: (count || 0) - results.length,
+    strategies_used: strategies,
     details,
   });
 }

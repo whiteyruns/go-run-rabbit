@@ -182,13 +182,14 @@ export default function ScrapeJobDetailPage() {
             </span>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <button
             onClick={enrichResults}
             disabled={enriching}
             className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-violet/15 text-neon-violet hover:bg-neon-violet/25 transition-colors disabled:opacity-40"
+            title="Runs all 4 strategies: website scrape → Google dork → business listing → pattern guess"
           >
-            {enriching ? "Enriching..." : "Enrich Emails"}
+            {enriching ? "Enriching..." : "Deep Enrich"}
           </button>
           <button
             onClick={async () => {
