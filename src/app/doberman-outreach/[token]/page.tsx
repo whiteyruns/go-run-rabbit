@@ -12,16 +12,23 @@ interface Target {
 }
 
 const IMAGES = {
-  hero: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/35196dbf-2466-433a-bc9b-44b3d13cdedc/DB+Anniversary+Party+Mood+Board+2026.JPG",
-  cocktails: "https://res.cloudinary.com/the-infatuation/image/upload/q_auto,f_auto/images/PR_Doberman_Bar_Menu_Selections_credit_Jose_Salinas_whl9kx",
-  exterior: "https://www.vegas4locals.com/wp-content/uploads/2025/08/doberman-drawing-room-cocktail-bar-las-vegas-arts-district.webp",
+  // Anthony Mair venue shots
+  hero: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/e497b3b6-e823-4884-b54d-7db48c17e79a/Doberman+5+-+Anthony+Mair.jpg",
+  venue1: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/d3f2ccad-401a-4625-b9c4-0e812add0b4b/Doberman+6+-+Anthony+Mair.jpg",
+  venue2: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/91977f45-fd7e-433b-b814-6c889f0718f6/Doberman+7+-+Anthony+Mair.jpg",
+  venue3: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/3ee46ee1-301f-436d-818a-50a06e965cfb/Doberman+8+-+Anthony+Mair.jpg",
+  venue4: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/b849976d-ea69-4fb1-b36b-24c52841964b/Doberman+9+-+Anthony+Mair.jpg",
+  venue5: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/7119fd35-dcdc-4126-a4ce-2f24436aa5ec/Doberman+13+-+Anthony+Mair.jpg",
+  // Cocktails
+  sahara: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/65c7f78e-4fdc-4663-b7cb-005e8cb90d67/The+Sahara.jpg",
+  tomKha: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/3056651f-1b0c-40a3-b8b5-685942fd681d/Tom+Kha+Fizz.jpg",
+  peterPepper: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/8150ea7f-d3b0-40a6-b518-6b78c133404c/Peter+Pepper.jpg",
+  birdsEye: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/63a398f4-fac7-4f35-bf08-0251f86028d0/Birds+Eye+View.jpg",
+  coffeeCheesecake: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/3792940a-46ff-4e9d-9279-650023cae35d/Coffee+Cheesecake.jpg",
+  // Keys to Doberman
+  keysTo: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/d111b856-234a-4fe9-9dc2-aaab60cc7820/2025---DDR---Keys-To-Doberman---1920x1080+%283%29.jpg",
+  // Logo
   logo: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/e49dad38-b8a7-4807-981b-2bc70e91654a/Doberman.png",
-  anniversary: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/9f5adad2-3672-4329-b278-bb222b260acf/2026-4-15---One-Year-Anniversary---Invitation.jpg",
-  moodBoard: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/35196dbf-2466-433a-bc9b-44b3d13cdedc/DB+Anniversary+Party+Mood+Board+2026.JPG",
-  menu1: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757626809418-WZ1WSX9TAS33SD6M9CCY/2025+-+Doberman+-+Menu+-+Booklet+-+4+-+WEB+-+1.jpg",
-  menu2: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757626806178-P5DU7PZHQLG89W8H8BK7/2025+-+Doberman+-+Menu+-+Booklet+-+4+-+WEB+-+2.jpg",
-  menu3: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757626742367-PI8UQJBMJS4TT3QFXCLP/2025+-+Doberman+-+Menu+-+Booklet+-+4+-+WEB+-+3.jpg",
-  nibbles: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757624992913-JO6XM04PVPZSY1Y6K4ZA/2025+-+Doberman+-+Menu+-+Nibbles+-+WEB+-+1.jpg",
 };
 
 const PRESS = [
@@ -141,15 +148,23 @@ export default function DobermanOutreachPage() {
         </div>
       </section>
 
-      {/* Gallery */}
+      {/* Gallery — venue + cocktails alternating */}
       <section className="dob-section">
         <div className="dob-gallery">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={IMAGES.cocktails} alt="Doberman cocktails" />
+          <img src={IMAGES.venue1} alt="Doberman Drawing Room interior" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={IMAGES.menu1} alt="Doberman cocktail menu" />
+          <img src={IMAGES.sahara} alt="The Sahara cocktail" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={IMAGES.exterior} alt="Doberman Drawing Room" />
+          <img src={IMAGES.venue2} alt="Doberman Drawing Room lounge" />
+        </div>
+        <div className="dob-gallery" style={{ marginTop: 8 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={IMAGES.peterPepper} alt="Peter Pepper cocktail" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={IMAGES.venue3} alt="Doberman Drawing Room seating" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={IMAGES.tomKha} alt="Tom Kha Fizz cocktail" />
         </div>
       </section>
 
