@@ -153,9 +153,6 @@ export default function CampaignDetailPage() {
     inquired: targets.filter((t) => ["inquired", "converted"].includes(t.status)).length,
   };
 
-  const inputClass =
-    "w-full bg-surface-container border-0 border-b border-outline-variant/30 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none focus:border-neon-violet transition-all placeholder:text-on-surface-variant/40";
-
   return (
     <div className="max-w-6xl mx-auto px-8 py-10">
       {/* Breadcrumb */}
