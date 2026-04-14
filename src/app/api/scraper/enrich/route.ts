@@ -3,7 +3,7 @@ import { getSupabase } from "@/lib/supabase";
 import { extractDomain, parseName, generatePermutations, verifyEmailMx } from "@/lib/email-finder";
 
 const EMAIL_REGEX = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
-const CONTACT_PATHS = ["", "/contact", "/contact-us", "/about", "/about-us", "/team", "/attorneys", "/our-team", "/staff", "/people", "/lawyers", "/our-lawyers"];
+const CONTACT_PATHS = ["", "/contact", "/contact-us", "/about"];
 
 const GENERIC_PREFIXES = new Set([
   "info", "contact", "hello", "office", "admin", "support", "help",
@@ -67,7 +67,7 @@ function scoreEmail(email: string, domain: string | null, contactName: string | 
 async function fetchPage(url: string): Promise<string> {
   try {
     const res = await fetch(url, {
-      signal: AbortSignal.timeout(6000),
+      signal: AbortSignal.timeout(4000),
       headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" },
       redirect: "follow",
     });
@@ -139,11 +139,8 @@ async function strategyWebsiteScrape(website: string, domain: string, contactNam
 async function strategyGoogleDork(contactName: string, companyName: string | null, domain: string | null): Promise<string | null> {
   // Search for the person's email on the web
   const queries = [
-    `"${contactName}" email ${domain || ""}`,
-    `"${contactName}" ${companyName || ""} email`,
-    domain ? `site:${domain} "${contactName}"` : null,
-    domain ? `site:${domain} email` : null,
-    `"${contactName}" "@${domain}"`,
+    `"${contactName}" email ${domain || companyName || ""}`,
+    domain ? `"${contactName}" "@${domain}"` : null,
   ].filter(Boolean) as string[];
 
   for (const query of queries) {
@@ -227,7 +224,9 @@ export async function POST(request: NextRequest) {
   }
 
   const supabase = getSupabase();
-  const limit = batch_size || 10;
+  const limit = batch_size || 5;
+  const startTime = Date.now();
+  const MAX_TIME = 25000; // 25 second max to stay under timeout
 
   // Which strategies to run
   const strategies = strategy
@@ -288,6 +287,9 @@ export async function POST(request: NextRequest) {
   }
 
   for (const result of results) {
+    // Bail if we're running out of time
+    if (Date.now() - startTime > MAX_TIME) break;
+
     let foundEmail: string | null = null;
     let method = "none";
     const triedStrategies: string[] = [];
