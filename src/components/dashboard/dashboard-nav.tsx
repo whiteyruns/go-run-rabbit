@@ -40,6 +40,7 @@ const navGroups = [
     items: [
       { href: "/dashboard/efd-pipeline", label: "Lead Pipeline", icon: "&#9670;" },
       { href: "/dashboard/efd-outbound", label: "Outbound", icon: "&#9654;" },
+      { href: "/dashboard/scraper", label: "Scraper", icon: "&#9881;" },
     ],
   },
   {

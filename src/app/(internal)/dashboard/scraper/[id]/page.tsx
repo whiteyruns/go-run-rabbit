@@ -1,0 +1,244 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+
+interface ScrapeJob {
+  id: string;
+  name: string;
+  description: string | null;
+  source_type: string;
+  status: string;
+  result_count: number;
+  created_at: string;
+}
+
+interface ScrapeResult {
+  id: string;
+  company_name: string | null;
+  contact_name: string | null;
+  email: string | null;
+  phone: string | null;
+  website: string | null;
+  address: string | null;
+  category: string | null;
+  source_url: string | null;
+  exported: boolean;
+}
+
+interface Campaign {
+  id: string;
+  name: string;
+}
+
+export default function ScrapeJobDetailPage() {
+  const params = useParams();
+  const jobId = params.id as string;
+
+  const [job, setJob] = useState<ScrapeJob | null>(null);
+  const [results, setResults] = useState<ScrapeResult[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedCampaign, setSelectedCampaign] = useState("");
+  const [exporting, setExporting] = useState(false);
+  const [exportResult, setExportResult] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    const [jobRes, resultsRes, campaignsRes] = await Promise.all([
+      fetch("/api/scraper"),
+      fetch(`/api/scraper/results?job_id=${jobId}`),
+      fetch("/api/efd-outbound/campaigns"),
+    ]);
+
+    if (jobRes.ok) {
+      const allJobs = await jobRes.json();
+      setJob(allJobs.find((j: ScrapeJob) => j.id === jobId) || null);
+    }
+    if (resultsRes.ok) setResults(await resultsRes.json());
+    if (campaignsRes.ok) setCampaigns(await campaignsRes.json());
+    setLoading(false);
+  }, [jobId]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  async function exportToCampaign() {
+    if (!selectedCampaign) return;
+    setExporting(true);
+    const res = await fetch("/api/scraper/results", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ job_id: jobId, campaign_id: selectedCampaign }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setExportResult(`Exported ${data.exported} targets to campaign`);
+      await fetchData();
+    }
+    setExporting(false);
+  }
+
+  function downloadCSV() {
+    const headers = ["company_name", "contact_name", "email", "phone", "website", "address", "category"];
+    const rows = results.map((r) =>
+      headers.map((h) => {
+        const val = r[h as keyof ScrapeResult];
+        return typeof val === "string" ? `"${val.replace(/"/g, '""')}"` : "";
+      }).join(",")
+    );
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${job?.name || "scrape"}-results.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto px-8 py-10">
+        <p className="text-on-surface-variant">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!job) {
+    return (
+      <div className="max-w-6xl mx-auto px-8 py-10">
+        <p className="text-neon-pink">Job not found</p>
+        <Link href="/dashboard/scraper" className="text-neon-cyan text-sm">&larr; Back</Link>
+      </div>
+    );
+  }
+
+  const unexported = results.filter((r) => !r.exported).length;
+  const withEmail = results.filter((r) => r.email).length;
+  const withPhone = results.filter((r) => r.phone).length;
+
+  return (
+    <div className="max-w-6xl mx-auto px-8 py-10">
+      <div className="mb-2">
+        <Link href="/dashboard/scraper" className="text-on-surface-variant text-xs hover:text-neon-cyan transition-colors">
+          &larr; Scraper
+        </Link>
+      </div>
+
+      {/* Header */}
+      <div className="flex items-start justify-between mb-8">
+        <div>
+          <h1 className="text-3xl font-extrabold tracking-tight text-on-surface mb-1">{job.name}</h1>
+          <div className="flex items-center gap-3">
+            <span className={`text-[9px] font-bold uppercase tracking-[0.15em] px-2 py-0.5 rounded-full ${
+              job.status === "completed" ? "bg-neon-cyan/15 text-neon-cyan" : "bg-neon-pink/15 text-neon-pink"
+            }`}>
+              {job.status}
+            </span>
+            <span className="text-on-surface-variant text-xs">
+              {new Date(job.created_at).toLocaleString()}
+            </span>
+          </div>
+        </div>
+        <button
+          onClick={downloadCSV}
+          className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors"
+        >
+          Download CSV
+        </button>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-3 mb-8">
+        <div className="bg-surface-container-high rounded-xl p-4 text-center">
+          <p className="text-2xl font-extrabold font-mono text-on-surface">{results.length}</p>
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Total Results</p>
+        </div>
+        <div className="bg-surface-container-high rounded-xl p-4 text-center">
+          <p className="text-2xl font-extrabold font-mono text-neon-cyan">{withEmail}</p>
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">With Email</p>
+        </div>
+        <div className="bg-surface-container-high rounded-xl p-4 text-center">
+          <p className="text-2xl font-extrabold font-mono text-neon-violet">{withPhone}</p>
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">With Phone</p>
+        </div>
+        <div className="bg-surface-container-high rounded-xl p-4 text-center">
+          <p className="text-2xl font-extrabold font-mono text-on-surface">{unexported}</p>
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Not Exported</p>
+        </div>
+      </div>
+
+      {/* Export to campaign */}
+      <div className="bg-surface-container rounded-xl p-4 mb-6 flex items-center gap-3">
+        <span className="text-on-surface-variant text-sm">Export to campaign:</span>
+        <select
+          value={selectedCampaign}
+          onChange={(e) => setSelectedCampaign(e.target.value)}
+          className="bg-surface-container-high border-0 rounded-lg px-3 py-2 text-on-surface text-sm focus:outline-none"
+        >
+          <option value="">Select campaign...</option>
+          {campaigns.map((c) => (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
+        <button
+          onClick={exportToCampaign}
+          disabled={!selectedCampaign || exporting || unexported === 0}
+          className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-cyan/15 text-neon-cyan hover:bg-neon-cyan/25 transition-colors disabled:opacity-40"
+        >
+          {exporting ? "Exporting..." : `Export ${unexported} to Campaign`}
+        </button>
+        {exportResult && (
+          <span className="text-neon-cyan text-xs">{exportResult}</span>
+        )}
+      </div>
+
+      {/* Results table */}
+      <div className="bg-surface-container rounded-xl overflow-hidden">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant border-b border-outline-variant/20">
+              <th className="text-left py-3 px-4">Company</th>
+              <th className="text-left py-3 px-3">Contact</th>
+              <th className="text-left py-3 px-3">Email</th>
+              <th className="text-left py-3 px-3">Phone</th>
+              <th className="text-left py-3 px-3">Category</th>
+              <th className="text-left py-3 px-3">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {results.map((r) => (
+              <tr key={r.id} className="border-b border-outline-variant/10 hover:bg-surface-container-high transition-colors">
+                <td className="py-3 px-4">
+                  <div>
+                    <p className="text-on-surface font-medium">{r.company_name || "—"}</p>
+                    {r.website && (
+                      <a href={r.website} target="_blank" rel="noopener noreferrer" className="text-neon-cyan text-[10px] hover:underline">
+                        {r.website.replace(/^https?:\/\//, "").slice(0, 30)}
+                      </a>
+                    )}
+                  </div>
+                </td>
+                <td className="py-3 px-3 text-on-surface-variant">{r.contact_name || "—"}</td>
+                <td className="py-3 px-3 text-on-surface-variant text-xs">{r.email || "—"}</td>
+                <td className="py-3 px-3 text-on-surface-variant text-xs">{r.phone || "—"}</td>
+                <td className="py-3 px-3">
+                  <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">
+                    {r.category || "—"}
+                  </span>
+                </td>
+                <td className="py-3 px-3">
+                  {r.exported ? (
+                    <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-neon-cyan">Exported</span>
+                  ) : (
+                    <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-on-surface-variant">Ready</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
