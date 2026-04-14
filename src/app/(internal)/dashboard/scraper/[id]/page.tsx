@@ -104,11 +104,11 @@ export default function ScrapeJobDetailPage() {
 
     try {
       // Run in batches until no more remain
-      while (remaining > 0 && batch <= 10) {
+      while (remaining > 0 && batch <= 20) {
         const res = await fetch("/api/scraper/enrich", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ job_id: jobId, batch_size: 10 }),
+          body: JSON.stringify({ job_id: jobId, batch_size: 3 }),
         });
         if (!res.ok) {
           const err = await res.json();
