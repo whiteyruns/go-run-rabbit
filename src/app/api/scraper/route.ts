@@ -110,7 +110,7 @@ async function scrapeDMCDirectory(config: Record<string, string>): Promise<Recor
   const results: Record<string, string | null>[] = [];
 
   // Known LV DMCs — structured data since directories are hard to scrape consistently
-  const knownDMCs = [
+  const knownDMCs: Record<string, string | null>[] = [
     { company_name: "Hosts Global", contact_name: null, website: "https://hosts-global.com", phone: "(702) 792-2680", email: null, address: "Las Vegas, NV", category: "DMC" },
     { company_name: "Destination Fabulous", contact_name: null, website: "https://destinationfabulous.com", phone: "(702) 889-8900", email: null, address: "Las Vegas, NV", category: "DMC" },
     { company_name: "aVenue Event Group", contact_name: null, website: "https://avenueeventgroup.com", phone: "(702) 735-2832", email: null, address: "Las Vegas, NV", category: "DMC" },
