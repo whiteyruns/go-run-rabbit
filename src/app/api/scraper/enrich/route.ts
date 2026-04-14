@@ -111,7 +111,36 @@ function extractEmails(html: string): string[] {
     .filter((v, i, a) => a.indexOf(v) === i);
 }
 
-/* ── Strategy 1: Scrape company website ───────────────────────────── */
+/* ── Strategy 0: Playwright headless browser (bypasses 403s) ──────── */
+const PLAYWRIGHT_URL = "http://localhost:3110/scrape";
+
+async function strategyPlaywright(website: string, domain: string, contactName: string | null): Promise<string | null> {
+  try {
+    const res = await fetch(PLAYWRIGHT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: website, domain }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const emails: string[] = data.emails || [];
+    const domainEmails = emails.filter((e: string) => e.endsWith(`@${domain}`) && !isGenericEmail(e));
+
+    if (domainEmails.length > 0) {
+      const scored = domainEmails
+        .map((e: string) => ({ email: e, score: scoreEmail(e, domain, contactName) }))
+        .sort((a: { score: number }, b: { score: number }) => b.score - a.score);
+      if (scored[0].score > 0) return scored[0].email;
+    }
+  } catch {
+    // Playwright service not running or timed out — fall through
+  }
+  return null;
+}
+
+/* ── Strategy 1: Scrape company website (plain fetch fallback) ────── */
 async function strategyWebsiteScrape(website: string, domain: string, contactName: string | null): Promise<string | null> {
   const baseUrl = website.replace(/\/$/, "");
 
@@ -233,7 +262,7 @@ export async function POST(request: NextRequest) {
   // Which strategies to run
   const strategies = strategy
     ? [strategy]
-    : ["website-scrape", "google-dork", "business-listing", "pattern-guess"];
+    : ["playwright", "website-scrape", "google-dork", "pattern-guess"];
 
   let query = supabase
     .from("cbm_scrape_results")
@@ -304,6 +333,13 @@ export async function POST(request: NextRequest) {
       triedStrategies.push(strat);
 
       switch (strat) {
+        case "playwright":
+          if (result.website && domain) {
+            foundEmail = await strategyPlaywright(result.website, domain, result.contact_name);
+            if (foundEmail) method = "playwright";
+          }
+          break;
+
         case "website-scrape":
           if (result.website && domain) {
             foundEmail = await strategyWebsiteScrape(result.website, domain, result.contact_name);
