@@ -11,6 +11,17 @@ interface Target {
   personalization: Record<string, string | null>;
 }
 
+const IMAGES = {
+  hero: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/bd139425-77e5-4d2b-ba9d-9aeeb51a78a5/P1641079+%284%29.jpg",
+  logo: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/e49dad38-b8a7-4807-981b-2bc70e91654a/Doberman.png",
+  anniversary: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/9f5adad2-3672-4329-b278-bb222b260acf/2026-4-15---One-Year-Anniversary---Invitation.jpg",
+  moodBoard: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/35196dbf-2466-433a-bc9b-44b3d13cdedc/DB+Anniversary+Party+Mood+Board+2026.JPG",
+  menu1: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757626809418-WZ1WSX9TAS33SD6M9CCY/2025+-+Doberman+-+Menu+-+Booklet+-+4+-+WEB+-+1.jpg",
+  menu2: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757626806178-P5DU7PZHQLG89W8H8BK7/2025+-+Doberman+-+Menu+-+Booklet+-+4+-+WEB+-+2.jpg",
+  menu3: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757626742367-PI8UQJBMJS4TT3QFXCLP/2025+-+Doberman+-+Menu+-+Booklet+-+4+-+WEB+-+3.jpg",
+  nibbles: "https://images.squarespace-cdn.com/content/v1/652d9f35798aeb069cef3d93/1757624992913-JO6XM04PVPZSY1Y6K4ZA/2025+-+Doberman+-+Menu+-+Nibbles+-+WEB+-+1.jpg",
+};
+
 const PRESS = [
   { pub: "Forbes", quote: "A moody cocktail bar and members club with drinks that taste like dinner and dessert." },
   { pub: "Travel + Leisure", quote: "Named Las Vegas the #1 Nightlife Destination in the World — Doberman featured." },
@@ -81,6 +92,15 @@ export default function DobermanOutreachPage() {
     <div style={{ background: "#0c0a08", color: "#e8e4dd", minHeight: "100vh", fontFamily: "'Georgia', 'Times New Roman', serif" }}>
       <style>{styles}</style>
 
+      {/* Hero Image */}
+      <div className="dob-hero-img">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={IMAGES.hero} alt="Doberman Drawing Room" />
+        <div className="dob-hero-overlay" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={IMAGES.logo} alt="Doberman" className="dob-hero-logo" />
+      </div>
+
       {/* Hero */}
       <section className="dob-hero">
         <p className="dob-eyebrow">A Private Invitation</p>
@@ -116,6 +136,18 @@ export default function DobermanOutreachPage() {
             <p className="dob-detail-label">Policy</p>
             <p>No phones. No cameras.<br />Be present.</p>
           </div>
+        </div>
+      </section>
+
+      {/* Gallery */}
+      <section className="dob-section">
+        <div className="dob-gallery">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={IMAGES.menu1} alt="Doberman cocktail menu" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={IMAGES.menu3} alt="Doberman interior" />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={IMAGES.nibbles} alt="Doberman nibbles" />
         </div>
       </section>
 
@@ -204,7 +236,15 @@ export default function DobermanOutreachPage() {
 }
 
 const styles = `
-  .dob-hero { max-width: 700px; margin: 0 auto; padding: 80px 24px 60px; text-align: center; }
+  .dob-hero-img { position: relative; width: 100%; height: 400px; overflow: hidden; }
+  .dob-hero-img img:first-child { width: 100%; height: 100%; object-fit: cover; }
+  .dob-hero-overlay { position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(12,10,8,0.3) 0%, rgba(12,10,8,0.9) 100%); }
+  .dob-hero-logo { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 140px; height: auto; z-index: 1; }
+
+  .dob-gallery { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; border-radius: 12px; overflow: hidden; }
+  .dob-gallery img { width: 100%; height: 280px; object-fit: cover; }
+
+  .dob-hero { max-width: 700px; margin: 0 auto; padding: 48px 24px 60px; text-align: center; }
   .dob-eyebrow { color: #c9a84c; font-size: 11px; font-weight: 400; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 16px; font-family: -apple-system, sans-serif; }
   .dob-title { font-size: clamp(28px, 5vw, 44px); font-weight: 400; line-height: 1.2; letter-spacing: 0.01em; margin-bottom: 20px; }
   .dob-accent { color: #c9a84c; }
