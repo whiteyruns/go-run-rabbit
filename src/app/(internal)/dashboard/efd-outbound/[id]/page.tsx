@@ -251,6 +251,14 @@ export default function CampaignDetailPage() {
               Pause
             </button>
           )}
+          {campaign.status === "paused" && (
+            <button
+              onClick={() => updateCampaignStatus("active")}
+              className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-cyan/15 text-neon-cyan hover:bg-neon-cyan/25 transition-colors"
+            >
+              Resume
+            </button>
+          )}
           <button
             onClick={sendOutreach}
             disabled={sending || stats.pending === 0}
