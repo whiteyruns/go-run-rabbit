@@ -103,6 +103,18 @@ export async function POST(request: NextRequest) {
   }
 }
 
+/* ── Helpers ───────────────────────────────────────────────────────── */
+
+function matchAllRegex(str: string, regex: RegExp): RegExpExecArray[] {
+  const results: RegExpExecArray[] = [];
+  let match: RegExpExecArray | null;
+  const re = new RegExp(regex.source, regex.flags.includes("g") ? regex.flags : regex.flags + "g");
+  while ((match = re.exec(str)) !== null) {
+    results.push(match);
+  }
+  return results;
+}
+
 /* ── Scraper Implementations ──────────────────────────────────────── */
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -154,7 +166,7 @@ async function scrapeDMCDirectory(config: Record<string, string>): Promise<Recor
     });
     if (admeiRes.ok) {
       const html = await admeiRes.text();
-      const companyMatches = html.matchAll(/<h\d[^>]*>([^<]+)<\/h\d>/g);
+      const companyMatches = matchAllRegex(html,/<h\d[^>]*>([^<]+)<\/h\d>/g);
       for (const match of companyMatches) {
         const name = match[1].trim();
         if (name.length > 3 && name.length < 60 && !knownDMCs.find((d) => d.company_name === name)) {
@@ -193,7 +205,7 @@ async function scrapeCESExhibitors(config: Record<string, string>): Promise<Reco
     if (res.ok) {
       const html = await res.text();
       // Extract company names from exhibitor cards
-      const matches = html.matchAll(/class="[^"]*exhibitor[^"]*"[^>]*>[\s\S]*?<(?:h\d|strong|span)[^>]*>([^<]{3,60})<\/(?:h\d|strong|span)>/gi);
+      const matches = matchAllRegex(html,/class="[^"]*exhibitor[^"]*"[^>]*>[\s\S]*?<(?:h\d|strong|span)[^>]*>([^<]{3,60})<\/(?:h\d|strong|span)>/gi);
       for (const match of matches) {
         const name = match[1].trim();
         if (name.length > 2 && !name.includes("{") && !name.includes("<")) {
@@ -269,7 +281,7 @@ async function scrapeBusinessDirectory(config: Record<string, string>): Promise<
     if (yelpRes.ok) {
       const html = await yelpRes.text();
       // Extract business cards from Yelp results
-      const bizMatches = html.matchAll(/aria-label="([^"]{3,80})"\s+href="\/biz\//g);
+      const bizMatches = matchAllRegex(html,/aria-label="([^"]{3,80})"\s+href="\/biz\//g);
       const seen = new Set<string>();
       for (const match of bizMatches) {
         const name = match[1].trim();
@@ -306,10 +318,10 @@ async function scrapeBusinessDirectory(config: Record<string, string>): Promise<
     if (ypRes.ok) {
       const html = await ypRes.text();
       // Extract business info
-      const nameMatches = html.matchAll(/class="business-name"[^>]*><[^>]*>([^<]{3,80})<\//g);
-      const phoneMatches = html.matchAll(/class="phones phone primary"[^>]*>([^<]+)<\//g);
-      const names = [...nameMatches].map((m) => m[1].trim());
-      const phones = [...phoneMatches].map((m) => m[1].trim());
+      const nameMatches = matchAllRegex(html,/class="business-name"[^>]*><[^>]*>([^<]{3,80})<\//g);
+      const phoneMatches = matchAllRegex(html,/class="phones phone primary"[^>]*>([^<]+)<\//g);
+      const names = nameMatches.map((m) => m[1].trim());
+      const phones = phoneMatches.map((m) => m[1].trim());
 
       for (let i = 0; i < names.length; i++) {
         if (!results.find((r) => r.company_name === names[i])) {
@@ -355,7 +367,8 @@ async function scrapeCustomURL(config: Record<string, string>): Promise<Record<s
     const phones = [...new Set(html.match(/\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g) || [])];
 
     // Extract company-like names from headings
-    const headings = [...html.matchAll(/<(?:h[1-4]|strong)[^>]*>([^<]{3,60})<\/(?:h[1-4]|strong)>/gi)]
+    const headingMatches = matchAllRegex(html, /<(?:h[1-4]|strong)[^>]*>([^<]{3,60})<\/(?:h[1-4]|strong)>/gi);
+    const headings = headingMatches
       .map((m) => m[1].trim())
       .filter((h) => h.length > 2 && !h.includes("{") && !h.includes("<"));
 
