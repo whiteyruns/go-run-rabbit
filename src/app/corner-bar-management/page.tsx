@@ -164,7 +164,7 @@ function HubContent() {
             </Link>
             <Link href="/dashboard/efd-pipeline" className="cbm-hub-card">
               <div className="cbm-hub-card-tag" style={{ color: "#aea2ff", borderColor: "#aea2ff" }}>CRM</div>
-              <h3>EFD Lead Pipeline</h3>
+              <h3>Lead Pipeline</h3>
               <p>
                 Kanban pipeline tracking every lead from inquiry to close &mdash;
                 drag-and-drop stages, cold-lead alerts, activity timeline, notes.
@@ -173,7 +173,7 @@ function HubContent() {
             </Link>
             <Link href="/dashboard/efd-outbound" className="cbm-hub-card">
               <div className="cbm-hub-card-tag" style={{ color: "#ff6b98", borderColor: "#ff6b98" }}>Outreach</div>
-              <h3>Outbound Engine</h3>
+              <h3>Outbound Campaigns</h3>
               <p>
                 Campaign manager &mdash; import targets, generate personalized magic links,
                 track engagement (views, clicks, inquiries).

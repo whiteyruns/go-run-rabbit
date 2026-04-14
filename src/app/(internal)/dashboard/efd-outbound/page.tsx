@@ -54,9 +54,9 @@ export default function EfdOutboundPage() {
     <div className="max-w-5xl mx-auto px-8 py-10">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">EFD OUTBOUND</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2">OUTBOUND</h1>
           <p className="text-on-surface-variant">
-            {campaigns.length} campaigns &middot; Target DMCs, corporate planners, and convention exhibitors
+            {campaigns.length} campaigns &middot; Outreach across all CBM properties
           </p>
         </div>
         <button

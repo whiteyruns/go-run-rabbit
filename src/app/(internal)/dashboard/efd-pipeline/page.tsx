@@ -117,7 +117,7 @@ export default function EfdPipelinePage() {
   if (loading) {
     return (
       <div className="max-w-full mx-auto px-8 py-10">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2">EFD PIPELINE</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight mb-2">LEAD PIPELINE</h1>
         <p className="text-on-surface-variant">Loading leads...</p>
       </div>
     );
@@ -128,7 +128,7 @@ export default function EfdPipelinePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">EFD PIPELINE</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2">LEAD PIPELINE</h1>
           <p className="text-on-surface-variant">
             {leads.length} total leads &middot; {totalValue} active
           </p>
