@@ -19,6 +19,8 @@ interface ScrapeResult {
   company_name: string | null;
   contact_name: string | null;
   email: string | null;
+  email_status: string | null;
+  email_method: string | null;
   phone: string | null;
   website: string | null;
   address: string | null;
@@ -46,6 +48,7 @@ export default function ScrapeJobDetailPage() {
   const [enriching, setEnriching] = useState(false);
   const [enrichResult, setEnrichResult] = useState<string | null>(null);
   const [deduping, setDeduping] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   const fetchData = useCallback(async () => {
     const [jobRes, resultsRes, campaignsRes] = await Promise.all([
@@ -212,6 +215,37 @@ export default function ScrapeJobDetailPage() {
             {deduping ? "Deduping..." : "Remove Duplicates"}
           </button>
           <button
+            onClick={async () => {
+              setVerifying(true);
+              setEnrichResult("Verifying emails...");
+              let totalValid = 0;
+              let totalInvalid = 0;
+              let remaining = 1;
+              let batch = 1;
+              while (remaining > 0 && batch <= 10) {
+                const res = await fetch("/api/scraper/verify", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ job_id: jobId, batch_size: 20 }),
+                });
+                if (!res.ok) break;
+                const data = await res.json();
+                totalValid += data.mx_valid || 0;
+                totalInvalid += data.invalid || 0;
+                remaining = data.remaining || 0;
+                setEnrichResult(`Batch ${batch}: ${totalValid} valid, ${totalInvalid} invalid${remaining > 0 ? ` — ${remaining} remaining...` : ""}`);
+                await fetchData();
+                batch++;
+              }
+              setEnrichResult(`Verification done: ${totalValid} valid, ${totalInvalid} invalid domains`);
+              setVerifying(false);
+            }}
+            disabled={verifying}
+            className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-cyan/15 text-neon-cyan hover:bg-neon-cyan/25 transition-colors disabled:opacity-40"
+          >
+            {verifying ? "Verifying..." : "Verify Emails"}
+          </button>
+          <button
             onClick={downloadCSV}
             className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors"
           >
@@ -299,7 +333,26 @@ export default function ScrapeJobDetailPage() {
                   </div>
                 </td>
                 <td className="py-3 px-3 text-on-surface-variant">{r.contact_name || "—"}</td>
-                <td className="py-3 px-3 text-on-surface-variant text-xs">{r.email || "—"}</td>
+                <td className="py-3 px-3">
+                  {r.email ? (
+                    <div>
+                      <span className="text-on-surface-variant text-xs">{r.email}</span>
+                      {r.email_status && (
+                        <span className={`ml-2 text-[8px] font-bold uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-full ${
+                          r.email_status === "mx-valid" ? "bg-neon-cyan/15 text-neon-cyan"
+                          : r.email_status === "verified" ? "bg-neon-cyan/20 text-neon-cyan"
+                          : r.email_status === "pattern-guess" ? "bg-neon-violet/15 text-neon-violet"
+                          : r.email_status === "invalid" ? "bg-neon-pink/15 text-neon-pink"
+                          : "bg-surface-container-high text-on-surface-variant"
+                        }`}>
+                          {r.email_status}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <span className="text-on-surface-variant text-xs">—</span>
+                  )}
+                </td>
                 <td className="py-3 px-3 text-on-surface-variant text-xs">{r.phone || "—"}</td>
                 <td className="py-3 px-3">
                   <span className="text-[9px] font-bold uppercase tracking-[0.1em] px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant">

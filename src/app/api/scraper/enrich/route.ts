@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
-import { extractDomain, parseName, generatePermutations } from "@/lib/email-finder";
+import { extractDomain, parseName, generatePermutations, verifyEmailMx } from "@/lib/email-finder";
 
 const EMAIL_REGEX = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g;
 const CONTACT_PATHS = ["", "/contact", "/contact-us", "/about", "/about-us", "/team", "/attorneys", "/our-team", "/staff", "/people", "/lawyers", "/our-lawyers"];
@@ -209,6 +209,7 @@ interface EnrichDetail {
   id: string;
   email: string | null;
   method: string;
+  email_status: string;
   strategies_tried: string[];
 }
 
@@ -326,16 +327,33 @@ export async function POST(request: NextRequest) {
       await new Promise((r) => setTimeout(r, 200));
     }
 
+    let emailStatus = "none";
+
+    if (foundEmail) {
+      // Verify email via MX lookup
+      try {
+        const mxResult = await verifyEmailMx(foundEmail);
+        if (mxResult.hasMx) {
+          emailStatus = method === "pattern-guess" ? "pattern-guess" : "mx-valid";
+        } else {
+          emailStatus = "invalid";
+          foundEmail = null; // Don't save invalid emails
+        }
+      } catch {
+        emailStatus = "unverified";
+      }
+    }
+
     if (foundEmail) {
       await supabase
         .from("cbm_scrape_results")
-        .update({ email: foundEmail })
+        .update({ email: foundEmail, email_status: emailStatus, email_method: method })
         .eq("id", result.id);
       enriched++;
       emailsFound++;
     }
 
-    details.push({ id: result.id, email: foundEmail, method, strategies_tried: triedStrategies });
+    details.push({ id: result.id, email: foundEmail, method, email_status: emailStatus, strategies_tried: triedStrategies });
 
     // Delay between results
     await new Promise((r) => setTimeout(r, 300));

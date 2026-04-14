@@ -45,6 +45,50 @@ export function generatePermutations(
   ].filter((v, i, a) => a.indexOf(v) === i); // deduplicate
 }
 
+/* ── MX Verification (works anywhere, no port 25 needed) ──────────── */
+
+export interface MxVerifyResult {
+  email: string;
+  valid: boolean;
+  mxHost: string | null;
+  hasMx: boolean;
+  error?: string;
+}
+
+export async function verifyEmailMx(email: string): Promise<MxVerifyResult> {
+  const domain = email.split("@")[1];
+  if (!domain) {
+    return { email, valid: false, mxHost: null, hasMx: false, error: "invalid format" };
+  }
+
+  // Basic format check
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email)) {
+    return { email, valid: false, mxHost: null, hasMx: false, error: "invalid format" };
+  }
+
+  try {
+    const records = await resolveMx(domain);
+    if (!records || records.length === 0) {
+      return { email, valid: false, mxHost: null, hasMx: false, error: "no MX records" };
+    }
+
+    records.sort((a, b) => a.priority - b.priority);
+    return {
+      email,
+      valid: true,
+      mxHost: records[0].exchange,
+      hasMx: true,
+    };
+  } catch (err) {
+    const code = (err as NodeJS.ErrnoException).code;
+    if (code === "ENOTFOUND" || code === "ENODATA") {
+      return { email, valid: false, mxHost: null, hasMx: false, error: "domain not found" };
+    }
+    return { email, valid: false, mxHost: null, hasMx: false, error: `DNS error: ${code}` };
+  }
+}
+
 /* ── SMTP Verifier ────────────────────────────────────────────────── */
 
 interface VerifyResult {
