@@ -45,6 +45,7 @@ export default function ScrapeJobDetailPage() {
   const [exportResult, setExportResult] = useState<string | null>(null);
   const [enriching, setEnriching] = useState(false);
   const [enrichResult, setEnrichResult] = useState<string | null>(null);
+  const [deduping, setDeduping] = useState(false);
 
   const fetchData = useCallback(async () => {
     const [jobRes, resultsRes, campaignsRes] = await Promise.all([
@@ -172,6 +173,26 @@ export default function ScrapeJobDetailPage() {
             className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-violet/15 text-neon-violet hover:bg-neon-violet/25 transition-colors disabled:opacity-40"
           >
             {enriching ? "Enriching..." : "Enrich Emails"}
+          </button>
+          <button
+            onClick={async () => {
+              setDeduping(true);
+              const res = await fetch("/api/scraper/dedup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ job_id: jobId }),
+              });
+              if (res.ok) {
+                const data = await res.json();
+                setEnrichResult(`Removed ${data.duplicates} duplicates — ${data.remaining} remaining`);
+                await fetchData();
+              }
+              setDeduping(false);
+            }}
+            disabled={deduping}
+            className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-pink/15 text-neon-pink hover:bg-neon-pink/25 transition-colors disabled:opacity-40"
+          >
+            {deduping ? "Deduping..." : "Remove Duplicates"}
           </button>
           <button
             onClick={downloadCSV}
