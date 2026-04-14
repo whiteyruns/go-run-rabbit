@@ -73,25 +73,30 @@ async function fetchPage(url: string): Promise<string> {
 }
 
 function extractEmails(html: string): string[] {
+  const found: string[] = [];
+
   // Standard regex extraction
-  const found = html.match(EMAIL_REGEX) || [];
+  const standard = html.match(EMAIL_REGEX);
+  if (standard) found.push(...standard);
 
   // Also decode mailto: links
-  const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/gi) || [];
-  for (const m of mailtoMatches) {
-    found.push(m.replace(/^mailto:/i, ""));
+  const mailtoMatches = html.match(/mailto:([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/gi);
+  if (mailtoMatches) {
+    for (const m of mailtoMatches) {
+      found.push(m.replace(/^mailto:/i, ""));
+    }
   }
 
   // Decode HTML entities: &#64; = @, &#46; = .
   const decoded = html.replace(/&#64;/g, "@").replace(/&#46;/g, ".").replace(/&#x40;/g, "@").replace(/&#x2e;/g, ".");
-  const decodedEmails = decoded.match(EMAIL_REGEX) || [];
-  found.push(...decodedEmails);
+  const decodedEmails = decoded.match(EMAIL_REGEX);
+  if (decodedEmails) found.push(...decodedEmails);
 
   // Check for [at] and [dot] obfuscation
   const deobf = html.replace(/\s*\[at\]\s*/gi, "@").replace(/\s*\(at\)\s*/gi, "@")
     .replace(/\s*\[dot\]\s*/gi, ".").replace(/\s*\(dot\)\s*/gi, ".");
-  const deobfEmails = deobf.match(EMAIL_REGEX) || [];
-  found.push(...deobfEmails);
+  const deobfEmails = deobf.match(EMAIL_REGEX);
+  if (deobfEmails) found.push(...deobfEmails);
 
   return found
     .map((e) => e.toLowerCase().trim())
