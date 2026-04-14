@@ -2,15 +2,6 @@
 
 /* eslint-disable @next/next/no-img-element */
 
-import { useEffect, useState } from "react";
-
-const SCREENSHOTS = {
-  campaignList: "https://cbm.gorunrabbit.com/dashboard/efd-outbound",
-  campaignDetail: "https://cbm.gorunrabbit.com/dashboard/efd-outbound/[campaign]",
-  pipeline: "https://cbm.gorunrabbit.com/dashboard/efd-pipeline",
-  outreachHero: "https://eastfremontdistrict.com/outreach/[token]",
-};
-
 const STATS = [
   { val: "8", label: "Targets Seeded" },
   { val: "1", label: "Viewed" },
@@ -37,15 +28,6 @@ const PIPELINE_STAGES = [
 ];
 
 export default function OutboundOverviewPage() {
-  const [screenshots, setScreenshots] = useState<Record<string, string>>({});
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    // Screenshots are captured and served as static files
-    // For now we use placeholder text - screenshots will be added
-    setLoaded(true);
-  }, []);
-
   return (
     <div style={styles.body}>
       <div style={styles.page}>
