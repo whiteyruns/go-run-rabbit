@@ -83,21 +83,37 @@ export default function ScrapeJobDetailPage() {
 
   async function enrichResults() {
     setEnriching(true);
-    setEnrichResult(null);
+    setEnrichResult("Enriching batch 1...");
+    let totalFound = 0;
+    let totalProcessed = 0;
+    let remaining = 1;
+    let batch = 1;
+
     try {
-      const res = await fetch("/api/scraper/enrich", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ job_id: jobId }),
-      });
-      if (res.ok) {
+      // Run in batches until no more remain
+      while (remaining > 0 && batch <= 10) {
+        const res = await fetch("/api/scraper/enrich", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ job_id: jobId, batch_size: 10 }),
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          setEnrichResult(`Batch ${batch} error: ${err.error || "failed"} — ${totalFound} emails found so far`);
+          break;
+        }
         const data = await res.json();
-        setEnrichResult(`Found ${data.emails_found} emails across ${data.processed} results`);
+        totalFound += data.emails_found || 0;
+        totalProcessed += data.processed || 0;
+        remaining = data.remaining || 0;
+
+        const cleaned = data.generics_cleaned ? ` (${data.generics_cleaned} generics removed)` : "";
+        setEnrichResult(`Batch ${batch}: ${totalFound} emails found across ${totalProcessed} results${cleaned}${remaining > 0 ? ` — ${remaining} remaining...` : ""}`);
         await fetchData();
-      } else {
-        const err = await res.json();
-        setEnrichResult(`Error: ${err.error || "enrichment failed"}`);
+        batch++;
       }
+      setEnrichResult(`Done: ${totalFound} personal emails found across ${totalProcessed} results`);
+      await fetchData();
     } catch {
       setEnrichResult("Enrichment request failed");
     }
