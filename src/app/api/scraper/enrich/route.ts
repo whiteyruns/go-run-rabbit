@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
     .from("cbm_scrape_results")
     .select("id, website, company_name, contact_name, phone, email")
     .eq("job_id", job_id)
-    .is("email", null)
+    .or("email.is.null,email.like.%25duckduckgo%25")
     .limit(limit);
 
   if (result_ids?.length) {
