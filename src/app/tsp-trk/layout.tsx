@@ -9,13 +9,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TSP TRK 2026 — Team Portal",
-  description: "TSP TRK 2026 — Internal team portal for The Speed Project track meet.",
+  title: "TSP TRK 2026 — Make Running Track Meet",
+  description: "A track meet in the desert. No spectators. No sponsors. October 2–5, 2026. The Speed Project.",
   robots: { index: false, follow: false },
   openGraph: {
-    title: "TSP TRK 2026 — Team Portal",
-    description: "Internal team portal. Restricted access.",
+    title: "TSP TRK 2026",
+    description: "A track meet in the desert. No spectators. No sponsors. October 2–5, 2026.",
     type: "website",
+    images: [{ url: "/tsp-trk/images/desert-runner-road.jpg", width: 1600, height: 1067 }],
+    siteName: "The Speed Project",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TSP TRK 2026",
+    description: "A track meet in the desert. No spectators. No sponsors.",
+    images: ["/tsp-trk/images/desert-runner-road.jpg"],
   },
 };
 
