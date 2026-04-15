@@ -561,29 +561,6 @@ export default function TspTrkLayout({
           line-height: 1.6;
         }
 
-        /* register */
-        .register {
-          padding: 160px 0;
-          text-align: center;
-          background: radial-gradient(ellipse at center, #1a0e08 0%, var(--bg) 70%);
-        }
-        .register h2 {
-          font-family: 'Anton', sans-serif;
-          font-size: clamp(64px, 11vw, 180px);
-          text-transform: uppercase;
-          line-height: .9;
-          margin-bottom: 24px;
-        }
-        .register h2 span { color: var(--rust); }
-        .register .sub {
-          color: var(--dust);
-          font-size: 14px;
-          letter-spacing: .28em;
-          text-transform: uppercase;
-          margin-bottom: 48px;
-        }
-        .register .cta { font-size: 14px; padding: 22px 48px; }
-
         /* footer */
         .tsp-footer {
           padding: 64px 0 48px;

@@ -270,7 +270,7 @@ function SiteContent() {
           <li><a href="#site-plan">Site Plan</a></li>
           <li><a href="#location">Location</a></li>
         </ul>
-        <a href="#register" className="cta">Contact</a>
+        <a href="mailto:keith@gorunrabbit.com?subject=TSP%20TRK%202026" className="cta">Contact</a>
       </nav>
 
       {/* ── HERO ── */}
@@ -316,9 +316,9 @@ function SiteContent() {
 
       {/* ── PHOTO STRIP 1 ── */}
       <div className="photo-strip photo-strip-3">
-        <img src="/tsp-trk/images/tsp-car-bw.jpg" alt="TSP support vehicle" />
+        <img src="/tsp-trk/images/sunset-runner.jpg" alt="Runner at sunset on desert road" />
         <img src="/tsp-trk/images/track-sprinters.jpg" alt="Track sprinters at the line" />
-        <img src="/tsp-trk/images/cart-sculpture.jpg" alt="Desert sculpture" />
+        <img src="/tsp-trk/images/dust-runner.jpg" alt="Runner in desert dust" />
       </div>
 
       {/* ── 01 THE MEET ── */}
@@ -539,23 +539,6 @@ function SiteContent() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ── REGISTER ── */}
-      <section id="register" className="register">
-        <div className="tsp-container">
-          <div className="sub">Team Coordination</div>
-          <h2 className="display">
-            Questions?<br />
-            <span>Hit Keith Direct.</span>
-          </h2>
-          <a
-            href="mailto:keith@gorunrabbit.com?subject=TSP%20TRK%202026"
-            className="cta rust"
-          >
-            keith@gorunrabbit.com
-          </a>
         </div>
       </section>
 
