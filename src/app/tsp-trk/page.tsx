@@ -267,6 +267,7 @@ function SiteContent() {
           <li><a href="#format">Format</a></li>
           <li><a href="#site-plan">Site Plan</a></li>
           <li><a href="#location">Location</a></li>
+          <li><a href="#partnerships">Partners</a></li>
         </ul>
         <a href="mailto:keith@gorunrabbit.com?subject=TSP%20TRK%202026" className="cta">Contact</a>
       </nav>
@@ -502,6 +503,81 @@ function SiteContent() {
                 <p>Postpone/cancel if high winds, rain, or conditions that could cause dust storms or playa damage.</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 06 BRAND PARTICIPATION ── */}
+      <section id="partnerships" className="tsp-section brand-section">
+        <div className="tsp-container">
+          <div className="section-head">
+            <div className="num">06</div>
+            <div>
+              <div className="label">Partnerships</div>
+              <h2>Brand Participation.</h2>
+            </div>
+          </div>
+
+          <div className="brand-intro">
+            <h3 className="brand-philosophy">
+              No Spectators.<span>No Sponsors.</span>
+            </h3>
+            <p>
+              We&apos;re looking for brands who want to build TRK with us, not throw a logo on it.
+              Participation means being inside the experiment — in the heat and the dust, in the
+              game-time decisions and late night revelry.
+            </p>
+            <div className="brand-ask">
+              <div className="ask-item">Design something runners actually need.</div>
+              <div className="ask-item">Support teams, athletes, and key moments.</div>
+              <div className="ask-item">Take on risk, add pressure or create consequence.</div>
+            </div>
+          </div>
+
+          <div className="tier-grid">
+            <div className="tier-card">
+              <div className="tier-price">$50K</div>
+              <div className="tier-name">Participating Partner</div>
+              <p className="tier-desc">
+                For brands aligned around experience, athlete support, and storytelling.
+              </p>
+              <ul className="tier-list">
+                <li>Integration with teams, solo athletes, or grants</li>
+                <li>Inclusion in TRK storytelling (pre / during / post)</li>
+                <li>Rights to capture content within agreed creative guardrails</li>
+                <li>On-site presence earned through participation</li>
+              </ul>
+            </div>
+            <div className="tier-card founding">
+              <div className="tier-price">$100–150K</div>
+              <div className="tier-name">Founding Partner</div>
+              <p className="tier-desc">
+                For brands who want to help shape the format itself.
+              </p>
+              <ul className="tier-list">
+                <li>Deeper collaboration across race, culture, music, hospitality</li>
+                <li>Priority access to teams, athletes, and grant-supported runners</li>
+                <li>Co-develop custom product or activation tied to TRK</li>
+                <li>Elevated role in narrative and documentation</li>
+                <li>Long-term association with the first unsanctioned TRK experiment</li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="guardrails">
+            <div className="guardrails-title">Creative Guardrails</div>
+            <div className="guardrails-list">
+              <span>No forced logos or callouts</span>
+              <span>No interrupting the race</span>
+              <span>No content without context</span>
+              <span>Everything must still work if the brand disappears next year</span>
+            </div>
+          </div>
+
+          <div className="brand-cta">
+            <a href="mailto:info@makerunning.com?subject=TRK%202026%20—%20Brand%20Participation" className="cta rust">
+              info@makerunning.com
+            </a>
           </div>
         </div>
       </section>

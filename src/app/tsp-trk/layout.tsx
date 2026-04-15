@@ -640,6 +640,150 @@ export default function TspTrkLayout({
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
+        /* brand participation (06) */
+        .brand-section {
+          background: linear-gradient(180deg, var(--bg), #0e0e0e);
+          border-top: 1px solid var(--line);
+        }
+        .brand-intro {
+          max-width: 720px;
+          margin-bottom: 80px;
+        }
+        .brand-philosophy {
+          font-family: 'Anton', sans-serif;
+          font-size: clamp(40px, 6vw, 72px);
+          text-transform: uppercase;
+          line-height: .95;
+          margin-bottom: 24px;
+        }
+        .brand-philosophy span { color: var(--rust); display: block; }
+        .brand-intro p {
+          font-size: 18px;
+          line-height: 1.7;
+          color: var(--dust);
+          margin-bottom: 32px;
+        }
+        .brand-ask {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .ask-item {
+          font-size: 14px;
+          letter-spacing: .08em;
+          color: var(--ink);
+          padding-left: 20px;
+          position: relative;
+        }
+        .ask-item::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 8px;
+          width: 8px;
+          height: 2px;
+          background: var(--rust);
+        }
+
+        /* tier cards */
+        .tier-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2px;
+          margin-bottom: 64px;
+        }
+        .tier-card {
+          background: var(--card);
+          padding: 48px 40px;
+          border-top: 3px solid var(--dust);
+        }
+        .tier-card.founding {
+          border-top-color: var(--rust);
+        }
+        .tier-price {
+          font-family: 'Anton', sans-serif;
+          font-size: 42px;
+          color: var(--ink);
+          line-height: 1;
+          margin-bottom: 8px;
+        }
+        .tier-card.founding .tier-price { color: var(--rust); }
+        .tier-name {
+          font-family: 'Anton', sans-serif;
+          font-size: 18px;
+          text-transform: uppercase;
+          letter-spacing: .08em;
+          color: var(--dust);
+          margin-bottom: 20px;
+        }
+        .tier-desc {
+          font-size: 15px;
+          color: var(--dust);
+          line-height: 1.6;
+          margin-bottom: 24px;
+        }
+        .tier-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .tier-list li {
+          font-size: 13px;
+          color: var(--dust);
+          padding-left: 16px;
+          position: relative;
+          line-height: 1.5;
+        }
+        .tier-list li::before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 7px;
+          width: 5px;
+          height: 5px;
+          background: var(--dust);
+          border-radius: 50%;
+          opacity: .5;
+        }
+        .tier-card.founding .tier-list li::before { background: var(--rust); opacity: .7; }
+
+        /* guardrails */
+        .guardrails {
+          padding: 32px 0;
+          border-top: 1px solid var(--line);
+          margin-bottom: 48px;
+        }
+        .guardrails-title {
+          font-family: 'Anton', sans-serif;
+          font-size: 14px;
+          text-transform: uppercase;
+          letter-spacing: .18em;
+          color: var(--dust);
+          margin-bottom: 16px;
+        }
+        .guardrails-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px 24px;
+        }
+        .guardrails-list span {
+          font-size: 12px;
+          letter-spacing: .08em;
+          color: var(--dust);
+          opacity: .6;
+        }
+        .guardrails-list span::before {
+          content: '/ ';
+          color: var(--rust);
+          opacity: .5;
+        }
+
+        .brand-cta { text-align: center; padding: 32px 0; }
+        .brand-cta .cta { font-size: 14px; padding: 20px 40px; }
+
         /* footer */
         .tsp-footer {
           padding: 80px 0;
@@ -672,6 +816,8 @@ export default function TspTrkLayout({
           .what-grid { grid-template-columns: 1fr; }
           .events-grid { grid-template-columns: repeat(2, 1fr); }
           .event-tile { aspect-ratio: auto; padding: 32px; }
+          .tier-grid { grid-template-columns: 1fr; }
+          .tier-card { padding: 32px 24px; }
           .location-grid { grid-template-columns: 1fr; gap: 48px; }
           .location-details { grid-template-columns: 1fr 1fr; }
           .detail-card { aspect-ratio: auto; padding: 24px; }
