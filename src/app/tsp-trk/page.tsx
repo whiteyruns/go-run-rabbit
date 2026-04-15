@@ -298,9 +298,9 @@ function SiteContent() {
 
       {/* ── PHOTO STRIP 1 ── */}
       <div className="photo-strip photo-strip-3">
-        <img src="/tsp-trk/images/desert-checkpoint-ai.png" alt="Desert checkpoint with umbrella" />
-        <img src="/tsp-trk/images/track-sprinters-ai.png" alt="Track sprinters in action" />
-        <img src="/tsp-trk/images/desert-twilight.jpg" alt="Desert mountains at twilight" />
+        <img src="/tsp-trk/images/desert-checkpoint-ai.jpg" alt="Desert checkpoint with umbrella" />
+        <img src="/tsp-trk/images/track-sprinters-ai.jpg" alt="Track sprinters in action" />
+        <img src="/tsp-trk/images/prefontaine.jpg" alt="Steve Prefontaine" />
       </div>
 
       {/* ── MANIFESTO ── */}
