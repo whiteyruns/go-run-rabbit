@@ -622,11 +622,6 @@ function SiteContent() {
             </div>
           </div>
 
-          <div className="brand-cta">
-            <a href="mailto:info@makerunning.com?subject=TRK%202026%20—%20Brand%20Participation" className="cta rust">
-              info@makerunning.com
-            </a>
-          </div>
         </div>
       </section>
 
@@ -634,7 +629,6 @@ function SiteContent() {
       <footer className="tsp-footer">
         <div className="footer-inner">
           <img src="/tsp-trk/tsp_logo-white.png" alt="The Speed Project" className="footer-logo" />
-          <a href="mailto:info@makerunning.com">info@makerunning.com</a>
         </div>
       </footer>
 
