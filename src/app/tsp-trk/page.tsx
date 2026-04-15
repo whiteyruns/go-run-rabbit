@@ -260,7 +260,7 @@ function SiteContent() {
       <div className="grain-overlay" />
 
       <nav className="tsp-nav">
-        <img src="/tsp-trk/tsp_logo-white.png" alt="The Speed Project" className="logo" />
+        <span className="nav-brand">TSP TRK 2026</span>
         <ul>
           <li><a href="#about">The Meet</a></li>
           <li><a href="#schedule">Schedule</a></li>
@@ -276,8 +276,8 @@ function SiteContent() {
         <div className="hero-bg-image" aria-hidden="true">
           <img src="/tsp-trk/images/desert-runner-road.jpg" alt="" />
         </div>
-        <div className="tsp-container">
-          <div className="eyebrow">
+        <div className="hero-content">
+          <div className="hero-eyebrow">
             TSP TRK <span className="dot" /> 2026 <span className="dot" /> Apex Dry Lake, NV
           </div>
           <h1 className="display hero-title">
@@ -287,14 +287,21 @@ function SiteContent() {
             <a href="#about" className="cta rust">View Briefing</a>
             <a href="#schedule" className="cta">See Schedule</a>
           </div>
-          <div className="hero-meta">
-            <div><b>Dates</b>October 1–5, 2026</div>
-            <div><b>Format</b>Two-Day Track Meet + Ultra</div>
-            <div><b>Field</b>15–18 Teams · 8–10 Runners</div>
-            <div><b>Vibe</b>No Spectators. No Sponsors.</div>
-          </div>
+        </div>
+        <div className="hero-meta">
+          <div><b>Dates</b>October 1–5, 2026</div>
+          <div><b>Format</b>Two-Day Track Meet + Ultra</div>
+          <div><b>Field</b>15–18 Teams · 8–10 Runners</div>
+          <div><b>Vibe</b>No Spectators. No Sponsors.</div>
         </div>
       </header>
+
+      {/* ── PHOTO STRIP 1 ── */}
+      <div className="photo-strip photo-strip-3">
+        <img src="/tsp-trk/images/playa-circle.png" alt="Runners gathered in circle on the playa at dusk" />
+        <img src="/tsp-trk/images/track-sprinters.jpg" alt="Track sprinters at the line" />
+        <img src="/tsp-trk/images/desert-twilight.jpg" alt="Desert mountains at twilight" />
+      </div>
 
       {/* ── MANIFESTO ── */}
       <section className="manifesto">
@@ -312,27 +319,17 @@ function SiteContent() {
         </div>
       </section>
 
-      {/* ── PHOTO STRIP 1 ── */}
-      <div className="photo-strip photo-strip-3">
-        <img src="/tsp-trk/images/playa-circle.png" alt="Runners gathered in circle on the playa at dusk" />
-        <img src="/tsp-trk/images/track-sprinters.jpg" alt="Track sprinters at the line" />
-        <img src="/tsp-trk/images/desert-twilight.jpg" alt="Desert mountains at twilight" />
-      </div>
-
       {/* ── 01 THE MEET ── */}
-      <section id="about" className="tsp-section what">
+      <section id="about" className="tsp-section">
         <div className="tsp-container">
           <div className="section-head">
             <div className="num">01</div>
-            <div>
-              <div className="label">The Meet</div>
-              <h2>A Track in the Dust.</h2>
-            </div>
+            <h2>A Track in the Dust.</h2>
           </div>
           <div className="what-grid">
             <div className="what-card">
-              <div className="num">400m</div>
-              <h3>Oval, marked &amp; measured</h3>
+              <div className="what-card-eyebrow">Infrastructure</div>
+              <h3>Oval, Marked &amp; Measured</h3>
               <p>
                 A temporary 400m oval with eight lanes, weighted cones, and chalk
                 lines. Standard distances, sacred geometry, on a playa older than
@@ -340,7 +337,7 @@ function SiteContent() {
               </p>
             </div>
             <div className="what-card">
-              <div className="num">&infin;</div>
+              <div className="what-card-eyebrow">Endurance</div>
               <h3>Figure-8 Ultra Loop</h3>
               <p>
                 A separate loop branches off the oval — a figure-8 ribbon for the
@@ -348,8 +345,8 @@ function SiteContent() {
               </p>
             </div>
             <div className="what-card">
-              <div className="num">120+</div>
-              <h3>15–18 teams. One playa.</h3>
+              <div className="what-card-eyebrow">Logistics</div>
+              <h3>15–18 Teams. One Playa.</h3>
               <p>
                 Teams of 8–10 runners, mixed amateur and pro. Pros assigned by
                 raffle. No trades. You are only as strong as your weakest link.
@@ -364,44 +361,20 @@ function SiteContent() {
         <div className="tsp-container">
           <div className="section-head">
             <div className="num">02</div>
-            <div>
-              <div className="label">Program</div>
-              <h2>Five Days. One Tribe.</h2>
-            </div>
+            <h2>Program.</h2>
           </div>
-          <div className="schedule-table">
+          <div className="schedule-rows">
             {[
-              { date: "Thu Oct 1", name: "Setup Day 1", items: [
-                { time: "All Day", desc: "Track build, staging, site prep — staff & crew only." }
-              ]},
-              { date: "Fri Oct 2", name: "Arrival", items: [
-                { time: "Morning", desc: "Continued setup & registration." },
-                { time: "Sundown", desc: "Teams roll in. RV/staff parking opens. Briefing under the dust." }
-              ]},
-              { date: "Sat Oct 3", name: "Meet Day 1", items: [
-                { time: "Morning–Eve", desc: "Main competition window. Heats, prelims, the first scores on the board." }
-              ]},
-              { date: "Sun Oct 4", name: "Meet Day 2", items: [
-                { time: "Morning–Eve", desc: "Finals. Ultra wraps. Podium under directional LEDs." },
-                { time: "Late", desc: "Initial breakdown. Site secured." }
-              ]},
-              { date: "Mon Oct 5", name: "Strike", items: [
-                { time: "8:00–13:00", desc: "Leave No Trace. Track removal. Full restoration. Off the playa." }
-              ]},
-            ].map((day, i) => (
-              <div className="day" key={i}>
-                <div className="day-label">
-                  <div className="day-date">{day.date}</div>
-                  <div className="day-name">{day.name}</div>
-                </div>
-                <div className="day-items">
-                  {day.items.map((item, j) => (
-                    <div className="day-item" key={j}>
-                      <div className="day-time">{item.time}</div>
-                      <div className="day-desc">{item.desc}</div>
-                    </div>
-                  ))}
-                </div>
+              { date: "Thu Oct 1", type: "Setup", desc: "Track build, staging, site prep — staff & crew only.", ultra: false },
+              { date: "Fri Oct 2", type: "Arrival", desc: "Teams roll in. RV/staff parking opens. Registration. Briefing under the dust.", ultra: false },
+              { date: "Sat Oct 3", type: "Meet Day 1", desc: "Main competition window. Heats, prelims, the first scores on the board.", ultra: false },
+              { date: "Sun Oct 4", type: "Meet Day 2 + Ultra", desc: "Finals. Ultra wraps. Podium under directional LEDs. Initial breakdown.", ultra: true },
+              { date: "Mon Oct 5", type: "Strike", desc: "Leave No Trace. Track removal. Full restoration. Off the playa.", ultra: false },
+            ].map((row, i) => (
+              <div className={`schedule-row ${row.ultra ? "ultra-row" : ""}`} key={i}>
+                <div className="schedule-date">{row.date}</div>
+                <div className="schedule-type">{row.type}</div>
+                <div className="schedule-desc">{row.desc}</div>
               </div>
             ))}
           </div>
@@ -409,25 +382,22 @@ function SiteContent() {
       </section>
 
       {/* ── 03 FORMAT ── */}
-      <section id="format" className="tsp-section format">
+      <section id="format" className="tsp-section">
         <div className="tsp-container">
           <div className="section-head">
             <div className="num">03</div>
-            <div>
-              <div className="label">Race Format</div>
-              <h2>Six Events. One Truth.</h2>
-            </div>
+            <h2>The Disciplines.</h2>
           </div>
           <div className="events-grid">
             {[
               { dist: "400m", type: "Sprint", ultra: false },
-              { dist: "800m", type: "Mid-D", ultra: false },
+              { dist: "800m", type: "Mid-Distance", ultra: false },
               { dist: "Mile", type: "1,609m", ultra: false },
               { dist: "DMR", type: "Distance Medley", ultra: false },
               { dist: "4×800", type: "Relay", ultra: false },
               { dist: "Ultra", type: "Figure-8 / Long", ultra: true },
             ].map((evt, i) => (
-              <div className={`event ${evt.ultra ? "ultra" : ""}`} key={i}>
+              <div className={`event-tile ${evt.ultra ? "ultra-tile" : ""}`} key={i}>
                 <div className="dist">{evt.dist}</div>
                 <div className="type">{evt.type}</div>
               </div>
@@ -442,44 +412,39 @@ function SiteContent() {
       </div>
 
       {/* ── 04 SITE PLAN ── */}
-      <section id="site-plan" className="tsp-section site-plan-section">
+      <section id="site-plan" className="tsp-section">
         <div className="tsp-container">
           <div className="section-head">
             <div className="num">04</div>
-            <div>
-              <div className="label">Operations</div>
-              <h2>The Site Plan.</h2>
-            </div>
+            <h2>Site Plan.</h2>
           </div>
-        </div>
-        <div className="site-plan-wrap">
-          <SitePlanMap />
-        </div>
-        <div className="tsp-container">
+          <div className="site-plan-map-wrap">
+            <SitePlanMap />
+          </div>
           <div className="site-plan-stats">
             <div className="stat">
-              <div className="stat-num">7.2</div>
               <div className="stat-label">Acres Total</div>
+              <div className="stat-num">7.2</div>
             </div>
             <div className="stat">
-              <div className="stat-num">8</div>
               <div className="stat-label">Lanes</div>
+              <div className="stat-num">8</div>
             </div>
             <div className="stat">
-              <div className="stat-num">~80</div>
               <div className="stat-label">Weighted Cones</div>
+              <div className="stat-num">~80</div>
             </div>
             <div className="stat">
+              <div className="stat-label">Paramedics</div>
               <div className="stat-num">2</div>
-              <div className="stat-label">Paramedics On-Site</div>
             </div>
             <div className="stat">
+              <div className="stat-label">Toilets</div>
               <div className="stat-num">9</div>
-              <div className="stat-label">Portable Toilets</div>
             </div>
             <div className="stat">
+              <div className="stat-label">Vehicles</div>
               <div className="stat-num">20</div>
-              <div className="stat-label">Staff Vehicles</div>
             </div>
           </div>
         </div>
@@ -487,8 +452,12 @@ function SiteContent() {
 
       {/* ── PHOTO STRIP 2 ── */}
       <div className="photo-strip photo-strip-2">
-        <img src="/tsp-trk/images/desert-setup-bw.jpg" alt="Desert checkpoint setup" />
-        <img src="/tsp-trk/images/runners-trail.jpg" alt="Runners on desert trail" />
+        <div className="photo-wrap">
+          <img src="/tsp-trk/images/desert-setup-bw.jpg" alt="Desert checkpoint setup" />
+        </div>
+        <div className="photo-wrap">
+          <img src="/tsp-trk/images/runners-trail.jpg" alt="Runners on desert trail" />
+        </div>
       </div>
 
       {/* ── 05 LOCATION ── */}
@@ -496,10 +465,7 @@ function SiteContent() {
         <div className="tsp-container">
           <div className="section-head">
             <div className="num">05</div>
-            <div>
-              <div className="label">Location</div>
-              <h2>Apex Dry Lake.</h2>
-            </div>
+            <h2>Location.</h2>
           </div>
           <div className="location-grid">
             <div className="location-copy">
@@ -520,20 +486,20 @@ function SiteContent() {
             </div>
             <div className="location-details">
               <div className="detail-card">
-                <div className="detail-label">Access</div>
-                <div className="detail-value">I-15 / U.S. 93 corridor, 1–2 mi from main access points near Apex</div>
+                <h4>Access</h4>
+                <p>I-15 / U.S. 93 corridor, 1–2 mi from main access points near Apex</p>
               </div>
               <div className="detail-card">
-                <div className="detail-label">Surface</div>
-                <div className="detail-value">Dry lake bed (playa) — flat, cracked, hard-packed. No ground alteration.</div>
+                <h4>Surface</h4>
+                <p>Dry lake bed (playa) — flat, cracked, hard-packed. No ground alteration.</p>
               </div>
               <div className="detail-card">
-                <div className="detail-label">Permit</div>
-                <div className="detail-value">Bureau of Land Management. Photos and restoration report within 7 days post-event.</div>
+                <h4>Permit</h4>
+                <p>Bureau of Land Management. Photos and restoration report within 7 days post-event.</p>
               </div>
               <div className="detail-card">
-                <div className="detail-label">Weather Contingency</div>
-                <div className="detail-value">Postpone/cancel if high winds, rain, or conditions that could cause dust storms or playa damage.</div>
+                <h4>Weather Contingency</h4>
+                <p>Postpone/cancel if high winds, rain, or conditions that could cause dust storms or playa damage.</p>
               </div>
             </div>
           </div>
