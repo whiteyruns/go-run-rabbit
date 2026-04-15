@@ -316,9 +316,9 @@ function SiteContent() {
 
       {/* ── PHOTO STRIP 1 ── */}
       <div className="photo-strip photo-strip-3">
-        <img src="/tsp-trk/images/sunset-runner.jpg" alt="Runner at sunset on desert road" />
+        <img src="/tsp-trk/images/playa-circle.png" alt="Runners gathered in circle on the playa at dusk" />
         <img src="/tsp-trk/images/track-sprinters.jpg" alt="Track sprinters at the line" />
-        <img src="/tsp-trk/images/dust-runner.jpg" alt="Runner in desert dust" />
+        <img src="/tsp-trk/images/desert-twilight.jpg" alt="Desert mountains at twilight" />
       </div>
 
       {/* ── 01 THE MEET ── */}
