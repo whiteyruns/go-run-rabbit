@@ -542,16 +542,6 @@ function SiteContent() {
         </div>
       </section>
 
-      <footer className="tsp-footer">
-        <div className="tsp-container row">
-          <div>&copy; 2026 Make Running &middot; A Go Run Rabbit Production</div>
-          <div>
-            <a href="mailto:keith@gorunrabbit.com">keith@gorunrabbit.com</a>
-            &nbsp;&middot;&nbsp;
-            <a href="tel:+19785908654">978.590.8654</a>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }
