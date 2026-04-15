@@ -240,6 +240,57 @@ export default function TspTrkLayout({
         }
         .tsp-nav .cta { padding: 10px 18px; font-size: 11px; }
 
+        /* hamburger */
+        .hamburger {
+          display: none;
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 8px;
+          flex-direction: column;
+          gap: 5px;
+          z-index: 60;
+        }
+        .hamburger span {
+          display: block;
+          width: 24px;
+          height: 2px;
+          background: var(--ink);
+          transition: all .3s;
+        }
+        .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* mobile menu overlay */
+        .mobile-menu {
+          position: fixed;
+          top: 0;
+          right: -100%;
+          width: 100%;
+          height: 100vh;
+          height: 100dvh;
+          background: var(--bg);
+          z-index: 45;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          gap: 8px;
+          transition: right .35s ease;
+        }
+        .mobile-menu.open { right: 0; }
+        .mobile-menu a {
+          font-family: 'Anton', sans-serif;
+          font-size: 36px;
+          text-transform: uppercase;
+          letter-spacing: .04em;
+          color: var(--dust);
+          padding: 12px 0;
+          transition: color .2s;
+        }
+        .mobile-menu a:hover { color: var(--ink); }
+
         /* hero */
         .tsp-hero {
           min-height: 100vh;
@@ -848,6 +899,8 @@ export default function TspTrkLayout({
         @media (max-width: 900px) {
           .tsp-nav { padding: 16px 24px; }
           .tsp-nav ul { display: none; }
+          .tsp-nav .nav-contact { display: none; }
+          .hamburger { display: flex; }
           .tsp-section { padding: 80px 0; }
           .section-head {
             flex-direction: column;
@@ -866,13 +919,25 @@ export default function TspTrkLayout({
           .detail-card { aspect-ratio: auto; padding: 24px; }
           .program-day { padding: 28px 24px; }
           .program-day-date { font-size: 22px; }
+          .tsp-hero {
+            min-height: 100dvh;
+            justify-content: flex-end;
+            padding-bottom: 0;
+          }
+          .hero-content {
+            padding-bottom: 32px;
+          }
+          .hero-title { margin-bottom: 24px; }
+          .hero-eyebrow { font-size: 10px; margin-bottom: 24px; letter-spacing: .28em; }
           .hero-meta {
-            padding: 16px 24px;
-            gap: 12px;
+            position: relative;
+            padding: 20px 24px;
+            gap: 16px 24px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            justify-content: start;
+            font-size: 11px;
           }
+          .tsp-nav .cta { padding: 8px 14px; font-size: 10px; }
           .photo-strip { grid-template-columns: 1fr !important; }
           .photo-strip-3 img { height: 220px; }
           .photo-strip-2 .photo-wrap img { height: 300px; }
@@ -890,7 +955,8 @@ export default function TspTrkLayout({
           .stat { flex: 0 0 calc(50% - 12px); }
           .hero-title { font-size: clamp(48px, 14vw, 180px); }
           .manifesto h2 { font-size: clamp(40px, 12vw, 128px); }
-          .hero-meta { grid-template-columns: 1fr; }
+          .hero-meta { grid-template-columns: 1fr 1fr; }
+          .hero-meta div { font-size: 10px; }
           .brand-cta .cta { padding: 18px 28px; font-size: 12px; }
         }
       `}</style>

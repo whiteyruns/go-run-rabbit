@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import AuthGate from "./components/AuthGate";
 
 function SitePlanMap() {
@@ -254,6 +255,8 @@ function SitePlanMap() {
 }
 
 function SiteContent() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <>
       {/* Grain overlay */}
@@ -269,8 +272,28 @@ function SiteContent() {
           <li><a href="#location">Location</a></li>
           <li><a href="#partnerships">Partners</a></li>
         </ul>
-        <a href="mailto:keith@gorunrabbit.com?subject=TSP%20TRK%202026" className="cta">Contact</a>
+        <a href="mailto:keith@gorunrabbit.com?subject=TSP%20TRK%202026" className="cta nav-contact">Contact</a>
+        <button
+          className={`hamburger ${menuOpen ? "open" : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Menu"
+        >
+          <span /><span /><span />
+        </button>
       </nav>
+
+      {/* Mobile menu */}
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        {["about", "schedule", "format", "site-plan", "location", "partnerships"].map((id) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            onClick={() => setMenuOpen(false)}
+          >
+            {id === "about" ? "The Meet" : id === "site-plan" ? "Site Plan" : id.charAt(0).toUpperCase() + id.slice(1)}
+          </a>
+        ))}
+      </div>
 
       {/* ── HERO ── */}
       <header className="tsp-hero">
