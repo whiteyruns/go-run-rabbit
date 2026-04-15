@@ -373,12 +373,84 @@ export default function TspTrkLayout({
         }
         .event.ultra .dist { color: var(--rust); }
 
+        /* grain overlay */
+        .grain-overlay {
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 100;
+          opacity: 0.035;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* hero background track lines */
+        .hero-bg-track {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+        }
+        .hero-bg-track svg { width: 120%; max-width: 1600px; }
+
+        /* site plan section */
+        .site-plan-section {
+          background: #080807;
+          border-top: 1px solid var(--line);
+          border-bottom: 1px solid var(--line);
+        }
+        .site-plan-wrap {
+          max-width: 1400px;
+          margin: 0 auto;
+          padding: 0 28px;
+          aspect-ratio: 4/3;
+        }
+        .site-plan-svg {
+          width: 100%;
+          height: 100%;
+          border: 1px solid var(--line);
+        }
+        .site-plan-stats {
+          display: grid;
+          grid-template-columns: repeat(6, 1fr);
+          gap: 1px;
+          background: var(--line);
+          margin-top: 64px;
+          border: 1px solid var(--line);
+        }
+        .stat {
+          background: var(--bg);
+          padding: 32px 20px;
+          text-align: center;
+        }
+        .stat-num {
+          font-family: 'Anton', sans-serif;
+          font-size: 36px;
+          color: var(--ink);
+          line-height: 1;
+        }
+        .stat-label {
+          font-size: 10px;
+          letter-spacing: .18em;
+          text-transform: uppercase;
+          color: var(--dust);
+          margin-top: 12px;
+        }
+
+        /* pulse animation for map dots */
+        @keyframes pulse {
+          0%, 100% { opacity: .6; r: 3; }
+          50% { opacity: 1; r: 5; }
+        }
+        .pulse-dot { animation: pulse 3s ease-in-out infinite; }
+
         /* location */
         .location-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 80px;
-          align-items: center;
+          align-items: start;
         }
         .location-copy h3 {
           font-family: 'Anton', sans-serif;
@@ -398,14 +470,33 @@ export default function TspTrkLayout({
           padding-top: 24px;
           border-top: 1px solid var(--line);
         }
-        .map-art {
-          aspect-ratio: 1/1;
-          background: #0d0d0d;
+        .location-details {
+          display: flex;
+          flex-direction: column;
+          gap: 1px;
+          background: var(--line);
           border: 1px solid var(--line);
-          position: relative;
-          overflow: hidden;
         }
-        .map-art svg { width: 100%; height: 100%; }
+        .detail-card {
+          background: var(--bg);
+          padding: 24px 28px;
+          display: grid;
+          grid-template-columns: 140px 1fr;
+          gap: 24px;
+          align-items: baseline;
+        }
+        .detail-label {
+          font-size: 11px;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+          color: var(--rust);
+          font-weight: 500;
+        }
+        .detail-value {
+          font-size: 14px;
+          color: var(--dust);
+          line-height: 1.6;
+        }
 
         /* register */
         .register {
@@ -454,11 +545,22 @@ export default function TspTrkLayout({
           .what-grid { grid-template-columns: 1fr; }
           .events-grid { grid-template-columns: repeat(2, 1fr); }
           .location-grid { grid-template-columns: 1fr; gap: 48px; }
+          .location-copy h3 { font-size: 48px; }
+          .detail-card { grid-template-columns: 1fr; gap: 8px; }
           .day { grid-template-columns: 1fr; gap: 20px; }
           .day-item { grid-template-columns: 100px 1fr; gap: 16px; }
           .section-head { grid-template-columns: 60px 1fr; gap: 24px; }
           .section-head .num { font-size: 48px; }
           .hero-meta { gap: 24px; }
+          .site-plan-wrap { aspect-ratio: auto; }
+          .site-plan-svg { aspect-ratio: 4/3; height: auto; }
+          .site-plan-stats { grid-template-columns: repeat(3, 1fr); }
+          .stat-num { font-size: 28px; }
+        }
+        @media (max-width: 600px) {
+          .events-grid { grid-template-columns: repeat(2, 1fr); }
+          .site-plan-stats { grid-template-columns: repeat(2, 1fr); }
+          .hero-title { font-size: clamp(48px, 12vw, 200px); }
         }
       `}</style>
       {children}
