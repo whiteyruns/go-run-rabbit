@@ -2,7 +2,7 @@
 
 import { useState, useEffect, type ReactNode } from "react";
 
-const ACCESS_CODE = "trk2026";
+const ACCESS_CODE = "TSP026";
 
 export default function AuthGate({ children }: { children: ReactNode }) {
   const [authed, setAuthed] = useState(false);
