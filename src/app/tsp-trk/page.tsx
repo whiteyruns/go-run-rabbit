@@ -298,8 +298,8 @@ function SiteContent() {
 
       {/* ── PHOTO STRIP 1 ── */}
       <div className="photo-strip photo-strip-3">
-        <img src="/tsp-trk/images/playa-circle.png" alt="Runners gathered in circle on the playa at dusk" />
-        <img src="/tsp-trk/images/track-sprinters.jpg" alt="Track sprinters at the line" />
+        <img src="/tsp-trk/images/desert-checkpoint-ai.png" alt="Desert checkpoint with umbrella" />
+        <img src="/tsp-trk/images/track-sprinters-ai.png" alt="Track sprinters in action" />
         <img src="/tsp-trk/images/desert-twilight.jpg" alt="Desert mountains at twilight" />
       </div>
 
