@@ -123,73 +123,71 @@ function SitePlanMap() {
 
       {/* === STAGING / OPERATIONS AREA === */}
       <g className="staging">
-        {/* Staging area — between track and parking */}
-        <rect x="530" y="170" width="80" height="50" rx="2"
+        {/* Staging area — east of the track */}
+        <rect x="645" y="245" width="80" height="55" rx="2"
           fill="none" stroke="#a8957c" strokeWidth="0.8" strokeDasharray="3 3" opacity=".4" />
-        <text x="545" y="184" fill="#a8957c" fontSize="7" letterSpacing="2"
+        <text x="660" y="259" fill="#a8957c" fontSize="7" letterSpacing="2"
           fontFamily="Inter, sans-serif" opacity=".5">STAGING</text>
 
         {/* Medical tent */}
-        <rect x="535" y="192" width="16" height="12" rx="1"
+        <rect x="650" y="268" width="16" height="12" rx="1"
           fill="#c5532a" opacity=".15" stroke="#c5532a" strokeWidth="0.5" />
-        <text x="543" y="200" fill="#c5532a" fontSize="5" textAnchor="middle"
+        <text x="658" y="276" fill="#c5532a" fontSize="5" textAnchor="middle"
           fontFamily="Inter, sans-serif" opacity=".7">MED</text>
 
         {/* Portable toilets — small icons */}
         <g opacity=".4">
-          <rect x="558" y="192" width="5" height="5" fill="#4a8c8c" rx=".5" />
-          <rect x="565" y="192" width="5" height="5" fill="#4a8c8c" rx=".5" />
-          <rect x="572" y="192" width="5" height="5" fill="#4a8c8c" rx=".5" />
-          <rect x="558" y="199" width="5" height="5" fill="#4a8c8c" rx=".5" />
-          <rect x="565" y="199" width="5" height="5" fill="#4a8c8c" rx=".5" />
-          <text x="558" y="214" fill="#4a8c8c" fontSize="5"
+          <rect x="672" y="268" width="5" height="5" fill="#4a8c8c" rx=".5" />
+          <rect x="679" y="268" width="5" height="5" fill="#4a8c8c" rx=".5" />
+          <rect x="686" y="268" width="5" height="5" fill="#4a8c8c" rx=".5" />
+          <rect x="672" y="275" width="5" height="5" fill="#4a8c8c" rx=".5" />
+          <rect x="679" y="275" width="5" height="5" fill="#4a8c8c" rx=".5" />
+          <text x="672" y="290" fill="#4a8c8c" fontSize="5"
             fontFamily="Inter, sans-serif" opacity=".8">WC ×9</text>
         </g>
 
         {/* EMS vehicle icon */}
-        <rect x="590" y="195" width="14" height="8" rx="1"
+        <rect x="700" y="270" width="14" height="8" rx="1"
           fill="#c5532a" opacity=".2" stroke="#c5532a" strokeWidth="0.5" />
-        <text x="597" y="201" fill="#c5532a" fontSize="4" textAnchor="middle"
+        <text x="707" y="276" fill="#c5532a" fontSize="4" textAnchor="middle"
           fontFamily="Inter, sans-serif" opacity=".7">EMS</text>
       </g>
 
       {/* === STAFF PARKING === */}
       <g className="parking">
-        <rect x="560" y="90" width="100" height="65" rx="2"
+        <rect x="645" y="120" width="110" height="65" rx="2"
           fill="#0f0e0c" stroke="#a8957c" strokeWidth="0.8" strokeDasharray="4 3" opacity=".35" />
-        <text x="584" y="110" fill="#a8957c" fontSize="8" letterSpacing="2"
+        <text x="670" y="140" fill="#a8957c" fontSize="8" letterSpacing="2"
           fontFamily="Inter, sans-serif" opacity=".5">STAFF PARKING</text>
-        <text x="584" y="122" fill="#a8957c" fontSize="6" letterSpacing="1"
+        <text x="670" y="152" fill="#a8957c" fontSize="6" letterSpacing="1"
           fontFamily="Inter, sans-serif" opacity=".35">20 VEHICLES</text>
         {/* Vehicle markers */}
         {[0,1,2,3,4].map(i => (
-          <rect key={`v-${i}`} x={575 + i * 16} y={132} width="10" height="5" rx=".5"
+          <rect key={`v-${i}`} x={660 + i * 16} y={162} width="10" height="5" rx=".5"
             fill="#a8957c" opacity=".12" />
         ))}
       </g>
 
       {/* === ACCESS ROADS === */}
       <g className="access-roads">
-        {/* Upper access road from east */}
-        <line x1="660" y1="200" x2="780" y2="160"
+        {/* Upper access road — from parking east */}
+        <line x1="755" y1="150" x2="790" y2="120"
           stroke="#a8957c" strokeWidth="2.5" opacity=".2" />
-        <line x1="660" y1="200" x2="780" y2="160"
+        <line x1="755" y1="150" x2="790" y2="120"
           stroke="#a8957c" strokeWidth="1" strokeDasharray="6 4" opacity=".4" />
-        {/* Arrow */}
-        <polygon points="770,164 780,160 774,170" fill="#a8957c" opacity=".4" />
+        <polygon points="784,124 790,120 786,130" fill="#a8957c" opacity=".4" />
 
-        {/* Lower access road from east */}
-        <line x1="640" y1="420" x2="780" y2="460"
+        {/* Lower access road from south-east */}
+        <line x1="700" y1="420" x2="790" y2="460"
           stroke="#a8957c" strokeWidth="2.5" opacity=".2" />
-        <line x1="640" y1="420" x2="780" y2="460"
+        <line x1="700" y1="420" x2="790" y2="460"
           stroke="#a8957c" strokeWidth="1" strokeDasharray="6 4" opacity=".4" />
-        {/* Arrow */}
-        <polygon points="770,456 780,460 772,450" fill="#a8957c" opacity=".4" />
+        <polygon points="780,456 790,460 782,450" fill="#a8957c" opacity=".4" />
 
         {/* Access label */}
-        <text x="720" y="310" fill="#a8957c" fontSize="9" letterSpacing="3"
+        <text x="750" y="340" fill="#a8957c" fontSize="9" letterSpacing="3"
           fontFamily="Anton, sans-serif" opacity=".4" textAnchor="middle">ACCESS</text>
-        <text x="720" y="324" fill="#a8957c" fontSize="9" letterSpacing="3"
+        <text x="750" y="354" fill="#a8957c" fontSize="9" letterSpacing="3"
           fontFamily="Anton, sans-serif" opacity=".4" textAnchor="middle">POINTS</text>
       </g>
 
