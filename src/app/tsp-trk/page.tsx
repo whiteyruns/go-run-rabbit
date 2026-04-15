@@ -364,20 +364,68 @@ function SiteContent() {
             <div className="num">02</div>
             <h2>Program.</h2>
           </div>
-          <div className="schedule-rows">
-            {[
-              { date: "Thu Oct 1", type: "Setup", desc: "Track build, staging, site prep — staff & crew only.", ultra: false },
-              { date: "Fri Oct 2", type: "Arrival", desc: "Teams roll in. RV/staff parking opens. Registration. Briefing under the dust.", ultra: false },
-              { date: "Sat Oct 3", type: "Meet Day 1", desc: "Main competition window. Heats, prelims, the first scores on the board.", ultra: false },
-              { date: "Sun Oct 4", type: "Meet Day 2 + Ultra", desc: "Finals. Ultra wraps. Podium under directional LEDs. Initial breakdown.", ultra: true },
-              { date: "Mon Oct 5", type: "Strike", desc: "Leave No Trace. Track removal. Full restoration. Off the playa.", ultra: false },
-            ].map((row, i) => (
-              <div className={`schedule-row ${row.ultra ? "ultra-row" : ""}`} key={i}>
-                <div className="schedule-date">{row.date}</div>
-                <div className="schedule-type">{row.type}</div>
-                <div className="schedule-desc">{row.desc}</div>
+          <div className="program-days">
+            {/* Arrival Day */}
+            <div className="program-day">
+              <div className="program-day-header">
+                <div className="program-day-date">Thu Oct 2</div>
+                <div className="program-day-name">Arrival Day</div>
               </div>
-            ))}
+              <div className="program-day-items">
+                <div className="program-item"><span>15:00</span>Drive to remote location in RVs from Vegas</div>
+                <div className="program-item"><span>17:00</span>Check in at HQ</div>
+                <div className="program-item highlight"><span>19:00</span>Sunset gathering + safety briefing. Gate closes — everyone must be on-site.</div>
+              </div>
+            </div>
+
+            {/* Meet Day 1 */}
+            <div className="program-day">
+              <div className="program-day-header">
+                <div className="program-day-date">Fri Oct 3</div>
+                <div className="program-day-name">Meet Day One</div>
+              </div>
+              <div className="program-day-items">
+                <div className="program-item"><span>7:00</span>Aire Libre run</div>
+                <div className="program-item ultra-item"><span>10:00</span>Start 24hr race</div>
+                <div className="program-item"><span>12:00</span>Track prelims + semis (800m / Mile / 4×4 / DMR)</div>
+                <div className="program-item"><span>18:00</span>Track Meet Day 1 ends</div>
+                <div className="program-item"><span>19:00</span>Dinner + recap</div>
+                <div className="program-item"><span>21:00</span>Singalong</div>
+                <div className="program-item"><span>22:00</span>VRL sound tent opens</div>
+                <div className="program-item ultra-item"><span>2:00</span>Late-night 24 race support moment</div>
+              </div>
+            </div>
+
+            {/* Meet Day 2 */}
+            <div className="program-day">
+              <div className="program-day-header">
+                <div className="program-day-date">Sat Oct 4</div>
+                <div className="program-day-name">Meet Day Two</div>
+              </div>
+              <div className="program-day-items">
+                <div className="program-item"><span>7:00</span>Aire Libre run</div>
+                <div className="program-item ultra-item"><span>10:00</span>24hr finish — entire camp together</div>
+                <div className="program-item"><span>12:00</span>Track finals + Pro Mile</div>
+                <div className="program-item"><span>17:00</span>Podium</div>
+                <div className="program-item"><span>19:30</span>Dinner</div>
+                <div className="program-item"><span>21:00</span>Double Down</div>
+                <div className="program-item"><span>21:30</span>Desert Party by VRL and guests</div>
+              </div>
+            </div>
+
+            {/* Departure */}
+            <div className="program-day">
+              <div className="program-day-header">
+                <div className="program-day-date">Sun Oct 5</div>
+                <div className="program-day-name">Departure</div>
+              </div>
+              <div className="program-day-items">
+                <div className="program-item"><span>7:00</span>Aire Libre run</div>
+                <div className="program-item"><span>9:00</span>Leave No Trace — Camp Breakdown</div>
+                <div className="program-item"><span>10:00</span>Closing ceremony at HQ</div>
+                <div className="program-item highlight"><span>12:00</span>Everyone off property by noon</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

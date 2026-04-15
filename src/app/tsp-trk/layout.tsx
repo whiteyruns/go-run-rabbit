@@ -45,6 +45,7 @@ export default function TspTrkLayout({
           -webkit-font-smoothing: antialiased;
           line-height: 1.5;
           min-height: 100vh;
+          scroll-behavior: smooth;
         }
         .tsp-trk-scope * { box-sizing: border-box; }
         .tsp-trk-scope img { max-width: 100%; display: block; }
@@ -382,41 +383,67 @@ export default function TspTrkLayout({
         .what-card p { color: var(--dust); font-size: 14px; line-height: 1.7; }
 
         /* schedule (02) */
-        .schedule-rows {
+        /* program schedule */
+        .program-days {
           display: flex;
           flex-direction: column;
-          gap: 1px;
+          gap: 2px;
         }
-        .schedule-row {
-          display: grid;
-          grid-template-columns: 160px 140px 1fr 1fr;
-          gap: 0;
-          padding: 48px 32px;
+        .program-day {
           background: var(--card);
-          transition: background .2s;
+          padding: 40px 40px;
         }
-        .schedule-row:hover { background: var(--card-alt); }
-        .schedule-row.ultra-row { color: var(--rust); }
-        .schedule-date {
+        .program-day-header {
+          display: flex;
+          align-items: baseline;
+          gap: 20px;
+          margin-bottom: 24px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid var(--line);
+        }
+        .program-day-date {
           font-family: 'Anton', sans-serif;
-          font-size: 18px;
+          font-size: 28px;
           text-transform: uppercase;
           letter-spacing: .02em;
+          white-space: nowrap;
         }
-        .schedule-type {
-          font-size: 11px;
+        .program-day-name {
+          font-size: 12px;
           letter-spacing: .22em;
           text-transform: uppercase;
+          color: var(--rust);
+        }
+        .program-day-items {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .program-item {
+          font-size: 14px;
           color: var(--dust);
-          padding-top: 4px;
+          line-height: 1.5;
+          display: flex;
+          gap: 16px;
         }
-        .schedule-desc {
-          font-size: 15px;
+        .program-item span {
+          font-family: 'Anton', sans-serif;
+          font-size: 14px;
           color: var(--ink);
-          grid-column: span 2;
-          line-height: 1.6;
+          min-width: 48px;
+          flex-shrink: 0;
+          letter-spacing: .02em;
         }
-        .ultra-row .schedule-desc { color: var(--rust); }
+        .program-item.highlight {
+          color: var(--ink);
+          font-weight: 500;
+        }
+        .program-item.ultra-item {
+          color: var(--rust);
+        }
+        .program-item.ultra-item span {
+          color: var(--rust);
+        }
 
         /* format / events (03) */
         .events-grid {
@@ -813,6 +840,14 @@ export default function TspTrkLayout({
         @media (max-width: 900px) {
           .tsp-nav { padding: 16px 24px; }
           .tsp-nav ul { display: none; }
+          .tsp-section { padding: 80px 0; }
+          .section-head {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 48px;
+          }
+          .section-head .num { font-size: clamp(48px, 10vw, 80px); }
           .what-grid { grid-template-columns: 1fr; }
           .events-grid { grid-template-columns: repeat(2, 1fr); }
           .event-tile { aspect-ratio: auto; padding: 32px; }
@@ -821,25 +856,34 @@ export default function TspTrkLayout({
           .location-grid { grid-template-columns: 1fr; gap: 48px; }
           .location-details { grid-template-columns: 1fr 1fr; }
           .detail-card { aspect-ratio: auto; padding: 24px; }
-          .schedule-row { grid-template-columns: 1fr; gap: 8px; padding: 24px 20px; }
-          .schedule-desc { grid-column: span 1; }
-          .section-head .num { font-size: clamp(48px, 8vw, 80px); }
-          .hero-meta { padding: 16px 24px; gap: 16px; }
+          .program-day { padding: 28px 24px; }
+          .program-day-date { font-size: 22px; }
+          .hero-meta {
+            padding: 16px 24px;
+            gap: 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            justify-content: start;
+          }
           .photo-strip { grid-template-columns: 1fr !important; }
-          .photo-strip-3 img { height: 300px; }
-          .photo-strip-2 .photo-wrap img { height: 400px; }
+          .photo-strip-3 img { height: 220px; }
+          .photo-strip-2 .photo-wrap img { height: 300px; }
           .full-bleed-image { height: 400px; }
           .site-plan-map-wrap { padding: 16px; aspect-ratio: auto; }
           .site-plan-svg { aspect-ratio: 4/3; height: auto; }
           .site-plan-stats { flex-wrap: wrap; gap: 24px; }
           .stat { flex: 0 0 calc(33% - 16px); }
+          .brand-philosophy { font-size: clamp(32px, 8vw, 56px); }
+          .guardrails-list { flex-direction: column; gap: 8px; }
         }
         @media (max-width: 600px) {
           .events-grid { grid-template-columns: repeat(2, 1fr); }
           .location-details { grid-template-columns: 1fr; }
           .stat { flex: 0 0 calc(50% - 12px); }
-          .hero-title { font-size: clamp(48px, 12vw, 180px); }
+          .hero-title { font-size: clamp(48px, 14vw, 180px); }
           .manifesto h2 { font-size: clamp(40px, 12vw, 128px); }
+          .hero-meta { grid-template-columns: 1fr; }
+          .brand-cta .cta { padding: 18px 28px; font-size: 12px; }
         }
       `}</style>
       {children}
