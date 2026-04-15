@@ -51,23 +51,23 @@ function SitePlanMap() {
       </g>
 
       {/* === FIGURE-8 ULTRA COURSE === */}
-      {/* Two large loops to the west/southwest of the oval, crossing near the track */}
+      {/* Two large loops west of the oval, well-separated from track */}
       <g className="ultra-course">
         {/* Upper loop */}
-        <ellipse cx="280" cy="200" rx="130" ry="100"
+        <ellipse cx="200" cy="200" rx="110" ry="95"
           fill="none" stroke="#c5532a" strokeWidth="2" strokeDasharray="8 5"
           opacity=".5" />
         {/* Lower loop */}
-        <ellipse cx="280" cy="400" rx="130" ry="100"
+        <ellipse cx="200" cy="400" rx="110" ry="95"
           fill="none" stroke="#c5532a" strokeWidth="2" strokeDasharray="8 5"
           opacity=".5" />
         {/* Crossing point glow */}
-        <circle cx="280" cy="300" r="8" fill="#c5532a" opacity=".08" filter="url(#softglow)" />
-        <circle cx="280" cy="300" r="3" fill="#c5532a" opacity=".6" className="pulse-dot" />
+        <circle cx="200" cy="300" r="8" fill="#c5532a" opacity=".08" filter="url(#softglow)" />
+        <circle cx="200" cy="300" r="3" fill="#c5532a" opacity=".6" className="pulse-dot" />
         {/* Ultra label */}
-        <text x="148" y="205" fill="#c5532a" fontSize="9" letterSpacing="3"
+        <text x="88" y="205" fill="#c5532a" fontSize="9" letterSpacing="3"
           fontFamily="Anton, sans-serif" opacity=".7">ULTRA COURSE</text>
-        <text x="148" y="218" fill="#a8957c" fontSize="7" letterSpacing="2"
+        <text x="88" y="218" fill="#a8957c" fontSize="7" letterSpacing="2"
           fontFamily="Inter, sans-serif" opacity=".5">FIGURE-8 LOOP</text>
       </g>
 
@@ -194,11 +194,11 @@ function SitePlanMap() {
       </g>
 
       {/* === 30-FT EMERGENCY ACCESS LANE === */}
-      <ellipse cx="480" cy="300" rx="180" ry="155"
+      <ellipse cx="500" cy="300" rx="175" ry="150"
         fill="none" stroke="#a8957c" strokeWidth="0.5" strokeDasharray="2 6" opacity=".2" />
-      <text x="306" y="480" fill="#a8957c" fontSize="6" letterSpacing="1.5"
+      <text x="340" y="475" fill="#a8957c" fontSize="6" letterSpacing="1.5"
         fontFamily="Inter, sans-serif" opacity=".25"
-        transform="rotate(-8, 306, 480)">30-FT EMERGENCY LANE</text>
+        transform="rotate(-8, 340, 475)">30-FT EMERGENCY LANE</text>
 
       {/* === COMPASS === */}
       <g transform="translate(60, 50)">
@@ -275,13 +275,8 @@ function SiteContent() {
 
       {/* ── HERO ── */}
       <header className="tsp-hero">
-        <div className="hero-bg-track" aria-hidden="true">
-          <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg" opacity=".04">
-            <ellipse cx="400" cy="200" rx="350" ry="170" fill="none" stroke="#f5f1e8" strokeWidth="1" />
-            <ellipse cx="400" cy="200" rx="330" ry="155" fill="none" stroke="#f5f1e8" strokeWidth=".5" />
-            <ellipse cx="400" cy="200" rx="310" ry="140" fill="none" stroke="#f5f1e8" strokeWidth=".5" />
-            <ellipse cx="400" cy="200" rx="290" ry="125" fill="none" stroke="#f5f1e8" strokeWidth=".5" />
-          </svg>
+        <div className="hero-bg-image" aria-hidden="true">
+          <img src="/tsp-trk/images/desert-runner-road.jpg" alt="" />
         </div>
         <div className="tsp-container">
           <div className="eyebrow">
@@ -318,6 +313,13 @@ function SiteContent() {
           </p>
         </div>
       </section>
+
+      {/* ── PHOTO STRIP 1 ── */}
+      <div className="photo-strip photo-strip-3">
+        <img src="/tsp-trk/images/tsp-car-bw.jpg" alt="TSP support vehicle" />
+        <img src="/tsp-trk/images/track-sprinters.jpg" alt="Track sprinters at the line" />
+        <img src="/tsp-trk/images/cart-sculpture.jpg" alt="Desert sculpture" />
+      </div>
 
       {/* ── 01 THE MEET ── */}
       <section id="about" className="tsp-section what">
@@ -436,6 +438,11 @@ function SiteContent() {
         </div>
       </section>
 
+      {/* ── FULL BLEED IMAGE ── */}
+      <div className="full-bleed-image">
+        <img src="/tsp-trk/images/desert-tracks.jpg" alt="Railroad tracks into the desert" />
+      </div>
+
       {/* ── 04 SITE PLAN ── */}
       <section id="site-plan" className="tsp-section site-plan-section">
         <div className="tsp-container">
@@ -479,6 +486,12 @@ function SiteContent() {
           </div>
         </div>
       </section>
+
+      {/* ── PHOTO STRIP 2 ── */}
+      <div className="photo-strip photo-strip-2">
+        <img src="/tsp-trk/images/desert-setup-bw.jpg" alt="Desert checkpoint setup" />
+        <img src="/tsp-trk/images/runners-trail.jpg" alt="Runners on desert trail" />
+      </div>
 
       {/* ── 05 LOCATION ── */}
       <section id="location" className="tsp-section">
