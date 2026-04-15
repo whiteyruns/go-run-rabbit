@@ -506,6 +506,14 @@ function SiteContent() {
         </div>
       </section>
 
+      {/* ── FOOTER ── */}
+      <footer className="tsp-footer">
+        <div className="footer-inner">
+          <img src="/tsp-trk/tsp_logo-white.png" alt="The Speed Project" className="footer-logo" />
+          <a href="mailto:info@makerunning.com">info@makerunning.com</a>
+        </div>
+      </footer>
+
     </>
   );
 }

@@ -640,6 +640,31 @@ export default function TspTrkLayout({
           background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
         }
 
+        /* footer */
+        .tsp-footer {
+          padding: 80px 0;
+          border-top: 1px solid var(--line);
+          text-align: center;
+        }
+        .footer-inner {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 24px;
+        }
+        .footer-logo {
+          height: 36px;
+          opacity: .7;
+        }
+        .tsp-footer a {
+          font-size: 13px;
+          letter-spacing: .22em;
+          text-transform: uppercase;
+          color: var(--dust);
+          transition: color .2s;
+        }
+        .tsp-footer a:hover { color: var(--ink); }
+
         /* responsive */
         @media (max-width: 900px) {
           .tsp-nav { padding: 16px 24px; }
