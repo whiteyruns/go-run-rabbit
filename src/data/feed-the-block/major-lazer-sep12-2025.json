@@ -1,0 +1,35 @@
+{
+  "metrics": [
+    { "id": "m-1", "category": "attendance", "metricName": "Total Visits", "metricValue": "14942" },
+    { "id": "m-2", "category": "attendance", "metricName": "Total Visitors", "metricValue": "14942" },
+    { "id": "m-3", "category": "engagement", "metricName": "Largest Dwell Bucket", "metricValue": "30-44 min" },
+    { "id": "m-4", "category": "demographics", "metricName": "Median Age", "metricValue": "36" },
+    { "id": "m-5", "category": "demographics", "metricName": "Hispanic Latino Pct", "metricValue": "34%" },
+    { "id": "m-6", "category": "general", "metricName": "Event Date", "metricValue": "September 12, 2025" },
+    { "id": "m-7", "category": "general", "metricName": "Event Day", "metricValue": "Friday" },
+    { "id": "m-8", "category": "general", "metricName": "Headliner", "metricValue": "Major Lazer" },
+    { "id": "m-9", "category": "journey", "metricName": "El Cortez Origin Pct", "metricValue": "20.8%" },
+    { "id": "m-10", "category": "attendance", "metricName": "Downtown Casino Crossover", "metricValue": "~10,000 (2/3 of audience)" }
+  ],
+  "hourly": [],
+  "duration": [],
+  "demographics": [],
+  "destinations": [
+    { "id": "d-1", "name": "Le Thai", "category": "Dining", "subCategory": "Thai Restaurant", "address": "523 Fremont St", "city": "Las Vegas", "distance": 0, "visitors": 4034, "percentage": "27%", "sortOrder": 1 }
+  ],
+  "hotels": [
+    { "id": "h-1", "name": "El Cortez Hotel and Casino", "category": "Hotel", "subCategory": "Casino Hotel", "address": "600 E Fremont St", "city": "Las Vegas", "distance": 0.1, "visitors": 3105, "percentage": "20.8%", "sortOrder": 1 },
+    { "id": "h-2", "name": "The D Casino & Hotel", "category": "Hotel", "subCategory": "Casino Hotel", "address": "301 Fremont St", "city": "Las Vegas", "distance": 0.2, "visitors": 1818, "percentage": "12.2%", "sortOrder": 2 },
+    { "id": "h-3", "name": "Golden Nugget Las Vegas Hotel & Casino", "category": "Hotel", "subCategory": "Casino Hotel", "address": "129 E Fremont St", "city": "Las Vegas", "distance": 0.3, "visitors": 1171, "percentage": "7.8%", "sortOrder": 3 },
+    { "id": "h-4", "name": "Circa Resort & Casino", "category": "Hotel", "subCategory": "Casino Hotel", "address": "8 Fremont St", "city": "Las Vegas", "distance": 0.4, "visitors": 1159, "percentage": "7.8%", "sortOrder": 4 },
+    { "id": "h-5", "name": "Four Queens", "category": "Hotel", "subCategory": "Casino Hotel", "address": "202 E Fremont St", "city": "Las Vegas", "distance": 0.2, "visitors": 781, "percentage": "5.2%", "sortOrder": 5 },
+    { "id": "h-6", "name": "Fremont Hotel and Casino", "category": "Hotel", "subCategory": "Casino Hotel", "address": "200 Fremont Street", "city": "Las Vegas", "distance": 0.2, "visitors": 771, "percentage": "5.2%", "sortOrder": 6 },
+    { "id": "h-7", "name": "The Plaza Hotel", "category": "Hotel", "subCategory": "Casino Hotel", "address": "1 S Main St", "city": "Las Vegas", "distance": 0.4, "visitors": 460, "percentage": "3.1%", "sortOrder": 7 },
+    { "id": "h-8", "name": "Main Street Station Casino Brewery Hotel", "category": "Hotel", "subCategory": "Casino Hotel", "address": "200 N Main St", "city": "Las Vegas", "distance": 0.5, "visitors": 299, "percentage": "2.0%", "sortOrder": 8 },
+    { "id": "h-9", "name": "Downtown Grand", "category": "Hotel", "subCategory": "Casino Hotel", "address": "206 N 3rd St", "city": "Las Vegas", "distance": 0.2, "visitors": 266, "percentage": "1.8%", "sortOrder": 9 },
+    { "id": "h-10", "name": "California Hotel & Casino", "category": "Hotel", "subCategory": "Casino Hotel", "address": "12 E Ogden Ave", "city": "Las Vegas", "distance": 0.3, "visitors": 249, "percentage": "1.7%", "sortOrder": 10 },
+    { "id": "h-11", "name": "Golden Gate Hotel & Casino", "category": "Hotel", "subCategory": "Casino Hotel", "address": "1 Fremont St", "city": "Las Vegas", "distance": 0.5, "visitors": 237, "percentage": "1.6%", "sortOrder": 11 }
+  ],
+  "originStates": [],
+  "originDMAs": []
+}
