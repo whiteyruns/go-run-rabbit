@@ -496,6 +496,14 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
           </section>
         )}
 
+        {/* 5b. Registered Audience — only when ticket data uploaded */}
+        {bundle.tickets && (
+          <RegisteredAudienceSection
+            tickets={bundle.tickets}
+            placerVisits={visits}
+          />
+        )}
+
         {/* 6. Economic Impact */}
         <section className="py-24 md:py-32 px-8 md:px-20 text-center recap-page-break">
           <div className="max-w-4xl mx-auto">
@@ -700,6 +708,213 @@ function ImpactBlock({
       <p className="text-sm text-[#1c1c18]/70 leading-relaxed">{caption}</p>
     </div>
   );
+}
+
+// ----------------------------------------------------------------------------
+// Registered Audience — surfaced when a tickets aggregate is attached.
+// ----------------------------------------------------------------------------
+import type { TicketsAggregate } from "@/lib/tickets-aggregator";
+
+function RegisteredAudienceSection({
+  tickets,
+  placerVisits,
+}: {
+  tickets: TicketsAggregate;
+  placerVisits: number;
+}) {
+  const walkUp = placerVisits - tickets.totalOrders;
+  const walkUpPct =
+    tickets.totalOrders > 0 ? Math.round((walkUp / tickets.totalOrders) * 100) : 0;
+  const showWalkUp = walkUp > 0 && tickets.totalOrders > 0;
+
+  const topStates = tickets.geographic.topStates.slice(0, 8);
+  const maxStateCount = topStates[0]?.count ?? 1;
+  const maxAge = Math.max(...tickets.age.buckets.map((b) => b.count), 1);
+
+  const nvPct = tickets.geographic.zipsAnalyzed
+    ? (tickets.geographic.nevadaCount / tickets.geographic.zipsAnalyzed) * 100
+    : 0;
+
+  return (
+    <section className="py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed] recap-page-break">
+      <div className="max-w-7xl mx-auto">
+        <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
+          Registered Audience
+        </p>
+        <h2 className="serif text-4xl md:text-5xl font-bold mb-10 max-w-3xl">
+          {fmtNum(tickets.totalOrders)} RSVPs.
+          {showWalkUp && (
+            <>
+              {" "}
+              <span className="text-[#7f5700]">+{walkUpPct}% walk-up</span>.
+            </>
+          )}
+        </h2>
+        <p className="text-[17px] text-[#1c1c18]/80 leading-[1.7] max-w-3xl mb-16">
+          BLOCKPARTY.VEGAS captured {fmtNum(tickets.totalOrders)} free
+          registrations in the {tickets.registrationByDay.length}-day window
+          leading up to the show.{" "}
+          {showWalkUp && (
+            <>
+              Placer.ai measured {fmtNum(placerVisits)} actual visits — a
+              <span className="text-[#7f5700] font-semibold"> {walkUpPct}% walk-up beyond registered audience</span>,
+              evidence that the activation pulled organic foot-traffic from the
+              corridor on top of its ticketed reach.{" "}
+            </>
+          )}
+          Demographic detail below reflects the subset of registrants who
+          self-reported each field.
+        </p>
+
+        {/* Row 1: Geographic split + Top States */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start mb-20">
+          {/* Geographic NV vs Other */}
+          <div className="md:col-span-5">
+            <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
+              Origin · ZIP-code Geographic
+            </p>
+            <div className="serif text-7xl md:text-[8rem] font-bold text-[#1c1c18] leading-none mb-2">
+              {nvPct.toFixed(0)}%
+            </div>
+            <p className="serif italic text-xl text-[#1c1c18]/70 mb-6">
+              of registrants from Nevada
+            </p>
+            <div className="space-y-3">
+              <Row
+                label="Nevada"
+                value={`${fmtNum(tickets.geographic.nevadaCount)} (${pct(
+                  tickets.geographic.nevadaCount,
+                  tickets.geographic.zipsAnalyzed,
+                )})`}
+              />
+              <Row
+                label="Out of state"
+                value={`${fmtNum(tickets.geographic.otherCount)} (${pct(
+                  tickets.geographic.otherCount,
+                  tickets.geographic.zipsAnalyzed,
+                )})`}
+              />
+              <p className="text-[11px] text-[#1c1c18]/50 italic pt-3">
+                n = {fmtNum(tickets.geographic.zipsAnalyzed)} valid ZIPs of{" "}
+                {fmtNum(tickets.totalOrders)} orders
+              </p>
+            </div>
+          </div>
+
+          {/* Top States */}
+          <div className="md:col-span-6 md:col-start-7">
+            <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
+              Orders by State
+            </p>
+            <div className="space-y-3">
+              {topStates.map((s) => (
+                <div key={s.state}>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="text-sm">
+                      <span className="serif font-bold">{s.state}</span>
+                    </span>
+                    <span className="text-xs text-[#1c1c18]/70">
+                      {fmtNum(s.count)} · {s.pct.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="h-2 bg-[#1c1c18]/10 relative">
+                    <div
+                      className="absolute inset-y-0 left-0 bg-[#7f5700]"
+                      style={{
+                        width: `${(s.count / maxStateCount) * 100}%`,
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Row 2: Gender + Age */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start">
+          {/* Gender */}
+          <div className="md:col-span-5">
+            <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
+              Gender · Self-reported
+            </p>
+            <div className="space-y-3 mb-3">
+              {tickets.gender.breakdown.map((g) => (
+                <div key={g.label}>
+                  <div className="flex justify-between items-baseline mb-1">
+                    <span className="text-sm serif font-bold">{g.label}</span>
+                    <span className="text-xs text-[#1c1c18]/70">
+                      {fmtNum(g.count)} · {g.pct.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="h-2 bg-[#1c1c18]/10 relative">
+                    <div
+                      className="absolute inset-y-0 left-0 bg-[#7f5700]"
+                      style={{ width: `${g.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-[#1c1c18]/50 italic">
+              n = {fmtNum(tickets.gender.n)} of {fmtNum(tickets.totalOrders)}{" "}
+              orders
+            </p>
+          </div>
+
+          {/* Age */}
+          <div className="md:col-span-6 md:col-start-7">
+            <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
+              Age · Self-reported · Median {tickets.age.median}
+            </p>
+            <div className="flex items-end gap-3 md:gap-4 h-48 border-b border-[#1c1c18]/20 mb-2">
+              {tickets.age.buckets.map((b, i) => {
+                const h = (b.count / maxAge) * 95;
+                return (
+                  <div
+                    key={b.range}
+                    className="flex-1 relative h-full flex flex-col justify-end"
+                    title={`${b.range}: ${fmtNum(b.count)} (${b.pct.toFixed(1)}%)`}
+                  >
+                    <div
+                      className="bg-[#7f5700] w-full"
+                      style={{
+                        height: `${h}%`,
+                        opacity: 0.55 + (i / tickets.age.buckets.length) * 0.45,
+                      }}
+                    />
+                    <div className="text-[9px] uppercase tracking-widest text-[#1c1c18]/60 text-center mt-2">
+                      {b.range}
+                    </div>
+                    <div className="text-[10px] text-[#1c1c18]/80 text-center font-semibold">
+                      {b.pct.toFixed(0)}%
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-[#1c1c18]/50 italic mt-6">
+              n = {fmtNum(tickets.age.n)} of {fmtNum(tickets.totalOrders)} orders
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between items-end py-3 border-b border-[#1c1c18]/10">
+      <span className="text-sm serif font-bold">{label}</span>
+      <span className="text-sm">{value}</span>
+    </div>
+  );
+}
+
+function pct(num: number, denom: number): string {
+  if (!denom) return "—";
+  return `${((num / denom) * 100).toFixed(1)}%`;
 }
 
 function SocialStat({ value, label }: { value: string; label: string }) {

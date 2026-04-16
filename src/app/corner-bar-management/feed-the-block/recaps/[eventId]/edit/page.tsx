@@ -6,6 +6,7 @@ import { EVENTS } from "@/data/feed-the-block/events";
 import { getSponsorsForEvent } from "@/data/feed-the-block/recap/event-sponsors";
 import { RecapForm, type RecapFormValues } from "../../RecapForm";
 import { PhotoManager } from "../../PhotoManager";
+import { TicketsManager } from "../../TicketsManager";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,14 @@ export default async function EditRecapPage({
         <PhotoManager
           eventId={recap.eventId}
           initial={JSON.parse(recap.photos)}
+        />
+      </div>
+
+      <div className="mt-16 pt-10 border-t border-[rgba(174,162,255,0.12)]">
+        <h2 className="text-xl font-bold mb-6">Tickets &amp; Registration</h2>
+        <TicketsManager
+          eventId={recap.eventId}
+          initial={recap.tickets ? JSON.parse(recap.tickets) : null}
         />
       </div>
     </div>

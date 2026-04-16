@@ -5,6 +5,7 @@ import { getSponsorsForEvent, type EventSponsor } from "./event-sponsors";
 import { MARSHMELLO_PHOTOS } from "./photos-marshmello";
 import type { PlacerEventDataset, DataCoverage } from "../types";
 import type { ArtistProfile } from "../artists/types";
+import type { TicketsAggregate } from "@/lib/tickets-aggregator";
 
 export interface RecapPhoto {
   slug: string;
@@ -33,6 +34,7 @@ export interface RecapBundle {
   artist: ArtistProfile | null;
   sponsors: EventSponsor[];
   photos: RecapPhotos;
+  tickets: TicketsAggregate | null;
 }
 
 export const photoUrl = (
@@ -85,6 +87,7 @@ export async function loadRecap(eventId: string): Promise<RecapBundle | null> {
       artist: artistJson,
       sponsors: JSON.parse(dbRow.sponsors),
       photos: JSON.parse(dbRow.photos),
+      tickets: dbRow.tickets ? JSON.parse(dbRow.tickets) : null,
     };
   }
 
@@ -116,5 +119,6 @@ export async function loadRecap(eventId: string): Promise<RecapBundle | null> {
     artist: getArtistForEvent(eventId) ?? null,
     sponsors: getSponsorsForEvent(eventId),
     photos,
+    tickets: null,
   };
 }

@@ -157,6 +157,7 @@ model FtbRecap {
   photos      String   // JSON: { hero, polaroid, portrait, gallery[] }
   sponsors    String   // JSON: [{ name, role }]
   execSummary String?  // JSON override; null = use FTB default
+  tickets     String?  // JSON: TicketsAggregate (BLOCKPARTY.VEGAS CSV → counts only, no PII)
   artistId    String?
   artist      Artist?  @relation(fields: [artistId], references: [id])
   createdAt   DateTime @default(now())
