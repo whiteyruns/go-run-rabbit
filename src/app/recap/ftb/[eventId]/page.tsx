@@ -9,6 +9,7 @@ import { getSponsorsForEvent } from "@/data/feed-the-block/recap/event-sponsors"
 import { computeEventCard, estimatedImpact } from "@/data/feed-the-block/series";
 import { feedTheBlock } from "@/data/feed-the-block";
 import { dtlvHotels, stripHotels, sumVisitors, isCbmAnchor } from "@/data/feed-the-block/marshmello-apr2";
+import { MARSHMELLO_PHOTOS, photoUrl } from "@/data/feed-the-block/recap/photos-marshmello";
 import { fmt, fmtNum } from "@/lib/utils";
 
 const ACCESS_CODE = "feed2026";
@@ -214,18 +215,23 @@ function RecapBody({ eventId }: { eventId: string }) {
             <br />
             {event.eventDate}
           </h2>
-          <div className="ftb-glass rounded-2xl overflow-hidden mb-6">
-            {/* Placeholder photo strip */}
-            <div
-              className="h-48 md:h-64 flex items-center justify-center text-white/30 text-sm"
-              style={{
-                background:
-                  "linear-gradient(135deg, rgba(255,215,9,0.08), rgba(252,13,144,0.08))",
-              }}
-            >
-              Event photography · placeholders pending social team
-            </div>
-          </div>
+          <figure className="relative rounded-2xl overflow-hidden mb-6 bg-black">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photoUrl(MARSHMELLO_PHOTOS.hero.slug, 1920)}
+              alt={MARSHMELLO_PHOTOS.hero.alt}
+              className="w-full h-64 md:h-[480px] object-cover"
+            />
+            <figcaption className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 to-transparent">
+              <p className="text-white/90 text-sm">{MARSHMELLO_PHOTOS.hero.caption}</p>
+              <p
+                className="text-white/50 uppercase tracking-widest text-[9px] mt-1"
+                style={{ fontFamily: "'Epilogue', sans-serif" }}
+              >
+                Photograph · {MARSHMELLO_PHOTOS.hero.credit}
+              </p>
+            </figcaption>
+          </figure>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Fact label="Day" value={event.eventDay} />
             <Fact label="Location" value="6th &amp; Fremont" />
@@ -330,16 +336,36 @@ function RecapBody({ eventId }: { eventId: string }) {
                 className="text-[10px] uppercase tracking-[0.25em] mb-3 text-white/50"
                 style={{ fontFamily: "'Epilogue', sans-serif" }}
               >
-                Example Social Outreach
+                The Night
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {artist.outreachExamples.map((o, i) => (
-                  <div key={i} className="ftb-glass rounded-xl p-4">
-                    <p className="text-sm font-bold text-white mb-1">
-                      {o.platform} · {o.handle}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <figure className="relative rounded-xl overflow-hidden bg-black aspect-[4/3]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={photoUrl(MARSHMELLO_PHOTOS.polaroid.slug, 640)}
+                    alt={MARSHMELLO_PHOTOS.polaroid.alt}
+                    className="w-full h-full object-cover"
+                  />
+                  <figcaption className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+                    <p className="text-white/80 uppercase tracking-widest text-[8px]" style={{ fontFamily: "'Epilogue', sans-serif" }}>
+                      {MARSHMELLO_PHOTOS.polaroid.credit}
                     </p>
-                    <p className="text-white/60 text-xs">{o.note}</p>
-                  </div>
+                  </figcaption>
+                </figure>
+                {MARSHMELLO_PHOTOS.gallery.slice(0, 2).map((p) => (
+                  <figure key={p.slug} className="relative rounded-xl overflow-hidden bg-black aspect-[4/3]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={photoUrl(p.slug, 640)}
+                      alt={p.alt}
+                      className="w-full h-full object-cover"
+                    />
+                    <figcaption className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+                      <p className="text-white/80 uppercase tracking-widest text-[8px]" style={{ fontFamily: "'Epilogue', sans-serif" }}>
+                        {p.credit}
+                      </p>
+                    </figcaption>
+                  </figure>
                 ))}
               </div>
             </div>

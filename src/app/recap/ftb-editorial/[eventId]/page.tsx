@@ -9,6 +9,7 @@ import { getSponsorsForEvent } from "@/data/feed-the-block/recap/event-sponsors"
 import { computeEventCard } from "@/data/feed-the-block/series";
 import { feedTheBlock } from "@/data/feed-the-block";
 import { isCbmAnchor } from "@/data/feed-the-block/marshmello-apr2";
+import { MARSHMELLO_PHOTOS, photoUrl } from "@/data/feed-the-block/recap/photos-marshmello";
 import { fmt, fmtNum } from "@/lib/utils";
 
 const ACCESS_CODE = "feed2026";
@@ -183,26 +184,19 @@ function RecapBody({ eventId }: { eventId: string }) {
         {/* 3. The Event (full-bleed) */}
         <section className="py-16 md:py-20 recap-page-break">
           <figure className="w-full h-[400px] md:h-[716px] relative overflow-hidden bg-[#1c1c18]">
-            {/* Placeholder treatment — swap for real photo asset when social team delivers */}
-            <div
-              className="absolute inset-0 grayscale"
-              style={{
-                background:
-                  "radial-gradient(ellipse at 40% 60%, #504536 0%, #1c1c18 70%), linear-gradient(180deg, transparent 0%, #0a0a08 100%)",
-              }}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={photoUrl(MARSHMELLO_PHOTOS.hero.slug, 1920)}
+              alt={MARSHMELLO_PHOTOS.hero.alt}
+              className="w-full h-full object-cover grayscale"
             />
-            <div
-              className="absolute inset-0 opacity-40"
-              style={{
-                background:
-                  "repeating-linear-gradient(90deg, transparent, transparent 40px, #c9912b22 41px, transparent 42px)",
-              }}
-            />
-            <div className="absolute bottom-0 left-0 p-8 bg-gradient-to-t from-black/70 to-transparent w-full">
-              <figcaption className="text-white serif italic text-sm">
-                Downtown Las Vegas pulsates under the {event.headliner} takeover ·{" "}
-                {event.eventDate}
+            <div className="absolute bottom-0 left-0 p-6 md:p-8 bg-gradient-to-t from-black/75 to-transparent w-full">
+              <figcaption className="text-white serif italic text-sm md:text-base">
+                {MARSHMELLO_PHOTOS.hero.caption}
               </figcaption>
+              <p className="text-white/60 uppercase tracking-widest text-[9px] mt-2">
+                Photograph · {MARSHMELLO_PHOTOS.hero.credit}
+              </p>
             </div>
           </figure>
           <div className="max-w-7xl mx-auto px-8 md:px-20 mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
@@ -282,22 +276,20 @@ function RecapBody({ eventId }: { eventId: string }) {
                 {/* Polaroid + social reach */}
                 <div className="md:col-span-4 md:col-start-9 flex flex-col gap-12">
                   <div className="bg-white p-4 shadow-[0_10px_40px_rgba(28,28,24,0.08)] -rotate-2 transform hover:rotate-0 transition-transform duration-500">
-                    <div
-                      className="aspect-square bg-[#f1ede7] overflow-hidden flex items-center justify-center"
-                      style={{
-                        background:
-                          "linear-gradient(135deg, #ebe8e2 0%, #f1ede7 100%)",
-                      }}
-                    >
-                      <span className="serif italic text-[#504536] text-center px-6">
-                        Event photograph
-                        <br />
-                        — pending social team
-                      </span>
+                    <div className="aspect-square bg-[#f1ede7] overflow-hidden">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={photoUrl(MARSHMELLO_PHOTOS.polaroid.slug, 640)}
+                        alt={MARSHMELLO_PHOTOS.polaroid.alt}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="pt-4 serif italic text-[#1c1c18]/60 text-center text-sm">
-                      &ldquo;Downtown energy is different.&rdquo;
+                      {MARSHMELLO_PHOTOS.polaroid.caption}
                     </div>
+                    <p className="text-[#1c1c18]/40 text-center uppercase tracking-widest text-[8px] pb-1">
+                      {MARSHMELLO_PHOTOS.polaroid.credit}
+                    </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-8">
@@ -317,6 +309,35 @@ function RecapBody({ eventId }: { eventId: string }) {
             </div>
           </section>
         )}
+
+        {/* Photo gallery — "The Night in Photographs" */}
+        <section className="py-16 md:py-20 bg-[#1c1c18] recap-page-break">
+          <div className="max-w-7xl mx-auto px-8 md:px-12">
+            <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+              The Night in Photographs
+            </p>
+            <h2 className="serif text-3xl md:text-5xl font-bold text-[#fdf9f3] leading-tight mb-12 max-w-3xl">
+              One block. Seventeen thousand. One set.
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-1 px-1">
+            {MARSHMELLO_PHOTOS.gallery.map((p) => (
+              <figure key={p.slug} className="relative aspect-[4/3] overflow-hidden bg-[#0a0a08]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photoUrl(p.slug, 1280)}
+                  alt={p.alt}
+                  className="w-full h-full object-cover"
+                />
+                <figcaption className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                  <p className="text-white/80 uppercase tracking-widest text-[9px]">
+                    {p.credit}
+                  </p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
 
         {/* 5. Placer.ai — data viz */}
         <section className="py-24 md:py-32 px-8 md:px-20 bg-[#ebe8e2] recap-page-break">
