@@ -90,6 +90,7 @@ function NoirContent() {
         <ul className="n-nav-links">
           <li><Link href="/oddyssey-manor/manor">Manor</Link></li>
           <li><a className="active">Noir</a></li>
+          <li><Link href="/oddyssey-manor/private">Private Events</Link></li>
           <li><a onClick={() => scrollToId("n-events")}>Events</a></li>
           <li><a onClick={() => scrollToId("n-tables")}>Bottles &amp; Tables</a></li>
           <li><a className="n-nav-cta" onClick={() => scrollToId("n-events")}>Get Tickets</a></li>
@@ -103,11 +104,19 @@ function NoirContent() {
         <div className="n-mobile-nav">
           <Link href="/oddyssey-manor/manor" onClick={() => setMobileOpen(false)}>Manor</Link>
           <a onClick={() => setMobileOpen(false)}>Noir</a>
+          <Link href="/oddyssey-manor/private" onClick={() => setMobileOpen(false)}>Private Events</Link>
           <a onClick={() => scrollToId("n-events")}>Events</a>
           <a onClick={() => scrollToId("n-tables")}>Bottles &amp; Tables</a>
           <a onClick={() => scrollToId("n-events")} style={{ color: "var(--accent)" }}>Get Tickets</a>
         </div>
       )}
+
+      {/* ═══ FLOATING PAGE NAV ═══ */}
+      <div className="page-pill-nav">
+        <Link href="/oddyssey-manor/manor">Manor</Link>
+        <a className="active">Noir</a>
+        <Link href="/oddyssey-manor/private">Private Events</Link>
+      </div>
 
       {/* ═══ HERO ═══ */}
       <section className="n-hero">
@@ -286,7 +295,7 @@ function NoirContent() {
           <h2 className="n-heading-2" style={{ textAlign: "center" }}>Inside Noir</h2>
         </div>
         <div className="n-gallery-grid">
-          {[8, 9, 12, 16, 11, 7, 14, 6, 5].map((n, i) => (
+          {[6, 15, 17, 5, 11, 16].map((n, i) => (
             <div key={i} className="n-gallery-cell">
               <div className="n-gallery-cell-inner" style={{ backgroundImage: `url('/oddyssey/gal${n}.webp')` }} />
             </div>
@@ -519,7 +528,7 @@ const BOTTLE_MENU = [
 
 const noirStyles = `
 /* ═══ SHARED TOKENS (declared locally for handoff portability) ═══ */
-.n-nav, .n-hero, .n-section-pad, .n-footer, .n-mobile-nav {
+.n-nav, .n-hero, .n-section-pad, .n-footer, .n-mobile-nav, .page-pill-nav {
   --bg: #060606;
   --bg-elevated: #0d0d0d;
   --bg-card: #111111;
@@ -592,6 +601,24 @@ const noirStyles = `
 @media (max-width: 900px) {
   .n-nav-links { display: none; }
   .n-hamburger { display: flex; }
+}
+
+/* ═══ FLOATING PAGE PILL NAV ═══ */
+.page-pill-nav {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 900;
+  display: flex; gap: 2px; background: rgba(6,6,6,0.9); backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle); padding: 6px;
+}
+.page-pill-nav a {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); padding: 10px 20px; transition: all 0.3s; cursor: pointer;
+  text-decoration: none;
+}
+.page-pill-nav a:hover { color: var(--text); }
+.page-pill-nav a.active { background: var(--accent); color: var(--bg); }
+@media (max-width: 600px) {
+  .page-pill-nav { bottom: 12px; padding: 3px; left: 8px; right: 8px; transform: none; justify-content: center; }
+  .page-pill-nav a { padding: 8px 12px; font-size: 8px; letter-spacing: 1px; flex: 1; text-align: center; }
 }
 
 /* ═══ PRIMITIVES ═══ */

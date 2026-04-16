@@ -89,6 +89,12 @@ function HubContent() {
               <p>Late-night immersive nightlife &mdash; Liquid Gold Fridays, Art in Motion Saturdays, 3 ticket tiers, bottles &amp; tables, bottle menu, events calendar, gallery.</p>
               <span className="hub-card-link">View &rarr;</span>
             </Link>
+            <Link href="/oddyssey-manor/private" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#c9a84c", borderColor: "#c9a84c" }}>Handoff</div>
+              <h3>Private Events</h3>
+              <p>Venue spaces, event types, inclusions, and inquiry form &mdash; corporate, celebrations, brand activations, weddings, buyouts.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
           </div>
         </div>
 

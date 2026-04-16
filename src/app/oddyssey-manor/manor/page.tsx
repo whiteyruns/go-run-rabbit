@@ -86,6 +86,7 @@ function ManorContent() {
         <ul className="m-nav-links">
           <li><a className="active">Manor</a></li>
           <li><Link href="/oddyssey-manor/noir">Noir</Link></li>
+          <li><Link href="/oddyssey-manor/private">Private Events</Link></li>
           <li><a onClick={() => scrollToId("m-gallery")}>Gallery</a></li>
           <li><a onClick={() => scrollToId("m-faq")}>FAQ</a></li>
           <li><a className="m-nav-cta" onClick={() => scrollToId("m-tickets")}>Get Tickets</a></li>
@@ -99,11 +100,19 @@ function ManorContent() {
         <div className="m-mobile-nav">
           <a onClick={() => setMobileOpen(false)}>Manor</a>
           <Link href="/oddyssey-manor/noir" onClick={() => setMobileOpen(false)}>Noir</Link>
+          <Link href="/oddyssey-manor/private" onClick={() => setMobileOpen(false)}>Private Events</Link>
           <a onClick={() => scrollToId("m-gallery")}>Gallery</a>
           <a onClick={() => scrollToId("m-faq")}>FAQ</a>
           <a onClick={() => scrollToId("m-tickets")} style={{ color: "var(--accent)" }}>Get Tickets</a>
         </div>
       )}
+
+      {/* ═══ FLOATING PAGE NAV ═══ */}
+      <div className="page-pill-nav">
+        <a className="active">Manor</a>
+        <Link href="/oddyssey-manor/noir">Noir</Link>
+        <Link href="/oddyssey-manor/private">Private Events</Link>
+      </div>
 
       {/* ═══ HERO ═══ */}
       <section className="m-hero">
@@ -544,7 +553,7 @@ const FAQ = [
 
 const manorStyles = `
 /* ═══ SHARED TOKENS (inherited from layout, re-declared for handoff portability) ═══ */
-.m-nav, .m-hero, .m-section-pad, .m-footer, .m-mobile-nav {
+.m-nav, .m-hero, .m-section-pad, .m-footer, .m-mobile-nav, .page-pill-nav {
   --bg: #060606;
   --bg-elevated: #0d0d0d;
   --bg-card: #111111;
@@ -616,6 +625,24 @@ const manorStyles = `
 @media (max-width: 900px) {
   .m-nav-links { display: none; }
   .m-hamburger { display: flex; }
+}
+
+/* ═══ FLOATING PAGE PILL NAV ═══ */
+.page-pill-nav {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 900;
+  display: flex; gap: 2px; background: rgba(6,6,6,0.9); backdrop-filter: blur(12px);
+  border: 1px solid var(--border-subtle); padding: 6px;
+}
+.page-pill-nav a {
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); padding: 10px 20px; transition: all 0.3s; cursor: pointer;
+  text-decoration: none;
+}
+.page-pill-nav a:hover { color: var(--text); }
+.page-pill-nav a.active { background: var(--accent); color: var(--bg); }
+@media (max-width: 600px) {
+  .page-pill-nav { bottom: 12px; padding: 3px; left: 8px; right: 8px; transform: none; justify-content: center; }
+  .page-pill-nav a { padding: 8px 12px; font-size: 8px; letter-spacing: 1px; flex: 1; text-align: center; }
 }
 
 /* ═══ SHARED PRIMITIVES ═══ */
