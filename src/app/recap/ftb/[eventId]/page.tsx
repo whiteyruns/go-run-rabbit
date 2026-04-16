@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { findEvent } from "@/data/feed-the-block/events";
 import { getArtistForEvent } from "@/data/feed-the-block/artists";
 import { FTB_EXECUTIVE_SUMMARY } from "@/data/feed-the-block/recap/exec-summary";
@@ -13,8 +13,8 @@ import { fmt, fmtNum } from "@/lib/utils";
 
 const ACCESS_CODE = "feed2026";
 
-export default function RecapPage({ params }: { params: Promise<{ eventId: string }> }) {
-  const { eventId } = use(params);
+export default function RecapPage({ params }: { params: { eventId: string } }) {
+  const { eventId } = params;
   const event = findEvent(eventId);
   if (!event) notFound();
 
