@@ -142,49 +142,53 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
 
       <main className="pt-20 md:pt-24">
         {/* 1. Cover hero */}
-        <section className="min-h-[90vh] px-8 md:px-20 py-20 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30">
+        <section className="min-h-[70vh] px-8 md:px-20 py-24 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30">
           <div className="max-w-7xl mx-auto w-full">
             <h1 className="serif text-6xl md:text-9xl font-bold leading-none tracking-tighter mb-10 max-w-5xl">
               {bundle.headliner} at Feed The Block
             </h1>
-            <p className="serif italic text-xl md:text-3xl text-[#1c1c18]/70 mb-20 max-w-2xl">
+            <p className="serif italic text-xl md:text-3xl text-[#1c1c18]/70 max-w-2xl">
               Independently measured impact from one night on Fremont.
             </p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 mt-10">
-              <StatRule value={fmtNum(visits)} label="Total Visitors" />
-              <StatRule value={`${dwellHrs} Hrs`} label="Avg. Dwell Time" />
-              <StatRule value={yoy} label="Visits Year-over-Year" />
-              <StatRule value={fmt(impact)} label="Direct Economic Spend" />
-            </div>
           </div>
         </section>
 
         {/* 2. Executive summary */}
         <section className="py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed]">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
-            <div className="md:col-span-4">
-              <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
-                The Series
-              </p>
-              <h2 className="serif text-4xl md:text-5xl font-bold leading-tight mb-4">
-                What Feed The Block is
-              </h2>
-              <p className="serif italic text-base text-[#1c1c18]/60">
-                Post-event Recap · {bundle.eventDate}
-              </p>
+          <div className="max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
+              <div className="md:col-span-4">
+                <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
+                  The Series
+                </p>
+                <h2 className="serif text-4xl md:text-5xl font-bold leading-tight mb-4">
+                  What Feed The Block is
+                </h2>
+                <p className="serif italic text-base text-[#1c1c18]/60">
+                  Post-event Recap · {bundle.eventDate}
+                </p>
+              </div>
+              <div className="md:col-span-7 md:col-start-6">
+                <p
+                  className="drop-cap text-[17px] text-[#1c1c18]/85 leading-[1.7] mb-12"
+                  dangerouslySetInnerHTML={{ __html: FTB_EXECUTIVE_SUMMARY.paragraphs[0] }}
+                />
+                <blockquote className="serif italic text-3xl md:text-4xl border-l-4 border-[#7f5700] pl-6 md:pl-8 py-4 text-[#7f5700] leading-tight">
+                  &ldquo;{FTB_EXECUTIVE_SUMMARY.tagline}&rdquo;
+                </blockquote>
+                <p
+                  className="text-[17px] text-[#1c1c18]/85 leading-[1.7] mt-12"
+                  dangerouslySetInnerHTML={{ __html: FTB_EXECUTIVE_SUMMARY.paragraphs[1] }}
+                />
+              </div>
             </div>
-            <div className="md:col-span-7 md:col-start-6">
-              <p
-                className="drop-cap text-[17px] text-[#1c1c18]/85 leading-[1.7] mb-12"
-                dangerouslySetInnerHTML={{ __html: FTB_EXECUTIVE_SUMMARY.paragraphs[0] }}
-              />
-              <blockquote className="serif italic text-3xl md:text-4xl border-l-4 border-[#7f5700] pl-6 md:pl-8 py-4 text-[#7f5700] leading-tight">
-                &ldquo;{FTB_EXECUTIVE_SUMMARY.tagline}&rdquo;
-              </blockquote>
-              <p
-                className="text-[17px] text-[#1c1c18]/85 leading-[1.7] mt-12"
-                dangerouslySetInnerHTML={{ __html: FTB_EXECUTIVE_SUMMARY.paragraphs[1] }}
-              />
+
+            {/* Headline stats — moved out of the cover hero */}
+            <div className="mt-20 md:mt-28 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+              <StatRule value={fmtNum(visits)} label="Total Visitors" />
+              <StatRule value={`${dwellHrs} Hrs`} label="Avg. Dwell Time" />
+              <StatRule value={yoy} label="Visits Year-over-Year" />
+              <StatRule value={fmt(impact)} label="Direct Economic Spend" />
             </div>
           </div>
         </section>
