@@ -1,0 +1,1833 @@
+{
+  "metrics": [
+    {
+      "id": "cmnysqg3u000mv3fbiepo5zhg",
+      "metricName": "In Market Estimate Pct",
+      "metricValue": "62",
+      "category": "visitation"
+    },
+    {
+      "id": "cmnysqg3w000nv3fboboog7yx",
+      "metricName": "Out Of Market Estimate Pct",
+      "metricValue": "38",
+      "category": "visitation"
+    },
+    {
+      "id": "cmnysqg2r0001v3fbzydnjx4i",
+      "metricName": "Total Visits",
+      "metricValue": "17629",
+      "category": "attendance"
+    },
+    {
+      "id": "cmnysqg2u0002v3fbom87sqkm",
+      "metricName": "Visits Per SqFt",
+      "metricValue": "0.12",
+      "category": "attendance"
+    },
+    {
+      "id": "cmnysqg2w0003v3fb06rccb1m",
+      "metricName": "Footprint Size SqFt",
+      "metricValue": "142255.84",
+      "category": "attendance"
+    },
+    {
+      "id": "cmnysqg2y0004v3fbye12xgtz",
+      "metricName": "Total Visitors",
+      "metricValue": "17629",
+      "category": "attendance"
+    },
+    {
+      "id": "cmnysqg2z0005v3fb4wjc1tuw",
+      "metricName": "Avg Dwell Time Min",
+      "metricValue": "112",
+      "category": "engagement"
+    },
+    {
+      "id": "cmnysqg310006v3fbp0ipuk90",
+      "metricName": "Visits YoY",
+      "metricValue": "+1046.5%",
+      "category": "growth"
+    },
+    {
+      "id": "cmnysqg330007v3fbxh1nq05u",
+      "metricName": "Visits Yo2Y",
+      "metricValue": "+706.4%",
+      "category": "growth"
+    },
+    {
+      "id": "cmnysqg350008v3fb52zr1lue",
+      "metricName": "Visits Yo3Y",
+      "metricValue": "+218.3%",
+      "category": "growth"
+    },
+    {
+      "id": "cmnysqg360009v3fb147exo57",
+      "metricName": "Median Age",
+      "metricValue": "35.9",
+      "category": "demographics"
+    },
+    {
+      "id": "cmnysqg38000av3fbpvf11n0o",
+      "metricName": "Median Household Income",
+      "metricValue": "$69,307",
+      "category": "demographics"
+    },
+    {
+      "id": "cmnysqg3a000bv3fbzt25siaf",
+      "metricName": "Most Common Ethnicity",
+      "metricValue": "Hispanic or Latino (38%)",
+      "category": "demographics"
+    },
+    {
+      "id": "cmnysqg3c000cv3fbv1ort98d",
+      "metricName": "Persons Per Household",
+      "metricValue": "2.77",
+      "category": "demographics"
+    },
+    {
+      "id": "cmnysqg3e000dv3fbygwtw49f",
+      "metricName": "Bachelors Degree Or Higher",
+      "metricValue": "23.7%",
+      "category": "demographics"
+    },
+    {
+      "id": "cmnysqg3f000ev3fbcoaifeck",
+      "metricName": "Peak Hour",
+      "metricValue": "9:00 PM",
+      "category": "attendance"
+    },
+    {
+      "id": "cmnysqg3h000fv3fbzf7yykrb",
+      "metricName": "Peak Visits",
+      "metricValue": "12172",
+      "category": "attendance"
+    },
+    {
+      "id": "cmnysqg3j000gv3fb5sethgu5",
+      "metricName": "Event Date",
+      "metricValue": "April 2, 2026",
+      "category": "general"
+    },
+    {
+      "id": "cmnysqg3l000hv3fb6j2lfgrl",
+      "metricName": "Event Day",
+      "metricValue": "Thursday",
+      "category": "general"
+    },
+    {
+      "id": "cmnysqg3n000iv3fb4w48wu8h",
+      "metricName": "Headliner",
+      "metricValue": "Marshmello",
+      "category": "general"
+    },
+    {
+      "id": "cmnysqg3o000jv3fbqg3ah6t7",
+      "metricName": "Hotel Casino Properties Tracked",
+      "metricValue": "53",
+      "category": "spillover"
+    },
+    {
+      "id": "cmnysqg3q000kv3fbmgwhyxj3",
+      "metricName": "El Cortez Origin Pct",
+      "metricValue": "14.6%",
+      "category": "journey"
+    },
+    {
+      "id": "cmnysqg3s000lv3fbscb9xsq5",
+      "metricName": "Return Home Pct",
+      "metricValue": "17.5%",
+      "category": "journey"
+    },
+    {
+      "id": "cmo1ram47002ss9r45uw3a2ek",
+      "metricName": "Nevada Local Pct",
+      "metricValue": "74.68",
+      "category": "origin"
+    },
+    {
+      "id": "cmo1ram49002ts9r41clz288h",
+      "metricName": "Out Of State Pct",
+      "metricValue": "25.32",
+      "category": "origin"
+    },
+    {
+      "id": "cmo1ram4a002us9r4c9d83aqv",
+      "metricName": "Nevada Local Visitors",
+      "metricValue": "13817",
+      "category": "origin"
+    },
+    {
+      "id": "cmo1ram4c002vs9r4st4haqp6",
+      "metricName": "Out Of State Visitors",
+      "metricValue": "4686",
+      "category": "origin"
+    },
+    {
+      "id": "cmo1ram4e002ws9r46j3pkwgz",
+      "metricName": "States Represented",
+      "metricValue": "47",
+      "category": "origin"
+    },
+    {
+      "id": "cmo1ram4f002xs9r4blxifilt",
+      "metricName": "Top Out Of State",
+      "metricValue": "California",
+      "category": "origin"
+    },
+    {
+      "id": "cmo1ram4h002ys9r4vfckp3ym",
+      "metricName": "DMAs Represented",
+      "metricValue": "120+",
+      "category": "origin"
+    }
+  ],
+  "hourly": [
+    {
+      "id": "hour-0",
+      "hour": "12:00 AM",
+      "hourIndex": 0,
+      "visits": 2498
+    },
+    {
+      "id": "hour-1",
+      "hour": "1:00 AM",
+      "hourIndex": 1,
+      "visits": 1526
+    },
+    {
+      "id": "hour-2",
+      "hour": "2:00 AM",
+      "hourIndex": 2,
+      "visits": 679
+    },
+    {
+      "id": "hour-3",
+      "hour": "3:00 AM",
+      "hourIndex": 3,
+      "visits": 187
+    },
+    {
+      "id": "hour-4",
+      "hour": "4:00 AM",
+      "hourIndex": 4,
+      "visits": 107
+    },
+    {
+      "id": "hour-5",
+      "hour": "5:00 AM",
+      "hourIndex": 5,
+      "visits": 78
+    },
+    {
+      "id": "hour-6",
+      "hour": "6:00 AM",
+      "hourIndex": 6,
+      "visits": 70
+    },
+    {
+      "id": "hour-7",
+      "hour": "7:00 AM",
+      "hourIndex": 7,
+      "visits": 38
+    },
+    {
+      "id": "hour-8",
+      "hour": "8:00 AM",
+      "hourIndex": 8,
+      "visits": 33
+    },
+    {
+      "id": "hour-9",
+      "hour": "9:00 AM",
+      "hourIndex": 9,
+      "visits": 14
+    },
+    {
+      "id": "hour-10",
+      "hour": "10:00 AM",
+      "hourIndex": 10,
+      "visits": 41
+    },
+    {
+      "id": "hour-11",
+      "hour": "11:00 AM",
+      "hourIndex": 11,
+      "visits": 95
+    },
+    {
+      "id": "hour-12",
+      "hour": "12:00 PM",
+      "hourIndex": 12,
+      "visits": 213
+    },
+    {
+      "id": "hour-13",
+      "hour": "1:00 PM",
+      "hourIndex": 13,
+      "visits": 273
+    },
+    {
+      "id": "hour-14",
+      "hour": "2:00 PM",
+      "hourIndex": 14,
+      "visits": 173
+    },
+    {
+      "id": "hour-15",
+      "hour": "3:00 PM",
+      "hourIndex": 15,
+      "visits": 211
+    },
+    {
+      "id": "hour-16",
+      "hour": "4:00 PM",
+      "hourIndex": 16,
+      "visits": 333
+    },
+    {
+      "id": "hour-17",
+      "hour": "5:00 PM",
+      "hourIndex": 17,
+      "visits": 948
+    },
+    {
+      "id": "hour-18",
+      "hour": "6:00 PM",
+      "hourIndex": 18,
+      "visits": 2832
+    },
+    {
+      "id": "hour-19",
+      "hour": "7:00 PM",
+      "hourIndex": 19,
+      "visits": 6431
+    },
+    {
+      "id": "hour-20",
+      "hour": "8:00 PM",
+      "hourIndex": 20,
+      "visits": 10679
+    },
+    {
+      "id": "hour-21",
+      "hour": "9:00 PM",
+      "hourIndex": 21,
+      "visits": 12172
+    },
+    {
+      "id": "hour-22",
+      "hour": "10:00 PM",
+      "hourIndex": 22,
+      "visits": 8681
+    },
+    {
+      "id": "hour-23",
+      "hour": "11:00 PM",
+      "hourIndex": 23,
+      "visits": 3745
+    }
+  ],
+  "duration": [
+    {
+      "id": "dur-0",
+      "durationRange": "<5 min",
+      "visits": 0,
+      "sortOrder": 0
+    },
+    {
+      "id": "dur-1",
+      "durationRange": "5-9 min",
+      "visits": 0,
+      "sortOrder": 1
+    },
+    {
+      "id": "dur-2",
+      "durationRange": "10-14 min",
+      "visits": 748,
+      "sortOrder": 2
+    },
+    {
+      "id": "dur-3",
+      "durationRange": "15-29 min",
+      "visits": 1138,
+      "sortOrder": 3
+    },
+    {
+      "id": "dur-4",
+      "durationRange": "30-44 min",
+      "visits": 1877,
+      "sortOrder": 4
+    },
+    {
+      "id": "dur-5",
+      "durationRange": "45-59 min",
+      "visits": 1602,
+      "sortOrder": 5
+    },
+    {
+      "id": "dur-6",
+      "durationRange": "60-74 min",
+      "visits": 1447,
+      "sortOrder": 6
+    },
+    {
+      "id": "dur-7",
+      "durationRange": "75-89 min",
+      "visits": 1603,
+      "sortOrder": 7
+    },
+    {
+      "id": "dur-8",
+      "durationRange": "90-104 min",
+      "visits": 1795,
+      "sortOrder": 8
+    },
+    {
+      "id": "dur-9",
+      "durationRange": "105-119 min",
+      "visits": 1108,
+      "sortOrder": 9
+    },
+    {
+      "id": "dur-10",
+      "durationRange": "120-134 min",
+      "visits": 978,
+      "sortOrder": 10
+    },
+    {
+      "id": "dur-11",
+      "durationRange": "135-149 min",
+      "visits": 984,
+      "sortOrder": 11
+    },
+    {
+      "id": "dur-12",
+      "durationRange": "150+ min",
+      "visits": 4382,
+      "sortOrder": 12
+    }
+  ],
+  "demographics": [
+    {
+      "id": "demo-Age-0",
+      "groupName": "Age",
+      "binLabel": "18-24",
+      "eventValue": 0.1199,
+      "stateValue": 0.1024,
+      "sortOrder": 0
+    },
+    {
+      "id": "demo-Age-1",
+      "groupName": "Age",
+      "binLabel": "25-34",
+      "eventValue": 0.2032,
+      "stateValue": 0.184,
+      "sortOrder": 1
+    },
+    {
+      "id": "demo-Age-2",
+      "groupName": "Age",
+      "binLabel": "35-44",
+      "eventValue": 0.194,
+      "stateValue": 0.177,
+      "sortOrder": 2
+    },
+    {
+      "id": "demo-Age-3",
+      "groupName": "Age",
+      "binLabel": "45-54",
+      "eventValue": 0.1716,
+      "stateValue": 0.1607,
+      "sortOrder": 3
+    },
+    {
+      "id": "demo-Age-4",
+      "groupName": "Age",
+      "binLabel": "55-64",
+      "eventValue": 0.1452,
+      "stateValue": 0.1589,
+      "sortOrder": 4
+    },
+    {
+      "id": "demo-Age-5",
+      "groupName": "Age",
+      "binLabel": "65+",
+      "eventValue": 0.1661,
+      "stateValue": 0.217,
+      "sortOrder": 5
+    },
+    {
+      "id": "demo-Ethnicity-10",
+      "groupName": "Ethnicity",
+      "binLabel": "Hispanic or Latino",
+      "eventValue": 0.3799,
+      "stateValue": 0.2963,
+      "sortOrder": 10
+    },
+    {
+      "id": "demo-Ethnicity-11",
+      "groupName": "Ethnicity",
+      "binLabel": "White",
+      "eventValue": 0.3062,
+      "stateValue": 0.4479,
+      "sortOrder": 11
+    },
+    {
+      "id": "demo-Ethnicity-12",
+      "groupName": "Ethnicity",
+      "binLabel": "Black",
+      "eventValue": 0.1271,
+      "stateValue": 0.0898,
+      "sortOrder": 12
+    },
+    {
+      "id": "demo-Ethnicity-13",
+      "groupName": "Ethnicity",
+      "binLabel": "Asian",
+      "eventValue": 0.1061,
+      "stateValue": 0.0875,
+      "sortOrder": 13
+    },
+    {
+      "id": "demo-Ethnicity-14",
+      "groupName": "Ethnicity",
+      "binLabel": "Native Hawaiian/PI",
+      "eventValue": 0.0096,
+      "stateValue": 0.0067,
+      "sortOrder": 14
+    },
+    {
+      "id": "demo-Ethnicity-15",
+      "groupName": "Ethnicity",
+      "binLabel": "American Indian/AN",
+      "eventValue": 0.0027,
+      "stateValue": 0.0058,
+      "sortOrder": 15
+    },
+    {
+      "id": "demo-Ethnicity-16",
+      "groupName": "Ethnicity",
+      "binLabel": "Other",
+      "eventValue": 0.0069,
+      "stateValue": 0.0064,
+      "sortOrder": 16
+    },
+    {
+      "id": "demo-Income-20",
+      "groupName": "Income",
+      "binLabel": "<$15K",
+      "eventValue": 0.0948,
+      "stateValue": 0.0798,
+      "sortOrder": 20
+    },
+    {
+      "id": "demo-Income-21",
+      "groupName": "Income",
+      "binLabel": "$15K-$25K",
+      "eventValue": 0.07,
+      "stateValue": 0.0588,
+      "sortOrder": 21
+    },
+    {
+      "id": "demo-Income-22",
+      "groupName": "Income",
+      "binLabel": "$25K-$50K",
+      "eventValue": 0.198,
+      "stateValue": 0.1769,
+      "sortOrder": 22
+    },
+    {
+      "id": "demo-Income-23",
+      "groupName": "Income",
+      "binLabel": "$50K-$100K",
+      "eventValue": 0.3163,
+      "stateValue": 0.3002,
+      "sortOrder": 23
+    },
+    {
+      "id": "demo-Income-24",
+      "groupName": "Income",
+      "binLabel": "$100K-$150K",
+      "eventValue": 0.1677,
+      "stateValue": 0.1822,
+      "sortOrder": 24
+    },
+    {
+      "id": "demo-Income-25",
+      "groupName": "Income",
+      "binLabel": "$150K+",
+      "eventValue": 0.1532,
+      "stateValue": 0.2021,
+      "sortOrder": 25
+    },
+    {
+      "id": "demo-Household-30",
+      "groupName": "Household",
+      "binLabel": "1 Person",
+      "eventValue": 0.282,
+      "stateValue": 0.2798,
+      "sortOrder": 30
+    },
+    {
+      "id": "demo-Household-31",
+      "groupName": "Household",
+      "binLabel": "2 Persons",
+      "eventValue": 0.2964,
+      "stateValue": 0.3359,
+      "sortOrder": 31
+    },
+    {
+      "id": "demo-Household-32",
+      "groupName": "Household",
+      "binLabel": "3 Persons",
+      "eventValue": 0.1625,
+      "stateValue": 0.1563,
+      "sortOrder": 32
+    },
+    {
+      "id": "demo-Household-33",
+      "groupName": "Household",
+      "binLabel": "4 Persons",
+      "eventValue": 0.1379,
+      "stateValue": 0.1234,
+      "sortOrder": 33
+    },
+    {
+      "id": "demo-Household-34",
+      "groupName": "Household",
+      "binLabel": "5+ Persons",
+      "eventValue": 0.1212,
+      "stateValue": 0.1046,
+      "sortOrder": 34
+    }
+  ],
+  "destinations": [
+    {
+      "id": "dest-0",
+      "name": "Le Thai",
+      "category": "Dining",
+      "subCategory": "Thai Restaurant",
+      "address": "523 Fremont St",
+      "city": "Las Vegas",
+      "distance": 0,
+      "visitors": 9015,
+      "percentage": "51.1%",
+      "sortOrder": 0
+    },
+    {
+      "id": "dest-1",
+      "name": "Evel Pie",
+      "category": "Dining",
+      "subCategory": "Pizza Place",
+      "address": "508 Fremont St",
+      "city": "Las Vegas",
+      "distance": 0,
+      "visitors": 2116,
+      "percentage": "12%",
+      "sortOrder": 1
+    },
+    {
+      "id": "dest-2",
+      "name": "Park on Fremont",
+      "category": "Dining",
+      "subCategory": "Burger Joint",
+      "address": "506 Fremont St",
+      "city": "Las Vegas",
+      "distance": 0,
+      "visitors": 1152,
+      "percentage": "6.5%",
+      "sortOrder": 2
+    },
+    {
+      "id": "dest-3",
+      "name": "Bangkok Street Thai",
+      "category": "Dining",
+      "subCategory": "Thai Restaurant",
+      "address": "611 E Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.1,
+      "visitors": 252,
+      "percentage": "1.4%",
+      "sortOrder": 3
+    },
+    {
+      "id": "dest-4",
+      "name": "7th & Carson",
+      "category": "Dining",
+      "subCategory": "American Restaurant",
+      "address": "616 E Carson Ave",
+      "city": "Las Vegas",
+      "distance": 0.1,
+      "visitors": 234,
+      "percentage": "1.3%",
+      "sortOrder": 4
+    },
+    {
+      "id": "dest-5",
+      "name": "In-N-Out Burger (Sahara)",
+      "category": "Dining",
+      "subCategory": "Burger Joint",
+      "address": "2900 W Sahara Ave",
+      "city": "Las Vegas",
+      "distance": 2.8,
+      "visitors": 201,
+      "percentage": "1.1%",
+      "sortOrder": 5
+    },
+    {
+      "id": "dest-6",
+      "name": "Tacos El Gordo",
+      "category": "Dining",
+      "subCategory": "Taco Place",
+      "address": "3260 Losee Rd N",
+      "city": "Las Vegas",
+      "distance": 3.5,
+      "visitors": 162,
+      "percentage": "0.9%",
+      "sortOrder": 6
+    },
+    {
+      "id": "dest-7",
+      "name": "Parlour Coffee",
+      "category": "Dining",
+      "subCategory": "Cafe",
+      "address": "616 E Carson Ave",
+      "city": "Las Vegas",
+      "distance": 0.1,
+      "visitors": 129,
+      "percentage": "0.7%",
+      "sortOrder": 7
+    },
+    {
+      "id": "dest-8",
+      "name": "Cornish Pasty Co.",
+      "category": "Dining",
+      "subCategory": "English Restaurant",
+      "address": "10 E Charleston Blvd",
+      "city": "Las Vegas",
+      "distance": 1,
+      "visitors": 101,
+      "percentage": "0.6%",
+      "sortOrder": 8
+    },
+    {
+      "id": "dest-9",
+      "name": "Sayulitas",
+      "category": "Dining",
+      "subCategory": "Mexican Restaurant",
+      "address": "616 E Carson Ave",
+      "city": "Las Vegas",
+      "distance": 0.1,
+      "visitors": 96,
+      "percentage": "0.5%",
+      "sortOrder": 9
+    }
+  ],
+  "hotels": [
+    {
+      "id": "hotel-0",
+      "name": "El Cortez Hotel & Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Casino",
+      "address": "600 E Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.1,
+      "visitors": 4836,
+      "percentage": "27.4%",
+      "sortOrder": 0
+    },
+    {
+      "id": "hotel-1",
+      "name": "Golden Nugget LV",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "129 E Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.3,
+      "visitors": 1126,
+      "percentage": "6.4%",
+      "sortOrder": 1
+    },
+    {
+      "id": "hotel-2",
+      "name": "The D Casino & Hotel",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "301 Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.2,
+      "visitors": 1089,
+      "percentage": "6.2%",
+      "sortOrder": 2
+    },
+    {
+      "id": "hotel-3",
+      "name": "Fremont Hotel & Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Casino",
+      "address": "200 Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.2,
+      "visitors": 858,
+      "percentage": "4.9%",
+      "sortOrder": 3
+    },
+    {
+      "id": "hotel-4",
+      "name": "Four Queens",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "202 E Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.2,
+      "visitors": 844,
+      "percentage": "4.8%",
+      "sortOrder": 4
+    },
+    {
+      "id": "hotel-5",
+      "name": "Circa Resort & Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "8 Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.4,
+      "visitors": 646,
+      "percentage": "3.7%",
+      "sortOrder": 5
+    },
+    {
+      "id": "hotel-6",
+      "name": "The Cosmopolitan",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "3708 Las Vegas Blvd S",
+      "city": "Las Vegas",
+      "distance": 4.5,
+      "visitors": 504,
+      "percentage": "2.9%",
+      "sortOrder": 6
+    },
+    {
+      "id": "hotel-7",
+      "name": "Downtown Grand LV",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "206 N 3rd St",
+      "city": "Las Vegas",
+      "distance": 0.2,
+      "visitors": 490,
+      "percentage": "2.8%",
+      "sortOrder": 7
+    },
+    {
+      "id": "hotel-8",
+      "name": "Caesars Palace",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "3570 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 4.1,
+      "visitors": 419,
+      "percentage": "2.4%",
+      "sortOrder": 8
+    },
+    {
+      "id": "hotel-9",
+      "name": "El Cortez Cabana Suites",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "600 Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.1,
+      "visitors": 393,
+      "percentage": "2.2%",
+      "sortOrder": 9
+    },
+    {
+      "id": "hotel-10",
+      "name": "Flamingo Las Vegas",
+      "category": "Hotels & Casinos",
+      "subCategory": "Resort",
+      "address": "3555 Las Vegas Blvd S",
+      "city": "Las Vegas",
+      "distance": 4,
+      "visitors": 376,
+      "percentage": "2.1%",
+      "sortOrder": 10
+    },
+    {
+      "id": "hotel-11",
+      "name": "Main Street Station",
+      "category": "Hotels & Casinos",
+      "subCategory": "Casino",
+      "address": "200 N Main St",
+      "city": "Las Vegas",
+      "distance": 0.5,
+      "visitors": 318,
+      "percentage": "1.8%",
+      "sortOrder": 11
+    },
+    {
+      "id": "hotel-12",
+      "name": "Paris Las Vegas",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "3655 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 4.3,
+      "visitors": 314,
+      "percentage": "1.8%",
+      "sortOrder": 12
+    },
+    {
+      "id": "hotel-13",
+      "name": "The Plaza Hotel",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "1 S Main St",
+      "city": "Las Vegas",
+      "distance": 0.4,
+      "visitors": 314,
+      "percentage": "1.8%",
+      "sortOrder": 13
+    },
+    {
+      "id": "hotel-14",
+      "name": "Fontainebleau LV",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "2777 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 2.4,
+      "visitors": 313,
+      "percentage": "1.8%",
+      "sortOrder": 14
+    },
+    {
+      "id": "hotel-15",
+      "name": "Golden Gate Hotel & Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "1 E Fremont St",
+      "city": "Las Vegas",
+      "distance": 0.4,
+      "visitors": 299,
+      "percentage": "1.7%",
+      "sortOrder": 15
+    },
+    {
+      "id": "hotel-16",
+      "name": "Planet Hollywood",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "3667 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 4.4,
+      "visitors": 295,
+      "percentage": "1.7%",
+      "sortOrder": 16
+    },
+    {
+      "id": "hotel-17",
+      "name": "Downtowner Motel",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "129 N 8th St",
+      "city": "Las Vegas",
+      "distance": 0.2,
+      "visitors": 245,
+      "percentage": "1.4%",
+      "sortOrder": 17
+    },
+    {
+      "id": "hotel-18",
+      "name": "Wynn Las Vegas",
+      "category": "Hotels & Casinos",
+      "subCategory": "Resort",
+      "address": "3131 Las Vegas Blvd S",
+      "city": "Las Vegas",
+      "distance": 3.3,
+      "visitors": 232,
+      "percentage": "1.3%",
+      "sortOrder": 18
+    },
+    {
+      "id": "hotel-19",
+      "name": "Rio Hotel & Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Resort",
+      "address": "3700 W Flamingo Rd",
+      "city": "Las Vegas",
+      "distance": 4.4,
+      "visitors": 217,
+      "percentage": "1.2%",
+      "sortOrder": 19
+    },
+    {
+      "id": "hotel-20",
+      "name": "Stratosphere",
+      "category": "Hotels & Casinos",
+      "subCategory": "Casino",
+      "address": "2000 Las Vegas Blvd S",
+      "city": "Las Vegas",
+      "distance": 1.7,
+      "visitors": 205,
+      "percentage": "1.2%",
+      "sortOrder": 20
+    },
+    {
+      "id": "hotel-21",
+      "name": "Resorts World LV",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "3000 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 2.8,
+      "visitors": 200,
+      "percentage": "1.1%",
+      "sortOrder": 21
+    },
+    {
+      "id": "hotel-22",
+      "name": "New York-New York",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "3790 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 5,
+      "visitors": 180,
+      "percentage": "1%",
+      "sortOrder": 22
+    },
+    {
+      "id": "hotel-23",
+      "name": "Mandalay Bay",
+      "category": "Hotels & Casinos",
+      "subCategory": "Resort",
+      "address": "3950 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 5.7,
+      "visitors": 161,
+      "percentage": "0.9%",
+      "sortOrder": 23
+    },
+    {
+      "id": "hotel-24",
+      "name": "California Hotel & Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "12 E Ogden Ave",
+      "city": "Las Vegas",
+      "distance": 0.4,
+      "visitors": 155,
+      "percentage": "0.9%",
+      "sortOrder": 24
+    },
+    {
+      "id": "hotel-25",
+      "name": "Excalibur Hotel & Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "3850 S Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 5.2,
+      "visitors": 152,
+      "percentage": "0.9%",
+      "sortOrder": 25
+    },
+    {
+      "id": "hotel-26",
+      "name": "Sahara Las Vegas",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "2535 Las Vegas Blvd",
+      "city": "Las Vegas",
+      "distance": 2.1,
+      "visitors": 151,
+      "percentage": "0.9%",
+      "sortOrder": 26
+    },
+    {
+      "id": "hotel-27",
+      "name": "Red Rock Casino",
+      "category": "Hotels & Casinos",
+      "subCategory": "Resort",
+      "address": "11011 W Charleston Blvd",
+      "city": "Las Vegas",
+      "distance": 10.8,
+      "visitors": 130,
+      "percentage": "0.7%",
+      "sortOrder": 27
+    },
+    {
+      "id": "hotel-28",
+      "name": "John E Carson Hotel",
+      "category": "Hotels & Casinos",
+      "subCategory": "Hotel",
+      "address": "124 S 6th St",
+      "city": "Las Vegas",
+      "distance": 0.1,
+      "visitors": 130,
+      "percentage": "0.7%",
+      "sortOrder": 28
+    }
+  ],
+  "originStates": [
+    {
+      "id": "cmo1ram0n000ns9r46akkcipf",
+      "stateName": "Nevada",
+      "visitors": 13817,
+      "percentage": 74.68,
+      "yoyChange": 12992,
+      "yoyChangePct": 1574.79,
+      "sortOrder": 0
+    },
+    {
+      "id": "cmo1ram0p000os9r48mr18bdf",
+      "stateName": "California",
+      "visitors": 1290,
+      "percentage": 6.972,
+      "yoyChange": 1171,
+      "yoyChangePct": 984.03,
+      "sortOrder": 1
+    },
+    {
+      "id": "cmo1ram0r000ps9r4owfe8w1w",
+      "stateName": "Washington",
+      "visitors": 301,
+      "percentage": 1.627,
+      "yoyChange": 267,
+      "yoyChangePct": 785.29,
+      "sortOrder": 2
+    },
+    {
+      "id": "cmo1ram0s000qs9r4z42xja62",
+      "stateName": "Colorado",
+      "visitors": 223,
+      "percentage": 1.205,
+      "yoyChange": 196,
+      "yoyChangePct": 725.93,
+      "sortOrder": 3
+    },
+    {
+      "id": "cmo1ram0u000rs9r450tzuw3t",
+      "stateName": "Minnesota",
+      "visitors": 222,
+      "percentage": 1.202,
+      "yoyChange": 175,
+      "yoyChangePct": 372.34,
+      "sortOrder": 4
+    },
+    {
+      "id": "cmo1ram0w000ss9r4r8t23ylz",
+      "stateName": "Utah",
+      "visitors": 209,
+      "percentage": 1.132,
+      "yoyChange": 185,
+      "yoyChangePct": 770.83,
+      "sortOrder": 5
+    },
+    {
+      "id": "cmo1ram0x000ts9r4ytx8rzas",
+      "stateName": "Arizona",
+      "visitors": 184,
+      "percentage": 0.996,
+      "yoyChange": 172,
+      "yoyChangePct": 1433.33,
+      "sortOrder": 6
+    },
+    {
+      "id": "cmo1ram0z000us9r4al0u3kld",
+      "stateName": "Texas",
+      "visitors": 157,
+      "percentage": 0.849,
+      "yoyChange": 50,
+      "yoyChangePct": 46.73,
+      "sortOrder": 7
+    },
+    {
+      "id": "cmo1ram11000vs9r4ni8bvayw",
+      "stateName": "Pennsylvania",
+      "visitors": 145,
+      "percentage": 0.781,
+      "yoyChange": 134,
+      "yoyChangePct": 1218.18,
+      "sortOrder": 8
+    },
+    {
+      "id": "cmo1ram12000ws9r48aoie9fo",
+      "stateName": "Florida",
+      "visitors": 137,
+      "percentage": 0.74,
+      "yoyChange": 76,
+      "yoyChangePct": 124.59,
+      "sortOrder": 9
+    },
+    {
+      "id": "cmo1ram14000xs9r462jqlbb0",
+      "stateName": "New York",
+      "visitors": 137,
+      "percentage": 0.739,
+      "yoyChange": 118,
+      "yoyChangePct": 621.05,
+      "sortOrder": 10
+    },
+    {
+      "id": "cmo1ram15000ys9r4i85ngiwg",
+      "stateName": "New Mexico",
+      "visitors": 135,
+      "percentage": 0.728,
+      "yoyChange": 135,
+      "yoyChangePct": null,
+      "sortOrder": 11
+    },
+    {
+      "id": "cmo1ram17000zs9r4ofrdl8kd",
+      "stateName": "Ohio",
+      "visitors": 112,
+      "percentage": 0.605,
+      "yoyChange": -36,
+      "yoyChangePct": -24.43,
+      "sortOrder": 12
+    },
+    {
+      "id": "cmo1ram180010s9r4ptx9vi5f",
+      "stateName": "Michigan",
+      "visitors": 111,
+      "percentage": 0.602,
+      "yoyChange": 75,
+      "yoyChangePct": 208.33,
+      "sortOrder": 13
+    },
+    {
+      "id": "cmo1ram1a0011s9r4yll2k3ix",
+      "stateName": "Illinois",
+      "visitors": 106,
+      "percentage": 0.571,
+      "yoyChange": 63,
+      "yoyChangePct": 146.51,
+      "sortOrder": 14
+    },
+    {
+      "id": "cmo1ram1b0012s9r4h0o4j8cs",
+      "stateName": "Virginia",
+      "visitors": 85,
+      "percentage": 0.461,
+      "yoyChange": 85,
+      "yoyChangePct": null,
+      "sortOrder": 15
+    },
+    {
+      "id": "cmo1ram1d0013s9r4niu7qjqn",
+      "stateName": "Wisconsin",
+      "visitors": 79,
+      "percentage": 0.429,
+      "yoyChange": -49,
+      "yoyChangePct": -38.28,
+      "sortOrder": 16
+    },
+    {
+      "id": "cmo1ram1e0014s9r46f1d602z",
+      "stateName": "Indiana",
+      "visitors": 76,
+      "percentage": 0.413,
+      "yoyChange": 56,
+      "yoyChangePct": 280,
+      "sortOrder": 17
+    },
+    {
+      "id": "cmo1ram1g0015s9r4wlnyr86t",
+      "stateName": "Georgia",
+      "visitors": 62,
+      "percentage": 0.334,
+      "yoyChange": 54,
+      "yoyChangePct": 675,
+      "sortOrder": 18
+    },
+    {
+      "id": "cmo1ram1i0016s9r47v6y99qu",
+      "stateName": "Iowa",
+      "visitors": 58,
+      "percentage": 0.315,
+      "yoyChange": 47,
+      "yoyChangePct": 427.27,
+      "sortOrder": 19
+    },
+    {
+      "id": "cmo1ram1j0017s9r4iizt08ej",
+      "stateName": "Kansas",
+      "visitors": 56,
+      "percentage": 0.304,
+      "yoyChange": 56,
+      "yoyChangePct": null,
+      "sortOrder": 20
+    },
+    {
+      "id": "cmo1ram1l0018s9r4072y7luk",
+      "stateName": "Oklahoma",
+      "visitors": 56,
+      "percentage": 0.301,
+      "yoyChange": 56,
+      "yoyChangePct": null,
+      "sortOrder": 21
+    },
+    {
+      "id": "cmo1ram1n0019s9r42aabwofk",
+      "stateName": "North Dakota",
+      "visitors": 56,
+      "percentage": 0.301,
+      "yoyChange": 56,
+      "yoyChangePct": null,
+      "sortOrder": 22
+    },
+    {
+      "id": "cmo1ram1o001as9r4aky7ulry",
+      "stateName": "Idaho",
+      "visitors": 52,
+      "percentage": 0.28,
+      "yoyChange": 52,
+      "yoyChangePct": null,
+      "sortOrder": 23
+    },
+    {
+      "id": "cmo1ram1q001bs9r4cydz2cxw",
+      "stateName": "District of Columbia",
+      "visitors": 50,
+      "percentage": 0.269,
+      "yoyChange": 50,
+      "yoyChangePct": null,
+      "sortOrder": 24
+    },
+    {
+      "id": "cmo1ram1s001cs9r4jci07epa",
+      "stateName": "New Jersey",
+      "visitors": 47,
+      "percentage": 0.253,
+      "yoyChange": 47,
+      "yoyChangePct": null,
+      "sortOrder": 25
+    },
+    {
+      "id": "cmo1ram1t001ds9r4lpv4uq0z",
+      "stateName": "North Carolina",
+      "visitors": 42,
+      "percentage": 0.226,
+      "yoyChange": 42,
+      "yoyChangePct": null,
+      "sortOrder": 26
+    },
+    {
+      "id": "cmo1ram1v001es9r499n2k6tw",
+      "stateName": "Hawaii",
+      "visitors": 41,
+      "percentage": 0.219,
+      "yoyChange": 41,
+      "yoyChangePct": null,
+      "sortOrder": 27
+    },
+    {
+      "id": "cmo1ram1x001fs9r4rb8dboeu",
+      "stateName": "Massachusetts",
+      "visitors": 39,
+      "percentage": 0.213,
+      "yoyChange": 39,
+      "yoyChangePct": null,
+      "sortOrder": 28
+    },
+    {
+      "id": "cmo1ram1y001gs9r453f9b893",
+      "stateName": "Tennessee",
+      "visitors": 37,
+      "percentage": 0.198,
+      "yoyChange": 19,
+      "yoyChangePct": 105.56,
+      "sortOrder": 29
+    },
+    {
+      "id": "cmo1ram20001hs9r4130eh3q6",
+      "stateName": "Montana",
+      "visitors": 35,
+      "percentage": 0.19,
+      "yoyChange": 35,
+      "yoyChangePct": null,
+      "sortOrder": 30
+    },
+    {
+      "id": "cmo1ram22001is9r4s7bz6f87",
+      "stateName": "Nebraska",
+      "visitors": 35,
+      "percentage": 0.188,
+      "yoyChange": 35,
+      "yoyChangePct": null,
+      "sortOrder": 31
+    },
+    {
+      "id": "cmo1ram23001js9r4if84nxgl",
+      "stateName": "Rhode Island",
+      "visitors": 35,
+      "percentage": 0.187,
+      "yoyChange": 35,
+      "yoyChangePct": null,
+      "sortOrder": 32
+    },
+    {
+      "id": "cmo1ram25001ks9r4wdjx65jw",
+      "stateName": "Missouri",
+      "visitors": 34,
+      "percentage": 0.183,
+      "yoyChange": 5,
+      "yoyChangePct": 17.24,
+      "sortOrder": 33
+    },
+    {
+      "id": "cmo1ram26001ls9r4glizlnnf",
+      "stateName": "South Dakota",
+      "visitors": 32,
+      "percentage": 0.175,
+      "yoyChange": 15,
+      "yoyChangePct": 88.24,
+      "sortOrder": 34
+    },
+    {
+      "id": "cmo1ram28001ms9r4kse6hbc5",
+      "stateName": "Kentucky",
+      "visitors": 29,
+      "percentage": 0.159,
+      "yoyChange": -13,
+      "yoyChangePct": -30.95,
+      "sortOrder": 35
+    },
+    {
+      "id": "cmo1ram29001ns9r440mkk3kz",
+      "stateName": "Mississippi",
+      "visitors": 28,
+      "percentage": 0.152,
+      "yoyChange": 23,
+      "yoyChangePct": 460,
+      "sortOrder": 36
+    },
+    {
+      "id": "cmo1ram2b001os9r4raun3tis",
+      "stateName": "Oregon",
+      "visitors": 25,
+      "percentage": 0.136,
+      "yoyChange": 25,
+      "yoyChangePct": null,
+      "sortOrder": 37
+    },
+    {
+      "id": "cmo1ram2c001ps9r4w2bjeeoo",
+      "stateName": "Louisiana",
+      "visitors": 25,
+      "percentage": 0.134,
+      "yoyChange": 4,
+      "yoyChangePct": 19.05,
+      "sortOrder": 38
+    },
+    {
+      "id": "cmo1ram2e001qs9r4hxflf5oh",
+      "stateName": "South Carolina",
+      "visitors": 21,
+      "percentage": 0.112,
+      "yoyChange": 21,
+      "yoyChangePct": null,
+      "sortOrder": 39
+    },
+    {
+      "id": "cmo1ram2g001rs9r4mf1bpz74",
+      "stateName": "Maryland",
+      "visitors": 17,
+      "percentage": 0.094,
+      "yoyChange": -8,
+      "yoyChangePct": -32,
+      "sortOrder": 40
+    },
+    {
+      "id": "cmo1ram2h001ss9r4g1okvqzq",
+      "stateName": "Maine",
+      "visitors": 14,
+      "percentage": 0.076,
+      "yoyChange": 3,
+      "yoyChangePct": 27.27,
+      "sortOrder": 41
+    },
+    {
+      "id": "cmo1ram2j001ts9r48vp375mq",
+      "stateName": "New Hampshire",
+      "visitors": 14,
+      "percentage": 0.073,
+      "yoyChange": 14,
+      "yoyChangePct": null,
+      "sortOrder": 42
+    },
+    {
+      "id": "cmo1ram2k001us9r4udbiw1vp",
+      "stateName": "Vermont",
+      "visitors": 11,
+      "percentage": 0.061,
+      "yoyChange": 11,
+      "yoyChangePct": null,
+      "sortOrder": 43
+    },
+    {
+      "id": "cmo1ram2m001vs9r43kehrv8p",
+      "stateName": "Arkansas",
+      "visitors": 11,
+      "percentage": 0.058,
+      "yoyChange": 0,
+      "yoyChangePct": 0,
+      "sortOrder": 44
+    },
+    {
+      "id": "cmo1ram2n001ws9r4a4yiofg0",
+      "stateName": "Wyoming",
+      "visitors": 10,
+      "percentage": 0.053,
+      "yoyChange": 10,
+      "yoyChangePct": null,
+      "sortOrder": 45
+    },
+    {
+      "id": "cmo1ram2p001xs9r4zq3p9myd",
+      "stateName": "Alabama",
+      "visitors": 4,
+      "percentage": 0.023,
+      "yoyChange": 4,
+      "yoyChangePct": null,
+      "sortOrder": 46
+    }
+  ],
+  "originDMAs": [
+    {
+      "id": "cmo1ram2r001ys9r4swx6pdaq",
+      "dmaName": "Las Vegas",
+      "dmaCode": "839",
+      "state": "Nevada",
+      "visitors": 13764,
+      "percentage": 74.396,
+      "yoyChange": 12939,
+      "yoyChangePct": 1568.36,
+      "sortOrder": 0
+    },
+    {
+      "id": "cmo1ram2u001zs9r4snj2hgci",
+      "dmaName": "Los Angeles",
+      "dmaCode": "803",
+      "state": "California",
+      "visitors": 717,
+      "percentage": 3.873,
+      "yoyChange": 619,
+      "yoyChangePct": 631.63,
+      "sortOrder": 1
+    },
+    {
+      "id": "cmo1ram2v0020s9r46j0sh5vh",
+      "dmaName": "Seattle-Tacoma",
+      "dmaCode": "819",
+      "state": "Washington",
+      "visitors": 284,
+      "percentage": 1.535,
+      "yoyChange": 263,
+      "yoyChangePct": 1252.38,
+      "sortOrder": 2
+    },
+    {
+      "id": "cmo1ram2x0021s9r4oy6c4upm",
+      "dmaName": "Salt Lake City",
+      "dmaCode": "770",
+      "state": "Utah",
+      "visitors": 225,
+      "percentage": 1.217,
+      "yoyChange": 201,
+      "yoyChangePct": 837.5,
+      "sortOrder": 3
+    },
+    {
+      "id": "cmo1ram2z0022s9r477wy9vct",
+      "dmaName": "Minneapolis-St. Paul",
+      "dmaCode": "613",
+      "state": "Minnesota",
+      "visitors": 224,
+      "percentage": 1.21,
+      "yoyChange": 188,
+      "yoyChangePct": 522.22,
+      "sortOrder": 4
+    },
+    {
+      "id": "cmo1ram300023s9r43567gm00",
+      "dmaName": "San Francisco-Oak-San Jose",
+      "dmaCode": "807",
+      "state": "California",
+      "visitors": 176,
+      "percentage": 0.95,
+      "yoyChange": 176,
+      "yoyChangePct": null,
+      "sortOrder": 5
+    },
+    {
+      "id": "cmo1ram320024s9r46k3hizb9",
+      "dmaName": "Denver",
+      "dmaCode": "751",
+      "state": "Colorado",
+      "visitors": 174,
+      "percentage": 0.94,
+      "yoyChange": 163,
+      "yoyChangePct": 1481.82,
+      "sortOrder": 6
+    },
+    {
+      "id": "cmo1ram330025s9r4ni5h9h3m",
+      "dmaName": "Philadelphia",
+      "dmaCode": "504",
+      "state": "Pennsylvania",
+      "visitors": 140,
+      "percentage": 0.759,
+      "yoyChange": 129,
+      "yoyChangePct": 1172.73,
+      "sortOrder": 7
+    },
+    {
+      "id": "cmo1ram350026s9r4um2nydp2",
+      "dmaName": "Albuquerque-Santa Fe",
+      "dmaCode": "790",
+      "state": "New Mexico",
+      "visitors": 135,
+      "percentage": 0.728,
+      "yoyChange": 135,
+      "yoyChangePct": null,
+      "sortOrder": 8
+    },
+    {
+      "id": "cmo1ram370027s9r4jbxdu4xl",
+      "dmaName": "Phoenix",
+      "dmaCode": "753",
+      "state": "Arizona",
+      "visitors": 129,
+      "percentage": 0.699,
+      "yoyChange": 129,
+      "yoyChangePct": null,
+      "sortOrder": 9
+    },
+    {
+      "id": "cmo1ram380028s9r4d5wz3eo7",
+      "dmaName": "New York",
+      "dmaCode": "501",
+      "state": "New York",
+      "visitors": 129,
+      "percentage": 0.699,
+      "yoyChange": 129,
+      "yoyChangePct": null,
+      "sortOrder": 10
+    },
+    {
+      "id": "cmo1ram3a0029s9r40furowwu",
+      "dmaName": "San Diego",
+      "dmaCode": "825",
+      "state": "California",
+      "visitors": 118,
+      "percentage": 0.635,
+      "yoyChange": 97,
+      "yoyChangePct": 461.9,
+      "sortOrder": 11
+    },
+    {
+      "id": "cmo1ram3c002as9r4immj0to3",
+      "dmaName": "Fresno-Visalia",
+      "dmaCode": "866",
+      "state": "California",
+      "visitors": 108,
+      "percentage": 0.584,
+      "yoyChange": 108,
+      "yoyChangePct": null,
+      "sortOrder": 12
+    },
+    {
+      "id": "cmo1ram3e002bs9r44azgh4sr",
+      "dmaName": "Chicago",
+      "dmaCode": "602",
+      "state": "Illinois",
+      "visitors": 87,
+      "percentage": 0.471,
+      "yoyChange": 63,
+      "yoyChangePct": 262.5,
+      "sortOrder": 13
+    },
+    {
+      "id": "cmo1ram3f002cs9r4pzludgxy",
+      "dmaName": "Washington, DC",
+      "dmaCode": "511",
+      "state": "Virginia",
+      "visitors": 79,
+      "percentage": 0.429,
+      "yoyChange": 54,
+      "yoyChangePct": 216,
+      "sortOrder": 14
+    },
+    {
+      "id": "cmo1ram3h002ds9r4pkgfpxpv",
+      "dmaName": "Sacramento-Stockton",
+      "dmaCode": "862",
+      "state": "California",
+      "visitors": 74,
+      "percentage": 0.397,
+      "yoyChange": 74,
+      "yoyChangePct": null,
+      "sortOrder": 15
+    },
+    {
+      "id": "cmo1ram3j002es9r4pew9r9cm",
+      "dmaName": "Kansas City",
+      "dmaCode": "616",
+      "state": "Missouri",
+      "visitors": 59,
+      "percentage": 0.32,
+      "yoyChange": 42,
+      "yoyChangePct": 247.06,
+      "sortOrder": 16
+    },
+    {
+      "id": "cmo1ram3k002fs9r4i5tz0zdz",
+      "dmaName": "Fargo",
+      "dmaCode": "724",
+      "state": "North Dakota",
+      "visitors": 56,
+      "percentage": 0.301,
+      "yoyChange": 56,
+      "yoyChangePct": null,
+      "sortOrder": 17
+    },
+    {
+      "id": "cmo1ram3m002gs9r4731y9mj1",
+      "dmaName": "Houston",
+      "dmaCode": "618",
+      "state": "Texas",
+      "visitors": 54,
+      "percentage": 0.294,
+      "yoyChange": 48,
+      "yoyChangePct": 800,
+      "sortOrder": 18
+    },
+    {
+      "id": "cmo1ram3o002hs9r4o5y43i01",
+      "dmaName": "Bakersfield",
+      "dmaCode": "800",
+      "state": "California",
+      "visitors": 54,
+      "percentage": 0.294,
+      "yoyChange": 54,
+      "yoyChangePct": null,
+      "sortOrder": 19
+    },
+    {
+      "id": "cmo1ram3q002is9r42jl1640x",
+      "dmaName": "Tampa-St. Pete",
+      "dmaCode": "539",
+      "state": "Florida",
+      "visitors": 54,
+      "percentage": 0.293,
+      "yoyChange": 23,
+      "yoyChangePct": 74.19,
+      "sortOrder": 20
+    },
+    {
+      "id": "cmo1ram3r002js9r4675i1nvf",
+      "dmaName": "Boston",
+      "dmaCode": "506",
+      "state": "Massachusetts",
+      "visitors": 53,
+      "percentage": 0.287,
+      "yoyChange": 53,
+      "yoyChangePct": null,
+      "sortOrder": 21
+    },
+    {
+      "id": "cmo1ram3t002ks9r4sj6h75px",
+      "dmaName": "Cleveland-Akron",
+      "dmaCode": "510",
+      "state": "Ohio",
+      "visitors": 49,
+      "percentage": 0.263,
+      "yoyChange": -99,
+      "yoyChangePct": -66.89,
+      "sortOrder": 22
+    },
+    {
+      "id": "cmo1ram3v002ls9r4s5a3il0g",
+      "dmaName": "Detroit",
+      "dmaCode": "505",
+      "state": "Michigan",
+      "visitors": 48,
+      "percentage": 0.258,
+      "yoyChange": 35,
+      "yoyChangePct": 269.23,
+      "sortOrder": 23
+    },
+    {
+      "id": "cmo1ram3w002ms9r496kdvsg6",
+      "dmaName": "Reno",
+      "dmaCode": "811",
+      "state": "Nevada",
+      "visitors": 47,
+      "percentage": 0.252,
+      "yoyChange": 47,
+      "yoyChangePct": null,
+      "sortOrder": 24
+    },
+    {
+      "id": "cmo1ram3y002ns9r4sed5x6kr",
+      "dmaName": "Atlanta",
+      "dmaCode": "524",
+      "state": "Georgia",
+      "visitors": 45,
+      "percentage": 0.243,
+      "yoyChange": 37,
+      "yoyChangePct": 462.5,
+      "sortOrder": 25
+    },
+    {
+      "id": "cmo1ram40002os9r4r9ea9uw1",
+      "dmaName": "Honolulu",
+      "dmaCode": "744",
+      "state": "Hawaii",
+      "visitors": 41,
+      "percentage": 0.219,
+      "yoyChange": 41,
+      "yoyChangePct": null,
+      "sortOrder": 26
+    },
+    {
+      "id": "cmo1ram42002ps9r4jbh473mz",
+      "dmaName": "Tucson",
+      "dmaCode": "789",
+      "state": "Arizona",
+      "visitors": 40,
+      "percentage": 0.216,
+      "yoyChange": 28,
+      "yoyChangePct": 233.33,
+      "sortOrder": 27
+    },
+    {
+      "id": "cmo1ram43002qs9r4xr8qzd4u",
+      "dmaName": "Colorado Springs-Pueblo",
+      "dmaCode": "752",
+      "state": "Colorado",
+      "visitors": 40,
+      "percentage": 0.214,
+      "yoyChange": 24,
+      "yoyChangePct": 150,
+      "sortOrder": 28
+    },
+    {
+      "id": "cmo1ram45002rs9r4j3v4v1bp",
+      "dmaName": "Ft. Wayne",
+      "dmaCode": "509",
+      "state": "Indiana",
+      "visitors": 38,
+      "percentage": 0.205,
+      "yoyChange": 38,
+      "yoyChangePct": null,
+      "sortOrder": 29
+    }
+  ]
+}
