@@ -1,0 +1,901 @@
+{
+  "metadata": {
+    "query": "Attorneys/Lawyers in Las Vegas, NV (89101 area)",
+    "date_scraped": "2026-04-13",
+    "sources": ["avvo.com"],
+    "notes": "Justia, YellowPages, Martindale, FindLaw, Yelp, and NV State Bar all returned 403/blocked. Avvo was the only accessible source. Addresses span greater Las Vegas metro - filter by 89101 zip for downtown only.",
+    "total_unique_attorneys": 75
+  },
+  "attorneys": [
+    {
+      "name": "Nick Wooldridge",
+      "firm": "LV Criminal Defense",
+      "phone": "(877) 565-2874",
+      "email": null,
+      "address": "400 S 7th St #401, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, Federal Crime, Sex Crime",
+      "website": "http://www.lvcriminaldefense.com",
+      "source_url": "https://www.avvo.com/criminal-defense-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Warren Geller",
+      "firm": "Cofer & Geller, LLC",
+      "phone": "(702) 707-9579",
+      "email": null,
+      "address": "601 S 10th Street, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, Sex Crime, Violent Crime",
+      "website": "https://defense.vegas",
+      "source_url": "https://www.avvo.com/criminal-defense-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Ross Carl Goodman",
+      "firm": "Goodman Law Group",
+      "phone": "(702) 830-7762",
+      "email": null,
+      "address": "520 S 4th St STE #200, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, DUI & DWI, Domestic Violence",
+      "website": "https://goodmanlawgroup.com/",
+      "source_url": "https://www.avvo.com/criminal-defense-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Joel M. Mann",
+      "firm": "Law Office of Joel M. Mann",
+      "phone": "(702) 842-0733",
+      "email": null,
+      "address": "601 South 7th Street, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, DUI & DWI, Drug Crime",
+      "website": "https://www.legalmann.com/",
+      "source_url": "https://www.avvo.com/criminal-defense-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Philip H. Brown",
+      "firm": "Brown Law Offices",
+      "phone": "(702) 793-2686",
+      "email": null,
+      "address": "200 Hoover Avenue, Suite 130, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, Domestic Violence, Drug Crime",
+      "website": "https://www.thelasvegasdefender.com/",
+      "source_url": "https://www.avvo.com/criminal-defense-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Daniel S. Simon",
+      "firm": "Law Offices of Daniel S. Simon",
+      "phone": "(702) 819-8835",
+      "email": null,
+      "address": "810 S Casino Center Blvd, Las Vegas, NV 89101",
+      "practice_area": "Personal Injury, Car Accidents, Wrongful Death",
+      "website": "https://simonlawlv.com/",
+      "source_url": "https://www.avvo.com/personal-injury-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Jordan Philip Schnitzer",
+      "firm": "The Schnitzer Law Firm",
+      "phone": "(702) 960-1902",
+      "email": null,
+      "address": "710 S. 9th Street, Suite 2, Las Vegas, NV 89101",
+      "practice_area": "Personal Injury, Car Accidents, Wrongful Death",
+      "website": "https://theschnitzerlawfirm.com/",
+      "source_url": "https://www.avvo.com/personal-injury-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Michael A. Troiano",
+      "firm": "The Law Office of Michael A. Troiano",
+      "phone": "(702) 843-0846",
+      "email": null,
+      "address": "600 S. 8th St, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, DUI & DWI, Sex Crime",
+      "website": "https://troianovegaslaw.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=2"
+    },
+    {
+      "name": "Joshua L. Tomsheck",
+      "firm": "Hofland & Tomsheck",
+      "phone": "(702) 550-1489",
+      "email": null,
+      "address": "228 South 4th Street, First Floor, Las Vegas, NV 89101",
+      "practice_area": "DUI & DWI, Criminal Defense, Domestic Violence",
+      "website": "http://www.lvnvlawfirm.com",
+      "source_url": "https://www.avvo.com/dui-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Jay L Siegel",
+      "firm": "Law Office of Chip Siegel, Esq.",
+      "phone": "(702) 430-7531",
+      "email": null,
+      "address": "601 S. 7th Street, Las Vegas, NV 89101",
+      "practice_area": "DUI & DWI, Criminal Defense",
+      "website": null,
+      "source_url": "https://www.avvo.com/dui-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "John M Turco",
+      "firm": "Law Office of John M Turco",
+      "phone": "(702) 840-5323",
+      "email": null,
+      "address": "815 South Casino Center Blvd, Las Vegas, NV 89101",
+      "practice_area": "DUI & DWI, Domestic Violence, Criminal Defense",
+      "website": "https://www.turcolaw.com/",
+      "source_url": "https://www.avvo.com/dui-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Shelley D. Krohn",
+      "firm": "Shelley D. Krohn, Ltd.",
+      "phone": "(229) 547-3461",
+      "email": null,
+      "address": "228 S. Fourth Street, 3rd Floor, Las Vegas, NV 89101",
+      "practice_area": "Bankruptcy, Chapter 7, Guardianship",
+      "website": "http://www.krohnlawoffice.com/",
+      "source_url": "https://www.avvo.com/bankruptcy-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "James Terry Leavitt",
+      "firm": "James Terry Leavitt",
+      "phone": "(702) 385-7444",
+      "email": null,
+      "address": "601 S 6th St, Las Vegas, NV 89101",
+      "practice_area": "Bankruptcy, Chapter 7, Chapter 13",
+      "website": null,
+      "source_url": "https://www.avvo.com/bankruptcy-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Laura L. Fritz",
+      "firm": "Laura L. Fritz",
+      "phone": "(702) 383-5155",
+      "email": null,
+      "address": "609 South 7th Street, Las Vegas, NV 89101",
+      "practice_area": "Bankruptcy, Chapter 7, Chapter 13, Debt Settlement",
+      "website": null,
+      "source_url": "https://www.avvo.com/bankruptcy-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Bradley Jon Hofland",
+      "firm": "Individual Practice",
+      "phone": "(702) 751-8818",
+      "email": null,
+      "address": "228 S 4th St, Las Vegas, NV 89101",
+      "practice_area": "Family, Divorce & Separation, Child Custody, Child Support",
+      "website": "http://www.hoflandlaw.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=4"
+    },
+    {
+      "name": "Timothy Ryan O'Reilly",
+      "firm": "O'Reilly Law Group",
+      "phone": "(844) 651-3940",
+      "email": null,
+      "address": "325 S Maryland Pkwy, Las Vegas, NV 89101",
+      "practice_area": "Litigation, Administrative Law, Gaming",
+      "website": "https://www.oreillylawgroup.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=6"
+    },
+    {
+      "name": "David R. Fischer",
+      "firm": "Law Office of David R. Fischer",
+      "phone": "(702) 866-9864",
+      "email": null,
+      "address": "400 South 4th Street, Suite 500, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, Federal Crime, Sex Crime",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=8"
+    },
+    {
+      "name": "George T. Bochanis",
+      "firm": "George T. Bochanis Ltd.",
+      "phone": "(877) 311-1820",
+      "email": null,
+      "address": "631 S 9th St, Las Vegas, NV 89101",
+      "practice_area": "Wrongful Death, Personal Injury, Slip and Fall",
+      "website": "http://lvaccident.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=5"
+    },
+    {
+      "name": "Charles Bennion",
+      "firm": "Charles Bennion",
+      "phone": "(702) 997-0827",
+      "email": null,
+      "address": "500 S. 7th Street, Las Vegas, NV 89101",
+      "practice_area": "Immigration",
+      "website": "http://bennion-law.com",
+      "source_url": "https://www.avvo.com/immigration-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Arsen V. Baziyants",
+      "firm": "Arsen V. Baziyants",
+      "phone": "(702) 243-9444",
+      "email": null,
+      "address": "530 S. 9th Street, Las Vegas, NV 89101",
+      "practice_area": "Immigration",
+      "website": null,
+      "source_url": "https://www.avvo.com/immigration-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Christopher Rasmussen",
+      "firm": "Rasmussen Law P.C.",
+      "phone": "(702) 384-5563",
+      "email": null,
+      "address": "520 South Fourth Street, Las Vegas, NV 89101",
+      "practice_area": "Criminal Defense, Personal Injury, Business",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=9"
+    },
+    {
+      "name": "Qumars Behzadi",
+      "firm": "Behzadi Law Offices",
+      "phone": "(775) 402-8168",
+      "email": null,
+      "address": "7720 W Sahara Ave Ste 106, Las Vegas, NV 89117",
+      "practice_area": "Personal Injury, Car Accidents, Workers Compensation",
+      "website": "http://behzadilaw.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html"
+    },
+    {
+      "name": "Sandy Van",
+      "firm": "Van Law Firm Injury and Accident Attorneys",
+      "phone": "(725) 900-3901",
+      "email": null,
+      "address": "1290 S Jones Blvd, Las Vegas, NV 89146",
+      "practice_area": "Car Accidents, Trucking Accident, Motorcycle Accident",
+      "website": "http://vanlawfirm.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html"
+    },
+    {
+      "name": "James W Claflin",
+      "firm": "Claflin Law Ltd",
+      "phone": "(702) 500-0846",
+      "email": null,
+      "address": "3753 Howard Hughes Parkway, Suite 200, Las Vegas, NV 89169",
+      "practice_area": "Family, Divorce & Separation, Marriage & Prenuptials",
+      "website": "http://ClafLaw.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html"
+    },
+    {
+      "name": "Dale A. Hayes",
+      "firm": "Hayes | Wakayama | Juan",
+      "phone": "(702) 570-8229",
+      "email": null,
+      "address": "5798 S. Durango Drive, Ste. 105, Las Vegas, NV 89113",
+      "practice_area": "Litigation, Personal Injury, DUI & DWI",
+      "website": "https://www.duilawyersoflasvegas.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=2"
+    },
+    {
+      "name": "Christopher Patrick Ford",
+      "firm": "Ford Law",
+      "phone": "(844) 495-0950",
+      "email": null,
+      "address": "1 Meridian Vista Dr., Suite 255, Las Vegas, NV 89135",
+      "practice_area": "Divorce & Separation, Child Custody, Alimony",
+      "website": "https://fordlawlv.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=2"
+    },
+    {
+      "name": "Sagar R. Raich",
+      "firm": "RAICH LAW PLLC",
+      "phone": "(702) 761-3248",
+      "email": null,
+      "address": "6785 S. Eastern Ave., Suite 5, Las Vegas, NV 89119",
+      "practice_area": "Business, Contracts & Agreements, Corporate & Incorporation",
+      "website": "http://www.raichattorneys.com",
+      "source_url": "https://www.avvo.com/business-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Ashley Morgan Watkins",
+      "firm": "Sam & Ash Injury Law",
+      "phone": "(833) 475-0276",
+      "email": null,
+      "address": "1108 S Casino Center Blvd., Las Vegas, NV 89104",
+      "practice_area": "Car Accidents, Personal Injury, Wrongful Death",
+      "website": "http://samandashlaw.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=3"
+    },
+    {
+      "name": "Bradley Myers",
+      "firm": "THE702FIRM Injury Attorneys",
+      "phone": "(702) 473-1585",
+      "email": null,
+      "address": "8335 W Flamingo Rd., Las Vegas, NV 89147",
+      "practice_area": "Personal Injury, Car Accidents, Slip and Fall",
+      "website": "https://the702firm.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=3"
+    },
+    {
+      "name": "Tracy M. Rau",
+      "firm": "Tracy M. Rau",
+      "phone": "(855) 637-1778",
+      "email": null,
+      "address": "501 S. Rancho Drive, Ste. F-40, Las Vegas, NV 89106",
+      "practice_area": "Divorce & Separation, Child Custody, Litigation",
+      "website": "http://www.tracymrau.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=3"
+    },
+    {
+      "name": "Derek William Kaczmarek",
+      "firm": "Kaczmarek & Jojola",
+      "phone": "(866) 738-1407",
+      "email": null,
+      "address": "1654 Village Center Circle, Suite 160, Las Vegas, NV",
+      "practice_area": "Tax, Tax Fraud & Tax Evasion",
+      "website": "http://www.kjtaxlaw.com/",
+      "source_url": "https://www.avvo.com/tax-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "James Oronoz",
+      "firm": "Oronoz & Ericsson, LLC",
+      "phone": "(702) 832-4037",
+      "email": null,
+      "address": "9900 Covington Cross Drive, Suite 290, Las Vegas, NV 89144",
+      "practice_area": "Personal Injury, Criminal Defense, Car Accidents",
+      "website": "https://oelawyers.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=3"
+    },
+    {
+      "name": "Leonard H. Stone",
+      "firm": "Shook & Stone",
+      "phone": "(702) 848-5016",
+      "email": null,
+      "address": "9455 West Russell Road, Suite 100, Las Vegas, NV",
+      "practice_area": "Personal Injury, Wrongful Death, Trucking Accident",
+      "website": "https://www.shookandstone.com/",
+      "source_url": "https://www.avvo.com/personal-injury-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Anthony Joseph Perez",
+      "firm": "Avrek Law Firm",
+      "phone": "(844) 505-3903",
+      "email": null,
+      "address": "7455 Arroyo Crossing, Suite 220, Las Vegas, NV",
+      "practice_area": "Personal Injury, Car Accidents",
+      "website": "https://www.alldaylawfirm.com",
+      "source_url": "https://www.avvo.com/personal-injury-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Marjorie A. Guymon",
+      "firm": "Goldsmith & Guymon, P.C.",
+      "phone": "(888) 996-7084",
+      "email": null,
+      "address": "2055 Village Center Circle, Las Vegas, NV 89134",
+      "practice_area": "Business, Bankruptcy & Debt, Family",
+      "website": "http://www.goldguylaw.com/",
+      "source_url": "https://www.avvo.com/business-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "G. Mark Albright",
+      "firm": "Albright Stoddard Warnick & Albright",
+      "phone": "(702) 410-6562",
+      "email": null,
+      "address": "801 S. Rancho Drive, Quail Park I, Suite D-4, Las Vegas, NV 89106",
+      "practice_area": "Business, Litigation, Personal Injury",
+      "website": "https://www.albrightstoddard.com/",
+      "source_url": "https://www.avvo.com/business-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Mark S. Katz",
+      "firm": "Alterwitz Katz LLP",
+      "phone": "(702) 357-3320",
+      "email": null,
+      "address": "8965 S. Eastern Avenue, Suite 360, Las Vegas, NV 89123",
+      "practice_area": "Business, Estate Planning, Tax, Real Estate",
+      "website": "http://www.katzlv.com",
+      "source_url": "https://www.avvo.com/business-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Joseph Zvi Gersten",
+      "firm": "The Gersten Law Firm PLLC",
+      "phone": "(855) 517-2093",
+      "email": null,
+      "address": "9680 W Tropicana Ave, Suite 146, Las Vegas, NV 89147",
+      "practice_area": "Business, Criminal Defense, Family",
+      "website": "http://www.thegerstenlawfirm.com",
+      "source_url": "https://www.avvo.com/business-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Edward L Kainen",
+      "firm": "KAINEN LAW GROUP, PLLC",
+      "phone": "(877) 801-6028",
+      "email": null,
+      "address": "3303 Novat Street, Suite 200, Las Vegas, NV 89129",
+      "practice_area": "Family, Divorce & Separation, Child Custody",
+      "website": "http://www.KainenLawGroup.com",
+      "source_url": "https://www.avvo.com/family-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Neil M Mullins",
+      "firm": "Kainen Law Group",
+      "phone": "(833) 366-2077",
+      "email": null,
+      "address": "3303 Novat Street, Suite 200, Las Vegas, NV 89129",
+      "practice_area": "Family, Divorce & Separation",
+      "website": "https://www.kainenlawgroup.com/attorneys/neil-m-mullins/",
+      "source_url": "https://www.avvo.com/family-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Ann Ellyn Kolber",
+      "firm": "Law Practice, Ltd.",
+      "phone": "(702) 747-8926",
+      "email": null,
+      "address": "5516 South Fort Apache Road, Suite 110, Las Vegas, NV 89148",
+      "practice_area": "Family, Divorce & Separation, Uncontested Divorce",
+      "website": "https://www.lawpracticeltd.com/",
+      "source_url": "https://www.avvo.com/family-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Andrew L Kynaston",
+      "firm": "Kainen Law Group",
+      "phone": "(833) 977-2661",
+      "email": null,
+      "address": "3303 Novat Street, Suite 200, Las Vegas, NV 89129",
+      "practice_area": "Family, Marriage & Prenuptials, Adoption",
+      "website": "http://www.kainenlawgroup.com/andrew-l-kynaston-esq/",
+      "source_url": "https://www.avvo.com/family-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Terry A. Moore",
+      "firm": "Marquis Aurbach",
+      "phone": "(702) 466-1751",
+      "email": null,
+      "address": "10001 Park Run Drive, Las Vegas, NV 89145",
+      "practice_area": "Real Estate, Landlord & Tenant, Litigation",
+      "website": "https://www.maclaw.com/attorney/moore-terry-a/",
+      "source_url": "https://www.avvo.com/real-estate-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Phillip Sandford Aurbach",
+      "firm": "Marquis Aurbach Chtd.",
+      "phone": "(702) 710-4976",
+      "email": null,
+      "address": "10001 Park Run Drive, Las Vegas, NV 89145",
+      "practice_area": "Real Estate, Arbitration, Mediation, Employment & Labor",
+      "website": "https://www.maclaw.com/attorney/aurbach-phillip-s/",
+      "source_url": "https://www.avvo.com/real-estate-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Carrie E. Hurtik",
+      "firm": "HURTIK LAW & ASSOCIATES",
+      "phone": "(702) 323-5098",
+      "email": null,
+      "address": "6767 W. Tropicana Avenue, Suite 200, Las Vegas, NV 89103",
+      "practice_area": "Real Estate, Probate, Estate Planning",
+      "website": "https://hurtiklaw.com",
+      "source_url": "https://www.avvo.com/real-estate-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "R. Duane Frizell",
+      "firm": "Frizell Law Firm",
+      "phone": "(844) 575-0440",
+      "email": null,
+      "address": "8275 S Eastern Ave Ste 200, Las Vegas, NV 89123",
+      "practice_area": "Real Estate, Litigation, Business",
+      "website": "http://www.frizelllaw.com",
+      "source_url": "https://www.avvo.com/real-estate-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Darren Heyman",
+      "firm": "Heyman Law Group",
+      "phone": "(702) 957-1724",
+      "email": null,
+      "address": "6671 Las Vegas Blvd. S., #D-210, Las Vegas, NV 89119",
+      "practice_area": "Immigration",
+      "website": "https://www.heymanlawgroup.com/",
+      "source_url": "https://www.avvo.com/immigration-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Jocelyn A. Cortez",
+      "firm": "GWP Immigration Law",
+      "phone": "(702) 737-7717",
+      "email": null,
+      "address": "8942 Spanish Ridge Ave., Ste 1, Las Vegas, NV 89148",
+      "practice_area": "Immigration",
+      "website": "https://gwp.law/",
+      "source_url": "https://www.avvo.com/immigration-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Daniel Frederick Lippmann",
+      "firm": "Lipp Law LLC",
+      "phone": "(702) 745-2363",
+      "email": null,
+      "address": "2580 Sorrel Street, Las Vegas, NV 89146",
+      "practice_area": "Immigration, Criminal Defense, Domestic Violence",
+      "website": "https://defenseattorneyvegas.com/",
+      "source_url": "https://www.avvo.com/immigration-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Mark A Naugle",
+      "firm": "Monument Immigration",
+      "phone": "(801) 609-3659",
+      "email": null,
+      "address": "1180 North Town Center Drive, Suite 100, Las Vegas, NV",
+      "practice_area": "Immigration",
+      "website": null,
+      "source_url": "https://www.avvo.com/immigration-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Benjamin P. Cloward",
+      "firm": "Cloward Trial Lawyers",
+      "phone": "(866) 545-3168",
+      "email": null,
+      "address": "9950 W. Cheyenne Ave., Las Vegas, NV 89129",
+      "practice_area": "Wrongful Death, Personal Injury, Motorcycle Accident",
+      "website": "http://www.TheFierceFirm.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=4"
+    },
+    {
+      "name": "William T. Sykes",
+      "firm": "Claggett & Sykes Law Firm",
+      "phone": "(702) 997-2887",
+      "email": null,
+      "address": "4101 Meadows Lane, Suite 100, Las Vegas, NV 89107",
+      "practice_area": "Personal Injury, Car Accidents, Defective Products",
+      "website": "https://csgtrials.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=4"
+    },
+    {
+      "name": "Matthew J. Kreutzer",
+      "firm": "Howard & Howard Attorneys",
+      "phone": "(702) 819-0651",
+      "email": null,
+      "address": "3800 Howard Hughes Pkwy, Suite 1000, Las Vegas, NV 89169",
+      "practice_area": "Franchising, Litigation",
+      "website": "http://www.forwardfranchising.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=4"
+    },
+    {
+      "name": "Michael A. Federico",
+      "firm": "Guard Dog Law LLC",
+      "phone": "(844) 264-9906",
+      "email": null,
+      "address": "500 N. Rainbow Suite 300, Las Vegas, NV 89107",
+      "practice_area": "Personal Injury, Criminal Defense, Civil Rights",
+      "website": "http://guarddoglaw.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=5"
+    },
+    {
+      "name": "Samuel Mirejovsky",
+      "firm": "Sam & Ash Injury Law",
+      "phone": "(855) 952-2517",
+      "email": null,
+      "address": "1108 S Casino Center Blvd., Las Vegas, NV 89104",
+      "practice_area": "Personal Injury, Car Accidents, Motorcycle Accident",
+      "website": "http://samandashlaw.com/las-vegas/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=5"
+    },
+    {
+      "name": "Daryl Alterwitz",
+      "firm": "Alterwitz Katz, LLP",
+      "phone": "(702) 748-8252",
+      "email": null,
+      "address": "8965 S Eastern Ave Ste 360, Las Vegas, NV 89123",
+      "practice_area": "Probate, Business, Estate Planning",
+      "website": "http://www.alterwitzkatz.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=6"
+    },
+    {
+      "name": "M. Erik Ahlander",
+      "firm": "Ahlander Injury Law",
+      "phone": "(702) 996-8261",
+      "email": null,
+      "address": "5532 S. Fort Apache Rd., Ste. 110, Las Vegas, NV 89148",
+      "practice_area": "Car Accidents, Personal Injury, Motorcycle Accident",
+      "website": "https://ahlanderinjurylaw.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=6"
+    },
+    {
+      "name": "Lewis John Gazda",
+      "firm": "Gazda & Tadayon, LLC",
+      "phone": "(702) 623-1495",
+      "email": null,
+      "address": "2600 S Rainbow Blvd Ste 200, Las Vegas, NV 89146",
+      "practice_area": "Car Accidents, Personal Injury, Spinal Cord Injury",
+      "website": "http://www.GazdaTadayon.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=6"
+    },
+    {
+      "name": "Gary M. Zernich",
+      "firm": "Roberts Stoffel Family Law Group",
+      "phone": "(833) 720-0705",
+      "email": null,
+      "address": "4411 South Pecos Road, Las Vegas, NV 89121",
+      "practice_area": "Family, Personal Injury",
+      "website": "https://lvfamilylaw.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=6"
+    },
+    {
+      "name": "Joseph T. Kozlowski",
+      "firm": "Garman Turner Gordon",
+      "phone": "(725) 777-2735",
+      "email": null,
+      "address": "650 White Drive, Suite 100, Las Vegas, NV 89119",
+      "practice_area": "Business, Real Estate, Banking",
+      "website": "http://www.gtg.legal",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=7"
+    },
+    {
+      "name": "David Mincin",
+      "firm": "Mincin Law, PLLC",
+      "phone": "(888) 572-6608",
+      "email": null,
+      "address": "7465 W. Lake Mead Blvd., Ste. 100, Las Vegas, NV 89128",
+      "practice_area": "Real Estate, Bankruptcy & Debt, Business",
+      "website": "http://www.mincinlaw.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=7"
+    },
+    {
+      "name": "Ryan Helmick",
+      "firm": "The Defense Firm",
+      "phone": "(702) 435-6425",
+      "email": null,
+      "address": "6830 S.Rainbow Blvd. Suite 200-A, Las Vegas, NV 89118",
+      "practice_area": "Criminal Defense, DUI & DWI, Sex Crime",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=7"
+    },
+    {
+      "name": "Brian Nelson",
+      "firm": "Law Offices of Brian H. Nelson",
+      "phone": "(702) 485-4567",
+      "email": null,
+      "address": "9525 Hillwood Drive, Suite 140, Las Vegas, NV 89134",
+      "practice_area": "Probate, Litigation, Trusts",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=7"
+    },
+    {
+      "name": "Jennifer L. Ferris",
+      "firm": "Ferris Law",
+      "phone": "(702) 710-8882",
+      "email": null,
+      "address": "601 South Rancho Drive, Suite C-20, Las Vegas, NV 89106",
+      "practice_area": "Criminal Defense",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=8"
+    },
+    {
+      "name": "Benjamin C. Durham",
+      "firm": "Benjamin Durham Law Firm",
+      "phone": "(702) 631-6111",
+      "email": null,
+      "address": "601 S. Rancho Dr. Ste B-14, Las Vegas, NV 89106",
+      "practice_area": "Criminal Defense, Personal Injury",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=8"
+    },
+    {
+      "name": "Kimber Leann Laux",
+      "firm": "Sgro and Roger, Attorneys at Law",
+      "phone": "(702) 384-9800",
+      "email": null,
+      "address": "2901 El Camino Ave., Suite 204, Las Vegas, NV 89102",
+      "practice_area": "Family, Child Custody, Divorce & Separation",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=8"
+    },
+    {
+      "name": "Cody S. Mounteer",
+      "firm": "Marquis Aurbach",
+      "phone": "(702) 207-6089",
+      "email": null,
+      "address": "10001 Park Run Drive, Las Vegas, NV 89145",
+      "practice_area": "Construction & Development, Litigation, Real Estate",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=8"
+    },
+    {
+      "name": "Stephen M. Dixon",
+      "firm": "Steve Dixon Law",
+      "phone": "(702) 329-4911",
+      "email": null,
+      "address": "10181 W Park Run Dr. #110, Suite 110, Las Vegas, NV 89145",
+      "practice_area": "Car Accidents, Personal Injury",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=9"
+    },
+    {
+      "name": "Kyle R. Tatum",
+      "firm": "Kang & Associates",
+      "phone": "(702) 333-4223",
+      "email": null,
+      "address": "6480 W. Spring Mountain Rd., Ste. 1, Las Vegas, NV 89146",
+      "practice_area": "Personal Injury, Criminal Defense, Litigation",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=9"
+    },
+    {
+      "name": "Lawrence C. Hill",
+      "firm": "Law Office of Lawrence C. Hill and Associates",
+      "phone": "(702) 530-5688",
+      "email": null,
+      "address": "3430 E. Flamingo Road, #232, Las Vegas, NV 89121",
+      "practice_area": "Car Accidents, Personal Injury, Motorcycle Accident",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=9"
+    },
+    {
+      "name": "Jonathan T Remmel",
+      "firm": "Remmel Law Firm",
+      "phone": "(702) 522-7707",
+      "email": null,
+      "address": "804 S Jones Blvd, Las Vegas, NV 89107",
+      "practice_area": "Personal Injury, Car Accidents, Wrongful Death",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=9"
+    },
+    {
+      "name": "Michael Phillip Balaban",
+      "firm": "Law Offices of Michael P. Balaban",
+      "phone": "(702) 857-8813",
+      "email": null,
+      "address": "10726 Del Rudini Street, Las Vegas, NV 89141",
+      "practice_area": "Employment & Labor, Discrimination, Sexual Harassment",
+      "website": "http://balaban-law.com",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=10"
+    },
+    {
+      "name": "Keith Edwin Galliher",
+      "firm": "The Galliher Law Firm",
+      "phone": "(855) 770-6061",
+      "email": null,
+      "address": "1850 E Sahara Ave Ste 107, Las Vegas, NV 89104",
+      "practice_area": "Personal Injury, Car Accidents, Slip and Fall",
+      "website": "http://www.galliher-law.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=10"
+    },
+    {
+      "name": "Candice E Renka",
+      "firm": "Marquis Aurbach Coffing",
+      "phone": "(702) 207-6075",
+      "email": null,
+      "address": "10001 Park Run Dr, Las Vegas, NV 89145",
+      "practice_area": "Litigation, Appeals, Business",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=10"
+    },
+    {
+      "name": "Michael David Pariente",
+      "firm": "Pariente Law Firm, P.C.",
+      "phone": "(702) 466-1871",
+      "email": null,
+      "address": "1635 Village Center Cir #280, Las Vegas, NV 89134",
+      "practice_area": "Criminal Defense, DUI & DWI, Domestic Violence",
+      "website": null,
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=10"
+    },
+    {
+      "name": "David Liebrader",
+      "firm": "Law Office of David Liebrader",
+      "phone": "(702) 380-3131",
+      "email": null,
+      "address": "3960 Howard Hughes Pkwy #500, Las Vegas, NV 89169",
+      "practice_area": "Securities & Investment Fraud, Business, Financial Markets",
+      "website": "https://www.investmentloss.com/",
+      "source_url": "https://www.avvo.com/all-lawyers/nv/las-vegas.html?page=10"
+    },
+    {
+      "name": "Taylor L. Randolph",
+      "firm": "Randolph Law Firm - North",
+      "phone": "(702) 904-9870",
+      "email": null,
+      "address": "6260 N. Durango Drive, Las Vegas, NV 89149",
+      "practice_area": "Tax, Chapter 7 Bankruptcy, Foreclosure",
+      "website": "http://www.randolphlawfirm.com",
+      "source_url": "https://www.avvo.com/bankruptcy-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Tisha R. Black",
+      "firm": "Black & Wadhams, Attorneys at Law",
+      "phone": "(702) 869-8801",
+      "email": null,
+      "address": "10777 West Twain Avenue, Third Floor, Las Vegas, NV 89135",
+      "practice_area": "Bankruptcy, Business, Contracts & Agreements",
+      "website": null,
+      "source_url": "https://www.avvo.com/bankruptcy-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Jennifer A Rigdon",
+      "firm": "Peters & Associates, LLP.",
+      "phone": "(702) 507-6990",
+      "email": null,
+      "address": "4230 S. Decatur Blvd., Ste. 200, Las Vegas, NV 89103",
+      "practice_area": "Bankruptcy, Chapter 7, Chapter 13",
+      "website": null,
+      "source_url": "https://www.avvo.com/bankruptcy-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "David M Grant",
+      "firm": "Grant Morris Dodds - Las Vegas Office",
+      "phone": "(702) 728-4425",
+      "email": null,
+      "address": "10161 W Park Run Dr #230, Las Vegas, NV 89135",
+      "practice_area": "Estate Planning, Trusts, Probate, Tax",
+      "website": "https://www.gmdlegal.com/",
+      "source_url": "https://www.avvo.com/estate-planning-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Delwyn E. Webber",
+      "firm": "Jones & LoBello",
+      "phone": "(702) 323-5649",
+      "email": null,
+      "address": "9950 W. Flamingo Rd, #100, Las Vegas, NV 89147",
+      "practice_area": "Estate Planning, Probate, Guardianship",
+      "website": "http://www.joneslobello.com",
+      "source_url": "https://www.avvo.com/estate-planning-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Mark Lee Dodds",
+      "firm": "Grant Morris Dodds - Las Vegas Office",
+      "phone": "(702) 751-0081",
+      "email": null,
+      "address": "10161 W Park Run Dr #230, Las Vegas, NV 89074",
+      "practice_area": "Estate Planning, Trusts, Probate",
+      "website": "https://www.gmdlegal.com/",
+      "source_url": "https://www.avvo.com/estate-planning-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Kirk D Kaplan",
+      "firm": "Crest Key Legal and Accounting",
+      "phone": "(702) 381-6449",
+      "email": null,
+      "address": "6980 O'Bannon Drive, Suite 100, Las Vegas, NV 89117",
+      "practice_area": "Estate Planning, Probate, Trusts",
+      "website": "https://crestkey.com/",
+      "source_url": "https://www.avvo.com/estate-planning-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "David A. Straus",
+      "firm": "Law Offices of David A Straus",
+      "phone": "(702) 381-6452",
+      "email": null,
+      "address": "900 Rancho Ln, Las Vegas, NV 89106",
+      "practice_area": "Estate Planning, Trusts, Probate",
+      "website": "http://strauslaw.com/",
+      "source_url": "https://www.avvo.com/estate-planning-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Eran Lagstein",
+      "firm": "Lagstein Law Firm",
+      "phone": "(323) 815-7439",
+      "email": null,
+      "address": "5940 S. Rainbow Blvd. Las Vegas, NV 89118",
+      "practice_area": "Employment & Labor, Car Accidents, Personal Injury",
+      "website": "http://www.losangeles-personalinjuryattorney.com",
+      "source_url": "https://www.avvo.com/employment-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Neama Rahmani",
+      "firm": "West Coast Trial Lawyers",
+      "phone": "(213) 237-1900",
+      "email": null,
+      "address": "6010 S Durango Dr, Suite 200, Las Vegas, NV",
+      "practice_area": "Employment & Labor, Personal Injury, Car Accidents",
+      "website": "https://westcoast.lawfirms.com/",
+      "source_url": "https://www.avvo.com/employment-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Nicholas D. Crosby",
+      "firm": "Marquis Aurbach",
+      "phone": "(702) 553-3153",
+      "email": null,
+      "address": "10001 Park Run Drive, Las Vegas, NV 89145",
+      "practice_area": "Employment & Labor, Constitutional, Civil Rights",
+      "website": "https://www.maclaw.com/attorney/crosby-nick-d/",
+      "source_url": "https://www.avvo.com/employment-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Joseph N. Mott",
+      "firm": "Claggett & Sykes Law Firm",
+      "phone": "(702) 655-2346",
+      "email": null,
+      "address": "4101 Meadows Lane, Suite 100, Las Vegas, NV 89107",
+      "practice_area": "Employment & Labor, Insurance, Personal Injury",
+      "website": null,
+      "source_url": "https://www.avvo.com/employment-lawyer/nv/las-vegas.html"
+    },
+    {
+      "name": "Derek N. Hatch",
+      "firm": "Jeffrey Burr, Ltd.",
+      "phone": "(702) 433-4455",
+      "email": null,
+      "address": "10000 W. Charleston Blvd. #100, Las Vegas, NV 89074",
+      "practice_area": "Tax",
+      "website": null,
+      "source_url": "https://www.avvo.com/tax-lawyer/nv/las-vegas.html"
+    }
+  ]
+}
