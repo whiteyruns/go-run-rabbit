@@ -7,6 +7,11 @@ import {
   marshmelloApr2,
   metric,
   demographicsByGroup,
+  dtlvHotels,
+  stripHotels,
+  downtownDining,
+  sumVisitors,
+  isCbmAnchor,
 } from "@/data/feed-the-block/marshmello-apr2";
 import { fmt, fmtNum } from "@/lib/utils";
 
@@ -99,14 +104,30 @@ function AnalyticsTab() {
       {/* Growth strip */}
       <GrowthStrip />
 
-      {/* Origin & Reach */}
-      <OriginSection />
+      {/* Spotlight on DTLV — district-impact story */}
+      <SpotlightDTLVSection />
 
-      {/* Hotel Attribution — critical for CBM */}
-      <HotelSection />
+      {/* Other DTLV Venues — non-CBM hotels in the district */}
+      <OtherDtlvHotelsSection />
 
-      {/* District Spillover */}
-      <SpilloverSection />
+      {/* Strip cross-traffic — hotels on the Strip */}
+      <StripCrossTrafficSection />
+
+      {/* Pre-event Origins + Post-event Destinations */}
+      <section>
+        <div className="mb-4">
+          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+            Pre-event Origins &amp; Post-event Destinations
+          </h3>
+          <p className="text-on-surface-variant text-sm mt-1">
+            Where attendees came from and where they went afterward
+          </p>
+        </div>
+        <div className="space-y-8">
+          <OutOfMarketSection />
+          <SpilloverSection />
+        </div>
+      </section>
 
       {/* Hourly curve + Dwell distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -149,7 +170,7 @@ function GrowthCard({ label, value, tone }: { label: string; value: string; tone
   );
 }
 
-function OriginSection() {
+function OutOfMarketSection() {
   const states = marshmelloApr2.originStates.slice(0, 10);
   const dmas = marshmelloApr2.originDMAs.slice(0, 10);
   const maxState = states[0]?.visitors ?? 1;
@@ -159,9 +180,16 @@ function OriginSection() {
     <div className="bg-surface-container-high rounded-xl p-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
-          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">Origin &amp; Reach</h3>
+          <p className="text-neon-violet text-[10px] font-bold tracking-[0.15em] uppercase mb-2">
+            Pre-event Origins
+          </p>
+          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+            Out-of-Market Visitation
+          </h3>
           <p className="text-on-surface-variant text-sm mt-1">
-            Where attendees traveled from · {metric("States Represented")} states · {metric("DMAs Represented")} DMAs
+            {metric("Out Of State Visitors")} out-of-state attendees ·{" "}
+            {metric("States Represented")} states · {metric("DMAs Represented")} DMAs ·
+            Top origin: {metric("Top Out Of State")}
           </p>
         </div>
         <div className="flex gap-3">
@@ -211,29 +239,75 @@ function OriginSection() {
   );
 }
 
-function HotelSection() {
-  const sorted = [...marshmelloApr2.hotels].sort((a, b) => b.visitors - a.visitors);
-  const elCortez = sorted.find((h) => h.name.toLowerCase().includes("el cortez"));
-  const rest = sorted.filter((h) => h !== elCortez).slice(0, 14);
-  const maxRest = rest[0]?.visitors ?? 1;
+function SpotlightDTLVSection() {
+  const dtlv = dtlvHotels();
+  const dtlvVisitors = sumVisitors(dtlv);
+  const totalVisits = parseInt(metric("Total Visits")) || 1;
+  const dtlvPct = (dtlvVisitors / totalVisits) * 100;
+
+  const dining = downtownDining();
+  const diningVisits = sumVisitors(dining);
+
+  const elCortez = marshmelloApr2.hotels.find(isCbmAnchor);
 
   return (
     <div className="bg-surface-container-high rounded-xl p-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
-          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">Hotel Attribution</h3>
+          <p className="text-neon-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-2">
+            Economic Activity for DTLV
+          </p>
+          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+            Spotlight on DTLV
+          </h3>
           <p className="text-on-surface-variant text-sm mt-1">
-            Where overnight attendees stayed · {metric("Hotel Casino Properties Tracked")} properties tracked
+            Downtown Las Vegas lift from the event — hotel stays, dining, and cross-visitation
+          </p>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="bg-surface-container rounded-xl p-5">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-2">
+            DTLV Hotel Visitors
+          </p>
+          <p className="text-neon-cyan font-mono font-extrabold text-3xl">
+            {fmtNum(dtlvVisitors)}
+          </p>
+          <p className="text-on-surface-variant text-xs mt-1">
+            {dtlvPct.toFixed(1)}% of attendance · {dtlv.length} DTLV properties
+          </p>
+        </div>
+        <div className="bg-surface-container rounded-xl p-5">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-2">
+            Fremont East Dining Visits
+          </p>
+          <p className="text-neon-violet font-mono font-extrabold text-3xl">
+            {fmtNum(diningVisits)}
+          </p>
+          <p className="text-on-surface-variant text-xs mt-1">
+            Across {dining.length} downtown venues
+          </p>
+        </div>
+        <div className="bg-surface-container rounded-xl p-5">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-2">
+            El Cortez Cross-Visitation
+          </p>
+          <p className="text-neon-pink font-mono font-extrabold text-3xl">
+            {metric("El Cortez Origin Pct")}
+          </p>
+          <p className="text-on-surface-variant text-xs mt-1">
+            Pre-event journey origin
           </p>
         </div>
       </div>
 
       {elCortez && (
-        <div className="bg-surface-container rounded-xl p-6 mb-6 ring-1 ring-neon-cyan/30">
+        <div className="bg-surface-container rounded-xl p-6 ring-1 ring-neon-cyan/30">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <p className="text-neon-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-2">
-                CBM Anchor Property · #1 Origin
+                CBM Anchor Property · #1 Hotel Origin
               </p>
               <h4 className="text-on-surface font-extrabold text-2xl">{elCortez.name}</h4>
               <p className="text-on-surface-variant text-sm mt-1">
@@ -247,25 +321,88 @@ function HotelSection() {
               <p className="text-on-surface-variant text-sm">
                 {fmtNum(elCortez.visitors)} attendees stayed here
               </p>
-              <p className="text-on-surface-variant text-xs mt-1">
-                Journey origin · {metric("El Cortez Origin Pct")} of visitors
-              </p>
             </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
 
-      <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-3">
-        Next 14 hotels by attendee stays
-      </p>
+function OtherDtlvHotelsSection() {
+  const dtlv = dtlvHotels()
+    .filter((h) => !isCbmAnchor(h))
+    .sort((a, b) => b.visitors - a.visitors);
+  const max = dtlv[0]?.visitors ?? 1;
+  const total = sumVisitors(dtlv);
+
+  return (
+    <div className="bg-surface-container-high rounded-xl p-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+            Other DTLV Venues
+          </h3>
+          <p className="text-on-surface-variant text-sm mt-1">
+            Non-CBM downtown hotels · within 1 mi of event
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">
+            DTLV hotel lift (excl. El Cortez)
+          </p>
+          <p className="text-neon-violet font-mono font-extrabold text-2xl">{fmtNum(total)}</p>
+        </div>
+      </div>
       <div className="space-y-2">
-        {rest.map((h) => (
+        {dtlv.map((h) => (
           <BarRow
             key={h.id}
             label={h.name}
             sub={`${h.distance} mi`}
             value={`${fmtNum(h.visitors)} · ${h.percentage}`}
-            pct={(h.visitors / maxRest) * 100}
+            pct={(h.visitors / max) * 100}
+            color="violet"
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StripCrossTrafficSection() {
+  const strip = stripHotels().sort((a, b) => b.visitors - a.visitors);
+  const max = strip[0]?.visitors ?? 1;
+  const total = sumVisitors(strip);
+  const totalVisits = parseInt(metric("Total Visits")) || 1;
+  const stripPct = (total / totalVisits) * 100;
+
+  return (
+    <div className="bg-surface-container-high rounded-xl p-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+            Strip Cross-Traffic
+          </h3>
+          <p className="text-on-surface-variant text-sm mt-1">
+            Hotels 2+ mi from event · Strip corridor pulled {stripPct.toFixed(1)}% of attendance
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">
+            Strip-origin attendees
+          </p>
+          <p className="text-neon-pink font-mono font-extrabold text-2xl">{fmtNum(total)}</p>
+        </div>
+      </div>
+      <div className="space-y-2">
+        {strip.map((h) => (
+          <BarRow
+            key={h.id}
+            label={h.name}
+            sub={`${h.distance} mi`}
+            value={`${fmtNum(h.visitors)} · ${h.percentage}`}
+            pct={(h.visitors / max) * 100}
             color="pink"
           />
         ))}
@@ -283,11 +420,14 @@ function SpilloverSection() {
     <div className="bg-surface-container-high rounded-xl p-8">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
+          <p className="text-neon-violet text-[10px] font-bold tracking-[0.15em] uppercase mb-2">
+            Post-event Destinations
+          </p>
           <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
-            District Spillover
+            Top Dining Destinations
           </h3>
           <p className="text-on-surface-variant text-sm mt-1">
-            Nearby venues visited by event attendees — the district-lift story for sponsors
+            Nearby venues visited after the event — the district-lift story for sponsors
           </p>
         </div>
         <div className="text-right">

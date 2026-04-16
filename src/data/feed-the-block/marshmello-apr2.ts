@@ -104,3 +104,26 @@ export const demographicsByGroup = (group: string): DemographicBin[] =>
   marshmelloApr2.demographics
     .filter((d) => d.groupName === group)
     .sort((a, b) => a.sortOrder - b.sortOrder);
+
+// Geographic bucketing — thresholds derived from actual data clusters
+// (0-1mi = DTLV district, 2-5mi = Strip corridor).
+export const DTLV_MAX_MI = 1.0;
+export const STRIP_MIN_MI = 2.0;
+export const DOWNTOWN_DINING_MAX_MI = 1.0;
+
+export const dtlvHotels = (): HotelStay[] =>
+  marshmelloApr2.hotels.filter((h) => h.distance <= DTLV_MAX_MI);
+
+export const stripHotels = (): HotelStay[] =>
+  marshmelloApr2.hotels.filter((h) => h.distance >= STRIP_MIN_MI);
+
+export const downtownDining = (): DestinationVisit[] =>
+  marshmelloApr2.destinations.filter(
+    (d) => (d.distance ?? 0) <= DOWNTOWN_DINING_MAX_MI
+  );
+
+export const sumVisitors = <T extends { visitors: number }>(arr: T[]): number =>
+  arr.reduce((s, x) => s + x.visitors, 0);
+
+export const isCbmAnchor = (h: HotelStay): boolean =>
+  h.name.toLowerCase().includes("el cortez");
