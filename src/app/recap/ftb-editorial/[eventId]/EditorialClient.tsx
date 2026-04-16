@@ -381,10 +381,10 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
           <section className="py-24 md:py-32 px-8 md:px-20 bg-[#ebe8e2] recap-page-break">
             <div className="max-w-7xl mx-auto">
               <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
-                Independently Measured
+                Footprint
               </p>
               <h2 className="serif text-4xl md:text-5xl font-bold mb-16">
-                The numbers, verified.
+                How the night moved.
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20 items-end">
                 <div className="md:col-span-5">
