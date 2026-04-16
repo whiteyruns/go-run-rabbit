@@ -90,6 +90,21 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
 function RecapBody({ bundle }: { bundle: RecapBundle }) {
   const { artist, sponsors, photos, data: ds } = bundle;
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const navItems: { id: string; label: string }[] = [
+    { id: "series", label: "The Series" },
+    { id: "event", label: "The Event" },
+    ...(artist ? [{ id: "headliner", label: "The Headliner" }] : []),
+    { id: "footprint", label: "Footprint" },
+    ...(bundle.tickets
+      ? [{ id: "audience", label: "Registered Audience" }]
+      : []),
+    { id: "lift", label: "The Lift" },
+    { id: "broadcast", label: "Broadcast" },
+    { id: "sponsors", label: "Sponsors" },
+    { id: "contact", label: "Contact" },
+  ];
 
   // Event card stats — inline computation from bundle.data.
   const parseIntSafe = (s: string | undefined): number => {
@@ -133,6 +148,16 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
             </span>
           )}
           <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Open menu"
+            className="flex flex-col gap-[5px] p-2 -mr-1"
+          >
+            <span className="block w-5 h-[1.5px] bg-[#1c1c18]" />
+            <span className="block w-5 h-[1.5px] bg-[#1c1c18]" />
+            <span className="block w-5 h-[1.5px] bg-[#1c1c18]" />
+          </button>
+          <button
             onClick={() => window.print()}
             className="hidden md:inline-block px-4 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
           >
@@ -148,6 +173,68 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </div>
       </nav>
 
+      {/* Section menu overlay */}
+      {menuOpen && (
+        <div className="recap-no-print fixed inset-0 z-[60] bg-[#fdf9f3] overflow-y-auto">
+          <div className="flex items-center justify-between px-4 md:px-8 py-3 border-b-[0.5px] border-[#c9912b]/30">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/feed-the-block/logo.webp"
+              alt="Feed The Block"
+              className="h-10 w-auto"
+            />
+            <button
+              type="button"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Close menu"
+              className="p-2 text-3xl leading-none text-[#1c1c18]"
+            >
+              ×
+            </button>
+          </div>
+          <div className="px-8 md:px-20 py-12 md:py-16 max-w-3xl">
+            <p className="uppercase tracking-[0.3em] text-[10px] text-[#7f5700] mb-8">
+              Sections
+            </p>
+            <ul className="space-y-1">
+              {navItems.map((item, i) => (
+                <li
+                  key={item.id}
+                  className={
+                    i > 0 ? "border-t border-[#c9912b]/20" : "border-y border-[#c9912b]/20"
+                  }
+                >
+                  <a
+                    href={`#${item.id}`}
+                    onClick={() => setMenuOpen(false)}
+                    className="serif text-3xl md:text-4xl font-bold leading-tight text-[#1c1c18] hover:text-[#7f5700] block py-5 transition-colors"
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-12 pt-8 border-t-[0.5px] border-[#c9912b]/30">
+              <a
+                href="mailto:partnerships@feedtheblock.com?subject=Feed%20The%20Block%20—%20Schedule%20a%20Call"
+                className="inline-block px-6 py-3 text-[10px] uppercase tracking-widest font-medium bg-[#7f5700] text-white hover:opacity-85 transition-opacity"
+              >
+                Schedule a Call
+              </a>
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  setTimeout(() => window.print(), 200);
+                }}
+                className="ml-3 inline-block px-6 py-3 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
+              >
+                Save as PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <main className="pt-20 md:pt-24">
         {/* 1. Cover hero */}
         <section className="min-h-[70vh] px-8 md:px-20 py-24 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30">
@@ -162,7 +249,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </section>
 
         {/* 2. Executive summary */}
-        <section className="py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed]">
+        <section id="series" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed]">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
               <div className="md:col-span-4">
@@ -203,7 +290,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
 
         {/* 3. The Event (full-bleed) */}
         {hero && (
-          <section className="py-16 md:py-20 recap-page-break">
+          <section id="event" className="scroll-mt-20 py-16 md:py-20 recap-page-break">
             <figure className="w-full h-[400px] md:h-[716px] relative overflow-hidden bg-[#1c1c18]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -253,12 +340,12 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
 
         {/* 4. Artist spotlight */}
         {artist && (
-          <section className="py-24 md:py-32 px-8 md:px-20 border-t-[0.5px] border-[#c9912b]/30 recap-page-break">
+          <section id="headliner" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 border-t-[0.5px] border-[#c9912b]/30 recap-page-break">
             <div className="max-w-7xl mx-auto">
               <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
                 The Headliner
               </p>
-              <h2 className="serif text-7xl md:text-[8rem] lg:text-[10rem] font-bold leading-[0.9] tracking-tighter mb-6 -ml-1 break-words">
+              <h2 className="serif text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] font-bold leading-[0.9] tracking-tighter mb-6 -ml-1 break-words">
                 {artist.stageName}
               </h2>
               <p className="serif italic text-xl md:text-2xl text-[#1c1c18]/60 mb-12 md:mb-16">
@@ -386,7 +473,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
 
         {/* 5. Placer.ai — data viz */}
         {topHotels.length > 0 && (
-          <section className="py-24 md:py-32 px-8 md:px-20 bg-[#ebe8e2] recap-page-break">
+          <section id="footprint" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#ebe8e2] recap-page-break">
             <div className="max-w-7xl mx-auto">
               <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
                 Footprint
@@ -513,7 +600,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         )}
 
         {/* 6. Economic Impact */}
-        <section className="py-24 md:py-32 px-8 md:px-20 text-center recap-page-break">
+        <section id="lift" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 text-center recap-page-break">
           <div className="max-w-4xl mx-auto">
             <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
               The Lift
@@ -549,7 +636,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </section>
 
         {/* 7. Social reach — inverse dark section */}
-        <section className="py-24 md:py-32 px-8 md:px-20 bg-[#1c1c18] text-[#fdf9f3] recap-page-break">
+        <section id="broadcast" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#1c1c18] text-[#fdf9f3] recap-page-break">
           <div className="max-w-7xl mx-auto">
             <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
               The Broadcast
@@ -595,7 +682,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </section>
 
         {/* 8. Sponsors */}
-        <section className="py-24 md:py-32 px-8 md:px-20">
+        <section id="sponsors" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20">
           <div className="max-w-7xl mx-auto text-center">
             <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-12 md:mb-16">
               With Gratitude
@@ -635,7 +722,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </section>
 
         {/* 9. CTA */}
-        <section className="py-32 md:py-40 px-8 text-center bg-white">
+        <section id="contact" className="scroll-mt-20 py-32 md:py-40 px-8 text-center bg-white">
           <div className="max-w-4xl mx-auto">
             <h2 className="serif text-7xl md:text-9xl font-bold mb-8">Let&rsquo;s talk.</h2>
             <p className="text-[17px] text-[#1c1c18]/60 mb-12 max-w-xl mx-auto">
@@ -750,7 +837,10 @@ function RegisteredAudienceSection({
     : 0;
 
   return (
-    <section className="py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed] recap-page-break">
+    <section
+      id="audience"
+      className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed] recap-page-break"
+    >
       <div className="max-w-7xl mx-auto">
         <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
           Registered Audience
