@@ -123,3 +123,69 @@ model RecapLog {
   sentAt DateTime @default(now())
   data   String?
 }
+
+model Artist {
+  id               String   @id @default(cuid())
+  stageName        String   @unique
+  realName          String
+  born             String   @default("")
+  nationality      String
+  genres           String   @default("[]") // JSON: string[]
+  yearsActive      String
+  signature        String   @default("")
+  bio              String
+  hits             String   // JSON: ArtistHit[]
+  albums           String   @default("[]") // JSON: ArtistAlbum[]
+  collaborations   String   @default("[]") // JSON: string[]
+  milestones       String   // JSON: string[]
+  reach            String   // JSON: ArtistReachMetric[]
+  outreachExamples String   @default("[]") // JSON: ArtistOutreach[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  recaps           FtbRecap[]
+}
+
+model FtbRecap {
+  id          String   @id @default(cuid())
+  eventId     String   @unique // URL slug, e.g. "marshmello-apr2-2026"
+  status      String   @default("draft") // "draft" | "published"
+  headliner   String
+  eventDate   String
+  eventDay    String
+  placerData  String   // JSON: PlacerEventDataset shape
+  coverage    String   // JSON: DataCoverage
+  photos      String   // JSON: { hero, polaroid, portrait, gallery[] }
+  sponsors    String   // JSON: [{ name, role }]
+  execSummary String?  // JSON override; null = use FTB default
+  artistId    String?
+  artist      Artist?  @relation(fields: [artistId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  recipients  FtbRecapRecipient[]
+}
+
+model FtbRecapRecipient {
+  id          String   @id @default(cuid())
+  recapId     String
+  recap       FtbRecap @relation(fields: [recapId], references: [id], onDelete: Cascade)
+  email       String
+  name        String?
+  group       String?  // "sponsors" | "media" | "city" | "lvcva" | "diageo"
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  openedAt    DateTime?
+  resendId    String?
+  createdAt   DateTime @default(now())
+
+  @@index([recapId])
+  @@index([resendId])
+}
+
+model FtbRecipientGroup {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  emails    String   // JSON: [{ email, name? }]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
