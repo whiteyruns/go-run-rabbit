@@ -473,7 +473,7 @@ function HourlySection() {
           const pct = (h.visits / max) * 100;
           const isPeak = h.visits === max;
           return (
-            <div key={h.id} className="flex-1 flex flex-col justify-end" title={`${h.hour} — ${fmtNum(h.visits)}`}>
+            <div key={h.id} className="flex-1 flex flex-col justify-end h-full" title={`${h.hour} — ${fmtNum(h.visits)}`}>
               <div
                 className={`rounded-t ${isPeak ? "bg-neon-cyan" : "bg-neon-cyan/40"}`}
                 style={{ height: `${pct}%`, minHeight: h.visits > 0 ? "2px" : "0px" }}
@@ -513,7 +513,7 @@ function DwellSection() {
           const pct = (b.visits / max) * 100;
           const isTop = b.visits === max;
           return (
-            <div key={b.id} className="flex-1 flex flex-col justify-end" title={`${b.durationRange} — ${fmtNum(b.visits)}`}>
+            <div key={b.id} className="flex-1 flex flex-col justify-end h-full" title={`${b.durationRange} — ${fmtNum(b.visits)}`}>
               <div
                 className={`rounded-t ${isTop ? "bg-neon-violet" : "bg-neon-violet/40"}`}
                 style={{ height: `${pct}%`, minHeight: b.visits > 0 ? "2px" : "0px" }}
