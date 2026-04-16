@@ -3,22 +3,25 @@
 import { useMemo, useState } from "react";
 import { MetricCard } from "@/components/ui/metric-card";
 import { feedTheBlock } from "@/data/feed-the-block";
+import { EVENTS } from "@/data/feed-the-block/events";
 import {
-  marshmelloApr2,
-  metric,
   demographicsByGroup,
-  dtlvHotels,
-  stripHotels,
   downtownDining,
-  sumVisitors,
+  dtlvHotels,
   isCbmAnchor,
+  metric,
+  stripHotels,
+  sumVisitors,
 } from "@/data/feed-the-block/marshmello-apr2";
+import type { EventDataset, PlacerEventDataset } from "@/data/feed-the-block/types";
 import { fmt, fmtNum } from "@/lib/utils";
 
 type Tab = "analytics" | "sponsorship";
 
 export default function BlockPartyPage() {
   const [tab, setTab] = useState<Tab>("analytics");
+  const [eventId, setEventId] = useState<string>(EVENTS[0].id);
+  const event = useMemo(() => EVENTS.find((e) => e.id === eventId) ?? EVENTS[0], [eventId]);
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-10">
@@ -42,122 +45,235 @@ export default function BlockPartyPage() {
         </div>
       </div>
 
-      {tab === "analytics" ? <AnalyticsTab /> : <SponsorshipTab />}
+      {tab === "analytics" ? (
+        <AnalyticsTab event={event} eventId={eventId} onEventChange={setEventId} />
+      ) : (
+        <SponsorshipTab />
+      )}
     </div>
   );
 }
 
 // ============================================================================
-// Analytics Tab — Placer.ai location-intelligence data, single event
+// Analytics Tab
 // ============================================================================
 
-function AnalyticsTab() {
+function AnalyticsTab({
+  event,
+  eventId,
+  onEventChange,
+}: {
+  event: EventDataset;
+  eventId: string;
+  onEventChange: (id: string) => void;
+}) {
+  const ds = event.data;
+
   return (
     <div className="space-y-8">
+      {/* Event picker */}
+      <EventPicker selected={eventId} onChange={onEventChange} />
+
       {/* Event header */}
-      <div className="bg-surface-container p-8 rounded-xl">
-        <div className="flex flex-col md:flex-row justify-between gap-8">
-          <div>
-            <p className="text-neon-violet text-[10px] font-bold tracking-[0.15em] uppercase mb-3">
-              Event · {metric("Event Day")}, {metric("Event Date")}
-            </p>
-            <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mb-3">
-              {metric("Headliner")}
-            </h2>
-            <p className="text-on-surface-variant max-w-xl mb-4">
-              Placer.ai measured foot-traffic analytics from the single-night performance.
-              Additional event datasets forthcoming.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <DataBadge label="Placer.ai measured" />
-              <DataBadge label={`${metric("Hotel Casino Properties Tracked")} properties tracked`} />
-              <DataBadge label={`${metric("DMAs Represented")} DMAs`} />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4 min-w-[320px]">
-            <MetricCard
-              label="Measured Visits"
-              value={fmtNum(parseInt(metric("Total Visits")))}
-              sub="Placer.ai device-level count"
-              accent
-            />
-            <MetricCard
-              label="Visits YoY"
-              value={metric("Visits YoY")}
-              sub={`Yo2Y ${metric("Visits Yo2Y")}`}
-            />
-            <MetricCard
-              label="Avg Dwell"
-              value={`${metric("Avg Dwell Time Min")} min`}
-              sub={`Peak ${metric("Peak Hour")}`}
-              accent
-            />
-            <MetricCard
-              label="Peak Concurrent"
-              value={fmtNum(parseInt(metric("Peak Visits")))}
-              sub="9:00 PM show moment"
-            />
-          </div>
-        </div>
-      </div>
+      <EventHeader event={event} />
 
       {/* Growth strip */}
-      <GrowthStrip />
+      <GrowthStrip ds={ds} />
 
-      {/* Spotlight on DTLV — district-impact story */}
-      <SpotlightDTLVSection />
+      {/* Spotlight on DTLV */}
+      {event.coverage.hotels && <SpotlightDTLVSection ds={ds} />}
 
-      {/* Other DTLV Venues — non-CBM hotels in the district */}
-      <OtherDtlvHotelsSection />
+      {/* Other DTLV Venues */}
+      {event.coverage.hotels && <OtherDtlvHotelsSection ds={ds} />}
 
-      {/* Strip cross-traffic — hotels on the Strip */}
-      <StripCrossTrafficSection />
+      {/* Strip Cross-Traffic */}
+      {event.coverage.hotels && <StripCrossTrafficSection ds={ds} />}
 
-      {/* Pre-event Origins + Post-event Destinations */}
-      <section>
-        <div className="mb-4">
-          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
-            Pre-event Origins &amp; Post-event Destinations
-          </h3>
-          <p className="text-on-surface-variant text-sm mt-1">
-            Where attendees came from and where they went afterward
-          </p>
-        </div>
-        <div className="space-y-8">
-          <OutOfMarketSection />
-          <SpilloverSection />
-        </div>
-      </section>
+      {/* Pre-event Origins & Post-event Destinations */}
+      {(event.coverage.originStates ||
+        event.coverage.originDMAs ||
+        event.coverage.destinations) && (
+        <section>
+          <div className="mb-4">
+            <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+              Pre-event Origins &amp; Post-event Destinations
+            </h3>
+            <p className="text-on-surface-variant text-sm mt-1">
+              Where attendees came from and where they went afterward
+            </p>
+          </div>
+          <div className="space-y-8">
+            {(event.coverage.originStates || event.coverage.originDMAs) && (
+              <OutOfMarketSection ds={ds} />
+            )}
+            {event.coverage.destinations && <SpilloverSection ds={ds} />}
+          </div>
+        </section>
+      )}
 
-      {/* Hourly curve + Dwell distribution */}
+      {/* Hourly + Dwell */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <HourlySection />
-        <DwellSection />
+        {event.coverage.hourly ? (
+          <HourlySection ds={ds} />
+        ) : (
+          <NotInDataset title="Hourly Traffic Curve" reason="Hour-by-hour data not in this export" />
+        )}
+        {event.coverage.duration ? (
+          <DwellSection ds={ds} />
+        ) : (
+          <NotInDataset title="Dwell Time Distribution" reason="Duration data not in this export" />
+        )}
       </div>
 
       {/* Demographics */}
-      <DemographicsSection />
+      {event.coverage.demographics && <DemographicsSection ds={ds} />}
+
+      {/* Revenue Impact (derived from hotel visitors) */}
+      {event.coverage.hotels && <RevenueImpactSection ds={ds} />}
 
       {/* Source footer */}
       <div className="text-center text-on-surface-variant text-xs pt-4">
-        Data source · Placer.ai location intelligence · Single-event dataset for Marshmello
-        (Apr 2, 2026). More events to be added as datasets become available.
+        Source · {sourceLabel(event.source)} · {event.eventDay}, {event.eventDate}.
       </div>
     </div>
   );
 }
 
-function GrowthStrip() {
+function sourceLabel(src: EventDataset["source"]): string {
+  switch (src) {
+    case "abacus-scrape":
+      return "Placer.ai via Abacus dashboard";
+    case "placer-pdf":
+      return "Placer.ai Property Overview PDF";
+    case "placer-xlsx":
+      return "Placer.ai XLSX export";
+    case "email-copy":
+      return "Email summary (partial)";
+  }
+}
+
+// ============================================================================
+// Event picker + header
+// ============================================================================
+
+function EventPicker({
+  selected,
+  onChange,
+}: {
+  selected: string;
+  onChange: (id: string) => void;
+}) {
   return (
-    <div className="grid grid-cols-3 gap-4">
-      <GrowthCard label="Visits YoY" value={metric("Visits YoY")} tone="cyan" />
-      <GrowthCard label="Yo2Y" value={metric("Visits Yo2Y")} tone="violet" />
-      <GrowthCard label="Yo3Y" value={metric("Visits Yo3Y")} tone="pink" />
+    <div className="flex items-center gap-3">
+      <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">
+        Event
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {EVENTS.map((e) => (
+          <button
+            key={e.id}
+            onClick={() => onChange(e.id)}
+            className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
+              selected === e.id
+                ? "bg-neon-cyan/15 text-neon-cyan ring-1 ring-neon-cyan/40"
+                : "bg-surface-container text-on-surface-variant hover:text-on-surface"
+            }`}
+          >
+            {e.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
 
-function GrowthCard({ label, value, tone }: { label: string; value: string; tone: "cyan" | "violet" | "pink" }) {
+function EventHeader({ event }: { event: EventDataset }) {
+  const ds = event.data;
+  const totalVisits = parseInt(metric(ds, "Total Visits")) || 0;
+  const peakVisits = parseInt(metric(ds, "Peak Visits")) || 0;
+
+  return (
+    <div className="bg-surface-container p-8 rounded-xl">
+      <div className="flex flex-col md:flex-row justify-between gap-8">
+        <div>
+          <p className="text-neon-violet text-[10px] font-bold tracking-[0.15em] uppercase mb-3">
+            {event.eventDay}, {event.eventDate}
+          </p>
+          <h2 className="text-3xl font-extrabold tracking-tight text-on-surface mb-3">
+            {event.headliner}
+          </h2>
+          <p className="text-on-surface-variant max-w-xl mb-4">
+            Placer.ai measured foot-traffic analytics for this single-night performance.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <DataBadge label="Placer.ai measured" />
+            {metric(ds, "Hotel Casino Properties Tracked") !== "—" && (
+              <DataBadge
+                label={`${metric(ds, "Hotel Casino Properties Tracked")} properties tracked`}
+              />
+            )}
+            {metric(ds, "DMAs Represented") !== "—" && (
+              <DataBadge label={`${metric(ds, "DMAs Represented")} DMAs`} />
+            )}
+            {metric(ds, "Monday Lift Multiple") !== "—" && (
+              <DataBadge
+                label={`${metric(ds, "Monday Lift Multiple")} Monday baseline lift`}
+              />
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4 min-w-[320px]">
+          <MetricCard
+            label="Measured Visits"
+            value={fmtNum(totalVisits)}
+            sub="Placer.ai device-level count"
+            accent
+          />
+          <MetricCard
+            label="Visits YoY"
+            value={metric(ds, "Visits YoY")}
+            sub={`Yo2Y ${metric(ds, "Visits Yo2Y")}`}
+          />
+          <MetricCard
+            label="Avg Dwell"
+            value={`${metric(ds, "Avg Dwell Time Min")} min`}
+            sub={
+              metric(ds, "Peak Hour") !== "—"
+                ? `Peak ${metric(ds, "Peak Hour")}`
+                : `Median ${metric(ds, "Median Dwell Time Min")} min`
+            }
+            accent
+          />
+          <MetricCard
+            label={peakVisits > 0 ? "Peak Concurrent" : "Panel Visits"}
+            value={peakVisits > 0 ? fmtNum(peakVisits) : metric(ds, "Panel Visits")}
+            sub={peakVisits > 0 ? "Show moment" : "Placer panel"}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GrowthStrip({ ds }: { ds: PlacerEventDataset }) {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <GrowthCard label="Visits YoY" value={metric(ds, "Visits YoY")} tone="cyan" />
+      <GrowthCard label="Yo2Y" value={metric(ds, "Visits Yo2Y")} tone="violet" />
+      <GrowthCard label="Yo3Y" value={metric(ds, "Visits Yo3Y")} tone="pink" />
+    </div>
+  );
+}
+
+function GrowthCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: "cyan" | "violet" | "pink";
+}) {
   const color =
     tone === "cyan" ? "text-neon-cyan" : tone === "violet" ? "text-neon-violet" : "text-neon-pink";
   return (
@@ -170,85 +286,20 @@ function GrowthCard({ label, value, tone }: { label: string; value: string; tone
   );
 }
 
-function OutOfMarketSection() {
-  const states = marshmelloApr2.originStates.slice(0, 10);
-  const dmas = marshmelloApr2.originDMAs.slice(0, 10);
-  const maxState = states[0]?.visitors ?? 1;
-  const maxDma = dmas[0]?.visitors ?? 1;
+// ============================================================================
+// Section: Spotlight on DTLV
+// ============================================================================
 
-  return (
-    <div className="bg-surface-container-high rounded-xl p-8">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-        <div>
-          <p className="text-neon-violet text-[10px] font-bold tracking-[0.15em] uppercase mb-2">
-            Pre-event Origins
-          </p>
-          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
-            Out-of-Market Visitation
-          </h3>
-          <p className="text-on-surface-variant text-sm mt-1">
-            {metric("Out Of State Visitors")} out-of-state attendees ·{" "}
-            {metric("States Represented")} states · {metric("DMAs Represented")} DMAs ·
-            Top origin: {metric("Top Out Of State")}
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <SplitChip label="In-Market" pct={metric("In Market Estimate Pct") + "%"} tone="cyan" />
-          <SplitChip label="Out-of-State" pct={metric("Out Of State Pct") + "%"} tone="violet" />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div>
-          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-4">
-            Top 10 States (by visitors)
-          </p>
-          <div className="space-y-2">
-            {states.map((s) => (
-              <BarRow
-                key={s.id}
-                label={s.stateName}
-                value={`${fmtNum(s.visitors)} · ${s.percentage.toFixed(1)}%`}
-                pct={(s.visitors / maxState) * 100}
-                rightChip={s.yoyChangePct != null ? <YoYChip pct={s.yoyChangePct} /> : null}
-                color="cyan"
-              />
-            ))}
-          </div>
-        </div>
-        <div>
-          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-4">
-            Top 10 DMAs
-          </p>
-          <div className="space-y-2">
-            {dmas.map((d) => (
-              <BarRow
-                key={d.id}
-                label={`${d.dmaName}`}
-                sub={d.state}
-                value={`${fmtNum(d.visitors)} · ${d.percentage.toFixed(1)}%`}
-                pct={(d.visitors / maxDma) * 100}
-                rightChip={d.yoyChangePct != null ? <YoYChip pct={d.yoyChangePct} /> : null}
-                color="violet"
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SpotlightDTLVSection() {
-  const dtlv = dtlvHotels();
+function SpotlightDTLVSection({ ds }: { ds: PlacerEventDataset }) {
+  const dtlv = dtlvHotels(ds);
   const dtlvVisitors = sumVisitors(dtlv);
-  const totalVisits = parseInt(metric("Total Visits")) || 1;
+  const totalVisits = parseInt(metric(ds, "Total Visits")) || 1;
   const dtlvPct = (dtlvVisitors / totalVisits) * 100;
 
-  const dining = downtownDining();
+  const dining = downtownDining(ds);
   const diningVisits = sumVisitors(dining);
 
-  const elCortez = marshmelloApr2.hotels.find(isCbmAnchor);
+  const elCortez = ds.hotels.find(isCbmAnchor);
 
   return (
     <div className="bg-surface-container-high rounded-xl p-8">
@@ -283,10 +334,12 @@ function SpotlightDTLVSection() {
             Fremont East Dining Visits
           </p>
           <p className="text-neon-violet font-mono font-extrabold text-3xl">
-            {fmtNum(diningVisits)}
+            {diningVisits > 0 ? fmtNum(diningVisits) : "—"}
           </p>
           <p className="text-on-surface-variant text-xs mt-1">
-            Across {dining.length} downtown venues
+            {dining.length > 0
+              ? `Across ${dining.length} downtown venues`
+              : "Destination data not in this export"}
           </p>
         </div>
         <div className="bg-surface-container rounded-xl p-5">
@@ -294,7 +347,7 @@ function SpotlightDTLVSection() {
             El Cortez Cross-Visitation
           </p>
           <p className="text-neon-pink font-mono font-extrabold text-3xl">
-            {metric("El Cortez Origin Pct")}
+            {metric(ds, "El Cortez Origin Pct")}
           </p>
           <p className="text-on-surface-variant text-xs mt-1">
             Pre-event journey origin
@@ -329,10 +382,15 @@ function SpotlightDTLVSection() {
   );
 }
 
-function OtherDtlvHotelsSection() {
-  const dtlv = dtlvHotels()
+// ============================================================================
+// Section: Other DTLV Venues
+// ============================================================================
+
+function OtherDtlvHotelsSection({ ds }: { ds: PlacerEventDataset }) {
+  const dtlv = dtlvHotels(ds)
     .filter((h) => !isCbmAnchor(h))
     .sort((a, b) => b.visitors - a.visitors);
+  if (dtlv.length === 0) return null;
   const max = dtlv[0]?.visitors ?? 1;
   const total = sumVisitors(dtlv);
 
@@ -370,11 +428,16 @@ function OtherDtlvHotelsSection() {
   );
 }
 
-function StripCrossTrafficSection() {
-  const strip = stripHotels().sort((a, b) => b.visitors - a.visitors);
+// ============================================================================
+// Section: Strip Cross-Traffic
+// ============================================================================
+
+function StripCrossTrafficSection({ ds }: { ds: PlacerEventDataset }) {
+  const strip = stripHotels(ds).sort((a, b) => b.visitors - a.visitors);
+  if (strip.length === 0) return null;
   const max = strip[0]?.visitors ?? 1;
   const total = sumVisitors(strip);
-  const totalVisits = parseInt(metric("Total Visits")) || 1;
+  const totalVisits = parseInt(metric(ds, "Total Visits")) || 1;
   const stripPct = (total / totalVisits) * 100;
 
   return (
@@ -411,10 +474,104 @@ function StripCrossTrafficSection() {
   );
 }
 
-function SpilloverSection() {
-  const dests = [...marshmelloApr2.destinations].sort((a, b) => b.visitors - a.visitors).slice(0, 10);
+// ============================================================================
+// Section: Out-of-Market Visitation
+// ============================================================================
+
+function OutOfMarketSection({ ds }: { ds: PlacerEventDataset }) {
+  const states = ds.originStates.slice(0, 10);
+  const dmas = ds.originDMAs.slice(0, 10);
+  const maxState = states[0]?.visitors ?? 1;
+  const maxDma = dmas[0]?.visitors ?? 1;
+
+  const hasStates = states.length > 0;
+  const hasDmas = dmas.length > 0;
+  if (!hasStates && !hasDmas) return null;
+
+  return (
+    <div className="bg-surface-container-high rounded-xl p-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <p className="text-neon-violet text-[10px] font-bold tracking-[0.15em] uppercase mb-2">
+            Pre-event Origins
+          </p>
+          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+            Out-of-Market Visitation
+          </h3>
+          <p className="text-on-surface-variant text-sm mt-1">
+            {metric(ds, "Out Of State Visitors")} out-of-state attendees ·{" "}
+            {metric(ds, "States Represented")} states · {metric(ds, "DMAs Represented")} DMAs ·
+            Top origin: {metric(ds, "Top Out Of State")}
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <SplitChip
+            label="In-Market"
+            pct={metric(ds, "In Market Estimate Pct") + "%"}
+            tone="cyan"
+          />
+          <SplitChip
+            label="Out-of-State"
+            pct={metric(ds, "Out Of State Pct") + "%"}
+            tone="violet"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {hasStates && (
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-4">
+              Top 10 States (by visitors)
+            </p>
+            <div className="space-y-2">
+              {states.map((s) => (
+                <BarRow
+                  key={s.id}
+                  label={s.stateName}
+                  value={`${fmtNum(s.visitors)} · ${s.percentage.toFixed(1)}%`}
+                  pct={(s.visitors / maxState) * 100}
+                  rightChip={s.yoyChangePct != null ? <YoYChip pct={s.yoyChangePct} /> : null}
+                  color="cyan"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        {hasDmas && (
+          <div>
+            <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-4">
+              Top 10 DMAs
+            </p>
+            <div className="space-y-2">
+              {dmas.map((d) => (
+                <BarRow
+                  key={d.id}
+                  label={d.dmaName}
+                  sub={d.state}
+                  value={`${fmtNum(d.visitors)} · ${d.percentage.toFixed(1)}%`}
+                  pct={(d.visitors / maxDma) * 100}
+                  rightChip={d.yoyChangePct != null ? <YoYChip pct={d.yoyChangePct} /> : null}
+                  color="violet"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Section: Top Dining Destinations (post-event)
+// ============================================================================
+
+function SpilloverSection({ ds }: { ds: PlacerEventDataset }) {
+  const dests = [...ds.destinations].sort((a, b) => b.visitors - a.visitors).slice(0, 10);
+  if (dests.length === 0) return null;
   const max = dests[0]?.visitors ?? 1;
-  const totalSpillover = dests.reduce((s, d) => s + d.visitors, 0);
+  const totalSpillover = sumVisitors(dests);
 
   return (
     <div className="bg-surface-container-high rounded-xl p-8">
@@ -457,23 +614,31 @@ function SpilloverSection() {
   );
 }
 
-function HourlySection() {
-  const hours = [...marshmelloApr2.hourly].sort((a, b) => a.hourIndex - b.hourIndex);
-  const max = Math.max(...hours.map((h) => h.visits));
+// ============================================================================
+// Section: Hourly Traffic Curve
+// ============================================================================
+
+function HourlySection({ ds }: { ds: PlacerEventDataset }) {
+  const hours = [...ds.hourly].sort((a, b) => a.hourIndex - b.hourIndex);
+  const max = Math.max(...hours.map((h) => h.visits), 1);
   return (
     <div className="bg-surface-container-high rounded-xl p-8">
       <h3 className="text-on-surface font-extrabold text-xl tracking-tight mb-1">
         Hourly Traffic Curve
       </h3>
       <p className="text-on-surface-variant text-sm mb-6">
-        Peak {metric("Peak Hour")} · {fmtNum(parseInt(metric("Peak Visits")))} concurrent
+        Peak {metric(ds, "Peak Hour")} · {fmtNum(parseInt(metric(ds, "Peak Visits")) || 0)} concurrent
       </p>
       <div className="flex items-end gap-[3px] h-48">
         {hours.map((h) => {
           const pct = (h.visits / max) * 100;
           const isPeak = h.visits === max;
           return (
-            <div key={h.id} className="flex-1 flex flex-col justify-end h-full" title={`${h.hour} — ${fmtNum(h.visits)}`}>
+            <div
+              key={h.id}
+              className="flex-1 flex flex-col justify-end h-full"
+              title={`${h.hour} — ${fmtNum(h.visits)}`}
+            >
               <div
                 className={`rounded-t ${isPeak ? "bg-neon-cyan" : "bg-neon-cyan/40"}`}
                 style={{ height: `${pct}%`, minHeight: h.visits > 0 ? "2px" : "0px" }}
@@ -493,9 +658,13 @@ function HourlySection() {
   );
 }
 
-function DwellSection() {
-  const buckets = [...marshmelloApr2.duration].sort((a, b) => a.sortOrder - b.sortOrder);
-  const max = Math.max(...buckets.map((b) => b.visits));
+// ============================================================================
+// Section: Dwell Time Distribution
+// ============================================================================
+
+function DwellSection({ ds }: { ds: PlacerEventDataset }) {
+  const buckets = [...ds.duration].sort((a, b) => a.sortOrder - b.sortOrder);
+  const max = Math.max(...buckets.map((b) => b.visits), 1);
   const plus150 = buckets.find((b) => b.durationRange.startsWith("150"));
   const total = buckets.reduce((s, b) => s + b.visits, 0);
   const plus150Pct = plus150 && total ? Math.round((plus150.visits / total) * 100) : 0;
@@ -506,14 +675,18 @@ function DwellSection() {
         Dwell Time Distribution
       </h3>
       <p className="text-on-surface-variant text-sm mb-6">
-        {plus150Pct}% of attendees stayed 2.5+ hours
+        {plus150Pct}% of attendees stayed 2.5+ hours · Avg {metric(ds, "Avg Dwell Time Min")} min
       </p>
       <div className="flex items-end gap-[3px] h-48">
         {buckets.map((b) => {
           const pct = (b.visits / max) * 100;
           const isTop = b.visits === max;
           return (
-            <div key={b.id} className="flex-1 flex flex-col justify-end h-full" title={`${b.durationRange} — ${fmtNum(b.visits)}`}>
+            <div
+              key={b.id}
+              className="flex-1 flex flex-col justify-end h-full"
+              title={`${b.durationRange} — ${fmtNum(b.visits)}`}
+            >
               <div
                 className={`rounded-t ${isTop ? "bg-neon-violet" : "bg-neon-violet/40"}`}
                 style={{ height: `${pct}%`, minHeight: b.visits > 0 ? "2px" : "0px" }}
@@ -534,7 +707,11 @@ function DwellSection() {
   );
 }
 
-function DemographicsSection() {
+// ============================================================================
+// Section: Demographics
+// ============================================================================
+
+function DemographicsSection({ ds }: { ds: PlacerEventDataset }) {
   const groups = ["Age", "Ethnicity", "Income", "Household"];
   return (
     <div className="bg-surface-container-high rounded-xl p-8">
@@ -542,26 +719,27 @@ function DemographicsSection() {
         <div>
           <h3 className="text-on-surface font-extrabold text-xl tracking-tight">Demographics</h3>
           <p className="text-on-surface-variant text-sm mt-1">
-            Event audience (cyan) vs. Nevada baseline (muted) · Median age {metric("Median Age")} ·
-            Median HHI {metric("Median Household Income")}
+            Event audience (cyan) vs. Nevada baseline (muted) · Median age {metric(ds, "Median Age")} ·
+            Median HHI {metric(ds, "Median Household Income")}
           </p>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {groups.map((g) => (
-          <DemographicGroup key={g} name={g} />
+          <DemographicGroup key={g} ds={ds} name={g} />
         ))}
       </div>
     </div>
   );
 }
 
-function DemographicGroup({ name }: { name: string }) {
-  const bins = useMemo(() => demographicsByGroup(name), [name]);
+function DemographicGroup({ ds, name }: { ds: PlacerEventDataset; name: string }) {
+  const bins = useMemo(() => demographicsByGroup(ds, name), [ds, name]);
   const max = useMemo(
     () => Math.max(...bins.flatMap((b) => [b.eventValue, b.stateValue]), 1),
     [bins]
   );
+  if (bins.length === 0) return null;
   return (
     <div className="bg-surface-container rounded-xl p-5">
       <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-4">
@@ -573,9 +751,9 @@ function DemographicGroup({ name }: { name: string }) {
             <div className="flex justify-between text-xs mb-1">
               <span className="text-on-surface">{b.binLabel}</span>
               <span className="font-mono text-on-surface-variant">
-                <span className="text-neon-cyan">{b.eventValue.toFixed(1)}%</span>
+                <span className="text-neon-cyan">{(b.eventValue * 100).toFixed(1)}%</span>
                 <span className="mx-1">vs</span>
-                <span>{b.stateValue.toFixed(1)}%</span>
+                <span>{(b.stateValue * 100).toFixed(1)}%</span>
               </span>
             </div>
             <div className="relative h-2 bg-surface-container-high rounded-full overflow-hidden">
@@ -596,14 +774,92 @@ function DemographicGroup({ name }: { name: string }) {
 }
 
 // ============================================================================
-// Sponsorship Tab — existing season narrative
+// Section: Revenue Impact (derived)
+// ============================================================================
+
+function RevenueImpactSection({ ds }: { ds: PlacerEventDataset }) {
+  // Model: 50% of hotel-casino crossover visitors buy 1 drink @ $12,
+  // 10% drop $50 in gaming. From City of Las Vegas sponsor analysis.
+  const DRINK_PRICE = 12;
+  const DRINK_RATE = 0.5;
+  const GAMING_PER_PERSON = 50;
+  const GAMING_RATE = 0.1;
+
+  const totalHotelVisitors = sumVisitors(ds.hotels);
+  if (totalHotelVisitors === 0) return null;
+
+  const drinkRevenue = totalHotelVisitors * DRINK_RATE * DRINK_PRICE;
+  const gamingRevenue = totalHotelVisitors * GAMING_RATE * GAMING_PER_PERSON;
+  const total = drinkRevenue + gamingRevenue;
+
+  return (
+    <div className="bg-surface-container-high rounded-xl p-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <p className="text-neon-cyan text-[10px] font-bold tracking-[0.15em] uppercase mb-2">
+            Conservative Revenue Model
+          </p>
+          <h3 className="text-on-surface font-extrabold text-xl tracking-tight">
+            Estimated Revenue Impact
+          </h3>
+          <p className="text-on-surface-variant text-sm mt-1">
+            Assumes 50% of casino-crossover visitors buy 1 drink @ $12, 10% drop $50 in gaming
+          </p>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">
+            Total estimated impact
+          </p>
+          <p className="text-neon-cyan font-mono font-extrabold text-3xl">{fmt(total)}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-surface-container rounded-xl p-5">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-2">
+            Hotel/Casino Crossover
+          </p>
+          <p className="text-on-surface font-mono font-extrabold text-2xl">
+            {fmtNum(totalHotelVisitors)}
+          </p>
+          <p className="text-on-surface-variant text-xs mt-1">
+            Parked at, passed through, or returned
+          </p>
+        </div>
+        <div className="bg-surface-container rounded-xl p-5">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-2">
+            Drink Revenue (50% × $12)
+          </p>
+          <p className="text-neon-violet font-mono font-extrabold text-2xl">
+            {fmt(drinkRevenue)}
+          </p>
+          <p className="text-on-surface-variant text-xs mt-1">
+            {fmtNum(Math.round(totalHotelVisitors * DRINK_RATE))} drinks
+          </p>
+        </div>
+        <div className="bg-surface-container rounded-xl p-5">
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant mb-2">
+            Gaming Revenue (10% × $50)
+          </p>
+          <p className="text-neon-pink font-mono font-extrabold text-2xl">
+            {fmt(gamingRevenue)}
+          </p>
+          <p className="text-on-surface-variant text-xs mt-1">
+            {fmtNum(Math.round(totalHotelVisitors * GAMING_RATE))} players
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// Sponsorship Tab — unchanged narrative from feed-the-block.ts
 // ============================================================================
 
 function SponsorshipTab() {
   const ftb = feedTheBlock;
   return (
     <div className="space-y-8">
-      {/* Event series overview */}
       <div className="bg-surface-container p-8 rounded-xl">
         <div className="flex flex-col md:flex-row justify-between gap-8">
           <div>
@@ -637,7 +893,6 @@ function SponsorshipTab() {
         </div>
       </div>
 
-      {/* Confirmed Sponsors */}
       <div className="bg-surface-container-low rounded-xl p-8">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -679,7 +934,6 @@ function SponsorshipTab() {
         </p>
       </div>
 
-      {/* 2025 performance */}
       <div className="bg-surface-container-high rounded-xl p-8">
         <h3 className="text-on-surface font-extrabold text-xl tracking-tight mb-2">
           2025 Season — Actual Performance
@@ -730,7 +984,6 @@ function SponsorshipTab() {
         </div>
       </div>
 
-      {/* Sponsorship tiers */}
       <div>
         <h3 className="text-on-surface font-extrabold text-xl tracking-tight mb-6">
           Sponsorship Tiers
@@ -763,7 +1016,6 @@ function SponsorshipTab() {
         </div>
       </div>
 
-      {/* Revenue potential */}
       <div className="bg-surface-container-low rounded-xl p-8">
         <h3 className="text-on-surface font-extrabold text-xl tracking-tight mb-2">
           Revenue Potential
@@ -851,7 +1103,8 @@ function YoYChip({ pct }: { pct: number }) {
   const positive = pct >= 0;
   const color = positive ? "text-neon-cyan bg-neon-cyan/10" : "text-neon-pink bg-neon-pink/10";
   const sign = positive ? "+" : "";
-  const display = Math.abs(pct) >= 1000 ? `${(pct / 100).toFixed(1)}x` : `${sign}${pct.toFixed(0)}%`;
+  const display =
+    Math.abs(pct) >= 1000 ? `${(pct / 100).toFixed(1)}x` : `${sign}${pct.toFixed(0)}%`;
   return (
     <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${color}`}>
       YoY {display}
@@ -895,6 +1148,17 @@ function BarRow({
       <div className="h-1.5 bg-surface-container rounded-full overflow-hidden">
         <div className={`h-full ${bar}`} style={{ width: `${Math.max(pct, 2)}%` }} />
       </div>
+    </div>
+  );
+}
+
+function NotInDataset({ title, reason }: { title: string; reason: string }) {
+  return (
+    <div className="bg-surface-container rounded-xl p-8 border border-dashed border-on-surface-variant/20">
+      <h3 className="text-on-surface-variant font-bold text-lg tracking-tight mb-2">
+        {title}
+      </h3>
+      <p className="text-on-surface-variant text-sm">{reason}</p>
     </div>
   );
 }
