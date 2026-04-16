@@ -67,10 +67,35 @@ function HubContent() {
           <p className="hub-sub">Go Run Rabbit &bull; April 2026</p>
         </div>
 
-        {/* Website & Design */}
+        {/* Handoff Build */}
         <div className="hub-group">
           <div className="hub-group-header">
             <div className="hub-group-num">01</div>
+            <div>
+              <h2>Handoff Build</h2>
+              <p>Production-ready page builds to hand to the Oddyssey dev team &mdash; approved design applied to live-site content</p>
+            </div>
+          </div>
+          <div className="hub-grid">
+            <Link href="/oddyssey-manor/manor" className="hub-card hub-card-featured">
+              <div className="hub-card-tag" style={{ color: "#c9a84c", borderColor: "#c9a84c" }}>Handoff</div>
+              <h3>Manor</h3>
+              <p>Full Manor page &mdash; hero, 4 ticket tiers, cocktails, bites, cast, 80-min flow, gallery, FAQ. Mirrors oddysseylv.com/manor structure with the approved noir aesthetic.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
+            <div className="hub-card" style={{ opacity: 0.5, pointerEvents: "none" }}>
+              <div className="hub-card-tag" style={{ color: "#5a5650", borderColor: "#5a5650" }}>Coming Next</div>
+              <h3>Noir</h3>
+              <p>Late-night dance environment &mdash; two dance floors, DJ programming, VIP tables, bottle service. Builds next.</p>
+              <span className="hub-card-link" style={{ color: "#5a5650" }}>In Progress</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Website & Design */}
+        <div className="hub-group">
+          <div className="hub-group-header">
+            <div className="hub-group-num">02</div>
             <div>
               <h2>Website &amp; Design</h2>
               <p>Wireframes, optimization audit, and technical SEO analysis</p>
@@ -101,7 +126,7 @@ function HubContent() {
         {/* Market Intelligence */}
         <div className="hub-group">
           <div className="hub-group-header">
-            <div className="hub-group-num">02</div>
+            <div className="hub-group-num">03</div>
             <div>
               <h2>Market Intelligence</h2>
               <p>Competitive positioning, strategic analysis, and market context</p>
@@ -126,7 +151,7 @@ function HubContent() {
         {/* Golden Hour Program */}
         <div className="hub-group">
           <div className="hub-group-header">
-            <div className="hub-group-num">03</div>
+            <div className="hub-group-num">04</div>
             <div>
               <h2>Golden Hour Program</h2>
               <p>Open bar concept with El Bandido Tequila &mdash; venue proposal, brand pitch, and marketing assets</p>
@@ -157,7 +182,7 @@ function HubContent() {
         {/* Growth */}
         <div className="hub-group">
           <div className="hub-group-header">
-            <div className="hub-group-num">04</div>
+            <div className="hub-group-num">05</div>
             <div>
               <h2>Audience Growth</h2>
               <p>Database building, social growth, and email capture strategies</p>
