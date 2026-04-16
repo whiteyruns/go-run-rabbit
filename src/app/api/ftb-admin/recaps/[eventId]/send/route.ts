@@ -49,7 +49,7 @@ export async function POST(
     );
   }
 
-  const base = process.env.NEXT_PUBLIC_URL || "https://go-rabbit.gorunrabbit.com";
+  const base = process.env.NEXT_PUBLIC_URL || "https://www.gorunrabbit.com";
   const recapUrl = `${base}/recap/ftb-editorial/${recap.eventId}`;
 
   const { Resend } = await import("resend");
