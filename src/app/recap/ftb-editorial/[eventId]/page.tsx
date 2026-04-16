@@ -227,17 +227,18 @@ function RecapBody({ eventId }: { eventId: string }) {
         {artist && (
           <section className="py-24 md:py-32 px-8 md:px-20 border-t-[0.5px] border-[#c9912b]/30 recap-page-break">
             <div className="max-w-7xl mx-auto">
+              <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
+                The Headliner
+              </p>
+              <h2 className="serif text-7xl md:text-[8rem] lg:text-[10rem] font-bold leading-[0.9] tracking-tighter mb-6 -ml-1 break-words">
+                {artist.stageName}
+              </h2>
+              <p className="serif italic text-xl md:text-2xl text-[#1c1c18]/60 mb-12 md:mb-16">
+                {artist.realName} · {artist.nationality} · {artist.yearsActive}
+              </p>
+
               <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
                 <div className="md:col-span-7">
-                  <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
-                    The Headliner
-                  </p>
-                  <h2 className="serif text-7xl md:text-[10rem] font-bold leading-[0.9] tracking-tighter mb-6 -ml-1">
-                    {artist.stageName}
-                  </h2>
-                  <p className="serif italic text-xl md:text-2xl text-[#1c1c18]/60 mb-8">
-                    {artist.realName} · {artist.nationality} · {artist.yearsActive}
-                  </p>
                   <p className="text-[17px] text-[#1c1c18]/85 leading-[1.7] max-w-2xl mb-10">
                     {artist.bio}
                   </p>
