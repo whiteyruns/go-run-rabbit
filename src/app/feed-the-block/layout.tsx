@@ -17,6 +17,21 @@ export const metadata: Metadata = {
     description:
       "A free event series on Fremont East. 7 Venues. 1 Block Party. Thousands of People.",
     type: "website",
+    images: [
+      {
+        url: "/feed-the-block/img/marshmello/packed-streets-hudson-1920.jpg",
+        width: 1920,
+        height: 1280,
+        alt: "Feed The Block on Fremont East",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FEED THE BLOCK — Downtown Las Vegas Street Festival",
+    description:
+      "A free event series on Fremont East. 7 Venues. 1 Block Party. Thousands of People.",
+    images: ["/feed-the-block/img/marshmello/packed-streets-hudson-1920.jpg"],
   },
 };
 

@@ -118,12 +118,12 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
   return (
     <>
       {/* Fixed nav */}
-      <nav className="recap-no-print fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-8 py-3 bg-[#fdf9f3]/85 backdrop-blur-md border-b-[0.5px] border-[#c9912b]/30">
+      <nav className="recap-no-print fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-8 py-3 bg-[#fdf9f3]/85 backdrop-blur-md border-b-[0.5px] border-[#c9912b]/30">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/feed-the-block/logo.webp"
           alt="Feed The Block"
-          className="h-9 md:h-10 w-auto"
+          className="h-10 md:h-10 w-auto"
         />
 
         <div className="flex gap-2 md:gap-3 items-center">
@@ -134,15 +134,16 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
           )}
           <button
             onClick={() => window.print()}
-            className="px-4 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
+            className="hidden md:inline-block px-4 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
           >
             Save as PDF
           </button>
           <a
             href="mailto:partnerships@feedtheblock.com?subject=Feed%20The%20Block%20—%20Schedule%20a%20Call"
-            className="px-4 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium bg-[#7f5700] text-white hover:opacity-85 transition-opacity"
+            className="px-3 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium bg-[#7f5700] text-white hover:opacity-85 transition-opacity whitespace-nowrap"
           >
-            Schedule a Call
+            <span className="md:hidden">Schedule</span>
+            <span className="hidden md:inline">Schedule a Call</span>
           </a>
         </div>
       </nav>
@@ -419,7 +420,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
                   </div>
                 </div>
 
-                <div className="md:col-span-7 relative pt-20">
+                <div className="hidden md:block md:col-span-7 relative pt-20">
                   <div className="flex items-end gap-4 md:gap-6 h-64 border-b border-[#1c1c18]/20 relative">
                     {topHotels.map((h, i) => {
                       const pct = (h.visitors / maxHotel) * 95;
