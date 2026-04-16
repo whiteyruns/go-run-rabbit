@@ -83,12 +83,12 @@ function HubContent() {
               <p>Full Manor page &mdash; hero, 4 ticket tiers, cocktails, bites, cast, 80-min flow, gallery, FAQ. Mirrors oddysseylv.com/manor structure with the approved noir aesthetic.</p>
               <span className="hub-card-link">View &rarr;</span>
             </Link>
-            <div className="hub-card" style={{ opacity: 0.5, pointerEvents: "none" }}>
-              <div className="hub-card-tag" style={{ color: "#5a5650", borderColor: "#5a5650" }}>Coming Next</div>
+            <Link href="/oddyssey-manor/noir" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#c9a84c", borderColor: "#c9a84c" }}>Handoff</div>
               <h3>Noir</h3>
-              <p>Late-night dance environment &mdash; two dance floors, DJ programming, VIP tables, bottle service. Builds next.</p>
-              <span className="hub-card-link" style={{ color: "#5a5650" }}>In Progress</span>
-            </div>
+              <p>Late-night immersive nightlife &mdash; Liquid Gold Fridays, Art in Motion Saturdays, 3 ticket tiers, bottles &amp; tables, bottle menu, events calendar, gallery.</p>
+              <span className="hub-card-link">View &rarr;</span>
+            </Link>
           </div>
         </div>
 
