@@ -144,9 +144,6 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         {/* 1. Cover hero */}
         <section className="min-h-[90vh] px-8 md:px-20 py-20 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30">
           <div className="max-w-7xl mx-auto w-full">
-            <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-8">
-              Post-event Recap · {bundle.eventDate}
-            </p>
             <h1 className="serif text-6xl md:text-9xl font-bold leading-none tracking-tighter mb-10 max-w-5xl">
               {bundle.headliner} at Feed The Block
             </h1>
@@ -169,9 +166,12 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
               <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
                 The Series
               </p>
-              <h2 className="serif text-4xl md:text-5xl font-bold leading-tight mb-8">
+              <h2 className="serif text-4xl md:text-5xl font-bold leading-tight mb-4">
                 What Feed The Block is
               </h2>
+              <p className="serif italic text-base text-[#1c1c18]/60">
+                Post-event Recap · {bundle.eventDate}
+              </p>
             </div>
             <div className="md:col-span-7 md:col-start-6">
               <p

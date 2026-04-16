@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Feed The Block — Recap Admin Guide</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+    :root {
+      --bg: #fdf9f3;
+      --ink: #1c1c18;
+      --ink-60: rgba(28, 28, 24, 0.6);
+      --ink-20: rgba(28, 28, 24, 0.15);
+      --gold: #7f5700;
+      --amber: #c9912b;
+      --panel: #f7f3ed;
+      --mono: ui-monospace, 'SF Mono', Menlo, monospace;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Inter', -apple-system, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    .container { max-width: 840px; margin: 0 auto; padding: 48px 32px 120px; }
+
+    header {
+      padding-bottom: 28px;
+      border-bottom: 0.5px solid var(--amber);
+      margin-bottom: 56px;
+    }
+    .eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+    h1 {
+      font-family: 'Noto Serif', serif;
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin: 16px 0 12px;
+    }
+    .sub {
+      font-family: 'Noto Serif', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--ink-60);
+    }
+
+    h2 {
+      font-family: 'Noto Serif', serif;
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 64px 0 8px;
+    }
+    h2::before {
+      display: block;
+      content: attr(data-step);
+      font-family: 'Inter', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      color: var(--gold);
+    }
+
+    p { margin: 0 0 14px; }
+
+    ol, ul { padding-left: 22px; margin: 0 0 16px; }
+    li { margin: 6px 0; }
+
+    code, kbd, .mono {
+      font-family: var(--mono);
+      font-size: 13px;
+      background: var(--panel);
+      padding: 2px 6px;
+      border-radius: 2px;
+    }
+
+    a { color: var(--gold); }
+
+    figure {
+      margin: 18px 0 28px;
+      border: 0.5px solid var(--ink-20);
+      background: var(--panel);
+    }
+    figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: var(--panel);
+    }
+    figure .placeholder {
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-60);
+      border: 1px dashed var(--amber);
+      background: var(--panel);
+    }
+    figcaption {
+      padding: 10px 14px;
+      font-size: 12px;
+      font-style: italic;
+      color: var(--ink-60);
+      border-top: 0.5px solid var(--ink-20);
+    }
+
+    .callout {
+      background: var(--panel);
+      border-left: 3px solid var(--gold);
+      padding: 16px 20px;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .callout .label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+
+    .tip { border-left-color: var(--amber); }
+    .warn { border-left-color: #b00020; }
+    .warn .label { color: #b00020; }
+
+    .toc {
+      background: var(--panel);
+      padding: 20px 28px;
+      margin: 32px 0 64px;
+    }
+    .toc ol { counter-reset: step; list-style: none; padding: 0; }
+    .toc li {
+      counter-increment: step;
+      padding: 4px 0;
+      font-size: 15px;
+    }
+    .toc li::before {
+      content: counter(step, decimal-leading-zero);
+      color: var(--gold);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      margin-right: 12px;
+    }
+    .toc a { text-decoration: none; color: var(--ink); }
+    .toc a:hover { color: var(--gold); }
+
+    hr {
+      border: none;
+      border-top: 0.5px solid var(--ink-20);
+      margin: 48px 0;
+    }
+
+    footer {
+      margin-top: 96px;
+      padding-top: 28px;
+      border-top: 0.5px solid var(--amber);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+    }
+
+    @media print {
+      body { font-size: 11pt; }
+      .container { max-width: none; padding: 0; }
+      h2 { page-break-before: always; }
+      h2:first-of-type { page-break-before: auto; }
+      figure { page-break-inside: avoid; }
+      a { color: var(--ink); text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="eyebrow">Feed The Block · Operator Guide</div>
+      <h1>How to create &amp; send a recap</h1>
+      <p class="sub">A step-by-step walkthrough for Mauricio — from raw Placer data to a tracked send.</p>
+    </header>
+
+    <section class="toc">
+      <div class="eyebrow">Contents</div>
+      <ol>
+        <li><a href="#login">Log in</a></li>
+        <li><a href="#artists">Set up the artist (once per new headliner)</a></li>
+        <li><a href="#create">Create a new recap</a></li>
+        <li><a href="#placer">Enter Placer.ai data</a></li>
+        <li><a href="#photos">Upload photos</a></li>
+        <li><a href="#preview">Preview the draft</a></li>
+        <li><a href="#publish">Publish</a></li>
+        <li><a href="#send">Send it</a></li>
+        <li><a href="#track">Track opens</a></li>
+        <li><a href="#edit">Make edits to a live recap</a></li>
+      </ol>
+    </section>
+
+    <section id="login">
+      <h2 data-step="Step 01">Log in</h2>
+      <p>Open <a href="https://go-rabbit.gorunrabbit.com/login">go-rabbit.gorunrabbit.com/login</a> and enter the Corner Bar Management password: <code>cbm2026</code>.</p>
+      <p>Once you&rsquo;re signed in, go to <a href="https://go-rabbit.gorunrabbit.com/corner-bar-management/feed-the-block">Corner Bar Management → Feed The Block</a> and click the <strong>Manage Recaps</strong> button at the top right.</p>
+      <figure>
+        <img src="/docs/mauricio/01-login.png" alt="Login screen" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: /login with cbm2026 entered' }))" />
+        <figcaption>Login — enter <code>cbm2026</code> and click Enter.</figcaption>
+      </figure>
+      <figure>
+        <img src="/docs/mauricio/02-cbm-hub.png" alt="CBM Feed The Block hub" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: FTB dashboard with Manage Recaps button highlighted' }))" />
+        <figcaption>Feed The Block hub — the <strong>Manage Recaps</strong> button sits at the top right.</figcaption>
+      </figure>
+      <div class="callout tip">
+        <div class="label">Bookmark</div>
+        The direct URL for recap management is <code>/corner-bar-management/feed-the-block/recaps</code>. Bookmark it.
+      </div>
+    </section>
+
+    <section id="artists">
+      <h2 data-step="Step 02">Set up the artist</h2>
+      <p>Each recap can link to an <em>artist profile</em> — the bio, hits, milestones, and social reach that appear in the Artist Spotlight section. You only need to add an artist <strong>once</strong>; they&rsquo;re reusable across recaps.</p>
+      <ol>
+        <li>From the Recaps page, click <strong>Artists</strong> in the top right.</li>
+        <li>Click <strong>+ New Artist</strong>.</li>
+        <li>Fill in: stage name, real name, born, nationality, years active, signature, bio.</li>
+        <li>Add Notable Hits, Milestones, and Social Reach rows as needed.</li>
+        <li>Click <strong>Create Artist</strong>.</li>
+      </ol>
+      <figure>
+        <img src="/docs/mauricio/03-artist-form.png" alt="Artist form" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: New artist form filled in for Marshmello' }))" />
+        <figcaption>Artist form — the bio paragraph flows into the recap&rsquo;s Headliner section.</figcaption>
+      </figure>
+      <div class="callout">
+        <div class="label">Skip to later</div>
+        If you don&rsquo;t have artist details yet, you can create the recap first and wire the artist up later.
+      </div>
+    </section>
+
+    <section id="create">
+      <h2 data-step="Step 03">Create a new recap</h2>
+      <p>On the Recaps page, click <strong>+ New Recap</strong>.</p>
+      <p>Fill the four required fields:</p>
+      <ul>
+        <li><strong>Event ID</strong> — the URL slug, e.g. <code>marshmello-apr2-2026</code>. Use lowercase letters, numbers, and hyphens. This is permanent and becomes the public URL.</li>
+        <li><strong>Headliner</strong> — display name, e.g. <code>Marshmello</code>.</li>
+        <li><strong>Event Date</strong> — as you want it displayed, e.g. <code>April 2, 2026</code>.</li>
+        <li><strong>Day of Week</strong> — e.g. <code>Wednesday</code>.</li>
+      </ul>
+      <p>Then pick the artist from the <strong>Artist</strong> dropdown.</p>
+      <figure>
+        <img src="/docs/mauricio/04-new-recap-basics.png" alt="New recap basics section" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: top of the New Recap form with Event ID, Headliner, Date, Day filled' }))" />
+        <figcaption>Event Basics — these four fields populate the hero, footer, and subtitles.</figcaption>
+      </figure>
+    </section>
+
+    <section id="placer">
+      <h2 data-step="Step 04">Enter Placer.ai data</h2>
+      <p>The Placer data field is a single JSON object with eight arrays: <code>metrics</code>, <code>hourly</code>, <code>duration</code>, <code>demographics</code>, <code>destinations</code>, <code>hotels</code>, <code>originStates</code>, and <code>originDMAs</code>.</p>
+      <h3>Fast way — clone a template</h3>
+      <p>Above the JSON box, use the <strong>Clone structure from</strong> dropdown to pre-fill the full shape from a prior event (Marshmello, Diplo, Major Lazer). Then just edit the numbers.</p>
+      <figure>
+        <img src="/docs/mauricio/05-clone-template.png" alt="Clone template dropdown" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: Placer data section with Clone structure from dropdown open' }))" />
+        <figcaption>Clone structure from — fastest starting point.</figcaption>
+      </figure>
+      <h3>Coverage checkboxes</h3>
+      <p>Under the JSON box, check which data sections are present. If your Placer export is incomplete (PDF-only, say), uncheck the missing ones — the recap page will hide those sections instead of showing empty charts.</p>
+      <h3>Sponsors</h3>
+      <p>Click <strong>+ Add Sponsor</strong> to add per-event sponsor rows. Each row needs a Name, Role (e.g. <em>Founding Municipal Partner</em>), and Category. Note is optional.</p>
+      <figure>
+        <img src="/docs/mauricio/06-sponsors.png" alt="Sponsors section with rows" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: Sponsors section with LVCVA, City, Diageo rows' }))" />
+        <figcaption>Per-event sponsors — these appear in the &ldquo;With Gratitude&rdquo; section near the end.</figcaption>
+      </figure>
+      <p>Click <strong>Create Draft</strong> at the bottom. You&rsquo;ll land on the edit page for the new recap — photos live here.</p>
+    </section>
+
+    <section id="photos">
+      <h2 data-step="Step 05">Upload photos</h2>
+      <p>Below the form on the edit page, scroll to the <strong>Photos</strong> section. Each slot expects one image:</p>
+      <ul>
+        <li><strong>Hero</strong> — the full-bleed image at the top of &ldquo;The Event&rdquo; section. Wide, impactful.</li>
+        <li><strong>Polaroid</strong> — the tilted photo next to the artist name. Square framing works best.</li>
+        <li><strong>Portrait</strong> — optional artist portrait.</li>
+        <li><strong>Gallery</strong> — the &ldquo;Night in Photographs&rdquo; strip. Upload 3 photos (a 4:3 aspect looks best).</li>
+      </ul>
+      <figure>
+        <img src="/docs/mauricio/07-photo-upload.png" alt="Photo upload form" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: photo upload form with file picker and metadata fields' }))" />
+        <figcaption>For each photo: pick a file, give it a short <em>slug</em> (URL-safe), photographer credit, and alt text.</figcaption>
+      </figure>
+      <div class="callout tip">
+        <div class="label">Slug tip</div>
+        The slug is how the file is named on disk. Use descriptive hyphenated names like <code>packed-crowd-hudson</code> or <code>artist-polaroid</code> — lowercase, no spaces.
+      </div>
+      <div class="callout">
+        <div class="label">What happens server-side</div>
+        When you upload, the server resizes the image to three widths (640px, 1280px, 1920px) and saves all three as optimized JPEGs. The recap page picks the right one for each placement automatically.
+      </div>
+    </section>
+
+    <section id="preview">
+      <h2 data-step="Step 06">Preview the draft</h2>
+      <p>On the edit page, click <strong>Preview Draft</strong>. The recap opens in a new tab with a <em>Draft</em> badge in the top right.</p>
+      <p>Only logged-in admins can see drafts — the public <code>feed2026</code> gate does <strong>not</strong> grant access until you publish. Anyone else visiting a draft URL hits a 404.</p>
+      <figure>
+        <img src="/docs/mauricio/08-draft-preview.png" alt="Recap draft preview with Draft badge" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: Recap page with Draft badge in the top nav' }))" />
+        <figcaption>The yellow <strong>Draft</strong> pill means sponsors can&rsquo;t see this yet.</figcaption>
+      </figure>
+      <p>Scroll through every section. Check the photo placements, the top-of-page stats (they&rsquo;re computed from your Placer <code>metrics</code> array), and the Economic Impact figures.</p>
+    </section>
+
+    <section id="publish">
+      <h2 data-step="Step 07">Publish</h2>
+      <p>Back on the edit page, click <strong>Publish</strong>. The status flips from yellow to cyan, and the recap becomes accessible at <code>/recap/ftb-editorial/&lt;event-id&gt;</code> behind the public <code>feed2026</code> access code.</p>
+      <figure>
+        <img src="/docs/mauricio/09-published.png" alt="Published recap status" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: Edit page with status badge showing Published in cyan' }))" />
+        <figcaption>Published — the public URL is now live.</figcaption>
+      </figure>
+      <div class="callout warn">
+        <div class="label">Unpublish anytime</div>
+        If you need to pull a recap back, click <strong>Unpublish</strong> from the edit page. The link becomes unreachable to the public while you fix things, without losing any data.
+      </div>
+    </section>
+
+    <section id="send">
+      <h2 data-step="Step 08">Send it</h2>
+      <p>From the Recaps list, click <strong>Send</strong> next to the row you just published (or use the <strong>Send</strong> action from the edit page header).</p>
+      <h3>Paste the recipients</h3>
+      <p>Paste into the text box, one recipient per line. Any of these formats works:</p>
+      <pre class="mono" style="background: var(--panel); padding: 14px 18px; font-size: 13px; overflow-x: auto; white-space: pre-wrap;">jane@example.com
+Jane Doe &lt;jane@example.com&gt;
+Jane Doe, jane@example.com</pre>
+      <figure>
+        <img src="/docs/mauricio/10-send-paste.png" alt="Send page with pasted recipients" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: Send page with 8 recipients pasted in, group tag \"LVCVA\" typed, Send button armed' }))" />
+        <figcaption>Paste recipients — the counter shows how many valid addresses were parsed.</figcaption>
+      </figure>
+      <h3>Optional — tag &amp; save as a group</h3>
+      <p>Add a <strong>group tag</strong> (e.g. <code>LVCVA</code>, <code>Sponsors</code>, <code>Media</code>) to mark this send. Then use <strong>Save Group</strong> to save the current list for future sends — it shows up under <em>Saved Groups</em> for one-click reuse.</p>
+      <h3>Send</h3>
+      <p>Click <strong>Send</strong>. You&rsquo;ll be asked to confirm the count, then the results table appears below with one row per recipient.</p>
+      <figure>
+        <img src="/docs/mauricio/11-send-results.png" alt="Send results table" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: Send Results with rows showing \"Sent\" in cyan' }))" />
+        <figcaption>Send results — any failure shows the error message per address.</figcaption>
+      </figure>
+      <div class="callout">
+        <div class="label">What each recipient gets</div>
+        An editorial-styled email from <code>partnerships@feedtheblock.com</code> with the recap&rsquo;s headliner, date, and a <strong>View the Recap</strong> button linking to the published URL. Replies go back to you directly.
+      </div>
+    </section>
+
+    <section id="track">
+      <h2 data-step="Step 09">Track opens</h2>
+      <p>Scroll to <strong>Send History</strong> on the same Send page. Each recipient row shows four timestamps: Sent, Delivered, Opened. Opens are populated by Resend&rsquo;s tracking pixel.</p>
+      <figure>
+        <img src="/docs/mauricio/12-history.png" alt="Send history table" onerror="this.replaceWith(Object.assign(document.createElement('div'), { className: 'placeholder', textContent: 'Screenshot: Send History table with Delivered and Opened columns populated' }))" />
+        <figcaption>Send history — revisit this page later to see who&rsquo;s opened.</figcaption>
+      </figure>
+      <div class="callout tip">
+        <div class="label">Opens are best-effort</div>
+        Many email clients (especially Apple Mail with privacy mode) block tracking pixels. Treat open counts as a floor, not a ceiling.
+      </div>
+    </section>
+
+    <section id="edit">
+      <h2 data-step="Step 10">Make edits to a live recap</h2>
+      <p>Every field on the Edit page stays editable after publishing. Edits are live immediately — no re-publish step needed.</p>
+      <p>If you need to pull a recap offline while you fix major things, click <strong>Unpublish</strong>, make the edits, then <strong>Publish</strong> again. The URL is the same throughout.</p>
+      <p>The recipient send history is preserved; past sends continue to work and track opens independently of edits you make later.</p>
+    </section>
+
+    <hr />
+
+    <section>
+      <h3>When something breaks</h3>
+      <ul>
+        <li><strong>JSON error when saving</strong> — the Placer data textarea expects valid JSON. If you see a red error, check for a missing comma or bracket at the line number shown.</li>
+        <li><strong>Photos don&rsquo;t appear after upload</strong> — refresh the page. The upload writes to disk then updates the recap; occasionally the UI needs one refresh to pick up the new file.</li>
+        <li><strong>Send button is greyed out</strong> — the recap is still in Draft. Publish it first.</li>
+        <li><strong>Everything looks wrong</strong> — DM Keith. Don&rsquo;t delete things in a panic; unpublish first, fix later.</li>
+      </ul>
+    </section>
+
+    <footer>
+      Corner Bar Management × Wynn Nightlife · Recap Operator Guide
+    </footer>
+  </div>
+</body>
+</html>
