@@ -54,9 +54,12 @@ function AuthGate({ children }: { children: React.ReactNode }) {
       style={{ background: "#fdf9f3" }}
     >
       <form onSubmit={submit} className="flex flex-col items-center gap-8 max-w-sm w-full">
-        <p className="serif text-4xl font-bold tracking-tighter text-[#1c1c18]">
-          FEED THE BLOCK
-        </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/feed-the-block/logo.webp"
+          alt="Feed The Block"
+          className="h-24 w-auto"
+        />
         <p className="uppercase tracking-[0.3em] text-[10px] text-[#7f5700]">
           Event Recap · Access Required
         </p>
@@ -115,10 +118,14 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
   return (
     <>
       {/* Fixed nav */}
-      <nav className="recap-no-print fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-8 py-5 bg-[#fdf9f3]/85 backdrop-blur-md border-b-[0.5px] border-[#c9912b]/30">
-        <div className="serif text-xl md:text-2xl font-bold tracking-tighter text-[#1c1c18]">
-          FEED THE BLOCK
-        </div>
+      <nav className="recap-no-print fixed top-0 w-full z-50 flex justify-between items-center px-6 md:px-8 py-3 bg-[#fdf9f3]/85 backdrop-blur-md border-b-[0.5px] border-[#c9912b]/30">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/feed-the-block/logo.webp"
+          alt="Feed The Block"
+          className="h-9 md:h-10 w-auto"
+        />
+
         <div className="flex gap-2 md:gap-3 items-center">
           {bundle.status === "draft" && (
             <span className="px-2 py-1 text-[9px] uppercase tracking-widest bg-[#c9912b] text-white">
@@ -650,7 +657,13 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </section>
 
         <footer className="w-full flex flex-col md:flex-row justify-between items-center gap-6 bg-[#fdf9f3] px-8 md:px-12 py-12 border-t border-[#c9912b]">
-          <div className="serif font-bold text-[#1c1c18] text-lg">FEED THE BLOCK</div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/feed-the-block/logo.webp"
+            alt="Feed The Block"
+            className="h-10 w-auto"
+          />
+
           <div className="serif uppercase tracking-widest text-[9px] text-[#1c1c18]/50 text-center">
             Post-event recap · {bundle.eventDay}, {bundle.eventDate} · Placer.ai verified
           </div>
