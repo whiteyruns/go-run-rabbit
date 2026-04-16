@@ -61,8 +61,8 @@ export interface OriginState {
   stateName: string;
   visitors: number;
   percentage: number;
-  yoyChange: number;
-  yoyChangePct: number;
+  yoyChange: number | null;
+  yoyChangePct: number | null;
   sortOrder: number;
 }
 
@@ -73,8 +73,8 @@ export interface OriginDMA {
   state: string;
   visitors: number;
   percentage: number;
-  yoyChange: number;
-  yoyChangePct: number;
+  yoyChange: number | null;
+  yoyChangePct: number | null;
   sortOrder: number;
 }
 

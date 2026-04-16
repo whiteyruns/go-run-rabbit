@@ -182,7 +182,7 @@ function OriginSection() {
                 label={s.stateName}
                 value={`${fmtNum(s.visitors)} · ${s.percentage.toFixed(1)}%`}
                 pct={(s.visitors / maxState) * 100}
-                rightChip={<YoYChip pct={s.yoyChangePct} />}
+                rightChip={s.yoyChangePct != null ? <YoYChip pct={s.yoyChangePct} /> : null}
                 color="cyan"
               />
             ))}
@@ -200,7 +200,7 @@ function OriginSection() {
                 sub={d.state}
                 value={`${fmtNum(d.visitors)} · ${d.percentage.toFixed(1)}%`}
                 pct={(d.visitors / maxDma) * 100}
-                rightChip={<YoYChip pct={d.yoyChangePct} />}
+                rightChip={d.yoyChangePct != null ? <YoYChip pct={d.yoyChangePct} /> : null}
                 color="violet"
               />
             ))}
@@ -242,7 +242,7 @@ function HotelSection() {
             </div>
             <div className="text-right">
               <p className="text-neon-cyan font-mono font-extrabold text-4xl">
-                {elCortez.percentage}%
+                {elCortez.percentage}
               </p>
               <p className="text-on-surface-variant text-sm">
                 {fmtNum(elCortez.visitors)} attendees stayed here
@@ -264,7 +264,7 @@ function HotelSection() {
             key={h.id}
             label={h.name}
             sub={`${h.distance} mi`}
-            value={`${fmtNum(h.visitors)} · ${h.percentage}%`}
+            value={`${fmtNum(h.visitors)} · ${h.percentage}`}
             pct={(h.visitors / maxRest) * 100}
             color="pink"
           />
