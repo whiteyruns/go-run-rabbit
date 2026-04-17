@@ -33,7 +33,17 @@ interface Args {
   date?: string; // "YYYY-MM-DD" shorthand
   out?: string;
   headless?: boolean;
+  venue?: "manor" | "noir"; // defaults to "manor"
 }
+
+const VENUE_ENV: Record<"manor" | "noir", string> = {
+  manor: "TICKETURE_EVENT_ID", // existing Manor env var (legacy name)
+  noir: "TICKETURE_EVENT_ID_NOIR",
+};
+const VENUE_DIR: Record<"manor" | "noir", string> = {
+  manor: "data/oddyssey-food/pulls",
+  noir: "data/oddyssey-noir/pulls",
+};
 
 function parseArgs(): Args {
   const out: Args = {};
@@ -46,6 +56,9 @@ function parseArgs(): Args {
     else if (key === "date") out.date = val;
     else if (key === "out") out.out = val;
     else if (key === "headless") out.headless = val !== "false";
+    else if (key === "venue") {
+      if (val === "manor" || val === "noir") out.venue = val;
+    }
   }
   return out;
 }
@@ -78,15 +91,16 @@ function todayLocal(): string {
 async function main() {
   const args = parseArgs();
 
+  const venue = args.venue ?? "manor";
   const BASE = process.env.TICKETURE_BASE_URL;
   const ACCOUNT = process.env.TICKETURE_ACCOUNT;
   const EMAIL = process.env.TICKETURE_EMAIL;
   const PASSWORD = process.env.TICKETURE_PASSWORD;
-  const EVENT_ID = process.env.TICKETURE_EVENT_ID;
+  const EVENT_ID = process.env[VENUE_ENV[venue]];
 
   if (!BASE || !ACCOUNT || !EMAIL || !PASSWORD || !EVENT_ID) {
     console.error(
-      "[pull] Missing env vars. Need TICKETURE_BASE_URL, TICKETURE_ACCOUNT, TICKETURE_EMAIL, TICKETURE_PASSWORD, TICKETURE_EVENT_ID"
+      `[pull] Missing env vars. Need TICKETURE_BASE_URL, TICKETURE_ACCOUNT, TICKETURE_EMAIL, TICKETURE_PASSWORD, ${VENUE_ENV[venue]}`
     );
     process.exit(1);
   }
@@ -95,11 +109,11 @@ async function main() {
   const from = args.from ?? pacificMidnightUtc(date);
   const until = args.until ?? pacificMidnightUtc(nextDate(date));
 
-  const outDir = args.out ?? path.resolve("data/oddyssey-food/pulls");
+  const outDir = args.out ?? path.resolve(VENUE_DIR[venue]);
   await fs.mkdir(outDir, { recursive: true });
 
   const headless = args.headless !== false;
-  console.log(`[pull] date=${date} from=${from} until=${until} headless=${headless}`);
+  console.log(`[pull] venue=${venue} date=${date} from=${from} until=${until} headless=${headless}`);
 
   const browser = await chromium.launch({ headless });
   const context = await browser.newContext({

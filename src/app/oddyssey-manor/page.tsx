@@ -79,8 +79,14 @@ function HubContent() {
           <div className="hub-grid">
             <Link href="/oddyssey-manor/admin/food" className="hub-card hub-card-featured">
               <div className="hub-card-tag" style={{ color: "#27ae60", borderColor: "#27ae60" }}>Admin Tool</div>
-              <h3>Food Inclusions Dashboard</h3>
-              <p>Upload Ticketure CSV → validate → generate kitchen-ready prep sheets. Replaces the manual SharePoint reconciliation.</p>
+              <h3>Manor · Food Inclusions</h3>
+              <p>Upload Ticketure CSV → validate → generate kitchen-ready prep sheets. Auto-pull, nightly recap with WoW.</p>
+              <span className="hub-card-link">Open Tool &rarr;</span>
+            </Link>
+            <Link href="/oddyssey-manor/admin/noir" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#b46ec8", borderColor: "#b46ec8" }}>Admin Tool</div>
+              <h3>Noir · Ticket Sales</h3>
+              <p>Attendance, revenue, capacity, and package mix for Noir. Auto-pull, nightly recap with week-over-week.</p>
               <span className="hub-card-link">Open Tool &rarr;</span>
             </Link>
           </div>

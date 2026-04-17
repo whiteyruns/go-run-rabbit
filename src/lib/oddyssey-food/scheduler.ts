@@ -97,8 +97,8 @@ function yesterdayLocal(): string {
   ].join("-");
 }
 
-function runPull(label: string, dateArg?: string) {
-  const args: string[] = [];
+function runPull(label: string, venue: "manor" | "noir", dateArg?: string) {
+  const args: string[] = [`--venue=${venue}`];
   if (dateArg) args.push(`--date=${dateArg}`);
   const stamp = new Date().toISOString();
   console.log(`[oddyssey-scheduler] ${stamp} fire: ${label}${dateArg ? ` (${dateArg})` : ""}`);
@@ -115,11 +115,12 @@ function runPull(label: string, dateArg?: string) {
   );
 }
 
-async function sendRecap(dateArg: string) {
+async function sendRecap(venue: "manor" | "noir", dateArg: string) {
   const port = process.env.PORT ?? "3102";
-  const url = `http://localhost:${port}/api/oddyssey-food/recap`;
+  const apiPath = venue === "manor" ? "oddyssey-food" : "oddyssey-noir";
+  const url = `http://localhost:${port}/api/${apiPath}/recap`;
   const stamp = new Date().toISOString();
-  console.log(`[oddyssey-scheduler] ${stamp} fire: recap (${dateArg})`);
+  console.log(`[oddyssey-scheduler] ${stamp} fire: recap-${venue} (${dateArg})`);
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -128,10 +129,10 @@ async function sendRecap(dateArg: string) {
     });
     const data = await res.json();
     console.log(
-      `[oddyssey-scheduler] recap → ${data.status} ${data.subject ?? ""} → ${(data.recipients ?? []).join(", ")} ${data.resend_id ? `(${data.resend_id})` : data.message ?? ""}`
+      `[oddyssey-scheduler] recap-${venue} → ${data.status} ${data.subject ?? ""} → ${(data.recipients ?? []).join(", ")} ${data.resend_id ? `(${data.resend_id})` : data.message ?? ""}`
     );
   } catch (e) {
-    console.log(`[oddyssey-scheduler] recap failed: ${String(e)}`);
+    console.log(`[oddyssey-scheduler] recap-${venue} failed: ${String(e)}`);
   }
 }
 
@@ -155,46 +156,43 @@ export function startScheduler(): void {
     return;
   }
 
-  const regular = new Cron(
-    "0,30 9-14 * * 4,5,6,0",
-    { timezone: "America/Los_Angeles", name: "oddyssey-regular" },
-    () => runPull("regular")
-  );
-  STATE.crons.push(regular);
-  STATE.jobs.push({
-    name: "regular",
-    pattern: "0,30 9-14 * * 4,5,6,0",
-    next: regular.nextRun()?.toISOString() ?? null,
-  });
+  // Two venues, each with its own show days:
+  // MANOR — Thu/Fri/Sat/Sun shows (weekdays 4,5,6,0)
+  // NOIR — Fri/Sat shows (weekdays 5,6)
+  //
+  // Regular pulls go HOURLY during the day (was every 30 min; Keith
+  // asked for hourly).
+  const jobs: Array<[string, string, () => void]> = [
+    // --- MANOR ---
+    // Hourly 9 AM – 2 PM, Thu–Sun (Manor cutoff is 2:30 PM for kitchen)
+    ["manor-regular", "0 9-14 * * 4,5,6,0", () => runPull("manor-regular", "manor")],
+    ["manor-postshow", "15 0 * * 5,6,0,1", () => runPull("manor-postshow", "manor", yesterdayLocal())],
+    ["manor-recap", "30 0 * * 5,6,0,1", () => sendRecap("manor", yesterdayLocal())],
 
-  const postshow = new Cron(
-    "15 0 * * 5,6,0,1",
-    { timezone: "America/Los_Angeles", name: "oddyssey-postshow" },
-    () => runPull("postshow", yesterdayLocal())
-  );
-  STATE.crons.push(postshow);
-  STATE.jobs.push({
-    name: "postshow",
-    pattern: "15 0 * * 5,6,0,1",
-    next: postshow.nextRun()?.toISOString() ?? null,
-  });
+    // --- NOIR ---
+    // Hourly 9 AM – 9 PM, Fri/Sat (show days; doors at 10 PM)
+    ["noir-regular", "0 9-21 * * 5,6", () => runPull("noir-regular", "noir")],
+    // Post-show pull at 03:00 Sat/Sun (after 2 AM close), recap at 03:15
+    ["noir-postshow", "0 3 * * 6,0", () => runPull("noir-postshow", "noir", yesterdayLocal())],
+    ["noir-recap", "15 3 * * 6,0", () => sendRecap("noir", yesterdayLocal())],
+  ];
 
-  // Recap email at 00:30 PT — 15 min after the post-show pull lands,
-  // so we send the full-night final numbers to Keith + Brandon.
-  const recap = new Cron(
-    "30 0 * * 5,6,0,1",
-    { timezone: "America/Los_Angeles", name: "oddyssey-recap" },
-    () => sendRecap(yesterdayLocal())
-  );
-  STATE.crons.push(recap);
-  STATE.jobs.push({
-    name: "recap",
-    pattern: "30 0 * * 5,6,0,1",
-    next: recap.nextRun()?.toISOString() ?? null,
-  });
+  for (const [name, pattern, handler] of jobs) {
+    const cron = new Cron(
+      pattern,
+      { timezone: "America/Los_Angeles", name: `oddyssey-${name}` },
+      handler
+    );
+    STATE.crons.push(cron);
+    STATE.jobs.push({
+      name,
+      pattern,
+      next: cron.nextRun()?.toISOString() ?? null,
+    });
+  }
 
   persistStatus();
   console.log(
-    "[oddyssey-scheduler] started | regular 9am-2:30pm PT Thu-Sun | postshow 00:15 PT | recap 00:30 PT Fri-Mon"
+    "[oddyssey-scheduler] started | manor: hourly 9-2 + postshow + recap | noir: hourly 9-9 + postshow 3am + recap"
   );
 }

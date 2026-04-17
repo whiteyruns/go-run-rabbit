@@ -1,0 +1,300 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import {
+  formatNoirCurrency,
+  type NoirSummary,
+  type NoirWeekOverWeek,
+  type NoirPackageBreakdown,
+  type NoirSessionOccupancy,
+} from "@/lib/oddyssey-noir/pipeline";
+
+export default function NoirSummaryPage() {
+  const [summary, setSummary] = useState<NoirSummary | null>(null);
+  const [wow, setWow] = useState<NoirWeekOverWeek | null>(null);
+  const [date, setDate] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [recapStatus, setRecapStatus] = useState<string | null>(null);
+
+  function loadForDate(d?: string) {
+    setLoading(true);
+    fetch(`/api/oddyssey-noir/wow${d ? `?date=${d}` : ""}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.status === "ok") {
+          setSummary(data.summary);
+          setWow(data.wow);
+          if (!date) setDate(data.summary.date);
+        } else {
+          setError(data.message);
+        }
+      })
+      .catch((e) => setError(String(e)))
+      .finally(() => setLoading(false));
+  }
+
+  useEffect(() => { loadForDate(); /* eslint-disable-line react-hooks/exhaustive-deps */ }, []);
+  useEffect(() => { if (date) loadForDate(date); /* eslint-disable-line react-hooks/exhaustive-deps */ }, [date]);
+
+  async function sendRecap(test: boolean) {
+    if (!summary) return;
+    setSending(true);
+    setRecapStatus(null);
+    try {
+      const res = await fetch("/api/oddyssey-noir/recap", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ test, date: summary.date }),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setRecapStatus(`Sent · ${data.subject} → ${(data.recipients ?? []).join(", ")}`);
+      } else {
+        setRecapStatus(`Failed · ${data.message ?? "Unknown"}`);
+      }
+    } catch (e) {
+      setRecapStatus(`Error · ${String(e)}`);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  if (loading && !summary) return <div style={{ padding: 40, color: "var(--text-muted)" }}>Loading…</div>;
+
+  if (error || !summary) {
+    return (
+      <div style={{ padding: 80, textAlign: "center", border: "1px dashed var(--border)" }}>
+        <div style={{ fontFamily: "var(--serif)", fontSize: 22, marginBottom: 24, color: "var(--text-secondary)" }}>
+          {error ?? "No data."}
+        </div>
+        <Link href="/oddyssey-manor/admin/noir/upload" style={btnPrimary}>Pull Noir data</Link>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{ marginBottom: 32, display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 16 }}>
+        <div>
+          <div style={{ fontSize: 10, letterSpacing: 4, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, marginBottom: 12 }}>
+            02 · Summary
+          </div>
+          <h1 style={{ fontFamily: "var(--serif)", fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 300, letterSpacing: 2, textTransform: "uppercase", margin: 0, lineHeight: 1.1 }}>
+            Noir · {summary.date_label}
+          </h1>
+          <p style={{ marginTop: 12, fontSize: 12, color: "var(--text-muted)", letterSpacing: 0.5 }}>
+            Source: {summary.source.filename} · pulled {new Date(summary.source.pulled_at).toLocaleString("en-US")}
+          </p>
+        </div>
+        {summary.available_dates.length > 1 && (
+          <div>
+            <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6 }}>Date</div>
+            <select value={date} onChange={(e) => setDate(e.target.value)} style={selectStyle}>
+              {summary.available_dates.map((d) => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Headline */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
+        <HeadlineStat label="Tickets Sold" value={String(summary.tickets_sold)} sub={`of ${summary.capacity_total} capacity`} />
+        <HeadlineStat label="Revenue" value={formatNoirCurrency(summary.revenue)} sub="at list price" />
+        <HeadlineStat label="Capacity" value={`${(summary.capacity_percent * 100).toFixed(0)}%`} sub={capacityLabel(summary.capacity_percent)} />
+        <HeadlineStat label="Redeemed" value={`${summary.redeemed} · ${(summary.redemption_rate * 100).toFixed(0)}%`} sub="ticket_state=redeemed" />
+      </div>
+      <style>{`@media (max-width: 900px) { div[style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr 1fr !important; } }`}</style>
+
+      {/* WoW */}
+      {wow && <WoWStrip wow={wow} summary={summary} />}
+
+      {/* Packages */}
+      <Section title="Package Mix" subtitle={`${summary.packages.reduce((s, p) => s + p.count, 0)} tickets · ${formatNoirCurrency(summary.revenue)} total`}>
+        <PackageTable packages={summary.packages} />
+      </Section>
+
+      {/* Sessions */}
+      <Section title="Session Occupancy" subtitle={`${summary.sessions.length} session${summary.sessions.length === 1 ? "" : "s"}`}>
+        <SessionList sessions={summary.sessions} />
+      </Section>
+
+      {/* Notes */}
+      {summary.notes.length > 0 && (
+        <Section title="Guest Notes">
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {summary.notes.map((n, i) => (
+              <div key={i} style={{ padding: "10px 14px", background: "rgba(192,57,43,0.08)", borderLeft: "3px solid #c0392b", fontSize: 13 }}>
+                <strong>{n.guest}</strong> · {n.session}
+                <div style={{ color: "var(--text-muted)", marginTop: 3 }}>{n.note}</div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+
+      {/* Actions */}
+      <div style={{ marginTop: 48, padding: "24px 28px", border: "1px solid var(--border-subtle)", background: "var(--bg-elevated)" }}>
+        <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, marginBottom: 14 }}>Actions</div>
+        <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: recapStatus ? 16 : 0 }}>
+          <button onClick={() => sendRecap(true)} disabled={sending} style={{ ...btnOutline, opacity: sending ? 0.5 : 1 }}>
+            {sending ? "Sending…" : "Send Test Recap (Keith only)"}
+          </button>
+          <button onClick={() => sendRecap(false)} disabled={sending} style={{ ...btnPrimary, opacity: sending ? 0.5 : 1 }}>
+            {sending ? "Sending…" : "Send Recap to Team"}
+          </button>
+          <Link href="/api/oddyssey-noir/recap" target="_blank" style={btnOutline}>Preview HTML</Link>
+        </div>
+        {recapStatus && (
+          <div style={{ fontSize: 12, color: recapStatus.startsWith("Sent") ? "#27ae60" : "#c0392b" }}>
+            {recapStatus}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function capacityLabel(pct: number): string {
+  if (pct >= 0.9) return "Near sold out";
+  if (pct >= 0.75) return "Strong night";
+  if (pct >= 0.5) return "Healthy";
+  if (pct >= 0.25) return "Room to fill";
+  return "Light";
+}
+
+function HeadlineStat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+  return (
+    <div style={{ background: "var(--bg-elevated)", padding: "28px 24px" }}>
+      <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, marginBottom: 12 }}>{label}</div>
+      <div style={{ fontFamily: "var(--serif)", fontSize: 44, fontWeight: 300, lineHeight: 1, color: "var(--text)", marginBottom: 6 }}>{value}</div>
+      {sub && <div style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: 0.5 }}>{sub}</div>}
+    </div>
+  );
+}
+
+function Section({ title, subtitle, children }: { title: string; subtitle?: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div style={{ marginTop: 48 }}>
+      <div style={{ marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8 }}>
+        <h2 style={{ fontFamily: "var(--serif)", fontSize: 22, fontWeight: 400, letterSpacing: 2, textTransform: "uppercase", margin: 0 }}>{title}</h2>
+        {subtitle && <div style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: 1.5, textTransform: "uppercase" }}>{subtitle}</div>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function PackageTable({ packages }: { packages: NoirPackageBreakdown[] }) {
+  return (
+    <div style={{ border: "1px solid var(--border-subtle)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.2fr 1.5fr 1fr", padding: "12px 20px", fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, borderBottom: "1px solid var(--border-subtle)", background: "var(--bg-elevated)" }}>
+        <div>Package</div>
+        <div style={{ textAlign: "right" }}>Tickets</div>
+        <div style={{ textAlign: "right" }}>Revenue</div>
+        <div>Mix</div>
+        <div style={{ textAlign: "right" }}>% Total</div>
+      </div>
+      {packages.map((p) => (
+        <div key={p.type} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1.2fr 1.5fr 1fr", padding: "14px 20px", fontSize: 13, alignItems: "center", borderBottom: "1px solid var(--border-subtle)", color: p.count === 0 ? "var(--text-muted)" : "var(--text)" }}>
+          <div style={{ fontFamily: "var(--serif)", fontSize: 16 }}>{p.label}</div>
+          <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 20, color: p.count > 0 ? "var(--accent)" : "var(--text-muted)" }}>{p.count}</div>
+          <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16 }}>{formatNoirCurrency(p.revenue)}</div>
+          <div>
+            <div style={{ height: 6, background: "var(--border-subtle)" }}>
+              <div style={{ height: "100%", width: `${p.percent * 100}%`, background: "var(--accent)" }} />
+            </div>
+          </div>
+          <div style={{ textAlign: "right", fontSize: 12, color: "var(--text-muted)" }}>{(p.percent * 100).toFixed(1)}%</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SessionList({ sessions }: { sessions: NoirSessionOccupancy[] }) {
+  if (sessions.length === 0) return <div style={{ padding: 40, textAlign: "center", color: "var(--text-muted)", border: "1px dashed var(--border)", fontSize: 13 }}>No session data yet.</div>;
+  return (
+    <div style={{ border: "1px solid var(--border-subtle)" }}>
+      {sessions.map((s, i) => (
+        <div key={s.iso} style={{ display: "grid", gridTemplateColumns: "90px 1fr 90px 2fr 80px", padding: "14px 20px", alignItems: "center", fontSize: 13, borderBottom: i < sessions.length - 1 ? "1px solid var(--border-subtle)" : "none", gap: 16 }}>
+          <div style={{ fontFamily: "var(--serif)", fontSize: 18, color: "var(--accent)" }}>{s.time_label}</div>
+          <div>
+            <div style={{ height: 6, background: "var(--border-subtle)" }}>
+              <div style={{ height: "100%", width: `${Math.min(100, s.percent * 100)}%`, background: s.percent >= 0.9 ? "#c0392b" : s.percent >= 0.75 ? "#d4b85e" : "var(--accent)" }} />
+            </div>
+          </div>
+          <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16 }}>
+            {s.admissions}<span style={{ color: "var(--text-muted)" }}>/{s.capacity}</span>
+          </div>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+            {s.package_mix.map((m) => (
+              <span key={m.type} style={{ fontSize: 10, letterSpacing: 1, color: "var(--text-muted)", padding: "3px 8px", border: "1px solid var(--border-subtle)" }}>
+                {m.short_label} · <strong style={{ color: "var(--text)" }}>{m.count}</strong>
+              </span>
+            ))}
+          </div>
+          <div style={{ textAlign: "right", fontSize: 12, color: s.percent >= 0.9 ? "#c0392b" : s.percent >= 0.75 ? "#d4b85e" : "var(--text-muted)" }}>
+            {(s.percent * 100).toFixed(0)}%
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function WoWStrip({ wow, summary }: { wow: NoirWeekOverWeek; summary: NoirSummary }) {
+  return (
+    <div style={{ marginTop: -8, marginBottom: 40 }}>
+      <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "var(--text-muted)", fontWeight: 500, marginBottom: 12 }}>
+        vs. {wow.prior_date_label}
+      </div>
+      {wow.available && wow.prior ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)" }}>
+          <DeltaCard label="Tickets" current={summary.tickets_sold} prior={wow.prior.tickets} delta={wow.deltas.tickets} />
+          <DeltaCard label="Revenue" current={formatNoirCurrency(summary.revenue)} prior={formatNoirCurrency(wow.prior.revenue)} delta={wow.deltas.revenue} formatDelta={(n) => (n >= 0 ? `+${formatNoirCurrency(n)}` : `−${formatNoirCurrency(Math.abs(n))}`)} />
+          <DeltaCard label="Capacity" current={`${(summary.capacity_percent * 100).toFixed(0)}%`} prior={`${(wow.prior.capacity_percent * 100).toFixed(0)}%`} delta={wow.deltas.capacity_percent} formatDelta={(n) => `${n >= 0 ? "+" : "−"}${Math.abs(n * 100).toFixed(0)} pts`} />
+          <DeltaCard label="Redeemed" current={summary.redeemed} prior={wow.prior.redeemed} delta={wow.deltas.redeemed} />
+        </div>
+      ) : (
+        <div style={{ padding: "20px 24px", border: "1px dashed var(--border-subtle)", background: "var(--bg-elevated)", fontSize: 12, color: "var(--text-muted)" }}>
+          {wow.prior_date_label} has no archived pull yet. WoW will populate once the scheduler has run through a full week.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DeltaCard({ label, current, prior, delta, formatDelta }: { label: string; current: string | number; prior: string | number; delta: number; formatDelta?: (n: number) => string }) {
+  const color = delta > 0 ? "#27ae60" : delta < 0 ? "#c0392b" : "var(--text-muted)";
+  const arrow = delta > 0 ? "▲" : delta < 0 ? "▼" : "—";
+  const deltaText = formatDelta ? formatDelta(delta) : `${delta >= 0 ? "+" : ""}${delta}`;
+  return (
+    <div style={{ background: "var(--bg-elevated)", padding: "16px 18px" }}>
+      <div style={{ fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6, fontWeight: 500 }}>{label}</div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
+        <div style={{ fontFamily: "var(--serif)", fontSize: 22, color: "var(--text)", lineHeight: 1 }}>{current}</div>
+        <div style={{ fontSize: 12, color, whiteSpace: "nowrap" }}>{arrow} {deltaText}</div>
+      </div>
+      <div style={{ fontSize: 10, color: "var(--text-muted)", letterSpacing: 1, marginTop: 4, textTransform: "uppercase" }}>was {prior}</div>
+    </div>
+  );
+}
+
+const btnPrimary: React.CSSProperties = {
+  display: "inline-block", padding: "12px 24px", background: "var(--accent)", color: "var(--bg)",
+  fontSize: 10, letterSpacing: 2, textTransform: "uppercase", fontWeight: 500, cursor: "pointer",
+  border: "none", textDecoration: "none",
+};
+const btnOutline: React.CSSProperties = {
+  display: "inline-block", padding: "12px 24px", background: "transparent", color: "var(--text-secondary)",
+  fontSize: 10, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer",
+  border: "1px solid var(--border)", textDecoration: "none",
+};
+const selectStyle: React.CSSProperties = {
+  background: "var(--bg-elevated)", color: "var(--text)", border: "1px solid var(--border-subtle)",
+  padding: "8px 12px", fontSize: 13, letterSpacing: 0.3, outline: "none", fontFamily: "var(--sans)",
+};
