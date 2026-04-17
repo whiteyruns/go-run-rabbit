@@ -9,6 +9,17 @@ const REPO = process.cwd();
 const WRAPPER = path.join(REPO, "scripts/oddyssey-food-pull.sh");
 
 let started = false;
+let startedAt: string | null = null;
+const scheduled: { name: string; pattern: string; next: string | null }[] = [];
+
+export function getSchedulerStatus() {
+  return {
+    started,
+    started_at: startedAt,
+    env_ok: Boolean(process.env.TICKETURE_EMAIL && process.env.TICKETURE_PASSWORD),
+    jobs: scheduled,
+  };
+}
 
 function yesterdayLocal(): string {
   const d = new Date();
@@ -40,9 +51,8 @@ function runPull(label: string, dateArg?: string) {
 export function startScheduler(): void {
   if (started) return;
   started = true;
+  startedAt = new Date().toISOString();
 
-  // Only schedule when the Ticketure env is present — otherwise there's
-  // nothing to pull and we avoid noisy failures in dev.
   if (!process.env.TICKETURE_EMAIL || !process.env.TICKETURE_PASSWORD) {
     console.log(
       "[oddyssey-scheduler] skipping — TICKETURE_* env vars not set"
@@ -50,19 +60,27 @@ export function startScheduler(): void {
     return;
   }
 
-  // Every 30 min, 9 AM – 2:30 PM PT, Thu/Fri/Sat/Sun
-  new Cron(
+  const regular = new Cron(
     "0,30 9-14 * * 4,5,6,0",
     { timezone: "America/Los_Angeles", name: "oddyssey-regular" },
     () => runPull("regular")
   );
+  scheduled.push({
+    name: "regular",
+    pattern: "0,30 9-14 * * 4,5,6,0",
+    next: regular.nextRun()?.toISOString() ?? null,
+  });
 
-  // 00:15 AM Fri/Sat/Sun/Mon — post-show pull with yesterday's date
-  new Cron(
+  const postshow = new Cron(
     "15 0 * * 5,6,0,1",
     { timezone: "America/Los_Angeles", name: "oddyssey-postshow" },
     () => runPull("postshow", yesterdayLocal())
   );
+  scheduled.push({
+    name: "postshow",
+    pattern: "15 0 * * 5,6,0,1",
+    next: postshow.nextRun()?.toISOString() ?? null,
+  });
 
   console.log(
     "[oddyssey-scheduler] started " +
