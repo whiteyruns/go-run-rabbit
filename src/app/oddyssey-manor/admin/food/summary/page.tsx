@@ -1,6 +1,7 @@
 "use client";
 
 import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
+import type { WeekOverWeek } from "@/lib/oddyssey-food/history";
 import {
   buildSummary,
   formatCurrency,
@@ -17,6 +18,7 @@ export default function SummaryPage() {
   const [date, setDate] = useState<string>("");
   const [sendingRecap, setSendingRecap] = useState(false);
   const [recapResult, setRecapResult] = useState<string | null>(null);
+  const [wow, setWow] = useState<WeekOverWeek | null>(null);
 
   useEffect(() => {
     setState(loadStateWithWalkups());
@@ -30,6 +32,19 @@ export default function SummaryPage() {
   useEffect(() => {
     if (summary && !date) setDate(summary.date);
   }, [summary, date]);
+
+  // Fetch week-over-week whenever the target date changes
+  useEffect(() => {
+    if (!summary) return;
+    let cancelled = false;
+    fetch(`/api/oddyssey-food/wow?date=${summary.date}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled && d.status === "ok") setWow(d.wow);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [summary?.date]);
 
   if (!state) {
     return (
@@ -102,6 +117,9 @@ export default function SummaryPage() {
 
       <style>{`@media (max-width: 900px) { div[style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr 1fr !important; } }`}</style>
 
+      {/* Week over week */}
+      {wow && <WoWStrip wow={wow} summary={summary} />}
+
       {/* Package mix */}
       <Section title="Package Mix" subtitle={`${summary.packages.reduce((s, p) => s + p.count, 0)} tickets · ${formatCurrency(summary.revenue)} total`}>
         <PackageTable packages={summary.packages} />
@@ -148,6 +166,73 @@ function capacityLabel(pct: number): string {
   if (pct >= 0.5) return "Healthy";
   if (pct >= 0.25) return "Room to fill";
   return "Light";
+}
+
+function WoWStrip({ wow, summary }: { wow: WeekOverWeek; summary: NightSummary }) {
+  return (
+    <div style={{ marginTop: -8, marginBottom: 40 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 12, flexWrap: "wrap", gap: 8 }}>
+        <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "var(--text-muted)", fontWeight: 500 }}>
+          vs. {wow.prior_date_label}
+        </div>
+        {!wow.available && (
+          <div style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: 0.3 }}>
+            No snapshot on file — comparison will populate next week
+          </div>
+        )}
+      </div>
+      {wow.available && wow.prior ? (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)" }}>
+          <DeltaCard label="Tickets" current={summary.tickets_sold} prior={wow.prior.tickets} delta={wow.deltas.tickets} />
+          <DeltaCard label="Revenue" current={formatCurrency(summary.revenue)} prior={formatCurrency(wow.prior.revenue)} delta={wow.deltas.revenue} formatDelta={(n) => (n >= 0 ? `+${formatCurrency(n)}` : `−${formatCurrency(Math.abs(n))}`)} />
+          <DeltaCard label="Capacity" current={`${(summary.capacity_percent * 100).toFixed(0)}%`} prior={`${(wow.prior.capacity_percent * 100).toFixed(0)}%`} delta={wow.deltas.capacity_percent} formatDelta={(n) => `${n >= 0 ? "+" : "−"}${Math.abs(n * 100).toFixed(0)} pts`} />
+          <DeltaCard label="Food Items" current={summary.food_items} prior={wow.prior.food_items} delta={wow.deltas.food_items} />
+        </div>
+      ) : (
+        <div style={{
+          padding: "20px 24px", border: "1px dashed var(--border-subtle)",
+          background: "var(--bg-elevated)", fontSize: 12, color: "var(--text-muted)",
+          letterSpacing: 0.3,
+        }}>
+          {wow.prior_date_label} has no archived pull. Once the scheduler runs through a full week, this row will show tonight&rsquo;s numbers against last week&rsquo;s same night.
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DeltaCard({
+  label,
+  current,
+  prior,
+  delta,
+  formatDelta,
+}: {
+  label: string;
+  current: string | number;
+  prior: string | number;
+  delta: number;
+  formatDelta?: (n: number) => string;
+}) {
+  const color = delta > 0 ? "#27ae60" : delta < 0 ? "#c0392b" : "var(--text-muted)";
+  const arrow = delta > 0 ? "▲" : delta < 0 ? "▼" : "—";
+  const deltaText = formatDelta ? formatDelta(delta) : `${delta >= 0 ? "+" : ""}${delta}`;
+  return (
+    <div style={{ background: "var(--bg-elevated)", padding: "16px 18px" }}>
+      <div style={{ fontSize: 9, letterSpacing: 2.5, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6, fontWeight: 500 }}>
+        {label}
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
+        <div style={{ fontFamily: "var(--serif)", fontSize: 22, color: "var(--text)", lineHeight: 1 }}>{current}</div>
+        <div style={{ fontSize: 12, color, letterSpacing: 0.3, whiteSpace: "nowrap" }}>
+          {arrow} {deltaText}
+        </div>
+      </div>
+      <div style={{ fontSize: 10, color: "var(--text-muted)", letterSpacing: 1, marginTop: 4, textTransform: "uppercase" }}>
+        was {prior}
+      </div>
+    </div>
+  );
 }
 
 function HeadlineStat({ label, value, sub }: { label: string; value: string; sub?: string }) {
