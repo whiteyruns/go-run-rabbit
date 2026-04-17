@@ -1,5 +1,6 @@
 "use client";
 
+import { GMBriefingPanel } from "@/components/oddyssey-sessions/GMBriefingPanel";
 import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
 import type { ManorReportOverlay, WeekOverWeek } from "@/lib/oddyssey-food/history";
 import {
@@ -20,6 +21,7 @@ export default function SummaryPage() {
   const [recapResult, setRecapResult] = useState<string | null>(null);
   const [wow, setWow] = useState<WeekOverWeek | null>(null);
   const [report, setReport] = useState<ManorReportOverlay | null>(null);
+  const [bullets, setBullets] = useState<string[]>([]);
 
   useEffect(() => {
     setState(loadStateWithWalkups());
@@ -46,6 +48,10 @@ export default function SummaryPage() {
           setReport(d.report ?? null);
         }
       })
+      .catch(() => {});
+    fetch(`/api/oddyssey-food/briefing?date=${summary.date}&format=json`)
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled && d.status === "ok") setBullets(d.bullets ?? []); })
       .catch(() => {});
     return () => { cancelled = true; };
   }, [summary?.date]);
@@ -162,6 +168,9 @@ export default function SummaryPage() {
       <Section title="Food Prep" subtitle={<Link href="/oddyssey-manor/admin/food/kitchen" style={{ color: "var(--accent)", textDecoration: "none", fontSize: 11, letterSpacing: 2, textTransform: "uppercase" }}>Open Kitchen View →</Link>}>
         <FoodSummary food={summary.food} />
       </Section>
+
+      {/* GM Briefing */}
+      <GMBriefingPanel venue="manor" date={summary.date} bullets={bullets} />
 
       {/* Actions */}
       <div style={{ marginTop: 48, padding: "24px 28px", border: "1px solid var(--border-subtle)", background: "var(--bg-elevated)" }}>

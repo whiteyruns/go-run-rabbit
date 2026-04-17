@@ -143,12 +143,16 @@ function runSessionsScrape(parentLabel: string, venue: "manor" | "noir", dateArg
   );
 }
 
-async function sendRecap(venue: "manor" | "noir", dateArg: string) {
+async function sendEmail(
+  kind: "recap" | "briefing",
+  venue: "manor" | "noir",
+  dateArg: string
+) {
   const port = process.env.PORT ?? "3102";
   const apiPath = venue === "manor" ? "oddyssey-food" : "oddyssey-noir";
-  const url = `http://localhost:${port}/api/${apiPath}/recap`;
+  const url = `http://localhost:${port}/api/${apiPath}/${kind}`;
   const stamp = new Date().toISOString();
-  console.log(`[oddyssey-scheduler] ${stamp} fire: recap-${venue} (${dateArg})`);
+  console.log(`[oddyssey-scheduler] ${stamp} fire: ${kind}-${venue} (${dateArg})`);
   try {
     const res = await fetch(url, {
       method: "POST",
@@ -157,11 +161,19 @@ async function sendRecap(venue: "manor" | "noir", dateArg: string) {
     });
     const data = await res.json();
     console.log(
-      `[oddyssey-scheduler] recap-${venue} → ${data.status} ${data.subject ?? ""} → ${(data.recipients ?? []).join(", ")} ${data.resend_id ? `(${data.resend_id})` : data.message ?? ""}`
+      `[oddyssey-scheduler] ${kind}-${venue} → ${data.status} ${data.subject ?? ""} → ${(data.recipients ?? []).join(", ")} ${data.resend_id ? `(${data.resend_id})` : data.message ?? ""}`
     );
   } catch (e) {
-    console.log(`[oddyssey-scheduler] recap-${venue} failed: ${String(e)}`);
+    console.log(`[oddyssey-scheduler] ${kind}-${venue} failed: ${String(e)}`);
   }
+}
+
+const sendRecap = (venue: "manor" | "noir", date: string) => sendEmail("recap", venue, date);
+const sendBriefing = (venue: "manor" | "noir", date: string) => sendEmail("briefing", venue, date);
+
+function todayLocal(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 export function startScheduler(): void {
@@ -194,12 +206,16 @@ export function startScheduler(): void {
     // --- MANOR ---
     // Hourly 9 AM – 2 PM, Thu–Sun (Manor cutoff is 2:30 PM for kitchen)
     ["manor-regular", "0 9-14 * * 4,5,6,0", () => runPull("manor-regular", "manor")],
+    // 5 PM PT GM briefing email — talking points for the evening
+    ["manor-briefing", "0 17 * * 4,5,6,0", () => sendBriefing("manor", todayLocal())],
     ["manor-postshow", "15 0 * * 5,6,0,1", () => runPull("manor-postshow", "manor", yesterdayLocal())],
     ["manor-recap", "30 0 * * 5,6,0,1", () => sendRecap("manor", yesterdayLocal())],
 
     // --- NOIR ---
     // Hourly 9 AM – 10 PM, Fri/Sat (captures last-minute sales as doors open)
     ["noir-regular", "0 9-22 * * 5,6", () => runPull("noir-regular", "noir")],
+    // 5 PM PT GM briefing email
+    ["noir-briefing", "0 17 * * 5,6", () => sendBriefing("noir", todayLocal())],
     // Post-show pull at 03:00 Sat/Sun (after 2 AM close), recap at 03:15
     ["noir-postshow", "0 3 * * 6,0", () => runPull("noir-postshow", "noir", yesterdayLocal())],
     ["noir-recap", "15 3 * * 6,0", () => sendRecap("noir", yesterdayLocal())],

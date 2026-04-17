@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { GMBriefingPanel } from "@/components/oddyssey-sessions/GMBriefingPanel";
 import {
   formatNoirCurrency,
   type NoirSummary,
@@ -15,6 +16,7 @@ export default function NoirSummaryPage() {
   const [summary, setSummary] = useState<NoirSummary | null>(null);
   const [wow, setWow] = useState<NoirWeekOverWeek | null>(null);
   const [report, setReport] = useState<NoirReportOverlay | null>(null);
+  const [bullets, setBullets] = useState<string[]>([]);
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +33,11 @@ export default function NoirSummaryPage() {
           setWow(data.wow);
           setReport(data.report ?? null);
           if (!date) setDate(data.summary.date);
+          // fetch auto talking points
+          fetch(`/api/oddyssey-noir/briefing?date=${data.summary.date}&format=json`)
+            .then((r) => r.json())
+            .then((b) => { if (b.status === "ok") setBullets(b.bullets ?? []); })
+            .catch(() => {});
         } else {
           setError(data.message);
         }
@@ -182,6 +189,9 @@ export default function NoirSummaryPage() {
           </div>
         </Section>
       )}
+
+      {/* GM Briefing */}
+      <GMBriefingPanel venue="noir" date={summary.date} bullets={bullets} />
 
       {/* Actions */}
       <div style={{ marginTop: 48, padding: "24px 28px", border: "1px solid var(--border-subtle)", background: "var(--bg-elevated)" }}>
