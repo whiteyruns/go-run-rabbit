@@ -102,7 +102,10 @@ async function main() {
   console.log(`[pull] date=${date} from=${from} until=${until} headless=${headless}`);
 
   const browser = await chromium.launch({ headless });
-  const context = await browser.newContext({ acceptDownloads: true });
+  const context = await browser.newContext({
+    acceptDownloads: true,
+    viewport: { width: 1440, height: 900 },
+  });
   const page = await context.newPage();
 
   try {
@@ -258,49 +261,81 @@ async function main() {
 
     if (!menuOpened) {
       await page.screenshot({ path: path.join(outDir, "last-at-dom-dump.png") }).catch(() => {});
-      const dump = await page.evaluate(() => {
+
+      // Access the iframe's real content via contentFrame()
+      const iframeEl = await page.locator("iframe").first().elementHandle();
+      const innerFrame = iframeEl ? await iframeEl.contentFrame() : null;
+      if (!innerFrame) {
+        throw new Error("Could not access iframe content");
+      }
+
+      const dump = await innerFrame.evaluate(() => {
         const out: {
-          url: string; title: string;
-          iframes: Array<{ src: string; w: number; h: number }>;
-          shadowHosts: number;
-          redeemedFound: Array<{ tag: string; cls: string; text: string }>;
-        } = {
-          url: location.href,
-          title: document.title,
-          iframes: [],
-          shadowHosts: 0,
-          redeemedFound: [],
-        };
-        document.querySelectorAll("iframe").forEach((f) => {
-          out.iframes.push({
-            src: f.src || "(no src)",
-            w: f.clientWidth,
-            h: f.clientHeight,
-          });
-        });
-        // Find elements containing "redeemed" anywhere — including descendants
+          url: string;
+          redeemed: { tag: string; cls: string; rect: { x: number; y: number; w: number; h: number } } | null;
+          candidates: Array<{
+            tag: string;
+            cls: string;
+            rect: { x: number; y: number; w: number; h: number };
+            text: string;
+            html: string;
+          }>;
+        } = { url: location.href, redeemed: null, candidates: [] };
+
         const all = Array.from(document.querySelectorAll("*")) as HTMLElement[];
+        const red = all.find((el) =>
+          /^REDEEMED$/i.test(
+            Array.from(el.childNodes)
+              .filter((n) => n.nodeType === 3)
+              .map((n) => n.nodeValue ?? "")
+              .join("")
+              .trim()
+          )
+        );
+        if (red) {
+          const r = red.getBoundingClientRect();
+          out.redeemed = {
+            tag: red.tagName,
+            cls: (red.className?.toString() ?? "").slice(0, 60),
+            rect: { x: r.x, y: r.y, w: r.width, h: r.height },
+          };
+        }
+
+        // Find clickable-ish elements near the REDEEMED button
+        // (within 200px vertically) with small width (icon size)
+        const refY = red ? red.getBoundingClientRect().top : 300;
         for (const el of all) {
-          if (el.shadowRoot) out.shadowHosts++;
-          const direct = Array.from(el.childNodes)
-            .filter((n) => n.nodeType === 3)
-            .map((n) => n.nodeValue ?? "")
-            .join("");
-          if (/redeemed/i.test(direct)) {
-            out.redeemedFound.push({
-              tag: el.tagName,
-              cls: (el.className?.toString() ?? "").slice(0, 60),
-              text: direct.trim().slice(0, 40),
-            });
-            if (out.redeemedFound.length >= 8) break;
-          }
+          const r = el.getBoundingClientRect();
+          if (r.width === 0 || r.height === 0) continue;
+          if (r.width > 80 || r.height > 80) continue; // small only
+          if (r.top < refY - 100 || r.top > refY + 200) continue;
+          const style = getComputedStyle(el);
+          const clickable =
+            el.tagName === "BUTTON" ||
+            el.getAttribute("role") === "button" ||
+            el.hasAttribute("onclick") ||
+            style.cursor === "pointer";
+          if (!clickable) continue;
+          out.candidates.push({
+            tag: el.tagName,
+            cls: (el.className?.toString() ?? "").slice(0, 60),
+            rect: { x: r.x, y: r.y, w: r.width, h: r.height },
+            text: (el.textContent ?? "").trim().slice(0, 30),
+            html: el.outerHTML.slice(0, 200),
+          });
+          if (out.candidates.length >= 15) break;
         }
         return out;
       });
-      console.log(`[pull] url=${dump.url} title="${dump.title}"`);
-      console.log(`[pull] iframes: ${JSON.stringify(dump.iframes)}`);
-      console.log(`[pull] shadow hosts: ${dump.shadowHosts}`);
-      console.log(`[pull] redeemed found: ${JSON.stringify(dump.redeemedFound, null, 2)}`);
+
+      console.log(`[pull] frame url: ${dump.url}`);
+      console.log(`[pull] redeemed: ${JSON.stringify(dump.redeemed)}`);
+      console.log(`[pull] small clickables near REDEEMED:`);
+      for (const c of dump.candidates) {
+        console.log(
+          `  ${c.tag}.${c.cls} @(${Math.round(c.rect.x)},${Math.round(c.rect.y)}) ${Math.round(c.rect.w)}x${Math.round(c.rect.h)} text="${c.text}" html="${c.html}"`
+        );
+      }
       throw new Error("Could not locate the ⋮ menu button on the attendees page");
     }
 
