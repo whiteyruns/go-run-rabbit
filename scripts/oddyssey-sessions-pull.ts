@@ -14,7 +14,7 @@
  *   tsx scripts/oddyssey-sessions-pull.ts --venue=noir --date=2026-04-17
  *   tsx scripts/oddyssey-sessions-pull.ts --venue=manor --date=2026-04-17 --headless=false
  */
-import { chromium, type Frame, type Page } from "playwright";
+import { chromium, type Frame, type FrameLocator, type Page } from "playwright";
 import path from "path";
 import fs from "fs/promises";
 
@@ -92,19 +92,24 @@ async function loginIfNeeded(page: Page, email: string, password: string) {
  * inspect `<a>`/`<div>` elements with hrefs or onclicks matching the
  * session URL pattern and extract the UUIDs.
  */
-async function enumerateSessions(page: Page, frame: Frame, date: string) {
+async function enumerateSessions(page: Page, flocator: FrameLocator, date: string) {
   // The Sessions tab shows a calendar. Click the target date first.
-  const [y, m, d] = date.split("-").map(Number);
+  const [, , d] = date.split("-").map(Number);
   const targetDay = d;
-  const dayCell = frame
+  const dayCell = flocator
     .locator(`td:has-text("${targetDay}"), button:has-text("${targetDay}")`)
     .first();
-  // Best-effort click; if not found, proceed anyway — the calendar
-  // may already be on the right day.
   await dayCell.click({ timeout: 4000 }).catch(() => {});
   await page.waitForTimeout(800);
 
-  // Extract session UUIDs from anchor hrefs and any data-* attributes.
+  // Get the actual Frame object so we can call evaluate()
+  const iframeEl = await page.locator("iframe").first().elementHandle();
+  const frame: Frame | null = iframeEl ? await iframeEl.contentFrame() : null;
+  if (!frame) {
+    console.log("[sessions] could not access iframe content");
+    return [];
+  }
+
   const sessions = await frame.evaluate(() => {
     const out: { session_id: string; time_label: string }[] = [];
     const seen = new Set<string>();
@@ -125,7 +130,6 @@ async function enumerateSessions(page: Page, frame: Frame, date: string) {
   });
 
   console.log(`[sessions] enumerated ${sessions.length} session UUIDs for ${date}`);
-  void y; void m; // silence unused
   return sessions;
 }
 
@@ -263,7 +267,7 @@ async function main() {
     const frame = page.frameLocator("iframe").first();
 
     // 2. Enumerate session UUIDs for the target date.
-    const sessions = await enumerateSessions(page, frame as unknown as Frame, date);
+    const sessions = await enumerateSessions(page, frame, date);
     if (sessions.length === 0) {
       await page.screenshot({ path: path.join(outDir, "last-no-sessions.png"), fullPage: true }).catch(() => {});
       throw new Error(`No sessions enumerated for ${date} — screenshot saved`);
