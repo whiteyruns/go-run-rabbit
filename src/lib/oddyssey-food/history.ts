@@ -4,8 +4,27 @@
 
 import fs from "fs";
 import path from "path";
+import { loadSessionReport, sumSessionReport, type SessionReport, type SessionReportTotals } from "@/lib/oddyssey-sessions/loader";
 import { buildStateFromCsv } from "./build-state";
 import { buildSummary, type NightSummary } from "./summary";
+
+export interface ManorReportOverlay {
+  available: boolean;
+  pulled_at?: string;
+  totals?: SessionReportTotals;
+  sessions?: SessionReport[];
+}
+
+export function loadManorReportOverlay(date: string): ManorReportOverlay {
+  const report = loadSessionReport("manor", date);
+  if (!report) return { available: false };
+  return {
+    available: true,
+    pulled_at: report.pulled_at,
+    totals: sumSessionReport(report),
+    sessions: report.sessions,
+  };
+}
 
 const PULLS_DIR = path.resolve(process.cwd(), "data/oddyssey-food/pulls");
 

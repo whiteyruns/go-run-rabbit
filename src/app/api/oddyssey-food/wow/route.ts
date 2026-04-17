@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { buildStateFromCsv } from "@/lib/oddyssey-food/build-state";
-import { buildWeekOverWeek } from "@/lib/oddyssey-food/history";
+import { buildWeekOverWeek, loadManorReportOverlay } from "@/lib/oddyssey-food/history";
 import { buildSummary } from "@/lib/oddyssey-food/summary";
 
 export const runtime = "nodejs";
@@ -34,7 +34,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ status: "error", message: "No summary for that date." }, { status: 400 });
   }
   const wow = buildWeekOverWeek(summary);
-  return NextResponse.json({ status: "ok", wow, summary_date: summary.date });
+  const report = loadManorReportOverlay(summary.date);
+  const priorReport = loadManorReportOverlay(wow.prior_date);
+  return NextResponse.json({ status: "ok", wow, summary_date: summary.date, report, prior_report: priorReport });
 }
 
 // POST variant accepts CSV body so the client can compute WoW against
@@ -55,5 +57,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ status: "error", message: "No summary for that date." }, { status: 400 });
   }
   const wow = buildWeekOverWeek(summary);
-  return NextResponse.json({ status: "ok", wow, summary_date: summary.date });
+  const report = loadManorReportOverlay(summary.date);
+  const priorReport = loadManorReportOverlay(wow.prior_date);
+  return NextResponse.json({ status: "ok", wow, summary_date: summary.date, report, prior_report: priorReport });
 }

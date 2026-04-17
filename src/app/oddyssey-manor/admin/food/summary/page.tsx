@@ -1,7 +1,7 @@
 "use client";
 
 import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
-import type { WeekOverWeek } from "@/lib/oddyssey-food/history";
+import type { ManorReportOverlay, WeekOverWeek } from "@/lib/oddyssey-food/history";
 import {
   buildSummary,
   formatCurrency,
@@ -19,6 +19,7 @@ export default function SummaryPage() {
   const [sendingRecap, setSendingRecap] = useState(false);
   const [recapResult, setRecapResult] = useState<string | null>(null);
   const [wow, setWow] = useState<WeekOverWeek | null>(null);
+  const [report, setReport] = useState<ManorReportOverlay | null>(null);
 
   useEffect(() => {
     setState(loadStateWithWalkups());
@@ -40,7 +41,10 @@ export default function SummaryPage() {
     fetch(`/api/oddyssey-food/wow?date=${summary.date}`)
       .then((r) => r.json())
       .then((d) => {
-        if (!cancelled && d.status === "ok") setWow(d.wow);
+        if (!cancelled && d.status === "ok") {
+          setWow(d.wow);
+          setReport(d.report ?? null);
+        }
       })
       .catch(() => {});
     return () => { cancelled = true; };
@@ -107,13 +111,37 @@ export default function SummaryPage() {
         )}
       </div>
 
-      {/* Headline stats */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
-        <HeadlineStat label="Tickets Sold" value={String(summary.tickets_sold)} sub={`of ${summary.capacity_total} capacity`} />
-        <HeadlineStat label="Revenue" value={formatCurrency(summary.revenue)} sub="at list price" />
-        <HeadlineStat label="Capacity" value={`${(summary.capacity_percent * 100).toFixed(0)}%`} sub={capacityLabel(summary.capacity_percent)} />
-        <HeadlineStat label="Food to Prep" value={String(summary.food_items)} sub={`${summary.food.by_item.length} menu item${summary.food.by_item.length === 1 ? "" : "s"}`} />
-      </div>
+      {/* Headline stats — prefer Ticketure actuals when the session report is on disk */}
+      {report?.available && report.totals ? (
+        <>
+          <div style={{
+            marginBottom: 14, padding: "10px 14px", background: "rgba(39,174,96,0.08)",
+            borderLeft: "3px solid #27ae60", fontSize: 11, color: "#27ae60",
+            letterSpacing: 0.5, textTransform: "uppercase", fontWeight: 500,
+          }}>
+            ✓ Actuals from Ticketure Summary Report · pulled {report.pulled_at ? new Date(report.pulled_at).toLocaleString("en-US") : ""}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
+            <HeadlineStat label="Tickets Sold" value={String(report.totals.reserved)} sub={`of ${report.totals.capacity} capacity`} />
+            <HeadlineStat label="Gross Revenue" value={formatCurrency(report.totals.gross_revenue)} sub={`Net $${report.totals.net_to_bank.toFixed(0)} to bank`} />
+            <HeadlineStat label="Capacity" value={`${(report.totals.capacity_percent * 100).toFixed(1)}%`} sub={capacityLabel(report.totals.capacity_percent)} />
+            <HeadlineStat label="Food to Prep" value={String(summary.food_items)} sub={`${summary.food.by_item.length} menu item${summary.food.by_item.length === 1 ? "" : "s"}`} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
+            <HeadlineStat label="Paid" value={String(report.totals.tickets_paid)} sub="actually paid" />
+            <HeadlineStat label="Free (Comps)" value={String(report.totals.tickets_free)} sub="$0 tickets" />
+            <HeadlineStat label="Orders" value={String(report.totals.total_orders)} sub="distinct purchases" />
+            <HeadlineStat label="Redeemed" value={`${report.totals.redeemed} · ${report.totals.reserved > 0 ? Math.round(report.totals.redeemed / report.totals.reserved * 100) : 0}%`} sub="scanned at door" />
+          </div>
+        </>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
+          <HeadlineStat label="Tickets Sold" value={String(summary.tickets_sold)} sub={`of ${summary.capacity_total} capacity`} />
+          <HeadlineStat label="Revenue (est.)" value={formatCurrency(summary.revenue)} sub="list price × count" />
+          <HeadlineStat label="Capacity" value={`${(summary.capacity_percent * 100).toFixed(0)}%`} sub={capacityLabel(summary.capacity_percent)} />
+          <HeadlineStat label="Food to Prep" value={String(summary.food_items)} sub={`${summary.food.by_item.length} menu item${summary.food.by_item.length === 1 ? "" : "s"}`} />
+        </div>
+      )}
 
       <style>{`@media (max-width: 900px) { div[style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr 1fr !important; } }`}</style>
 
