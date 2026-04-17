@@ -22,16 +22,27 @@ const WRAPPER = typeof process !== "undefined"
   ? getPath().join(REPO, "scripts/oddyssey-food-pull.sh")
   : "";
 
-let started = false;
-let startedAt: string | null = null;
-const scheduled: { name: string; pattern: string; next: string | null }[] = [];
+// Scheduler state lives on globalThis so it survives Next.js's chunk
+// splitting (instrumentation.ts and API route are separate bundles that
+// otherwise each get their own module-scoped state).
+interface SchedulerState {
+  started: boolean;
+  startedAt: string | null;
+  jobs: { name: string; pattern: string; next: string | null }[];
+  crons: Cron[];
+}
+const G = globalThis as unknown as { __oddysseyScheduler?: SchedulerState };
+if (!G.__oddysseyScheduler) {
+  G.__oddysseyScheduler = { started: false, startedAt: null, jobs: [], crons: [] };
+}
+const STATE: SchedulerState = G.__oddysseyScheduler!;
 
 export function getSchedulerStatus() {
   return {
-    started,
-    started_at: startedAt,
+    started: STATE.started,
+    started_at: STATE.startedAt,
     env_ok: Boolean(process.env.TICKETURE_EMAIL && process.env.TICKETURE_PASSWORD),
-    jobs: scheduled,
+    jobs: STATE.jobs,
   };
 }
 
@@ -64,14 +75,12 @@ function runPull(label: string, dateArg?: string) {
 }
 
 export function startScheduler(): void {
-  if (started) return;
-  started = true;
-  startedAt = new Date().toISOString();
+  if (STATE.started) return;
+  STATE.started = true;
+  STATE.startedAt = new Date().toISOString();
 
   if (!process.env.TICKETURE_EMAIL || !process.env.TICKETURE_PASSWORD) {
-    console.log(
-      "[oddyssey-scheduler] skipping — TICKETURE_* env vars not set"
-    );
+    console.log("[oddyssey-scheduler] skipping — TICKETURE_* env vars not set");
     return;
   }
 
@@ -80,7 +89,8 @@ export function startScheduler(): void {
     { timezone: "America/Los_Angeles", name: "oddyssey-regular" },
     () => runPull("regular")
   );
-  scheduled.push({
+  STATE.crons.push(regular);
+  STATE.jobs.push({
     name: "regular",
     pattern: "0,30 9-14 * * 4,5,6,0",
     next: regular.nextRun()?.toISOString() ?? null,
@@ -91,15 +101,14 @@ export function startScheduler(): void {
     { timezone: "America/Los_Angeles", name: "oddyssey-postshow" },
     () => runPull("postshow", yesterdayLocal())
   );
-  scheduled.push({
+  STATE.crons.push(postshow);
+  STATE.jobs.push({
     name: "postshow",
     pattern: "15 0 * * 5,6,0,1",
     next: postshow.nextRun()?.toISOString() ?? null,
   });
 
   console.log(
-    "[oddyssey-scheduler] started " +
-      "| regular: every 30 min 9am–2:30pm PT Thu–Sun " +
-      "| postshow: 00:15 PT Fri/Sat/Sun/Mon"
+    "[oddyssey-scheduler] started | regular 9am-2:30pm PT Thu-Sun | postshow 00:15 PT Fri-Mon"
   );
 }
