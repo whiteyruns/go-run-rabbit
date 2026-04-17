@@ -7,6 +7,7 @@ import {
   type NoirSummary,
   type NoirPackageBreakdown,
   type NoirSessionOccupancy,
+  type NoirTicketGroupRow,
 } from "@/lib/oddyssey-noir/pipeline";
 import type { NoirWeekOverWeek } from "@/lib/oddyssey-noir/history";
 
@@ -112,10 +113,30 @@ export default function NoirSummaryPage() {
       {/* WoW */}
       {wow && <WoWStrip wow={wow} summary={summary} />}
 
-      {/* Packages */}
-      <Section title="Package Mix" subtitle={`${summary.packages.reduce((s, p) => s + p.count, 0)} tickets · ${formatNoirCurrency(summary.revenue)} total`}>
-        <PackageTable packages={summary.packages} />
+      {/* Ticket Groups — mirrors Ticketure's Summary Report rows */}
+      <Section
+        title="Ticket Groups"
+        subtitle={<span style={{ color: "var(--text-muted)" }}>From attendees CSV · list-price estimate</span>}
+      >
+        <TicketGroupsTable groups={summary.ticket_groups} />
+        <div style={{
+          marginTop: 12, padding: "10px 14px", background: "rgba(180,110,200,0.06)",
+          borderLeft: "3px solid var(--accent)", fontSize: 12, color: "var(--text-muted)",
+          letterSpacing: 0.3, lineHeight: 1.5,
+        }}>
+          <strong style={{ color: "var(--accent)" }}>Revenue is list-price × ticket count.</strong>{" "}
+          Ticketure&rsquo;s Summary Report shows actual paid-vs-free breakdown and net-to-bank
+          (these are not exposed in the attendees CSV). We&rsquo;ll wire those in once the
+          Summary Report scraper ships.
+        </div>
       </Section>
+
+      {/* Packages (seeded types only) */}
+      {summary.packages.some((p) => p.count > 0) && (
+        <Section title="Package Mix" subtitle={`${summary.packages.reduce((s, p) => s + p.count, 0)} tickets · ${formatNoirCurrency(summary.revenue)} total`}>
+          <PackageTable packages={summary.packages} />
+        </Section>
+      )}
 
       {/* Sessions */}
       <Section title="Session Occupancy" subtitle={`${summary.sessions.length} session${summary.sessions.length === 1 ? "" : "s"}`}>
@@ -184,6 +205,39 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: Reac
         {subtitle && <div style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: 1.5, textTransform: "uppercase" }}>{subtitle}</div>}
       </div>
       {children}
+    </div>
+  );
+}
+
+function TicketGroupsTable({ groups }: { groups: NoirTicketGroupRow[] }) {
+  if (groups.length === 0) return <div style={{ padding: 24, color: "var(--text-muted)", fontSize: 13, border: "1px dashed var(--border)" }}>No ticket groups in this pull.</div>;
+  return (
+    <div style={{ border: "1px solid var(--border-subtle)" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1.3fr", padding: "12px 20px", fontSize: 9, letterSpacing: 2, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, borderBottom: "1px solid var(--border-subtle)", background: "var(--bg-elevated)" }}>
+        <div>Ticket Group</div>
+        <div style={{ textAlign: "right" }}>Reserved</div>
+        <div style={{ textAlign: "right" }}>Redeemed</div>
+        <div style={{ textAlign: "right" }}>Revenue (est.)</div>
+      </div>
+      {groups.map((g) => (
+        <div key={g.ticket_group_name} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1.3fr", padding: "14px 20px", fontSize: 13, alignItems: "center", borderBottom: "1px solid var(--border-subtle)" }}>
+          <div style={{ fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
+            {g.ticket_group_name}
+            {!g.price_known && (
+              <span style={{ marginLeft: 8, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", color: "#d4a574", padding: "2px 6px", border: "1px solid rgba(212,165,116,0.3)", verticalAlign: "middle" }}>
+                No price seeded
+              </span>
+            )}
+          </div>
+          <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 20, color: "var(--accent)" }}>{g.reserved}</div>
+          <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text-secondary)" }}>
+            {g.redeemed} <span style={{ color: "var(--text-muted)", fontSize: 11 }}>· {(g.redemption_rate * 100).toFixed(0)}%</span>
+          </div>
+          <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: g.price_known ? "var(--text)" : "var(--text-muted)" }}>
+            {g.price_known ? formatNoirCurrency(g.revenue_estimate) : "—"}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
