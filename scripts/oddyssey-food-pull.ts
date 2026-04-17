@@ -252,28 +252,48 @@ async function main() {
     if (!menuOpened) {
       await page.screenshot({ path: path.join(outDir, "last-at-dom-dump.png") }).catch(() => {});
       const dump = await page.evaluate(() => {
-        const out: { url: string; title: string; bodySnippet: string; elementSamples: string[] } = {
+        const out: {
+          url: string; title: string;
+          iframes: Array<{ src: string; w: number; h: number }>;
+          shadowHosts: number;
+          redeemedFound: Array<{ tag: string; cls: string; text: string }>;
+        } = {
           url: location.href,
           title: document.title,
-          bodySnippet: (document.body?.innerText ?? "").slice(0, 500),
-          elementSamples: [],
+          iframes: [],
+          shadowHosts: 0,
+          redeemedFound: [],
         };
-        // Case-insensitive search for "redeemed"
+        document.querySelectorAll("iframe").forEach((f) => {
+          out.iframes.push({
+            src: f.src || "(no src)",
+            w: f.clientWidth,
+            h: f.clientHeight,
+          });
+        });
+        // Find elements containing "redeemed" anywhere — including descendants
         const all = Array.from(document.querySelectorAll("*")) as HTMLElement[];
         for (const el of all) {
-          const t = el.textContent?.trim() ?? "";
-          if (/redeemed/i.test(t) && t.length < 40) {
-            out.elementSamples.push(
-              `<${el.tagName} class="${(el.className || "").toString().slice(0, 60)}"> ${t.slice(0, 40)}`
-            );
-            if (out.elementSamples.length >= 6) break;
+          if (el.shadowRoot) out.shadowHosts++;
+          const direct = Array.from(el.childNodes)
+            .filter((n) => n.nodeType === 3)
+            .map((n) => n.nodeValue ?? "")
+            .join("");
+          if (/redeemed/i.test(direct)) {
+            out.redeemedFound.push({
+              tag: el.tagName,
+              cls: (el.className?.toString() ?? "").slice(0, 60),
+              text: direct.trim().slice(0, 40),
+            });
+            if (out.redeemedFound.length >= 8) break;
           }
         }
         return out;
       });
-      console.log(`[pull] at DOM dump: url=${dump.url} title="${dump.title}"`);
-      console.log(`[pull] body snippet: ${dump.bodySnippet}`);
-      console.log(`[pull] redeemed samples:\n  ${dump.elementSamples.join("\n  ")}`);
+      console.log(`[pull] url=${dump.url} title="${dump.title}"`);
+      console.log(`[pull] iframes: ${JSON.stringify(dump.iframes)}`);
+      console.log(`[pull] shadow hosts: ${dump.shadowHosts}`);
+      console.log(`[pull] redeemed found: ${JSON.stringify(dump.redeemedFound, null, 2)}`);
       throw new Error("Could not locate the ⋮ menu button on the attendees page");
     }
 
