@@ -110,48 +110,71 @@ async function main() {
     //    should redirect to its login flow.
     const attendeesUrl = `${BASE}/${ACCOUNT}/event/${EVENT_ID}/attendees?from=${encodeURIComponent(from)}&until=${encodeURIComponent(until)}`;
     console.log(`[pull] go ${attendeesUrl}`);
-    await page.goto(attendeesUrl, { waitUntil: "domcontentloaded" });
+    await page.goto(attendeesUrl, { waitUntil: "networkidle" }).catch(() => {});
 
-    // 2. Login flow: heuristic — if we see an email input, log in.
-    //    Adjust selectors once we know the exact login form.
-    const emailInput = page.locator('input[type="email"], input[name="email"]').first();
-    if (await emailInput.isVisible({ timeout: 5000 }).catch(() => false)) {
+    // 2. Login flow. Ticketure legacy login uses labeled email + password
+    //    inputs and a "Sign in" button.
+    const onLogin = await page.getByRole("heading", { name: /sign in/i })
+      .isVisible({ timeout: 5000 })
+      .catch(() => false);
+
+    if (onLogin) {
       console.log("[pull] login page detected — submitting credentials");
-      await emailInput.fill(EMAIL);
-      const pwInput = page.locator('input[type="password"]').first();
-      await pwInput.fill(PASSWORD);
-      // Submit — try a few common patterns
-      const submit = page
-        .locator('button[type="submit"], button:has-text("Sign in"), button:has-text("Log in"), button:has-text("Login")')
-        .first();
+      await page.getByLabel(/email/i).first().fill(EMAIL);
+      await page.getByLabel(/password/i).first().fill(PASSWORD);
       await Promise.all([
-        page.waitForLoadState("domcontentloaded"),
-        submit.click(),
+        page.waitForLoadState("networkidle"),
+        page.getByRole("button", { name: /^sign in$/i }).click(),
       ]);
-
-      // After login, Ticketure may redirect to a dashboard instead of the
-      // attendees URL. Navigate there explicitly.
-      await page.goto(attendeesUrl, { waitUntil: "domcontentloaded" });
+      // Ticketure may land on a dashboard. Navigate to the filter URL.
+      await page.goto(attendeesUrl, { waitUntil: "networkidle" });
     }
 
-    // 3. Wait for the attendees list to render.
-    await page.waitForSelector("text=attendees", { timeout: 15000 }).catch(() => {});
+    // 3. Wait for the attendees list to render ("Showing all N attendees").
+    await page
+      .getByText(/showing all \d+ attendees?|no attendees/i)
+      .first()
+      .waitFor({ timeout: 20000 })
+      .catch(() => {});
 
-    // 4. Click the ⋮ (three-dot) menu. Ticketure shows it at the top-right
-    //    of the list header. There's no stable role, so we look for an
-    //    SVG button adjacent to the REDEEMED/UNREDEEMED chips. Fall back
-    //    to any button containing an ellipsis / kebab icon.
-    const kebab = page
-      .locator('button:has(svg)')
-      .filter({ hasNot: page.locator("text=/redeemed|unredeemed|filter/i") })
-      .last();
-    await kebab.click({ timeout: 10000 });
+    // Save a diagnostic screenshot BEFORE the menu click so we can debug
+    // selector issues without re-running the whole pull.
+    await page
+      .screenshot({
+        path: path.join(outDir, "last-before-menu.png"),
+        fullPage: false,
+      })
+      .catch(() => {});
 
-    // 5. Click "Export to CSV" in the popup menu.
+    // 4. Click the ⋮ (three-dot) menu. It sits next to the UNREDEEMED
+    //    dark button in the header row; try a few selector patterns.
+    let menuOpened = false;
+    const kebabCandidates = [
+      page.getByRole("button", { name: /more|options|menu/i }),
+      page.locator("button[aria-haspopup]"),
+      // Icon-only button that's a sibling of the UNREDEEMED chip
+      page.getByRole("button", { name: /unredeemed/i }).locator("xpath=following::button[1]"),
+    ];
+    for (const loc of kebabCandidates) {
+      try {
+        if (await loc.first().isVisible({ timeout: 2000 })) {
+          await loc.first().click({ timeout: 3000 });
+          menuOpened = true;
+          break;
+        }
+      } catch {
+        /* try next */
+      }
+    }
+    if (!menuOpened) {
+      throw new Error("Could not locate the ⋮ menu button on the attendees page");
+    }
+
+    // 5. Click "Export to CSV" in the popup.
     const exportItem = page.getByText(/export to csv/i).first();
     const [download] = await Promise.all([
-      page.waitForEvent("download"),
-      exportItem.click(),
+      page.waitForEvent("download", { timeout: 30000 }),
+      exportItem.click({ timeout: 5000 }),
     ]);
 
     // 6. Save with a timestamped name + copy to latest.csv
