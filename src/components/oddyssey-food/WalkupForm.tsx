@@ -17,13 +17,44 @@ export function WalkupForm({ state, onClose, onSaved }: Props) {
   const catalog = getMenuCatalog();
   const ticketTypes = getTicketTypes();
 
-  // Pull unique session ISOs from already-loaded state (if any) so the user
-  // can pick from real sessions. If nothing loaded, they can type a time.
+  // Manor runs 9 fixed session times every show night. Build the dropdown
+  // from the full grid (for each loaded date) so walk-ups can be assigned
+  // to any slot, even ones with zero CSV rows yet.
   const sessionOptions = useMemo(() => {
-    if (!state) return [];
-    const uniq = new Map<string, string>();
-    for (const s of state.by_session) uniq.set(s.session_iso, s.session_label);
-    return Array.from(uniq.entries()).map(([iso, label]) => ({ iso, label }));
+    const SLOTS = [
+      { h: 18, m: 30 }, { h: 18, m: 45 },
+      { h: 19, m: 0 },  { h: 19, m: 15 }, { h: 19, m: 30 }, { h: 19, m: 45 },
+      { h: 20, m: 0 },  { h: 20, m: 15 }, { h: 20, m: 30 },
+    ];
+    const dates = state
+      ? Array.from(new Set(state.by_date.map((d) => d.session_date))).sort()
+      : [];
+    // If no CSV loaded, default to today so the form still works for
+    // standalone walk-up entry.
+    if (dates.length === 0) {
+      const now = new Date();
+      const today =
+        `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      dates.push(today);
+    }
+    const opts: { iso: string; label: string }[] = [];
+    for (const date of dates) {
+      const d = new Date(date + "T00:00:00");
+      const dayLabel = !isNaN(d.getTime())
+        ? d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })
+        : date;
+      for (const slot of SLOTS) {
+        const hh = String(slot.h).padStart(2, "0");
+        const mm = String(slot.m).padStart(2, "0");
+        const iso = `${date}T${hh}:${mm}:00`;
+        const d2 = new Date(iso);
+        const time = !isNaN(d2.getTime())
+          ? d2.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })
+          : `${hh}:${mm}`;
+        opts.push({ iso, label: `${dayLabel} · ${time}` });
+      }
+    }
+    return opts;
   }, [state]);
 
   const [session_iso, setSessionIso] = useState(sessionOptions[0]?.iso ?? "");
