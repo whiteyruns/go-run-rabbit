@@ -92,7 +92,7 @@ export function buildRecap(state: DashboardState, date?: string): RecapData | nu
   }
   const sessions = Array.from(sessionMap.entries())
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([_, s]) => ({
+    .map(([, s]) => ({
       time: s.time,
       label: s.label,
       guests: s.guests.size,
