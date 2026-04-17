@@ -22,28 +22,69 @@ const WRAPPER = typeof process !== "undefined"
   ? getPath().join(REPO, "scripts/oddyssey-food-pull.sh")
   : "";
 
-// Scheduler state lives on globalThis so it survives Next.js's chunk
-// splitting (instrumentation.ts and API route are separate bundles that
-// otherwise each get their own module-scoped state).
+// State is persisted to disk because Next.js gives instrumentation.ts
+// and API routes isolated module contexts — globalThis isn't shared.
+// Crons fire in the instrumentation context; the API route just
+// reports what's on disk.
 interface SchedulerState {
   started: boolean;
   startedAt: string | null;
   jobs: { name: string; pattern: string; next: string | null }[];
   crons: Cron[];
 }
-const G = globalThis as unknown as { __oddysseyScheduler?: SchedulerState };
-if (!G.__oddysseyScheduler) {
-  G.__oddysseyScheduler = { started: false, startedAt: null, jobs: [], crons: [] };
+const STATE: SchedulerState = {
+  started: false,
+  startedAt: null,
+  jobs: [],
+  crons: [],
+};
+
+function statusFilePath(): string {
+  const pathMod = nodeRequire("path") as typeof import("path");
+  return pathMod.join(process.cwd(), "data/oddyssey-food/scheduler-status.json");
 }
-const STATE: SchedulerState = G.__oddysseyScheduler!;
+
+function persistStatus() {
+  try {
+    const fs = nodeRequire("fs") as typeof import("fs");
+    const pathMod = nodeRequire("path") as typeof import("path");
+    const file = statusFilePath();
+    fs.mkdirSync(pathMod.dirname(file), { recursive: true });
+    fs.writeFileSync(
+      file,
+      JSON.stringify(
+        {
+          started: STATE.started,
+          started_at: STATE.startedAt,
+          jobs: STATE.jobs,
+          pid: process.pid,
+        },
+        null,
+        2
+      )
+    );
+  } catch { /* non-fatal */ }
+}
 
 export function getSchedulerStatus() {
-  return {
-    started: STATE.started,
-    started_at: STATE.startedAt,
-    env_ok: Boolean(process.env.TICKETURE_EMAIL && process.env.TICKETURE_PASSWORD),
-    jobs: STATE.jobs,
-  };
+  // Read what's on disk so callers outside the instrumentation context
+  // still see the real state.
+  try {
+    const fs = nodeRequire("fs") as typeof import("fs");
+    const raw = fs.readFileSync(statusFilePath(), "utf-8");
+    const onDisk = JSON.parse(raw);
+    return {
+      ...onDisk,
+      env_ok: Boolean(process.env.TICKETURE_EMAIL && process.env.TICKETURE_PASSWORD),
+    };
+  } catch {
+    return {
+      started: STATE.started,
+      started_at: STATE.startedAt,
+      env_ok: Boolean(process.env.TICKETURE_EMAIL && process.env.TICKETURE_PASSWORD),
+      jobs: STATE.jobs,
+    };
+  }
 }
 
 function yesterdayLocal(): string {
@@ -118,6 +159,7 @@ export function startScheduler(): void {
     next: postshow.nextRun()?.toISOString() ?? null,
   });
 
+  persistStatus();
   console.log(
     "[oddyssey-scheduler] started | regular 9am-2:30pm PT Thu-Sun | postshow 00:15 PT Fri-Mon"
   );
