@@ -170,8 +170,8 @@ export function startScheduler(): void {
     ["manor-recap", "30 0 * * 5,6,0,1", () => sendRecap("manor", yesterdayLocal())],
 
     // --- NOIR ---
-    // Hourly 9 AM – 9 PM, Fri/Sat (show days; doors at 10 PM)
-    ["noir-regular", "0 9-21 * * 5,6", () => runPull("noir-regular", "noir")],
+    // Hourly 9 AM – 10 PM, Fri/Sat (captures last-minute sales as doors open)
+    ["noir-regular", "0 9-22 * * 5,6", () => runPull("noir-regular", "noir")],
     // Post-show pull at 03:00 Sat/Sun (after 2 AM close), recap at 03:15
     ["noir-postshow", "0 3 * * 6,0", () => runPull("noir-postshow", "noir", yesterdayLocal())],
     ["noir-recap", "15 3 * * 6,0", () => sendRecap("noir", yesterdayLocal())],
