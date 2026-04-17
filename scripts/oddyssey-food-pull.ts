@@ -193,33 +193,31 @@ async function main() {
       await page.goto(attendeesUrl, { waitUntil: "networkidle" });
     }
 
-    // 3. Wait for the attendees list to render ("Showing all N attendees").
-    await page
+    // 3. The attendees UI renders inside an iframe. All further
+    //    interactions target that frame.
+    const frame = page.frameLocator("iframe").first();
+
+    // Wait for the attendees list to render inside the frame.
+    await frame
       .getByText(/showing all \d+ attendees?|no attendees/i)
       .first()
-      .waitFor({ timeout: 20000 })
+      .waitFor({ timeout: 25000 })
       .catch(() => {});
 
-    // Save a diagnostic screenshot BEFORE the menu click so we can debug
-    // selector issues without re-running the whole pull.
     await page
-      .screenshot({
-        path: path.join(outDir, "last-before-menu.png"),
-        fullPage: false,
-      })
+      .screenshot({ path: path.join(outDir, "last-before-menu.png") })
       .catch(() => {});
 
-    // 4. Click the ⋮ (three-dot) menu. Ticketure uses div/span clickables
-    //    rather than <button>, so we widen the search and fall back to a
-    //    coordinate click relative to the REDEEMED chip (which is stable).
+    // 4. Click the ⋮ (three-dot) menu inside the frame.
     let menuOpened = false;
     const kebabCandidates = [
-      page.getByRole("button", { name: /more|options|menu|actions/i }),
-      page.locator('[role="button"][aria-haspopup]'),
-      page.locator('[role="button"][aria-label]').filter({ hasText: "" }),
-      page.locator('svg[class*="dot" i]').locator("xpath=ancestor::*[@role='button' or self::button][1]"),
-      // Direct text-based match on the dots character
-      page.locator('[role="button"]:has-text("⋮"), [role="button"]:has-text("…")'),
+      frame.getByRole("button", { name: /more|options|menu|actions/i }),
+      frame.locator('[role="button"][aria-haspopup]'),
+      frame.locator('button:has(svg):not(:has-text("redeemed")):not(:has-text("unredeemed"))'),
+      // Ellipsis text variants
+      frame.locator('button:has-text("⋮"), button:has-text("…")'),
+      // XPath fallback: the button right after the UNREDEEMED chip's container
+      frame.locator('xpath=(//button[contains(., "UNREDEEMED")]/following::button)[1]'),
     ];
     for (const loc of kebabCandidates) {
       try {
@@ -234,18 +232,27 @@ async function main() {
       }
     }
 
-    // Coordinate fallback: the kebab sits below-left of REDEEMED.
+    // Coordinate fallback within the iframe
     if (!menuOpened) {
-      console.log("[pull] kebab selectors failed, trying coordinate click");
-      const redeemed = page.getByText(/^REDEEMED$/).first();
+      console.log("[pull] kebab selectors failed, trying coordinate click in frame");
+      const redeemed = frame.getByText(/^REDEEMED$/i).first();
       const redBox = await redeemed.boundingBox().catch(() => null);
       if (redBox) {
-        const x = redBox.x - 60; // ~60px left of REDEEMED chip's left edge
-        const y = redBox.y + redBox.height + 20; // ~20px below
+        // The ⋮ in screenshots is ~60px left of REDEEMED's left edge
+        // and ~42px below the bottom of the chip.
+        const iframeEl = page.locator("iframe").first();
+        const iframeBox = await iframeEl.boundingBox();
+        const offsetX = iframeBox ? iframeBox.x : 0;
+        const offsetY = iframeBox ? iframeBox.y : 0;
+        const x = offsetX + redBox.x - 60;
+        const y = offsetY + redBox.y + redBox.height + 20;
         console.log(`[pull] coordinate click at (${Math.round(x)}, ${Math.round(y)})`);
         await page.mouse.click(x, y);
-        await page.waitForTimeout(500);
-        menuOpened = (await page.getByText(/export to csv/i).isVisible({ timeout: 2000 }).catch(() => false));
+        await page.waitForTimeout(700);
+        menuOpened = await frame
+          .getByText(/export to csv/i)
+          .isVisible({ timeout: 2000 })
+          .catch(() => false);
       }
     }
 
@@ -297,8 +304,9 @@ async function main() {
       throw new Error("Could not locate the ⋮ menu button on the attendees page");
     }
 
-    // 5. Click "Export to CSV" in the popup.
-    const exportItem = page.getByText(/export to csv/i).first();
+    // 5. Click "Export to CSV" in the popup (inside the iframe).
+    const frameForExport = page.frameLocator("iframe").first();
+    const exportItem = frameForExport.getByText(/export to csv/i).first();
     const [download] = await Promise.all([
       page.waitForEvent("download", { timeout: 30000 }),
       exportItem.click({ timeout: 5000 }),
