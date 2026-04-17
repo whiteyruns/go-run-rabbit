@@ -209,18 +209,26 @@ async function main() {
       })
       .catch(() => {});
 
-    // 4. Click the ⋮ (three-dot) menu. It sits next to the UNREDEEMED
-    //    dark button in the header row; try a few selector patterns.
+    // 4. Click the ⋮ (three-dot) menu. It's a small icon-only button
+    //    near the REDEEMED/UNREDEEMED chips. Try several patterns, then
+    //    dump a button inventory on failure so we can tune the selector.
     let menuOpened = false;
     const kebabCandidates = [
-      page.getByRole("button", { name: /more|options|menu/i }),
+      page.getByRole("button", { name: /more|options|menu|actions/i }),
       page.locator("button[aria-haspopup]"),
-      // Icon-only button that's a sibling of the UNREDEEMED chip
-      page.getByRole("button", { name: /unredeemed/i }).locator("xpath=following::button[1]"),
+      page.locator("button[aria-label]").filter({ hasText: "" }),
+      // SVG "dots" icon variants
+      page.locator('button:has(svg[class*="dot" i])'),
+      page.locator('button:has(svg[data-icon*="ellipsis" i])'),
+      // Button with exactly 3 dots as text
+      page.locator('button:text-is("⋮"), button:text-is("…"), button:text-is("...")'),
+      // Fallback: icon-only button near the filter row
+      page.getByRole("button", { name: /unredeemed/i })
+        .locator("xpath=ancestor::*[1]/following::button[1]"),
     ];
     for (const loc of kebabCandidates) {
       try {
-        if (await loc.first().isVisible({ timeout: 2000 })) {
+        if (await loc.first().isVisible({ timeout: 1500 })) {
           await loc.first().click({ timeout: 3000 });
           menuOpened = true;
           break;
@@ -229,7 +237,30 @@ async function main() {
         /* try next */
       }
     }
+
+    // If still stuck, look for the export menu item directly — sometimes
+    // the menu is always mounted, just hidden. Clicking the item may work.
     if (!menuOpened) {
+      const exportDirect = page.getByText(/export to csv/i).first();
+      if (await exportDirect.isVisible({ timeout: 1000 }).catch(() => false)) {
+        menuOpened = true; // treat as opened — fall through to click below
+      }
+    }
+
+    if (!menuOpened) {
+      // Dump every visible button so we can tune the selector next round.
+      const buttons = await page.locator("button:visible").all();
+      console.log(`[pull] kebab candidates — ${buttons.length} visible buttons:`);
+      for (let i = 0; i < buttons.length; i++) {
+        const b = buttons[i];
+        const box = await b.boundingBox().catch(() => null);
+        const text = ((await b.textContent()) ?? "").trim().slice(0, 30);
+        const aria = (await b.getAttribute("aria-label").catch(() => "")) ?? "";
+        const cls = ((await b.getAttribute("class").catch(() => "")) ?? "").slice(0, 40);
+        console.log(
+          `  [${i}] ${box ? `${Math.round(box.width)}x${Math.round(box.height)} @(${Math.round(box.x)},${Math.round(box.y)})` : "no box"} text="${text}" aria="${aria}" class="${cls}"`
+        );
+      }
       throw new Error("Could not locate the ⋮ menu button on the attendees page");
     }
 
