@@ -250,19 +250,30 @@ async function main() {
     }
 
     if (!menuOpened) {
-      // Dump the DOM near the REDEEMED chip so we can see the actual markup.
+      await page.screenshot({ path: path.join(outDir, "last-at-dom-dump.png") }).catch(() => {});
       const dump = await page.evaluate(() => {
-        const all = Array.from(document.querySelectorAll("*"));
-        const redeemed = all.find((el) => el.textContent?.trim() === "REDEEMED");
-        if (!redeemed) return { found: false, html: "" };
-        // Walk up 6 levels to capture the whole filter header block
-        let n: Element | null = redeemed;
-        for (let i = 0; i < 6 && n?.parentElement; i++) n = n.parentElement;
-        return { found: true, html: (n as Element).outerHTML.slice(0, 8000) };
+        const out: { url: string; title: string; bodySnippet: string; elementSamples: string[] } = {
+          url: location.href,
+          title: document.title,
+          bodySnippet: (document.body?.innerText ?? "").slice(0, 500),
+          elementSamples: [],
+        };
+        // Case-insensitive search for "redeemed"
+        const all = Array.from(document.querySelectorAll("*")) as HTMLElement[];
+        for (const el of all) {
+          const t = el.textContent?.trim() ?? "";
+          if (/redeemed/i.test(t) && t.length < 40) {
+            out.elementSamples.push(
+              `<${el.tagName} class="${(el.className || "").toString().slice(0, 60)}"> ${t.slice(0, 40)}`
+            );
+            if (out.elementSamples.length >= 6) break;
+          }
+        }
+        return out;
       });
-      console.log(
-        `[pull] DOM dump near REDEEMED — found=${dump.found}, html=${dump.html}`
-      );
+      console.log(`[pull] at DOM dump: url=${dump.url} title="${dump.title}"`);
+      console.log(`[pull] body snippet: ${dump.bodySnippet}`);
+      console.log(`[pull] redeemed samples:\n  ${dump.elementSamples.join("\n  ")}`);
       throw new Error("Could not locate the ⋮ menu button on the attendees page");
     }
 
