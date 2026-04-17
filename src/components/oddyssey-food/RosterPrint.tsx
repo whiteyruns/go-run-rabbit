@@ -157,15 +157,25 @@ const printStyles = `
   }
   .rp-c-num { text-align: center; font-weight: 700; font-size: 12px; }
 
+  /* Yellow highlight on the first row of each guest — scan-ability */
+  .rp-row.rp-guest-first td {
+    background: #fff38a !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   /* Thicker bottom border ends each guest — no color banding needed on paper */
   .rp-guest-last td { border-bottom: 2px solid #000 !important; }
   /* Separator above a new ticket within a guest */
   .rp-ticket-first:not(.rp-row:first-child) td { border-top: 0.5px solid #555; }
   /* VIP: solid left edge */
   .rp-vip td:first-child { border-left: 3px solid #000 !important; }
-  /* Has note: stripe left edge with heavy weight */
+  /* Has note: overrides yellow with orange+red stripe to flag allergen */
   .rp-has-note td:first-child { border-left: 3px double #000 !important; }
-  .rp-has-note td { background: #f0f0f0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rp-has-note.rp-guest-first td {
+    background: #ffd4a8 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   .rp-vip-tag {
     display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px;
     border: 1.5px solid #000; padding: 1px 5px; margin-right: 6px;
