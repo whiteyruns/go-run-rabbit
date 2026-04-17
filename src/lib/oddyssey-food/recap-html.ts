@@ -1,10 +1,13 @@
 import type { RecapData } from "./recap";
+import { formatCurrency } from "./summary";
 
 // Produces a standalone HTML email body. Styled with noir palette, inlined
 // CSS (email-client compatible), no external dependencies.
 export function renderRecapHtml(r: RecapData): string {
   const pct = (r.stats.redemption_rate * 100).toFixed(0);
+  const capPct = (r.stats.capacity_percent * 100).toFixed(0);
   const pulledAt = new Date(r.source_pulled_at).toLocaleString("en-US");
+  const hasPackages = r.packages.some((p) => p.count > 0);
 
   return `<!DOCTYPE html>
 <html>
@@ -20,22 +23,49 @@ export function renderRecapHtml(r: RecapData): string {
     <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:300;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0;color:#e8e4dd;">${escape(r.date_label)}</h1>
   </div>
 
-  <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+  <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
     <tr>
-      ${statCell("Admissions", String(r.stats.admission_tickets))}
+      ${statCell("Tickets Sold", String(r.stats.admission_tickets))}
+      ${statCell("Revenue", formatCurrency(r.stats.revenue))}
+      ${statCell("Capacity", `${capPct}%`, capacityColor(r.stats.capacity_percent))}
       ${statCell("Parties", String(r.stats.parties))}
-      ${statCell("Items", String(r.stats.food_items))}
-      ${statCell("Sessions", String(r.stats.sessions))}
     </tr>
     <tr>
+      ${statCell("Food Items", String(r.stats.food_items))}
       ${statCell("Redeemed", `${r.stats.redeemed} · ${pct}%`, "#27ae60")}
       ${statCell("VIPs", String(r.stats.vip_parties), "#d4b85e")}
       ${statCell("Notes", String(r.stats.note_parties), "#c0392b")}
-      ${statCell("Walk-ups", String(r.stats.walkups), "#4caf7a")}
     </tr>
   </table>
 
-  ${section("Item Totals", `
+  ${hasPackages ? section("Ticket Sales by Package", `
+    <table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.06);">
+      <tr style="background:rgba(255,255,255,0.03);">
+        <td style="padding:10px 14px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;">Package</td>
+        <td style="padding:10px 14px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;text-align:right;">Tix</td>
+        <td style="padding:10px 14px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;text-align:right;">Revenue</td>
+        <td style="padding:10px 14px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;text-align:right;">% Mix</td>
+      </tr>
+      ${r.packages
+        .map(
+          (p) => `<tr>
+            <td style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.06);font-family:Georgia,serif;font-size:15px;color:${p.count > 0 ? "#e8e4dd" : "#5a5650"};">${escape(p.label)}</td>
+            <td style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.06);text-align:right;font-family:Georgia,serif;font-size:18px;color:${p.count > 0 ? "#c9a84c" : "#5a5650"};">${p.count}</td>
+            <td style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.06);text-align:right;font-family:Georgia,serif;font-size:15px;color:${p.count > 0 ? "#e8e4dd" : "#5a5650"};">${formatCurrency(p.revenue)}</td>
+            <td style="padding:10px 14px;border-top:1px solid rgba(255,255,255,0.06);text-align:right;font-size:12px;color:#9a958d;">${(p.percent * 100).toFixed(1)}%</td>
+          </tr>`
+        )
+        .join("")}
+      <tr>
+        <td style="padding:12px 14px;border-top:1px solid #c9a84c;font-size:10px;letter-spacing:2px;color:#5a5650;text-transform:uppercase;font-weight:500;">Total</td>
+        <td style="padding:12px 14px;border-top:1px solid #c9a84c;text-align:right;font-family:Georgia,serif;font-size:20px;color:#e8e4dd;">${r.stats.admission_tickets}</td>
+        <td style="padding:12px 14px;border-top:1px solid #c9a84c;text-align:right;font-family:Georgia,serif;font-size:20px;color:#e8e4dd;">${formatCurrency(r.stats.revenue)}</td>
+        <td style="padding:12px 14px;border-top:1px solid #c9a84c;text-align:right;font-size:12px;color:#5a5650;">${r.stats.admission_tickets}/${r.stats.capacity_total}</td>
+      </tr>
+    </table>
+  `) : ""}
+
+  ${r.item_totals.length > 0 ? section("Item Totals", `
     <table style="width:100%;border-collapse:collapse;">
       ${r.item_totals
         .map(
@@ -46,16 +76,25 @@ export function renderRecapHtml(r: RecapData): string {
         )
         .join("")}
     </table>
-  `)}
+  `) : ""}
 
   ${section("Sessions", r.sessions.length === 0 ? `<p style="color:#9a958d;font-size:13px;">No sessions.</p>` : r.sessions
     .map(
-      (s) => `
+      (s) => {
+        const pctCap = (s.percent * 100).toFixed(0);
+        const capColor = capacityColor(s.percent);
+        return `
       <div style="border:1px solid rgba(255,255,255,0.06);padding:16px 18px;margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-          <div style="font-size:11px;letter-spacing:3px;color:#c9a84c;text-transform:uppercase;font-weight:500;">${escape(s.time)}</div>
-          <div style="font-size:11px;color:#5a5650;letter-spacing:1px;text-transform:uppercase;">${s.guests} parties · ${s.items} items</div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:13px;letter-spacing:3px;color:#c9a84c;text-transform:uppercase;font-weight:500;">${escape(s.time)}</div>
+          <div style="font-size:11px;color:#5a5650;letter-spacing:1px;text-transform:uppercase;">
+            <span style="color:${capColor};font-weight:500;">${s.admissions}/${s.capacity} · ${pctCap}%</span>
+            &nbsp;·&nbsp; ${s.items} items
+          </div>
         </div>
+        ${s.package_mix.length > 0 ? `<div style="margin-bottom:10px;">
+          ${s.package_mix.map((m) => `<span style="display:inline-block;font-size:10px;letter-spacing:1px;color:#9a958d;padding:3px 8px;border:1px solid rgba(255,255,255,0.08);margin-right:5px;">${escape(m.short_label)} · <strong style="color:#e8e4dd;">${m.count}</strong></span>`).join("")}
+        </div>` : ""}
         ${s.breakdown
           .map(
             (b) => `<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:#9a958d;">
@@ -63,7 +102,8 @@ export function renderRecapHtml(r: RecapData): string {
             </div>`
           )
           .join("")}
-      </div>`
+      </div>`;
+      }
     )
     .join("")
   )}
@@ -120,9 +160,16 @@ function escape(s: string): string {
     .replace(/"/g, "&quot;");
 }
 
+function capacityColor(percent: number): string {
+  if (percent >= 0.9) return "#c0392b"; // near sold out
+  if (percent >= 0.75) return "#d4b85e"; // strong
+  if (percent >= 0.5) return "#c9a84c"; // healthy
+  return "#9a958d"; // light
+}
+
 export function recapSubject(r: RecapData): string {
   const date = new Date(r.date + "T00:00:00");
   const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
   const monthDay = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  return `Manor Recap · ${weekday} ${monthDay} · ${r.stats.food_items} items · ${r.stats.parties} parties`;
+  return `Manor Recap · ${weekday} ${monthDay} · ${r.stats.admission_tickets} tix · ${formatCurrency(r.stats.revenue)} · ${r.stats.food_items} items`;
 }

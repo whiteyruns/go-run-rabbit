@@ -1,4 +1,5 @@
 import { getMenuCatalog } from "./normalizer";
+import { buildSummary, type PackageBreakdown } from "./summary";
 import type { DashboardState } from "./types";
 
 export interface RecapData {
@@ -16,13 +17,21 @@ export interface RecapData {
     note_parties: number;
     redeemed: number;
     redemption_rate: number; // 0-1
+    revenue: number; // total revenue at list price
+    capacity_total: number;
+    capacity_percent: number; // 0-1
   };
+  packages: PackageBreakdown[];
   item_totals: { id: string; label: string; count: number }[];
   sessions: {
     time: string; // "7:30 PM"
     label: string; // "Friday, April 17 · 7:30 PM"
     guests: number;
     items: number;
+    admissions: number;
+    capacity: number;
+    percent: number; // 0-1 capacity
+    package_mix: { short_label: string; count: number }[];
     breakdown: { label: string; count: number }[];
   }[];
   notes: { guest: string; session: string; note: string }[];
@@ -34,12 +43,19 @@ export interface RecapData {
 export function buildRecap(state: DashboardState, date?: string): RecapData | null {
   const catalog = getMenuCatalog();
 
-  // Pick the target date
+  // Pick the target date — prefer dates with any activity (groups OR allocations)
   const datesInState = Array.from(
-    new Set(state.allocations.map((a) => a.session_date))
+    new Set([
+      ...state.allocations.map((a) => a.session_date),
+      ...state.groups.map((g) => g.session_iso.slice(0, 10)),
+    ])
   ).sort();
   const target = date ?? datesInState[datesInState.length - 1];
   if (!target) return null;
+
+  // Pull ticket/revenue side from the summary builder
+  const summary = buildSummary(state, target);
+  if (!summary) return null;
 
   // Filter allocations + groups to that date
   const dayAllocs = state.allocations.filter((a) => a.session_date === target);
@@ -64,43 +80,38 @@ export function buildRecap(state: DashboardState, date?: string): RecapData | nu
     item_totals.push({ id: "__unknown__", label: "Unknown / Unmapped", count: counts["__unknown__"] });
   }
 
-  // Session breakdown
-  const sessionMap = new Map<
-    string,
-    { time: string; label: string; guests: Set<string>; items: number; breakdown: Record<string, number> }
-  >();
+  // Per-session food breakdown (item -> count)
+  const foodBySession = new Map<string, Record<string, number>>();
+  const guestsBySession = new Map<string, Set<string>>();
   for (const a of dayAllocs) {
-    let s = sessionMap.get(a.session_iso);
-    if (!s) {
-      const d = new Date(a.session_iso);
-      const fullLabel = !isNaN(d.getTime())
-        ? d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
-        : a.session_date;
-      s = {
-        time: a.session_time_label,
-        label: `${fullLabel} · ${a.session_time_label}`,
-        guests: new Set(),
-        items: 0,
-        breakdown: {},
-      };
-      sessionMap.set(a.session_iso, s);
-    }
-    s.guests.add(a.buyer_email);
-    s.items += 1;
-    const label = a.menu_item_label;
-    s.breakdown[label] = (s.breakdown[label] ?? 0) + 1;
+    if (!foodBySession.has(a.session_iso)) foodBySession.set(a.session_iso, {});
+    if (!guestsBySession.has(a.session_iso)) guestsBySession.set(a.session_iso, new Set());
+    const bd = foodBySession.get(a.session_iso)!;
+    bd[a.menu_item_label] = (bd[a.menu_item_label] ?? 0) + 1;
+    guestsBySession.get(a.session_iso)!.add(a.buyer_email);
   }
-  const sessions = Array.from(sessionMap.entries())
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([, s]) => ({
-      time: s.time,
-      label: s.label,
-      guests: s.guests.size,
-      items: s.items,
-      breakdown: Object.entries(s.breakdown)
+
+  // Sessions come from summary (covers all sessions with admissions),
+  // enriched with food breakdown for those that have food.
+  const sessions = summary.sessions.map((occ) => {
+    const bd = foodBySession.get(occ.iso) ?? {};
+    const fullLabel = new Date(occ.iso).toLocaleDateString("en-US", {
+      weekday: "long", month: "long", day: "numeric",
+    });
+    return {
+      time: occ.time_label,
+      label: `${fullLabel} · ${occ.time_label}`,
+      guests: guestsBySession.get(occ.iso)?.size ?? 0,
+      items: occ.food_items,
+      admissions: occ.admissions,
+      capacity: occ.capacity,
+      percent: occ.percent,
+      package_mix: occ.package_mix.map((m) => ({ short_label: m.short_label, count: m.count })),
+      breakdown: Object.entries(bd)
         .map(([label, count]) => ({ label, count }))
         .sort((a, b) => b.count - a.count),
-    }));
+    };
+  });
 
   // Redemption (based on ticket_state)
   const redeemed = dayAllocs.filter((a) => a.ticket_state === "redeemed").length;
@@ -153,7 +164,11 @@ export function buildRecap(state: DashboardState, date?: string): RecapData | nu
       note_parties: notes.length,
       redeemed,
       redemption_rate: redemptionRate,
+      revenue: summary.revenue,
+      capacity_total: summary.capacity_total,
+      capacity_percent: summary.capacity_percent,
     },
+    packages: summary.packages,
     item_totals,
     sessions,
     notes,
