@@ -11,6 +11,7 @@ const TABS = [
   { href: "/oddyssey-manor/admin/food/validation", label: "02 · Validation" },
   { href: "/oddyssey-manor/admin/food/roster", label: "03 · Roster" },
   { href: "/oddyssey-manor/admin/food/kitchen", label: "04 · Kitchen" },
+  { href: "/oddyssey-manor/admin/food/summary", label: "05 · Summary" },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
