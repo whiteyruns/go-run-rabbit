@@ -75,6 +75,16 @@ function runPull(label: string, dateArg?: string) {
 }
 
 export function startScheduler(): void {
+  // Diagnostic: prove startScheduler() was invoked
+  try {
+    const fs = nodeRequire("fs") as typeof import("fs");
+    const path = nodeRequire("path") as typeof import("path");
+    fs.appendFileSync(
+      path.join(process.cwd(), "logs/scheduler-fired.log"),
+      `${new Date().toISOString()} startScheduler() pid=${process.pid} STATE.started=${STATE.started} globalThis=${typeof globalThis}\n`
+    );
+  } catch { /* non-fatal */ }
+
   if (STATE.started) return;
   STATE.started = true;
   STATE.startedAt = new Date().toISOString();
