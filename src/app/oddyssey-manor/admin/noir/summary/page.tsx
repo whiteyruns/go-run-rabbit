@@ -9,11 +9,12 @@ import {
   type NoirSessionOccupancy,
   type NoirTicketGroupRow,
 } from "@/lib/oddyssey-noir/pipeline";
-import type { NoirWeekOverWeek } from "@/lib/oddyssey-noir/history";
+import type { NoirWeekOverWeek, NoirReportOverlay } from "@/lib/oddyssey-noir/history";
 
 export default function NoirSummaryPage() {
   const [summary, setSummary] = useState<NoirSummary | null>(null);
   const [wow, setWow] = useState<NoirWeekOverWeek | null>(null);
+  const [report, setReport] = useState<NoirReportOverlay | null>(null);
   const [date, setDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,6 +29,7 @@ export default function NoirSummaryPage() {
         if (data.status === "ok") {
           setSummary(data.summary);
           setWow(data.wow);
+          setReport(data.report ?? null);
           if (!date) setDate(data.summary.date);
         } else {
           setError(data.message);
@@ -101,13 +103,37 @@ export default function NoirSummaryPage() {
         )}
       </div>
 
-      {/* Headline */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
-        <HeadlineStat label="Tickets Sold" value={String(summary.tickets_sold)} sub={`of ${summary.capacity_total} capacity`} />
-        <HeadlineStat label="Revenue" value={formatNoirCurrency(summary.revenue)} sub="at list price" />
-        <HeadlineStat label="Capacity" value={`${(summary.capacity_percent * 100).toFixed(0)}%`} sub={capacityLabel(summary.capacity_percent)} />
-        <HeadlineStat label="Redeemed" value={`${summary.redeemed} · ${(summary.redemption_rate * 100).toFixed(0)}%`} sub="ticket_state=redeemed" />
-      </div>
+      {/* Headline — prefer report actuals when available */}
+      {report?.available && report.totals ? (
+        <>
+          <div style={{
+            marginBottom: 14, padding: "10px 14px", background: "rgba(39,174,96,0.08)",
+            borderLeft: "3px solid #27ae60", fontSize: 11, color: "#27ae60",
+            letterSpacing: 0.5, textTransform: "uppercase", fontWeight: 500,
+          }}>
+            ✓ Showing actuals from Ticketure Summary Report · pulled {report.pulled_at ? new Date(report.pulled_at).toLocaleString("en-US") : ""}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
+            <HeadlineStat label="Tickets Sold" value={String(report.totals.reserved)} sub={`of ${report.totals.capacity} capacity`} />
+            <HeadlineStat label="Gross Revenue" value={formatNoirCurrency(report.totals.gross_revenue)} sub={`Net $${report.totals.net_to_bank.toFixed(0)} to bank`} />
+            <HeadlineStat label="Capacity" value={`${(report.totals.capacity_percent * 100).toFixed(1)}%`} sub={capacityLabel(report.totals.capacity_percent)} />
+            <HeadlineStat label="Redeemed" value={`${report.totals.redeemed} · ${report.totals.reserved > 0 ? Math.round(report.totals.redeemed / report.totals.reserved * 100) : 0}%`} sub={`${report.totals.total_orders} orders`} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
+            <HeadlineStat label="Paid" value={String(report.totals.tickets_paid)} sub="actually paid" />
+            <HeadlineStat label="Free (Comps)" value={String(report.totals.tickets_free)} sub="$0 tickets" />
+            <HeadlineStat label="Held" value={String(report.totals.tickets_held)} sub="not yet sold" />
+            <HeadlineStat label="Refunded" value={formatNoirCurrency(report.totals.revenue_refunded)} sub={`${report.totals.tickets_refunded} tix`} />
+          </div>
+        </>
+      ) : (
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
+          <HeadlineStat label="Tickets Sold" value={String(summary.tickets_sold)} sub={`of ${summary.capacity_total} capacity`} />
+          <HeadlineStat label="Revenue (est.)" value={formatNoirCurrency(summary.revenue)} sub="list price × count" />
+          <HeadlineStat label="Capacity" value={`${(summary.capacity_percent * 100).toFixed(0)}%`} sub={capacityLabel(summary.capacity_percent)} />
+          <HeadlineStat label="Redeemed" value={`${summary.redeemed} · ${(summary.redemption_rate * 100).toFixed(0)}%`} sub="ticket_state=redeemed" />
+        </div>
+      )}
       <style>{`@media (max-width: 900px) { div[style*="grid-template-columns: repeat(4"] { grid-template-columns: 1fr 1fr !important; } }`}</style>
 
       {/* WoW */}

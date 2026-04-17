@@ -4,8 +4,27 @@
 
 import fs from "fs";
 import path from "path";
+import { loadSessionReport, sumSessionReport, type SessionReport, type SessionReportTotals } from "@/lib/oddyssey-sessions/loader";
 import { buildNoirState, buildNoirSummary } from "./pipeline";
 import type { NoirSummary } from "./pipeline";
+
+export interface NoirReportOverlay {
+  available: boolean;
+  pulled_at?: string;
+  totals?: SessionReportTotals;
+  sessions?: SessionReport[];
+}
+
+export function loadNoirReportOverlay(date: string): NoirReportOverlay {
+  const report = loadSessionReport("noir", date);
+  if (!report) return { available: false };
+  return {
+    available: true,
+    pulled_at: report.pulled_at,
+    totals: sumSessionReport(report),
+    sessions: report.sessions,
+  };
+}
 
 const NOIR_PULLS_DIR = path.resolve(process.cwd(), "data/oddyssey-noir/pulls");
 const FILE_RE = /^attendees-(\d{4}-\d{2}-\d{2})-.*\.csv$/;

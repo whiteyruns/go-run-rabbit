@@ -110,6 +110,34 @@ function runPull(label: string, venue: "manor" | "noir", dateArg?: string) {
   proc.stderr.on("data", (d: Buffer) =>
     process.stderr.write(`[oddyssey-scheduler/${label}] ${d}`)
   );
+  proc.on("close", (code: number | null) => {
+    console.log(`[oddyssey-scheduler] ${label} exited ${code}`);
+    // After the attendees pull lands, kick a session summary scrape
+    // so we have the authoritative revenue/paid-vs-free numbers too.
+    if (code === 0 && !label.includes("sessions")) runSessionsScrape(label, venue, dateArg);
+  });
+}
+
+function runSessionsScrape(parentLabel: string, venue: "manor" | "noir", dateArg?: string) {
+  const args: string[] = ["tsx", "scripts/oddyssey-sessions-pull.ts", `--venue=${venue}`];
+  if (dateArg) args.push(`--date=${dateArg}`);
+  const label = `${parentLabel}+sessions`;
+  const stamp = new Date().toISOString();
+  console.log(`[oddyssey-scheduler] ${stamp} fire: ${label}${dateArg ? ` (${dateArg})` : ""}`);
+  const { spawn } = getChildProcess();
+  const path = nodeRequire("path") as typeof import("path");
+  // Invoke via npx using bash to pick up .env.local via the wrapper's env-loading
+  // (we can reuse the same wrapper script since it just runs the tsx binary).
+  // Simpler: spawn the wrapper but swap the script arg — we need a separate
+  // wrapper for sessions. Use an inline sh -c that sources .env.local.
+  const shCmd = `source ${path.join(REPO, ".env.local")} 2>/dev/null; export PATH=/Users/white/.nvm/versions/node/v22.22.0/bin:$PATH; cd ${REPO}; set -a; source .env.local; set +a; npx ${args.join(" ")}`;
+  const proc = spawn("/bin/bash", ["-c", shCmd], { cwd: REPO });
+  proc.stdout.on("data", (d: Buffer) =>
+    process.stdout.write(`[oddyssey-scheduler/${label}] ${d}`)
+  );
+  proc.stderr.on("data", (d: Buffer) =>
+    process.stderr.write(`[oddyssey-scheduler/${label}] ${d}`)
+  );
   proc.on("close", (code: number | null) =>
     console.log(`[oddyssey-scheduler] ${label} exited ${code}`)
   );

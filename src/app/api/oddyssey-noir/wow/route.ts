@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { buildNoirState, buildNoirSummary } from "@/lib/oddyssey-noir/pipeline";
-import { buildNoirWeekOverWeek } from "@/lib/oddyssey-noir/history";
+import { buildNoirWeekOverWeek, loadNoirReportOverlay } from "@/lib/oddyssey-noir/history";
 
 export const runtime = "nodejs";
 
@@ -19,5 +19,7 @@ export async function GET(request: Request) {
   const summary = buildNoirSummary(state, date);
   if (!summary) return NextResponse.json({ status: "error", message: "No data for that date." }, { status: 400 });
   const wow = buildNoirWeekOverWeek(summary);
-  return NextResponse.json({ status: "ok", wow, summary });
+  const report = loadNoirReportOverlay(summary.date);
+  const priorReport = loadNoirReportOverlay(wow.prior_date);
+  return NextResponse.json({ status: "ok", wow, summary, report, prior_report: priorReport });
 }
