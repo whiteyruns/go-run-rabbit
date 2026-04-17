@@ -209,39 +209,51 @@ async function scrapeSessionSummary(
 
   function parseMoney(s: string | null): number | null {
     if (!s) return null;
-    const n = parseFloat(s.replace(/[^0-9.\-]/g, ""));
+    // Grab the first dollar-looking number (handles "$348.80" prefix variants)
+    const m = s.match(/-?\$?\s*([0-9,]+(?:\.[0-9]{1,2})?)/);
+    if (!m) return null;
+    const n = parseFloat(m[1].replace(/,/g, ""));
     return isNaN(n) ? null : n;
   }
   function parseInt1(s: string | null): number | null {
     if (!s) return null;
-    const n = parseInt(s.replace(/[^0-9\-]/g, ""), 10);
+    // First integer in the text, not a concat of all digits
+    const m = s.match(/-?\d+/);
+    if (!m) return null;
+    const n = parseInt(m[0], 10);
     return isNaN(n) ? null : n;
   }
+  // For "X / Y  Z%" text blocks, extract all three numbers
+  function parseRatioPct(s: string | null): { a: number | null; b: number | null; pct: number | null } {
+    if (!s) return { a: null, b: null, pct: null };
+    const nums = s.match(/-?\d+(?:\.\d+)?/g) ?? [];
+    return {
+      a: nums[0] !== undefined ? parseFloat(nums[0]) : null,
+      b: nums[1] !== undefined ? parseFloat(nums[1]) : null,
+      pct: nums[2] !== undefined ? parseFloat(nums[2]) : null,
+    };
+  }
+
+  const reserved = parseRatioPct(rawValues["Tickets Reserved"]);
+  const redeemed = parseRatioPct(rawValues["Tickets Redeemed"]);
 
   const data = {
     title: rawValues.__title,
-    reserved_text: rawValues["Tickets Reserved"],
-    redeemed_text: rawValues["Tickets Redeemed"],
-    gross_revenue_text: rawValues["Gross Revenue"],
-    total_orders_text: rawValues["Total Orders"],
-    tickets_free_text: rawValues["Tickets (Free)"],
-    tickets_paid_text: rawValues["Tickets (Paid)"],
-    tickets_held_text: rawValues["Tickets (Held)"],
-    tickets_refunded_text: rawValues["Tickets Refunded"],
-    net_to_bank_text: rawValues["Net Revenue to Bank"],
-    revenue_sold_text: rawValues["Revenue Sold"],
-    revenue_refunded_text: rawValues["Revenue Refunded"],
-    reserved_num: parseInt1(rawValues["Tickets Reserved"]),
-    redeemed_num: parseInt1(rawValues["Tickets Redeemed"]),
-    gross_revenue_num: parseMoney(rawValues["Gross Revenue"]),
-    total_orders_num: parseInt1(rawValues["Total Orders"]),
-    tickets_free_num: parseInt1(rawValues["Tickets (Free)"]),
-    tickets_paid_num: parseInt1(rawValues["Tickets (Paid)"]),
-    tickets_held_num: parseInt1(rawValues["Tickets (Held)"]),
-    tickets_refunded_num: parseInt1(rawValues["Tickets Refunded"]),
-    net_to_bank_num: parseMoney(rawValues["Net Revenue to Bank"]),
-    revenue_sold_num: parseMoney(rawValues["Revenue Sold"]),
-    revenue_refunded_num: parseMoney(rawValues["Revenue Refunded"]),
+    reserved: reserved.a,
+    capacity: reserved.b,
+    capacity_percent: reserved.pct != null ? reserved.pct / 100 : null,
+    redeemed: redeemed.a,
+    redeemed_of: redeemed.b,
+    redeemed_percent: redeemed.pct != null ? redeemed.pct / 100 : null,
+    gross_revenue: parseMoney(rawValues["Gross Revenue"]),
+    total_orders: parseInt1(rawValues["Total Orders"]),
+    tickets_free: parseInt1(rawValues["Tickets (Free)"]),
+    tickets_paid: parseInt1(rawValues["Tickets (Paid)"]),
+    tickets_held: parseInt1(rawValues["Tickets (Held)"]),
+    tickets_refunded: parseInt1(rawValues["Tickets Refunded"]),
+    net_to_bank: parseMoney(rawValues["Net Revenue to Bank"]),
+    revenue_sold: parseMoney(rawValues["Revenue Sold"]),
+    revenue_refunded: parseMoney(rawValues["Revenue Refunded"]),
   };
 
   return data;
