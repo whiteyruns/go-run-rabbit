@@ -1,15 +1,17 @@
 [
   {
-    "ticket_sku": "VOYEUR-GA",
-    "package_type": "voyeur",
-    "package_label": "The Voyeur",
-    "short_label": "VOYEUR",
+    "ticket_sku": "GA",
+    "ticket_group_name": "General Admission",
+    "package_type": "general_admission",
+    "package_label": "General Admission",
+    "short_label": "GEN ADM",
     "price": 79,
     "included_items": 0,
     "menu_group": null
   },
   {
-    "ticket_sku": "EXPLORER-A",
+    "ticket_sku": "EXPLORER",
+    "ticket_group_name": "The Explorer",
     "package_type": "explorer",
     "package_label": "The Explorer",
     "short_label": "EXPLORER",
@@ -18,7 +20,8 @@
     "menu_group": "A"
   },
   {
-    "ticket_sku": "DINNER-A",
+    "ticket_sku": "DINNER",
+    "ticket_group_name": "The Dinner Guest",
     "package_type": "dinner_guest",
     "package_label": "The Dinner Guest",
     "short_label": "DINNER",
@@ -27,7 +30,8 @@
     "menu_group": "A"
   },
   {
-    "ticket_sku": "ULTIMATE-A",
+    "ticket_sku": "ULTIMATE",
+    "ticket_group_name": "The Ultimate Party Guest",
     "package_type": "ultimate",
     "package_label": "The Ultimate Party Guest",
     "short_label": "ULTIMATE",

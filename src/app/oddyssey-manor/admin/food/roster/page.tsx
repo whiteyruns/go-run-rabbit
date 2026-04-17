@@ -79,9 +79,10 @@ export default function RosterPage() {
           border: "1px solid var(--border-subtle)", borderLeft: "3px solid var(--accent)",
           marginBottom: 40, lineHeight: 1.6,
         }}>
-          <strong style={{ color: "var(--accent)" }}>Tips:</strong> Pick a <em>Location</em> and <em>Type</em> for each guest
-          (first row only — the rest inherit). Setting <em>Type</em> to Dinner / Ultimate groups their food items into a single ticket #.
-          Your assignments auto-save. Orders close at 2:30 PM — upload the final CSV after that for the most accurate sheet.
+          <strong style={{ color: "var(--accent)" }}>Tips:</strong> If you uploaded the full
+          &ldquo;All Ticket Groups&rdquo; attendees export, <em>Type</em> and <em>Location</em> are auto-populated for every
+          guest — just override any you want to change. Otherwise pick <em>Location</em> and <em>Type</em> manually
+          (first row only — the rest inherit). Your assignments auto-save. Orders close at 2:30 PM — upload the final CSV after that for the most accurate sheet.
         </div>
 
         {sections.map((section) => (

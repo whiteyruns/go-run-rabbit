@@ -25,8 +25,9 @@ export interface MenuItem {
 // Ticket package rule (mocked SharePoint).
 export interface TicketType {
   ticket_sku: string;
+  ticket_group_name: string; // Ticketure's label, e.g. "The Dinner Guest"
   package_type: string;
-  package_label: string; // "The Dinner Guest"
+  package_label: string;
   short_label: string; // "DINNER" — matches SharePoint TYPE column format
   price: number;
   included_items: number;
@@ -47,6 +48,12 @@ export interface FoodAllocation {
   menu_item_id: string | null; // null = unknown item (validation error)
   menu_item_label: string;
   ticket_state: string;
+
+  // Parent admission ticket info — populated when the CSV is a full
+  // "All Ticket Groups" export (via admit_name → scan_code join).
+  parent_scan_code?: string; // from admit_name on the Inclusion row
+  derived_package_type?: string; // "explorer" | "dinner_guest" | ...
+  derived_package_label?: string; // "DINNER", "EXPLORER", etc.
 }
 
 // Order/group view — same buyer email + session = one party.
@@ -61,7 +68,11 @@ export interface OrderGroup {
   items_by_id: Record<string, number>;
   allocations: FoodAllocation[];
 
-  // Populated when a ticket-purchase source is also loaded (v2 hook):
+  // Populated from the admission rows when available (full attendees CSV).
+  derived_package_types?: string[]; // unique types in the group
+  derived_party_size?: number; // count of admission-type scan_codes
+
+  // Populated when a ticket-purchase source is also loaded (strict mode):
   package_type?: string;
   package_label?: string;
   expected_items_per_guest?: number;
