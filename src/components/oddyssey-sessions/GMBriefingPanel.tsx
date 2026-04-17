@@ -120,17 +120,18 @@ export function GMBriefingPanel({ venue, date, bullets, accent = "var(--accent)"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             onBlur={saveNotes}
-            placeholder="e.g. Bandido open bar 10 PM–12 AM · Photoshoot for Noir · VIP: [name] party of 8 · Press: [outlet]"
+            placeholder={"e.g.\n• Bandido open bar 10 PM–12 AM\n• Photoshoot for Noir\n• VIP: Smith party of 8 at 8:30 PM\n• Press: LA Times covering the Siren set"}
             rows={7}
             style={{
               width: "100%", background: "var(--bg)", border: "1px solid var(--border-subtle)",
               padding: "12px 14px", color: "var(--text)", fontFamily: "var(--sans)",
               fontSize: 14, lineHeight: 1.6, outline: "none", resize: "vertical",
+              whiteSpace: "pre-wrap",
             }}
           />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8 }}>
             <div style={{ fontSize: 11, color: "var(--text-muted)" }}>
-              Autosaves on blur · Ctrl+S (Tab-out) to force
+              Press Enter for a new line · autosaves when you click out
             </div>
             <div style={{ fontSize: 11, color: status === "saved" ? "#27ae60" : status === "error" ? "#c0392b" : "var(--text-muted)" }}>
               {status === "saving" && "saving…"}

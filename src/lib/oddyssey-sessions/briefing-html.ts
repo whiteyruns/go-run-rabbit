@@ -57,7 +57,7 @@ export function renderBriefingHtml(input: BriefingEmailInput): string {
   ${input.notes.trim().length > 0 ? `
     <div style="margin-bottom:28px;">
       <h2 style="font-family:Georgia,serif;font-size:18px;font-weight:400;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px;color:#e8e4dd;border-bottom:1px solid ${alpha(accent, 0.25)};padding-bottom:8px;">Evening Notes</h2>
-      <div style="padding:16px 20px;background:${alpha(accent, 0.06)};border-left:3px solid ${accent};font-size:14px;color:#e8e4dd;line-height:1.7;white-space:pre-wrap;">${esc(input.notes)}</div>
+      <div style="padding:16px 20px;background:${alpha(accent, 0.06)};border-left:3px solid ${accent};font-size:14px;color:#e8e4dd;line-height:1.7;">${escMultiline(input.notes)}</div>
       ${input.notes_updated_at ? `<div style="margin-top:6px;font-size:10px;color:#5a5650;letter-spacing:1px;text-transform:uppercase;">Last edited ${esc(new Date(input.notes_updated_at).toLocaleString("en-US"))}</div>` : ""}
     </div>
   ` : ""}
@@ -92,6 +92,15 @@ function formatMoney(n: number): string {
 }
 function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+// Escape + convert real newlines to <br> so line breaks survive in
+// email clients that strip `white-space: pre-wrap`. Collapses runs of
+// 3+ blank lines to a single paragraph break.
+function escMultiline(s: string): string {
+  return esc(s)
+    .replace(/\r\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\n/g, "<br>");
 }
 function alpha(hex: string, a: number): string {
   // hex like #c9a84c → rgba
