@@ -204,8 +204,10 @@ export function startScheduler(): void {
   // asked for hourly).
   const jobs: Array<[string, string, () => void]> = [
     // --- MANOR ---
-    // Hourly 9 AM – 2 PM, Thu–Sun (Manor cutoff is 2:30 PM for kitchen)
-    ["manor-regular", "0 9-14 * * 4,5,6,0", () => runPull("manor-regular", "manor")],
+    // Hourly 9 AM – 5 PM, Thu–Sun. Kitchen cutoff is 2:30 PM but ticket
+    // sales keep coming through the afternoon, so we pull through 5 PM
+    // to make the 5 PM GM briefing email up-to-date.
+    ["manor-regular", "0 9-17 * * 4,5,6,0", () => runPull("manor-regular", "manor")],
     // 5 PM PT GM briefing email — talking points for the evening
     ["manor-briefing", "0 17 * * 4,5,6,0", () => sendBriefing("manor", todayLocal())],
     ["manor-postshow", "15 0 * * 5,6,0,1", () => runPull("manor-postshow", "manor", yesterdayLocal())],
