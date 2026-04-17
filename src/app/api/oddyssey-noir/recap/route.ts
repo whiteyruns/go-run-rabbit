@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
-import { buildNoirState, buildNoirSummary, buildNoirWeekOverWeek } from "@/lib/oddyssey-noir/pipeline";
+import { buildNoirState, buildNoirSummary } from "@/lib/oddyssey-noir/pipeline";
+import { buildNoirWeekOverWeek } from "@/lib/oddyssey-noir/history";
 import { renderNoirRecapHtml, noirRecapSubject } from "@/lib/oddyssey-noir/recap-html";
 
 export const runtime = "nodejs";

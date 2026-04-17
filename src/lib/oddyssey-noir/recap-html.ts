@@ -1,5 +1,6 @@
-import type { NoirSummary, NoirWeekOverWeek } from "./pipeline";
+import type { NoirSummary } from "./pipeline";
 import { formatNoirCurrency } from "./pipeline";
+import type { NoirWeekOverWeek } from "./history";
 
 export function renderNoirRecapHtml(s: NoirSummary, wow: NoirWeekOverWeek): string {
   const capPct = (s.capacity_percent * 100).toFixed(0);

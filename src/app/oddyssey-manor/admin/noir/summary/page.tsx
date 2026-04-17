@@ -5,10 +5,10 @@ import Link from "next/link";
 import {
   formatNoirCurrency,
   type NoirSummary,
-  type NoirWeekOverWeek,
   type NoirPackageBreakdown,
   type NoirSessionOccupancy,
 } from "@/lib/oddyssey-noir/pipeline";
+import type { NoirWeekOverWeek } from "@/lib/oddyssey-noir/history";
 
 export default function NoirSummaryPage() {
   const [summary, setSummary] = useState<NoirSummary | null>(null);
