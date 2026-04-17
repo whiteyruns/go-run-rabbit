@@ -159,7 +159,7 @@ export function buildRoster(
             type_label: tt?.short_label ?? (a.package_type ? a.package_type.toUpperCase() : "—"),
             package_type: a.package_type ?? null,
             time_label: timeLabel(alloc.session_iso),
-            name: alloc.guest_name || alloc.buyer_name,
+            name: alloc.buyer_name,
             food: alloc.menu_item_label,
             email: alloc.buyer_email,
             banding: currentBanding,
