@@ -1,12 +1,26 @@
 import { Cron } from "croner";
-import { spawn } from "child_process";
-import path from "path";
 
 // Runs inside the Next.js server process (see src/instrumentation.ts).
 // Croner holds its own timers; no extra process management needed.
+// Hide Node built-ins from webpack's static analysis so this module
+// doesn't fail the Edge-runtime bundle (instrumentation.ts is included
+// in both runtimes).
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const nodeRequire: NodeRequire = typeof window === "undefined"
+  ? (eval("require") as NodeRequire)
+  : (null as unknown as NodeRequire);
 
-const REPO = process.cwd();
-const WRAPPER = path.join(REPO, "scripts/oddyssey-food-pull.sh");
+function getChildProcess() {
+  return nodeRequire("child_process") as typeof import("child_process");
+}
+function getPath() {
+  return nodeRequire("path") as typeof import("path");
+}
+
+const REPO = typeof process !== "undefined" ? process.cwd() : "";
+const WRAPPER = typeof process !== "undefined"
+  ? getPath().join(REPO, "scripts/oddyssey-food-pull.sh")
+  : "";
 
 let started = false;
 let startedAt: string | null = null;
@@ -36,14 +50,15 @@ function runPull(label: string, dateArg?: string) {
   if (dateArg) args.push(`--date=${dateArg}`);
   const stamp = new Date().toISOString();
   console.log(`[oddyssey-scheduler] ${stamp} fire: ${label}${dateArg ? ` (${dateArg})` : ""}`);
+  const { spawn } = getChildProcess();
   const proc = spawn(WRAPPER, args, { cwd: REPO });
-  proc.stdout.on("data", (d) =>
+  proc.stdout.on("data", (d: Buffer) =>
     process.stdout.write(`[oddyssey-scheduler/${label}] ${d}`)
   );
-  proc.stderr.on("data", (d) =>
+  proc.stderr.on("data", (d: Buffer) =>
     process.stderr.write(`[oddyssey-scheduler/${label}] ${d}`)
   );
-  proc.on("close", (code) =>
+  proc.on("close", (code: number | null) =>
     console.log(`[oddyssey-scheduler] ${label} exited ${code}`)
   );
 }
