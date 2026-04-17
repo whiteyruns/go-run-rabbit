@@ -115,6 +115,26 @@ function runPull(label: string, dateArg?: string) {
   );
 }
 
+async function sendRecap(dateArg: string) {
+  const port = process.env.PORT ?? "3102";
+  const url = `http://localhost:${port}/api/oddyssey-food/recap`;
+  const stamp = new Date().toISOString();
+  console.log(`[oddyssey-scheduler] ${stamp} fire: recap (${dateArg})`);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ date: dateArg }),
+    });
+    const data = await res.json();
+    console.log(
+      `[oddyssey-scheduler] recap → ${data.status} ${data.subject ?? ""} → ${(data.recipients ?? []).join(", ")} ${data.resend_id ? `(${data.resend_id})` : data.message ?? ""}`
+    );
+  } catch (e) {
+    console.log(`[oddyssey-scheduler] recap failed: ${String(e)}`);
+  }
+}
+
 export function startScheduler(): void {
   // Diagnostic: prove startScheduler() was invoked
   try {
@@ -159,8 +179,22 @@ export function startScheduler(): void {
     next: postshow.nextRun()?.toISOString() ?? null,
   });
 
+  // Recap email at 00:30 PT — 15 min after the post-show pull lands,
+  // so we send the full-night final numbers to Keith + Brandon.
+  const recap = new Cron(
+    "30 0 * * 5,6,0,1",
+    { timezone: "America/Los_Angeles", name: "oddyssey-recap" },
+    () => sendRecap(yesterdayLocal())
+  );
+  STATE.crons.push(recap);
+  STATE.jobs.push({
+    name: "recap",
+    pattern: "30 0 * * 5,6,0,1",
+    next: recap.nextRun()?.toISOString() ?? null,
+  });
+
   persistStatus();
   console.log(
-    "[oddyssey-scheduler] started | regular 9am-2:30pm PT Thu-Sun | postshow 00:15 PT Fri-Mon"
+    "[oddyssey-scheduler] started | regular 9am-2:30pm PT Thu-Sun | postshow 00:15 PT | recap 00:30 PT Fri-Mon"
   );
 }
