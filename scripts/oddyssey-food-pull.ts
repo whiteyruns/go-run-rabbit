@@ -250,23 +250,19 @@ async function main() {
     }
 
     if (!menuOpened) {
-      // One more: dump every clickable element's bbox + text so we can tune.
-      const els = await page
-        .locator('button, [role="button"], [tabindex]:not([tabindex="-1"])')
-        .all();
-      console.log(`[pull] candidate inventory — ${els.length} clickables:`);
-      for (let i = 0; i < Math.min(els.length, 40); i++) {
-        const e = els[i];
-        const vis = await e.isVisible().catch(() => false);
-        if (!vis) continue;
-        const box = await e.boundingBox().catch(() => null);
-        const text = ((await e.textContent()) ?? "").trim().slice(0, 30);
-        const aria = (await e.getAttribute("aria-label").catch(() => "")) ?? "";
-        const tag = await e.evaluate((el) => el.tagName).catch(() => "?");
-        console.log(
-          `  [${i}] <${tag}> ${box ? `${Math.round(box.width)}x${Math.round(box.height)} @(${Math.round(box.x)},${Math.round(box.y)})` : "no box"} text="${text}" aria="${aria}"`
-        );
-      }
+      // Dump the DOM near the REDEEMED chip so we can see the actual markup.
+      const dump = await page.evaluate(() => {
+        const all = Array.from(document.querySelectorAll("*"));
+        const redeemed = all.find((el) => el.textContent?.trim() === "REDEEMED");
+        if (!redeemed) return { found: false, html: "" };
+        // Walk up 6 levels to capture the whole filter header block
+        let n: Element | null = redeemed;
+        for (let i = 0; i < 6 && n?.parentElement; i++) n = n.parentElement;
+        return { found: true, html: (n as Element).outerHTML.slice(0, 8000) };
+      });
+      console.log(
+        `[pull] DOM dump near REDEEMED — found=${dump.found}, html=${dump.html}`
+      );
       throw new Error("Could not locate the ⋮ menu button on the attendees page");
     }
 
