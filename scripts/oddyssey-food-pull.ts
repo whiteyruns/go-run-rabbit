@@ -212,50 +212,47 @@ async function main() {
       .catch(() => {});
 
     // 4. Click the ⋮ (three-dot) menu inside the frame.
+    //    Ticketure uses a Bootstrap-style dropdown: a <button> with
+    //    class "EditOptions__toggle" + data-toggle="dropdown".
     let menuOpened = false;
-    const kebabCandidates = [
-      frame.getByRole("button", { name: /more|options|menu|actions/i }),
-      frame.locator('[role="button"][aria-haspopup]'),
-      frame.locator('button:has(svg):not(:has-text("redeemed")):not(:has-text("unredeemed"))'),
-      // Ellipsis text variants
-      frame.locator('button:has-text("⋮"), button:has-text("…")'),
-      // XPath fallback: the button right after the UNREDEEMED chip's container
-      frame.locator('xpath=(//button[contains(., "UNREDEEMED")]/following::button)[1]'),
-    ];
-    for (const loc of kebabCandidates) {
-      try {
-        if (await loc.first().isVisible({ timeout: 1500 })) {
-          await loc.first().click({ timeout: 3000 });
-          menuOpened = true;
-          console.log("[pull] kebab opened via selector");
-          break;
-        }
-      } catch {
-        /* try next */
-      }
+    const kebab = frame.locator(".EditOptions__toggle").first();
+    try {
+      await kebab.waitFor({ state: "visible", timeout: 8000 });
+      await kebab.click({ timeout: 4000 });
+      await page.waitForTimeout(400);
+      menuOpened = await frame
+        .getByText(/export to csv/i)
+        .isVisible({ timeout: 3000 })
+        .catch(() => false);
+      if (menuOpened) console.log("[pull] kebab opened via .EditOptions__toggle");
+    } catch (e) {
+      console.log("[pull] .EditOptions__toggle click failed:", (e as Error).message);
     }
 
-    // Coordinate fallback within the iframe
+    // Fallbacks — broader attribute matches
     if (!menuOpened) {
-      console.log("[pull] kebab selectors failed, trying coordinate click in frame");
-      const redeemed = frame.getByText(/^REDEEMED$/i).first();
-      const redBox = await redeemed.boundingBox().catch(() => null);
-      if (redBox) {
-        // The ⋮ in screenshots is ~60px left of REDEEMED's left edge
-        // and ~42px below the bottom of the chip.
-        const iframeEl = page.locator("iframe").first();
-        const iframeBox = await iframeEl.boundingBox();
-        const offsetX = iframeBox ? iframeBox.x : 0;
-        const offsetY = iframeBox ? iframeBox.y : 0;
-        const x = offsetX + redBox.x - 60;
-        const y = offsetY + redBox.y + redBox.height + 20;
-        console.log(`[pull] coordinate click at (${Math.round(x)}, ${Math.round(y)})`);
-        await page.mouse.click(x, y);
-        await page.waitForTimeout(700);
-        menuOpened = await frame
-          .getByText(/export to csv/i)
-          .isVisible({ timeout: 2000 })
-          .catch(() => false);
+      const fallbacks = [
+        frame.locator('[data-toggle="dropdown"]'),
+        frame.locator('[aria-haspopup="true"]'),
+      ];
+      for (const loc of fallbacks) {
+        try {
+          if (await loc.first().isVisible({ timeout: 1500 })) {
+            await loc.first().click({ timeout: 3000 });
+            await page.waitForTimeout(400);
+            if (
+              await frame
+                .getByText(/export to csv/i)
+                .isVisible({ timeout: 2000 })
+                .catch(() => false)
+            ) {
+              menuOpened = true;
+              break;
+            }
+          }
+        } catch {
+          /* try next */
+        }
       }
     }
 
