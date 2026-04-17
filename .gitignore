@@ -22,3 +22,6 @@ src/generated/
 next-env.d.ts
 .DS_Store
 _old/
+
+# Oddyssey food auto-pull artifacts (local only)
+data/oddyssey-food/pulls/

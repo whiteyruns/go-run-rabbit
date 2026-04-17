@@ -9,13 +9,27 @@ import type { DashboardState } from "@/lib/oddyssey-food/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+interface PullMeta {
+  filename: string;
+  pulled_at: string;
+  date: string;
+  size_bytes: number;
+}
+
 export default function UploadPage() {
   const [state, setState] = useState<DashboardState | null>(null);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [autoAssign, setAutoAssign] = useState<AutoAssignmentSummary | null>(null);
+  const [pulling, setPulling] = useState(false);
+  const [pullMeta, setPullMeta] = useState<PullMeta | null>(null);
+  const [pullError, setPullError] = useState<string | null>(null);
 
   useEffect(() => {
     setState(loadState());
+    fetch("/api/oddyssey-food/pull")
+      .then((r) => r.json())
+      .then((d) => { if (d.meta) setPullMeta(d.meta); })
+      .catch(() => {});
   }, []);
 
   function handleFile(filename: string, text: string) {
@@ -33,6 +47,25 @@ export default function UploadPage() {
     setAutoAssign(null);
   }
 
+  async function handlePullFromTicketure() {
+    setPulling(true);
+    setPullError(null);
+    try {
+      const res = await fetch("/api/oddyssey-food/pull", { method: "POST", body: "{}" });
+      const data = await res.json();
+      if (data.status !== "ok" || !data.csv) {
+        setPullError(data.stderr || data.stdout || "Pull failed — check server logs.");
+        return;
+      }
+      setPullMeta(data.meta);
+      handleFile(data.meta.filename, data.csv);
+    } catch (e) {
+      setPullError(String(e));
+    } finally {
+      setPulling(false);
+    }
+  }
+
   return (
     <div>
       <PageHeader
@@ -40,6 +73,39 @@ export default function UploadPage() {
         title="Drop the Ticketure Attendees CSV"
         description={`Use the "All Ticket Groups" attendee export from Ticketure — the full unfiltered CSV lets the dashboard auto-derive each guest's package TYPE and suggest a LOCATION based on party size. An Inclusions-only export still works but leaves those fields blank.`}
       />
+
+      <div style={{
+        padding: "18px 24px", marginBottom: 24,
+        background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)",
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        flexWrap: "wrap", gap: 16,
+      }}>
+        <div>
+          <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, marginBottom: 4 }}>
+            Auto-Pull from Ticketure
+          </div>
+          <div style={{ fontSize: 13, color: "var(--text-secondary)", letterSpacing: 0.3 }}>
+            {pullMeta ? (
+              <>Last pulled: <strong style={{ color: "var(--text)" }}>{new Date(pullMeta.pulled_at).toLocaleString("en-US")}</strong> · {pullMeta.date}</>
+            ) : (
+              "No pulls yet. Server will log into Ticketure and download today's attendee list."
+            )}
+          </div>
+        </div>
+        <button
+          onClick={handlePullFromTicketure}
+          disabled={pulling}
+          style={{ ...btnPrimary, opacity: pulling ? 0.5 : 1 }}
+        >
+          {pulling ? "Pulling…" : "Pull Now"}
+        </button>
+      </div>
+
+      {pullError && (
+        <div style={{ padding: 16, marginBottom: 24, border: "1px solid #c0392b", background: "rgba(192,57,43,0.08)", fontSize: 12, color: "#c0392b", whiteSpace: "pre-wrap", fontFamily: "monospace" }}>
+          {pullError}
+        </div>
+      )}
 
       <CsvDropzone onFile={handleFile} />
 
