@@ -77,7 +77,10 @@ export function RosterPrint({ sections, snapshotAt }: Props) {
                       <td>
                         {isFirst ? (
                           <>
-                            <div>{row.name}</div>
+                            <div>
+                              {row.is_walkup && <span className="rp-walkup-tag">WALK-UP</span>}
+                              {row.name}
+                            </div>
                             {row.customer_note && (
                               <div className="rp-note">⚠ {row.customer_note}</div>
                             )}
@@ -179,6 +182,11 @@ const printStyles = `
   .rp-vip-tag {
     display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px;
     border: 1.5px solid #000; padding: 1px 5px; margin-right: 6px;
+  }
+  .rp-walkup-tag {
+    display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    border: 1.5px dashed #000; padding: 1px 5px; margin-right: 6px;
+    background: #fff; color: #000;
   }
   .rp-note {
     font-size: 10px; font-weight: 700; margin-top: 3px; padding: 2px 6px;

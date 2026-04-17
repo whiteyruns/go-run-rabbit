@@ -5,7 +5,7 @@ import { PrintLayout } from "@/components/oddyssey-food/PrintLayout";
 import { SessionBarChart } from "@/components/oddyssey-food/SessionBarChart";
 import { SessionBreakdown } from "@/components/oddyssey-food/SessionBreakdown";
 import { TotalsTable } from "@/components/oddyssey-food/TotalsTable";
-import { loadState } from "@/lib/oddyssey-food/storage";
+import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
 import type { DashboardState } from "@/lib/oddyssey-food/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -14,7 +14,7 @@ export default function KitchenPage() {
   const [state, setState] = useState<DashboardState | null>(null);
 
   useEffect(() => {
-    setState(loadState());
+    setState(loadStateWithWalkups());
   }, []);
 
   if (!state) {

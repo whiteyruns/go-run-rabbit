@@ -143,7 +143,10 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
                 <td className="rc-name">
                   {isFirst ? (
                     <div className="rc-name-wrap">
-                      {row.is_vip && <span className="rc-vip-star" title="VIP · Ultimate Party Guest">★ VIP</span>}
+                      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                        {row.is_walkup && <span className="rc-walkup-tag">WALK-UP</span>}
+                        {row.is_vip && <span className="rc-vip-star" title="VIP · Ultimate Party Guest">★ VIP</span>}
+                      </div>
                       <span>{row.name}</span>
                       {hasNote && (
                         <span className="rc-note-badge" title={row.customer_note}>
@@ -229,8 +232,13 @@ const rosterStyles = `
 .rc-email { color: var(--text-muted); font-size: 12px; }
 
 .rc-name-wrap { display: flex; flex-direction: column; gap: 4px; }
+.rc-walkup-tag {
+  display: inline-flex; align-items: center;
+  font-size: 9px; letter-spacing: 2px; font-weight: 600; color: #060606;
+  background: #4caf7a; padding: 2px 8px;
+}
 .rc-vip-star {
-  display: inline-flex; align-items: center; align-self: flex-start;
+  display: inline-flex; align-items: center;
   font-size: 9px; letter-spacing: 2px; font-weight: 600; color: #060606;
   background: #d4b85e; padding: 2px 8px;
 }

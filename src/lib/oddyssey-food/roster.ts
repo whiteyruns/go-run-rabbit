@@ -23,6 +23,7 @@ export interface RosterRow {
   // Guest-level flags (populated on every row of a guest for easy access)
   customer_note: string; // allergy / dietary / request text, empty if none
   is_vip: boolean; // Ultimate Party Guest tier
+  is_walkup: boolean; // manually added (not from Ticketure CSV)
 
   // Row styling hints for the renderer
   banding: "a" | "b"; // alternating per ticket
@@ -151,6 +152,8 @@ export function buildRoster(
       const isVip =
         a.package_type === "ultimate" ||
         (g.derived_package_types ?? []).includes("ultimate");
+      // Walk-up = any allocation has ticket_state === "walkup"
+      const isWalkup = g.allocations.some((al) => al.ticket_state === "walkup");
 
       // Sort within a guest: by raw ticket item order in CSV (stable already)
       const tickets = groupIntoTickets(g.allocations, a.package_type);
@@ -174,6 +177,7 @@ export function buildRoster(
             email: alloc.buyer_email,
             customer_note: customerNote,
             is_vip: isVip,
+            is_walkup: isWalkup,
             banding: currentBanding,
             is_guest_first: rows.length === guestRowStart && ii === 0 && ti === 0,
             is_guest_last: false, // fixed up below

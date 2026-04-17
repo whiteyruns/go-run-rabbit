@@ -3,7 +3,7 @@
 import { ErrorList } from "@/components/oddyssey-food/ErrorList";
 import { ItemBarChart } from "@/components/oddyssey-food/ItemBarChart";
 import { SummaryCards } from "@/components/oddyssey-food/SummaryCards";
-import { loadState } from "@/lib/oddyssey-food/storage";
+import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
 import type { DashboardState, ValidationFinding } from "@/lib/oddyssey-food/types";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ export default function ValidationPage() {
   const [state, setState] = useState<DashboardState | null>(null);
 
   useEffect(() => {
-    setState(loadState());
+    setState(loadStateWithWalkups());
   }, []);
 
   if (!state) {

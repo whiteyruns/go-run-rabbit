@@ -2,24 +2,33 @@
 
 import { RosterPrint } from "@/components/oddyssey-food/RosterPrint";
 import { RosterTable } from "@/components/oddyssey-food/RosterTable";
+import { WalkupForm } from "@/components/oddyssey-food/WalkupForm";
 import { loadAssignments, type AssignmentsMap } from "@/lib/oddyssey-food/assignments";
+import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
 import { buildRoster } from "@/lib/oddyssey-food/roster";
-import { loadState } from "@/lib/oddyssey-food/storage";
 import type { DashboardState } from "@/lib/oddyssey-food/types";
+import { loadWalkups } from "@/lib/oddyssey-food/walkups";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function RosterPage() {
   const [state, setState] = useState<DashboardState | null>(null);
   const [assignments, setAssignments] = useState<AssignmentsMap>({});
   const [loaded, setLoaded] = useState(false);
   const [search, setSearch] = useState("");
+  const [showWalkup, setShowWalkup] = useState(false);
+  const [walkupCount, setWalkupCount] = useState(0);
+
+  const refresh = useCallback(() => {
+    setState(loadStateWithWalkups());
+    setAssignments(loadAssignments());
+    setWalkupCount(loadWalkups().length);
+  }, []);
 
   useEffect(() => {
-    setState(loadState());
-    setAssignments(loadAssignments());
+    refresh();
     setLoaded(true);
-  }, []);
+  }, [refresh]);
 
   const sections = useMemo(() => {
     if (!state) return [];
@@ -30,12 +39,24 @@ export default function RosterPage() {
 
   if (!state) {
     return (
-      <div style={{ padding: 80, textAlign: "center", border: "1px dashed var(--border)" }}>
-        <div style={{ fontFamily: "var(--serif)", fontSize: 22, marginBottom: 24, color: "var(--text-secondary)" }}>
-          No data loaded.
+      <>
+        <div style={{ padding: 80, textAlign: "center", border: "1px dashed var(--border)" }}>
+          <div style={{ fontFamily: "var(--serif)", fontSize: 22, marginBottom: 24, color: "var(--text-secondary)" }}>
+            No data loaded.
+          </div>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            <Link href="/oddyssey-manor/admin/food/upload" style={btnPrimary}>Upload a CSV</Link>
+            <button onClick={() => setShowWalkup(true)} style={btnOutline}>+ Add Walk-Up</button>
+          </div>
         </div>
-        <Link href="/oddyssey-manor/admin/food/upload" style={btnPrimary}>Upload a CSV</Link>
-      </div>
+        {showWalkup && (
+          <WalkupForm
+            state={state}
+            onClose={() => setShowWalkup(false)}
+            onSaved={() => { setShowWalkup(false); refresh(); }}
+          />
+        )}
+      </>
     );
   }
 
@@ -77,8 +98,10 @@ export default function RosterPage() {
             <ProgressStat label="Types" value={`${assignedTypes}/${guestKeys.size}`} />
             {vipGuests > 0 && <ProgressStat label="⭐ VIP" value={String(vipGuests)} color="#d4b85e" />}
             {guestsWithNotes > 0 && <ProgressStat label="⚠ Notes" value={String(guestsWithNotes)} color="#c0392b" />}
+            {walkupCount > 0 && <ProgressStat label="Walk-ups" value={String(walkupCount)} color="#27ae60" />}
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            <button onClick={() => setShowWalkup(true)} style={btnOutline}>+ Add Walk-Up</button>
             <button onClick={() => window.print()} style={btnPrimary}>Print Roster</button>
             <Link href="/oddyssey-manor/admin/food/kitchen" style={btnOutline}>View Totals &amp; Charts →</Link>
           </div>
@@ -133,6 +156,14 @@ export default function RosterPage() {
       </div>
 
       <RosterPrint sections={sections} snapshotAt={state.source.uploaded_at} />
+
+      {showWalkup && (
+        <WalkupForm
+          state={state}
+          onClose={() => setShowWalkup(false)}
+          onSaved={() => { setShowWalkup(false); refresh(); }}
+        />
+      )}
     </>
   );
 }
