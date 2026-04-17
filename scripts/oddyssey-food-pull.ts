@@ -209,28 +209,24 @@ async function main() {
       })
       .catch(() => {});
 
-    // 4. Click the ⋮ (three-dot) menu. It's a small icon-only button
-    //    near the REDEEMED/UNREDEEMED chips. Try several patterns, then
-    //    dump a button inventory on failure so we can tune the selector.
+    // 4. Click the ⋮ (three-dot) menu. Ticketure uses div/span clickables
+    //    rather than <button>, so we widen the search and fall back to a
+    //    coordinate click relative to the REDEEMED chip (which is stable).
     let menuOpened = false;
     const kebabCandidates = [
       page.getByRole("button", { name: /more|options|menu|actions/i }),
-      page.locator("button[aria-haspopup]"),
-      page.locator("button[aria-label]").filter({ hasText: "" }),
-      // SVG "dots" icon variants
-      page.locator('button:has(svg[class*="dot" i])'),
-      page.locator('button:has(svg[data-icon*="ellipsis" i])'),
-      // Button with exactly 3 dots as text
-      page.locator('button:text-is("⋮"), button:text-is("…"), button:text-is("...")'),
-      // Fallback: icon-only button near the filter row
-      page.getByRole("button", { name: /unredeemed/i })
-        .locator("xpath=ancestor::*[1]/following::button[1]"),
+      page.locator('[role="button"][aria-haspopup]'),
+      page.locator('[role="button"][aria-label]').filter({ hasText: "" }),
+      page.locator('svg[class*="dot" i]').locator("xpath=ancestor::*[@role='button' or self::button][1]"),
+      // Direct text-based match on the dots character
+      page.locator('[role="button"]:has-text("⋮"), [role="button"]:has-text("…")'),
     ];
     for (const loc of kebabCandidates) {
       try {
         if (await loc.first().isVisible({ timeout: 1500 })) {
           await loc.first().click({ timeout: 3000 });
           menuOpened = true;
+          console.log("[pull] kebab opened via selector");
           break;
         }
       } catch {
@@ -238,27 +234,37 @@ async function main() {
       }
     }
 
-    // If still stuck, look for the export menu item directly — sometimes
-    // the menu is always mounted, just hidden. Clicking the item may work.
+    // Coordinate fallback: the kebab sits below-left of REDEEMED.
     if (!menuOpened) {
-      const exportDirect = page.getByText(/export to csv/i).first();
-      if (await exportDirect.isVisible({ timeout: 1000 }).catch(() => false)) {
-        menuOpened = true; // treat as opened — fall through to click below
+      console.log("[pull] kebab selectors failed, trying coordinate click");
+      const redeemed = page.getByText(/^REDEEMED$/).first();
+      const redBox = await redeemed.boundingBox().catch(() => null);
+      if (redBox) {
+        const x = redBox.x - 60; // ~60px left of REDEEMED chip's left edge
+        const y = redBox.y + redBox.height + 20; // ~20px below
+        console.log(`[pull] coordinate click at (${Math.round(x)}, ${Math.round(y)})`);
+        await page.mouse.click(x, y);
+        await page.waitForTimeout(500);
+        menuOpened = (await page.getByText(/export to csv/i).isVisible({ timeout: 2000 }).catch(() => false));
       }
     }
 
     if (!menuOpened) {
-      // Dump every visible button so we can tune the selector next round.
-      const buttons = await page.locator("button:visible").all();
-      console.log(`[pull] kebab candidates — ${buttons.length} visible buttons:`);
-      for (let i = 0; i < buttons.length; i++) {
-        const b = buttons[i];
-        const box = await b.boundingBox().catch(() => null);
-        const text = ((await b.textContent()) ?? "").trim().slice(0, 30);
-        const aria = (await b.getAttribute("aria-label").catch(() => "")) ?? "";
-        const cls = ((await b.getAttribute("class").catch(() => "")) ?? "").slice(0, 40);
+      // One more: dump every clickable element's bbox + text so we can tune.
+      const els = await page
+        .locator('button, [role="button"], [tabindex]:not([tabindex="-1"])')
+        .all();
+      console.log(`[pull] candidate inventory — ${els.length} clickables:`);
+      for (let i = 0; i < Math.min(els.length, 40); i++) {
+        const e = els[i];
+        const vis = await e.isVisible().catch(() => false);
+        if (!vis) continue;
+        const box = await e.boundingBox().catch(() => null);
+        const text = ((await e.textContent()) ?? "").trim().slice(0, 30);
+        const aria = (await e.getAttribute("aria-label").catch(() => "")) ?? "";
+        const tag = await e.evaluate((el) => el.tagName).catch(() => "?");
         console.log(
-          `  [${i}] ${box ? `${Math.round(box.width)}x${Math.round(box.height)} @(${Math.round(box.x)},${Math.round(box.y)})` : "no box"} text="${text}" aria="${aria}" class="${cls}"`
+          `  [${i}] <${tag}> ${box ? `${Math.round(box.width)}x${Math.round(box.height)} @(${Math.round(box.x)},${Math.round(box.y)})` : "no box"} text="${text}" aria="${aria}"`
         );
       }
       throw new Error("Could not locate the ⋮ menu button on the attendees page");
