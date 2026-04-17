@@ -112,19 +112,18 @@ async function enumerateSessions(page: Page, flocator: FrameLocator, date: strin
 
   const sessions = await frame.evaluate(() => {
     const out: { session_id: string; time_label: string }[] = [];
-    const seen = new Set<string>();
-    const anchors = Array.from(document.querySelectorAll("a, [data-href]")) as HTMLElement[];
+    const seen: Record<string, boolean> = {};
+    const anchors = Array.from(document.querySelectorAll("a, [data-href]"));
     for (const a of anchors) {
-      const href = (a.getAttribute("href") ?? a.getAttribute("data-href") ?? "") as string;
+      const href = (a.getAttribute("href") || a.getAttribute("data-href") || "");
       const m = href.match(/session\/([a-f0-9-]{32,})/i);
       if (!m) continue;
       const id = m[1].toLowerCase();
-      if (seen.has(id)) continue;
-      seen.add(id);
-      // Find a nearby time label (the session cell usually contains a time like "6:30 PM")
-      const text = (a.textContent ?? "").trim();
+      if (seen[id]) continue;
+      seen[id] = true;
+      const text = (a.textContent || "").trim();
       const timeMatch = text.match(/\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)/);
-      out.push({ session_id: id, time_label: timeMatch?.[0] ?? text.slice(0, 40) });
+      out.push({ session_id: id, time_label: timeMatch ? timeMatch[0] : text.slice(0, 40) });
     }
     return out;
   });
@@ -159,73 +158,91 @@ async function scrapeSessionSummary(
   const inner = iframeEl ? await iframeEl.contentFrame() : null;
   if (!inner) return null;
 
-  const data = await inner.evaluate(() => {
-    // Helper: find element with trimmed text equal to label, return the
-    // next sibling's / nearest number-looking text.
-    function labelValue(label: string): string | null {
-      const all = Array.from(document.querySelectorAll("*")) as HTMLElement[];
+  // Evaluate with a single arrow function body — no nested helpers
+  // (tsx/TypeScript downleveling injects __name refs that break in
+  // the browser context otherwise).
+  const labels = [
+    "Tickets Reserved",
+    "Tickets Redeemed",
+    "Gross Revenue",
+    "Total Orders",
+    "Tickets (Free)",
+    "Tickets (Paid)",
+    "Tickets (Held)",
+    "Tickets Refunded",
+    "Net Revenue to Bank",
+    "Revenue Sold",
+    "Revenue Refunded",
+  ];
+
+  const rawValues = await inner.evaluate((labelsList: string[]) => {
+    const result: Record<string, string | null> = {};
+    const all = Array.from(document.querySelectorAll("*")) as HTMLElement[];
+    for (const label of labelsList) {
+      let found: string | null = null;
       for (const el of all) {
         const direct = Array.from(el.childNodes)
           .filter((n) => n.nodeType === 3)
-          .map((n) => n.nodeValue ?? "")
+          .map((n) => n.nodeValue || "")
           .join("")
           .trim();
-        if (direct.toLowerCase() === label.toLowerCase()) {
-          // Look in following siblings for a value
-          let sib: Element | null = el.nextElementSibling;
-          for (let i = 0; i < 3 && sib; i++) {
-            const t = (sib.textContent ?? "").trim();
-            if (t) return t;
-            sib = sib.nextElementSibling;
-          }
-          // Otherwise, look in parent's text content after this label
-          const parentText = (el.parentElement?.textContent ?? "").trim();
-          if (parentText && parentText !== direct) return parentText.replace(direct, "").trim();
+        if (direct.toLowerCase() !== label.toLowerCase()) continue;
+        let sib: Element | null = el.nextElementSibling;
+        for (let i = 0; i < 3 && sib; i++) {
+          const t = (sib.textContent || "").trim();
+          if (t) { found = t; break; }
+          sib = sib.nextElementSibling;
         }
+        if (!found) {
+          const parentText = (el.parentElement?.textContent || "").trim();
+          if (parentText && parentText !== direct) {
+            found = parentText.replace(direct, "").trim();
+          }
+        }
+        if (found) break;
       }
-      return null;
+      result[label] = found;
     }
+    result["__title"] = document.querySelector("h1, h2")?.textContent?.trim() ?? "";
+    return result;
+  }, labels);
 
-    function parseMoney(s: string | null): number | null {
-      if (!s) return null;
-      const m = s.replace(/[^0-9.\-]/g, "");
-      const n = parseFloat(m);
-      return isNaN(n) ? null : n;
-    }
-    function parseInt1(s: string | null): number | null {
-      if (!s) return null;
-      const m = s.replace(/[^0-9\-]/g, "");
-      const n = parseInt(m, 10);
-      return isNaN(n) ? null : n;
-    }
+  function parseMoney(s: string | null): number | null {
+    if (!s) return null;
+    const n = parseFloat(s.replace(/[^0-9.\-]/g, ""));
+    return isNaN(n) ? null : n;
+  }
+  function parseInt1(s: string | null): number | null {
+    if (!s) return null;
+    const n = parseInt(s.replace(/[^0-9\-]/g, ""), 10);
+    return isNaN(n) ? null : n;
+  }
 
-    return {
-      title: document.querySelector("h1, h2")?.textContent?.trim() ?? "",
-      reserved_text: labelValue("Tickets Reserved"),
-      redeemed_text: labelValue("Tickets Redeemed"),
-      gross_revenue_text: labelValue("Gross Revenue"),
-      total_orders_text: labelValue("Total Orders"),
-      tickets_free_text: labelValue("Tickets (Free)"),
-      tickets_paid_text: labelValue("Tickets (Paid)"),
-      tickets_held_text: labelValue("Tickets (Held)"),
-      tickets_refunded_text: labelValue("Tickets Refunded"),
-      net_to_bank_text: labelValue("Net Revenue to Bank"),
-      revenue_sold_text: labelValue("Revenue Sold"),
-      revenue_refunded_text: labelValue("Revenue Refunded"),
-      // Parsed derived values:
-      reserved_num: parseInt1(labelValue("Tickets Reserved")),
-      redeemed_num: parseInt1(labelValue("Tickets Redeemed")),
-      gross_revenue_num: parseMoney(labelValue("Gross Revenue")),
-      total_orders_num: parseInt1(labelValue("Total Orders")),
-      tickets_free_num: parseInt1(labelValue("Tickets (Free)")),
-      tickets_paid_num: parseInt1(labelValue("Tickets (Paid)")),
-      tickets_held_num: parseInt1(labelValue("Tickets (Held)")),
-      tickets_refunded_num: parseInt1(labelValue("Tickets Refunded")),
-      net_to_bank_num: parseMoney(labelValue("Net Revenue to Bank")),
-      revenue_sold_num: parseMoney(labelValue("Revenue Sold")),
-      revenue_refunded_num: parseMoney(labelValue("Revenue Refunded")),
-    };
-  });
+  const data = {
+    title: rawValues.__title,
+    reserved_text: rawValues["Tickets Reserved"],
+    redeemed_text: rawValues["Tickets Redeemed"],
+    gross_revenue_text: rawValues["Gross Revenue"],
+    total_orders_text: rawValues["Total Orders"],
+    tickets_free_text: rawValues["Tickets (Free)"],
+    tickets_paid_text: rawValues["Tickets (Paid)"],
+    tickets_held_text: rawValues["Tickets (Held)"],
+    tickets_refunded_text: rawValues["Tickets Refunded"],
+    net_to_bank_text: rawValues["Net Revenue to Bank"],
+    revenue_sold_text: rawValues["Revenue Sold"],
+    revenue_refunded_text: rawValues["Revenue Refunded"],
+    reserved_num: parseInt1(rawValues["Tickets Reserved"]),
+    redeemed_num: parseInt1(rawValues["Tickets Redeemed"]),
+    gross_revenue_num: parseMoney(rawValues["Gross Revenue"]),
+    total_orders_num: parseInt1(rawValues["Total Orders"]),
+    tickets_free_num: parseInt1(rawValues["Tickets (Free)"]),
+    tickets_paid_num: parseInt1(rawValues["Tickets (Paid)"]),
+    tickets_held_num: parseInt1(rawValues["Tickets (Held)"]),
+    tickets_refunded_num: parseInt1(rawValues["Tickets Refunded"]),
+    net_to_bank_num: parseMoney(rawValues["Net Revenue to Bank"]),
+    revenue_sold_num: parseMoney(rawValues["Revenue Sold"]),
+    revenue_refunded_num: parseMoney(rawValues["Revenue Refunded"]),
+  };
 
   return data;
 }
