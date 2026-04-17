@@ -1,29 +1,11 @@
 [
   {
-    "ticket_sku": "NOIR-EARLY",
-    "ticket_group_name": "Early Entry",
-    "package_type": "early_entry",
-    "package_label": "Early Entry",
-    "short_label": "EARLY",
-    "price": 20,
-    "notes": "Update prices when Ticketure changes them"
-  },
-  {
     "ticket_sku": "NOIR-GA",
-    "ticket_group_name": "General Admission",
-    "package_type": "general_admission",
+    "ticket_group_name": "GA",
+    "package_type": "ga",
     "package_label": "General Admission",
-    "short_label": "GEN ADM",
+    "short_label": "GA",
     "price": 35,
-    "notes": "Update prices when Ticketure changes them"
-  },
-  {
-    "ticket_sku": "NOIR-VIP",
-    "ticket_group_name": "VIP Experience",
-    "package_type": "vip",
-    "package_label": "VIP Experience",
-    "short_label": "VIP",
-    "price": 75,
-    "notes": "Update prices when Ticketure changes them"
+    "notes": "Update the price when Ticketure changes it. Add more entries here (Early Entry, VIP) when those ticket groups go live in Ticketure."
   }
 ]
