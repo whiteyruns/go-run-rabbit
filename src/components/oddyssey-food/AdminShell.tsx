@@ -9,7 +9,8 @@ const ACCESS_CODE = "oddyssey2026";
 const TABS = [
   { href: "/oddyssey-manor/admin/food/upload", label: "01 · Upload" },
   { href: "/oddyssey-manor/admin/food/validation", label: "02 · Validation" },
-  { href: "/oddyssey-manor/admin/food/kitchen", label: "03 · Kitchen" },
+  { href: "/oddyssey-manor/admin/food/roster", label: "03 · Roster" },
+  { href: "/oddyssey-manor/admin/food/kitchen", label: "04 · Kitchen" },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {

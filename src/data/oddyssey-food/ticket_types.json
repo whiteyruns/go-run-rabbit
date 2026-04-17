@@ -1,8 +1,10 @@
 [
   {
-    "ticket_sku": "VOYAGER-GA",
-    "package_type": "voyager",
+    "ticket_sku": "VOYEUR-GA",
+    "package_type": "voyeur",
     "package_label": "The Voyeur",
+    "short_label": "VOYEUR",
+    "price": 79,
     "included_items": 0,
     "menu_group": null
   },
@@ -10,6 +12,8 @@
     "ticket_sku": "EXPLORER-A",
     "package_type": "explorer",
     "package_label": "The Explorer",
+    "short_label": "EXPLORER",
+    "price": 99,
     "included_items": 1,
     "menu_group": "A"
   },
@@ -17,6 +21,8 @@
     "ticket_sku": "DINNER-A",
     "package_type": "dinner_guest",
     "package_label": "The Dinner Guest",
+    "short_label": "DINNER",
+    "price": 149,
     "included_items": 3,
     "menu_group": "A"
   },
@@ -24,6 +30,8 @@
     "ticket_sku": "ULTIMATE-A",
     "package_type": "ultimate",
     "package_label": "The Ultimate Party Guest",
+    "short_label": "ULTIMATE",
+    "price": 239,
     "included_items": 4,
     "menu_group": "A"
   }

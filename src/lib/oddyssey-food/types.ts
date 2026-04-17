@@ -26,7 +26,9 @@ export interface MenuItem {
 export interface TicketType {
   ticket_sku: string;
   package_type: string;
-  package_label: string;
+  package_label: string; // "The Dinner Guest"
+  short_label: string; // "DINNER" — matches SharePoint TYPE column format
+  price: number;
   included_items: number;
   menu_group: string | null;
 }

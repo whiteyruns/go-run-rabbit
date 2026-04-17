@@ -53,7 +53,7 @@ export default function ValidationPage() {
 
       <div style={{ marginTop: 64, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
         <Link href="/oddyssey-manor/admin/food/upload" style={btnOutline}>← Back to Upload</Link>
-        <Link href="/oddyssey-manor/admin/food/kitchen" style={btnPrimary}>Continue to Kitchen Sheet →</Link>
+        <Link href="/oddyssey-manor/admin/food/roster" style={btnPrimary}>Continue to Roster →</Link>
       </div>
     </div>
   );

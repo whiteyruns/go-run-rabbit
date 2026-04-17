@@ -32,14 +32,14 @@ export default function KitchenPage() {
     <>
       <div className="admin-not-print">
         <Header
-          eyebrow="03 · Kitchen"
+          eyebrow="04 · Kitchen"
           title="Prep Summary"
-          description={`${state.allocations.length} items across ${state.by_session.length} session${state.by_session.length === 1 ? "" : "s"}`}
+          description={`${state.allocations.length} items across ${state.by_session.length} session${state.by_session.length === 1 ? "" : "s"} · for screen review`}
         />
 
         <div style={{ display: "flex", gap: 12, marginBottom: 48, flexWrap: "wrap" }}>
-          <button onClick={() => window.print()} style={btnPrimary}>Print Kitchen Sheet</button>
-          <Link href="/oddyssey-manor/admin/food/validation" style={btnOutline}>← Back to Validation</Link>
+          <Link href="/oddyssey-manor/admin/food/roster" style={btnPrimary}>Back to Roster (Printable) →</Link>
+          <Link href="/oddyssey-manor/admin/food/validation" style={btnOutline}>← Validation</Link>
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 32, marginBottom: 56 }}>
