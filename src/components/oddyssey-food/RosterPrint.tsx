@@ -57,12 +57,13 @@ export function RosterPrint({ sections, snapshotAt }: Props) {
               <tbody>
                 {section.rows.map((row, i) => {
                   const isFirst = row.is_guest_first;
+                  const guestFirst = isFirst ? " rp-guest-first" : "";
                   const last = row.is_guest_last ? " rp-guest-last" : "";
                   const ticketFirst = row.is_ticket_first ? " rp-ticket-first" : "";
                   const vipClass = row.is_vip ? " rp-vip" : "";
                   const noteClass = row.customer_note ? " rp-has-note" : "";
                   return (
-                    <tr key={`${row.scan_code}-${i}`} className={`rp-row${last}${ticketFirst}${vipClass}${noteClass}`}>
+                    <tr key={`${row.scan_code}-${i}`} className={`rp-row${guestFirst}${last}${ticketFirst}${vipClass}${noteClass}`}>
                       <td>{isFirst ? (row.location || "") : ""}</td>
                       <td className="rp-c-num">{row.ticket_number ?? ""}</td>
                       <td>
