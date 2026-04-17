@@ -11,7 +11,9 @@ export interface InclusionRow {
   admit_email: string;
   scan_code: string;
   ticket_state: string; // "redeemed", etc.
-  // identity_* metadata fields ignored — pass through if needed later
+  identity_customer_note: string;
+  identity_customer_note_two: string;
+  // Other identity_* metadata fields still ignored
 }
 
 // Catalog entry (mocked SharePoint).
@@ -71,6 +73,9 @@ export interface OrderGroup {
   // Populated from the admission rows when available (full attendees CSV).
   derived_package_types?: string[]; // unique types in the group
   derived_party_size?: number; // count of admission-type scan_codes
+
+  // Guest notes from the CSV (allergies, requests, etc.)
+  customer_note?: string; // combined identity_customer_note[_two]
 
   // Populated when a ticket-purchase source is also loaded (strict mode):
   package_type?: string;

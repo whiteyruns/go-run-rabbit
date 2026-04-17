@@ -86,6 +86,8 @@ export function parseCSV(text: string): ParseResult {
       admit_email: row.admit_email ?? row.identity_email ?? "",
       scan_code: row.scan_code ?? "",
       ticket_state: row.ticket_state ?? "",
+      identity_customer_note: row.identity_customer_note ?? "",
+      identity_customer_note_two: row.identity_customer_note_two ?? "",
     });
   }
 

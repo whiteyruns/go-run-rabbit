@@ -20,6 +20,10 @@ export interface RosterRow {
   food: string;
   email: string;
 
+  // Guest-level flags (populated on every row of a guest for easy access)
+  customer_note: string; // allergy / dietary / request text, empty if none
+  is_vip: boolean; // Ultimate Party Guest tier
+
   // Row styling hints for the renderer
   banding: "a" | "b"; // alternating per ticket
   is_guest_first: boolean; // first row of a new guest (email change)
@@ -142,6 +146,12 @@ export function buildRoster(
       const a = assignments[key] ?? {};
       const tt = a.package_type ? TICKET_BY_TYPE[a.package_type] : undefined;
 
+      const customerNote = g.customer_note ?? "";
+      // VIP = Ultimate tier either from manual assignment or derived
+      const isVip =
+        a.package_type === "ultimate" ||
+        (g.derived_package_types ?? []).includes("ultimate");
+
       // Sort within a guest: by raw ticket item order in CSV (stable already)
       const tickets = groupIntoTickets(g.allocations, a.package_type);
       const guestRowStart = rows.length;
@@ -162,6 +172,8 @@ export function buildRoster(
             name: alloc.buyer_name,
             food: alloc.menu_item_label,
             email: alloc.buyer_email,
+            customer_note: customerNote,
+            is_vip: isVip,
             banding: currentBanding,
             is_guest_first: rows.length === guestRowStart && ii === 0 && ti === 0,
             is_guest_last: false, // fixed up below

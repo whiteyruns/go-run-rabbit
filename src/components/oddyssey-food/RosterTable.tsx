@@ -9,9 +9,10 @@ interface Props {
   section: RosterSection;
   assignments: AssignmentsMap;
   onAssignmentsChange: (m: AssignmentsMap) => void;
+  searchTerm?: string;
 }
 
-export function RosterTable({ section, assignments, onAssignmentsChange }: Props) {
+export function RosterTable({ section, assignments, onAssignmentsChange, searchTerm = "" }: Props) {
   const catalog = getMenuCatalog();
   const ticketTypes = getTicketTypes();
 
@@ -35,6 +36,29 @@ export function RosterTable({ section, assignments, onAssignmentsChange }: Props
     const next = updateAssignment(buyerEmail, sessionIso, { package_type: pkg || undefined });
     onAssignmentsChange(next);
   }
+
+  // Pre-compute which rows should be visible under the search filter.
+  // Rule: a guest-first row matches if any of its displayed fields do;
+  // continuation rows inherit the guest's visibility.
+  const term = searchTerm.trim().toLowerCase();
+  const visibility = new Array<boolean>(section.rows.length);
+  let lastGuestVisible = true;
+  for (let i = 0; i < section.rows.length; i++) {
+    const row = section.rows[i];
+    if (row.is_guest_first) {
+      if (!term) {
+        lastGuestVisible = true;
+      } else {
+        const haystack = [
+          row.name, row.email, row.location, row.type_label,
+          row.customer_note, row.time_label, row.food,
+        ].join(" ").toLowerCase();
+        lastGuestVisible = haystack.includes(term);
+      }
+    }
+    visibility[i] = lastGuestVisible;
+  }
+  const hasAnyVisible = visibility.some(Boolean);
 
   return (
     <div className="roster-section">
@@ -64,19 +88,23 @@ export function RosterTable({ section, assignments, onAssignmentsChange }: Props
             <th style={{ width: "14%" }}>Location</th>
             <th style={{ width: "4%" }}>#</th>
             <th style={{ width: "10%" }}>Type</th>
-            <th style={{ width: "10%" }}>Time</th>
-            <th style={{ width: "18%" }}>Name</th>
-            <th style={{ width: "16%" }}>Food</th>
+            <th style={{ width: "9%" }}>Time</th>
+            <th style={{ width: "20%" }}>Name</th>
+            <th style={{ width: "15%" }}>Food</th>
             <th style={{ width: "28%" }}>Email</th>
           </tr>
         </thead>
         <tbody>
           {section.rows.map((row, i) => {
+            if (!visibility[i]) return null;
             const key = assignmentKey(row.buyer_email, row.session_iso);
             const a = assignments[key] ?? {};
             // Only render editors on is_guest_first row; continuation rows inherit
             const isFirst = row.is_guest_first;
-            const rowClass = `rr rr-${row.banding}${row.is_guest_last ? " rr-guest-last" : ""}${isFirst ? " rr-guest-first" : ""}`;
+            const vipClass = row.is_vip ? " rr-vip" : "";
+            const hasNote = row.customer_note.length > 0;
+            const noteClass = hasNote ? " rr-has-note" : "";
+            const rowClass = `rr rr-${row.banding}${row.is_guest_last ? " rr-guest-last" : ""}${isFirst ? " rr-guest-first" : ""}${vipClass}${noteClass}`;
 
             return (
               <tr key={`${row.scan_code}-${i}`} className={rowClass}>
@@ -112,12 +140,31 @@ export function RosterTable({ section, assignments, onAssignmentsChange }: Props
                   )}
                 </td>
                 <td className="rc-time">{isFirst ? row.time_label : ""}</td>
-                <td className="rc-name">{isFirst ? row.name : ""}</td>
+                <td className="rc-name">
+                  {isFirst ? (
+                    <div className="rc-name-wrap">
+                      {row.is_vip && <span className="rc-vip-star" title="VIP · Ultimate Party Guest">★ VIP</span>}
+                      <span>{row.name}</span>
+                      {hasNote && (
+                        <span className="rc-note-badge" title={row.customer_note}>
+                          ⚠ {row.customer_note}
+                        </span>
+                      )}
+                    </div>
+                  ) : ""}
+                </td>
                 <td className="rc-food">{row.food}</td>
                 <td className="rc-email">{isFirst ? row.email : ""}</td>
               </tr>
             );
           })}
+          {!hasAnyVisible && (
+            <tr>
+              <td colSpan={7} style={{ padding: 40, textAlign: "center", color: "var(--text-muted)", fontSize: 13 }}>
+                No matches for &ldquo;{searchTerm}&rdquo; on this date.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>
@@ -180,6 +227,23 @@ const rosterStyles = `
 .rc-time, .rc-name, .rc-food, .rc-email { letter-spacing: 0.3px; }
 .rc-food { font-weight: 500; }
 .rc-email { color: var(--text-muted); font-size: 12px; }
+
+.rc-name-wrap { display: flex; flex-direction: column; gap: 4px; }
+.rc-vip-star {
+  display: inline-flex; align-items: center; align-self: flex-start;
+  font-size: 9px; letter-spacing: 2px; font-weight: 600; color: #060606;
+  background: #d4b85e; padding: 2px 8px;
+}
+.rc-note-badge {
+  display: inline-flex; align-items: center; align-self: flex-start;
+  font-size: 11px; color: #c0392b; font-weight: 500;
+  background: rgba(192,57,43,0.12); padding: 3px 8px;
+  border-left: 2px solid #c0392b; letter-spacing: 0.3px;
+  max-width: 100%; word-break: break-word;
+}
+.rr-vip { box-shadow: inset 3px 0 0 #d4b85e; }
+.rr-has-note { box-shadow: inset 3px 0 0 #c0392b; }
+.rr-vip.rr-has-note { box-shadow: inset 3px 0 0 #c0392b, inset 6px 0 0 #d4b85e; }
 
 @media (max-width: 900px) {
   .roster-main { font-size: 11px; }

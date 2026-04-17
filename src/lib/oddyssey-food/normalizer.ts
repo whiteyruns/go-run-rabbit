@@ -118,6 +118,25 @@ function indexAdmissions(rows: InclusionRow[]): AdmissionIndex {
   return { byScanCode, byGroup };
 }
 
+// Build a map of buyer_email::session_iso -> customer note (combined from
+// both identity_customer_note fields). Falls back to any row the buyer
+// appears in (food OR admission).
+function indexCustomerNotes(rows: InclusionRow[]): Map<string, string> {
+  const notes = new Map<string, string>();
+  for (const r of rows) {
+    if (!r.identity_email) continue;
+    const combined = [r.identity_customer_note, r.identity_customer_note_two]
+      .map((s) => (s ?? "").trim())
+      .filter(Boolean)
+      .join(" · ");
+    if (!combined) continue;
+    const session = parseSession(r.session_time);
+    const key = `${r.identity_email}::${session.iso}`;
+    if (!notes.has(key)) notes.set(key, combined);
+  }
+  return notes;
+}
+
 /**
  * Convert raw Inclusions rows into FoodAllocation records, enriching with
  * the parent admission's package_type when the CSV also contains admission
@@ -158,7 +177,8 @@ export function normalizeAllocations(rows: InclusionRow[]): FoodAllocation[] {
 // Group allocations into order/party groups: same buyer_email + session.
 export function groupOrders(
   allocations: FoodAllocation[],
-  admissionsByGroup?: Map<string, AdmissionEntry[]>
+  admissionsByGroup?: Map<string, AdmissionEntry[]>,
+  customerNotes?: Map<string, string>
 ): OrderGroup[] {
   const map = new Map<string, OrderGroup>();
   for (const a of allocations) {
@@ -215,6 +235,14 @@ export function groupOrders(
     });
   }
 
+  // Apply customer notes to groups
+  if (customerNotes) {
+    map.forEach((g, key) => {
+      const note = customerNotes.get(key);
+      if (note) g.customer_note = note;
+    });
+  }
+
   return Array.from(map.values()).sort((a, b) =>
     a.session_iso.localeCompare(b.session_iso) ||
     a.buyer_email.localeCompare(b.buyer_email)
@@ -225,10 +253,12 @@ export function groupOrders(
 export function normalizeFull(rows: InclusionRow[]): {
   allocations: FoodAllocation[];
   admissions: AdmissionIndex;
+  customerNotes: Map<string, string>;
 } {
   const admissions = indexAdmissions(rows);
   const allocations = normalizeAllocations(rows);
-  return { allocations, admissions };
+  const customerNotes = indexCustomerNotes(rows);
+  return { allocations, admissions, customerNotes };
 }
 
 export function getMenuCatalog(): MenuItem[] {

@@ -13,6 +13,7 @@ export default function RosterPage() {
   const [state, setState] = useState<DashboardState | null>(null);
   const [assignments, setAssignments] = useState<AssignmentsMap>({});
   const [loaded, setLoaded] = useState(false);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setState(loadState());
@@ -42,6 +43,13 @@ export default function RosterPage() {
   const guestKeys = new Set(state.groups.map((g) => `${g.buyer_email}::${g.session_iso}`));
   const assignedLocations = Array.from(guestKeys).filter((k) => assignments[k]?.location).length;
   const assignedTypes = Array.from(guestKeys).filter((k) => assignments[k]?.package_type).length;
+  // Count guests with notes + VIPs for the summary line
+  const guestsWithNotes = state.groups.filter((g) => (g.customer_note ?? "").length > 0).length;
+  const vipGuests = state.groups.filter(
+    (g) =>
+      (g.derived_package_types ?? []).includes("ultimate") ||
+      assignments[`${g.buyer_email}::${g.session_iso}`]?.package_type === "ultimate"
+  ).length;
 
   return (
     <>
@@ -61,17 +69,45 @@ export default function RosterPage() {
         {/* Assignment progress + actions */}
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          flexWrap: "wrap", gap: 16, marginBottom: 32,
+          flexWrap: "wrap", gap: 16, marginBottom: 16,
           padding: "18px 24px", background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)",
         }}>
           <div style={{ display: "flex", gap: 32, flexWrap: "wrap" }}>
-            <ProgressStat label="Locations Assigned" value={`${assignedLocations}/${guestKeys.size}`} />
-            <ProgressStat label="Types Assigned" value={`${assignedTypes}/${guestKeys.size}`} />
+            <ProgressStat label="Locations" value={`${assignedLocations}/${guestKeys.size}`} />
+            <ProgressStat label="Types" value={`${assignedTypes}/${guestKeys.size}`} />
+            {vipGuests > 0 && <ProgressStat label="⭐ VIP" value={String(vipGuests)} color="#d4b85e" />}
+            {guestsWithNotes > 0 && <ProgressStat label="⚠ Notes" value={String(guestsWithNotes)} color="#c0392b" />}
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <button onClick={() => window.print()} style={btnPrimary}>Print Roster</button>
             <Link href="/oddyssey-manor/admin/food/kitchen" style={btnOutline}>View Totals &amp; Charts →</Link>
           </div>
+        </div>
+
+        {/* Search */}
+        <div style={{ marginBottom: 28, position: "relative" }}>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search guests by name, email, location, type…"
+            style={{
+              width: "100%", padding: "14px 48px 14px 20px",
+              background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)",
+              color: "var(--text)", fontSize: 14, letterSpacing: 0.3,
+              outline: "none", fontFamily: "var(--sans)",
+            }}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              style={{
+                position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+                background: "transparent", border: "none", color: "var(--text-muted)",
+                fontSize: 18, cursor: "pointer", padding: "4px 8px",
+              }}
+            >×</button>
+          )}
         </div>
 
         <div style={{
@@ -91,6 +127,7 @@ export default function RosterPage() {
             section={section}
             assignments={assignments}
             onAssignmentsChange={setAssignments}
+            searchTerm={search}
           />
         ))}
       </div>
@@ -100,10 +137,10 @@ export default function RosterPage() {
   );
 }
 
-function ProgressStat({ label, value }: { label: string; value: string }) {
+function ProgressStat({ label, value, color }: { label: string; value: string; color?: string }) {
   return (
     <div>
-      <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, marginBottom: 4 }}>
+      <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: color ?? "var(--accent)", fontWeight: 500, marginBottom: 4 }}>
         {label}
       </div>
       <div style={{ fontFamily: "var(--serif)", fontSize: 24, fontWeight: 400, color: "var(--text)" }}>

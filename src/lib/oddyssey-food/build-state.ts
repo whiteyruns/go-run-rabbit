@@ -99,10 +99,14 @@ export function buildStateFromCsv(
   autoAssign?: AutoAssignmentSummary;
 } {
   const { rows, warnings } = parseCSV(csvText);
-  const { allocations, admissions } = normalizeFull(rows);
+  const { allocations, admissions, customerNotes } = normalizeFull(rows);
   const hasAdmissions = admissions.byScanCode.size > 0;
 
-  const groups = groupOrders(allocations, hasAdmissions ? admissions.byGroup : undefined);
+  const groups = groupOrders(
+    allocations,
+    hasAdmissions ? admissions.byGroup : undefined,
+    customerNotes
+  );
   const totals = totalsByItem(allocations);
   const by_session = aggregateBySession(allocations);
   const by_date = aggregateByDate(by_session);

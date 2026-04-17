@@ -59,13 +59,31 @@ export function RosterPrint({ sections, snapshotAt }: Props) {
                   const isFirst = row.is_guest_first;
                   const last = row.is_guest_last ? " rp-guest-last" : "";
                   const ticketFirst = row.is_ticket_first ? " rp-ticket-first" : "";
+                  const vipClass = row.is_vip ? " rp-vip" : "";
+                  const noteClass = row.customer_note ? " rp-has-note" : "";
                   return (
-                    <tr key={`${row.scan_code}-${i}`} className={`rp-row${last}${ticketFirst}`}>
+                    <tr key={`${row.scan_code}-${i}`} className={`rp-row${last}${ticketFirst}${vipClass}${noteClass}`}>
                       <td>{isFirst ? (row.location || "") : ""}</td>
                       <td className="rp-c-num">{row.ticket_number ?? ""}</td>
-                      <td>{isFirst ? row.type_label : ""}</td>
+                      <td>
+                        {isFirst ? (
+                          <>
+                            {row.is_vip && <span className="rp-vip-tag">★ VIP</span>}
+                            {row.type_label}
+                          </>
+                        ) : ""}
+                      </td>
                       <td>{isFirst ? row.time_label : ""}</td>
-                      <td>{isFirst ? row.name : ""}</td>
+                      <td>
+                        {isFirst ? (
+                          <>
+                            <div>{row.name}</div>
+                            {row.customer_note && (
+                              <div className="rp-note">⚠ {row.customer_note}</div>
+                            )}
+                          </>
+                        ) : ""}
+                      </td>
                       <td>{row.food}</td>
                       <td>{isFirst ? row.email : ""}</td>
                     </tr>
@@ -143,6 +161,19 @@ const printStyles = `
   .rp-guest-last td { border-bottom: 2px solid #000 !important; }
   /* Separator above a new ticket within a guest */
   .rp-ticket-first:not(.rp-row:first-child) td { border-top: 0.5px solid #555; }
+  /* VIP: solid left edge */
+  .rp-vip td:first-child { border-left: 3px solid #000 !important; }
+  /* Has note: stripe left edge with heavy weight */
+  .rp-has-note td:first-child { border-left: 3px double #000 !important; }
+  .rp-has-note td { background: #f0f0f0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .rp-vip-tag {
+    display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px;
+    border: 1.5px solid #000; padding: 1px 5px; margin-right: 6px;
+  }
+  .rp-note {
+    font-size: 10px; font-weight: 700; margin-top: 3px; padding: 2px 6px;
+    border: 1.5px solid #000; letter-spacing: 0.3px;
+  }
 
   .rp-foot {
     margin-top: 12px; padding-top: 6px; border-top: 1px solid #000;
