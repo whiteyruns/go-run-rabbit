@@ -214,8 +214,8 @@ export function startScheduler(): void {
     // --- NOIR ---
     // Hourly 9 AM – 10 PM, Fri/Sat (captures last-minute sales as doors open)
     ["noir-regular", "0 9-22 * * 5,6", () => runPull("noir-regular", "noir")],
-    // 5 PM PT GM briefing email
-    ["noir-briefing", "0 17 * * 5,6", () => sendBriefing("noir", todayLocal())],
+    // 9 PM PT GM briefing email (one hour before doors at 10 PM)
+    ["noir-briefing", "0 21 * * 5,6", () => sendBriefing("noir", todayLocal())],
     // Post-show pull at 03:00 Sat/Sun (after 2 AM close), recap at 03:15
     ["noir-postshow", "0 3 * * 6,0", () => runPull("noir-postshow", "noir", yesterdayLocal())],
     ["noir-recap", "15 3 * * 6,0", () => sendRecap("noir", yesterdayLocal())],
