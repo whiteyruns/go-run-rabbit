@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.gorunrabbit.oddyssey-food-pull-postshow</string>
+
+  <!--
+    Post-show final pull at 00:15 (12:15 AM) the morning AFTER each show
+    night. Captures ticket_state redemptions for the prior day.
+    We pass yesterday's date via a wrapper that computes it; since plist
+    ProgramArguments can't run shell substitution, we use /bin/sh -c.
+  -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/sh</string>
+    <string>-c</string>
+    <string>/Users/white/apps/go-rabbit-web/scripts/oddyssey-food-pull.sh --date=$(date -v-1d +\%Y-\%m-\%d)</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/white/apps/go-rabbit-web</string>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/white/apps/go-rabbit-web/logs/oddyssey-food-pull.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/white/apps/go-rabbit-web/logs/oddyssey-food-pull.log</string>
+
+  <!-- 00:15 Fri, Sat, Sun, Mon (the mornings after Thu/Fri/Sat/Sun shows) -->
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Weekday</key><integer>6</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>15</integer></dict>
+    <dict><key>Weekday</key><integer>0</integer><key>Hour</key><integer>0</integer><key>Minute</key><integer>15</integer></dict>
+  </array>
+</dict>
+</plist>
