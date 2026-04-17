@@ -38,6 +38,8 @@ export function renderRecapHtml(r: RecapData): string {
     </tr>
   </table>
 
+  ${renderWoW(r)}
+
   ${hasPackages ? section("Ticket Sales by Package", `
     <table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.06);">
       <tr style="background:rgba(255,255,255,0.03);">
@@ -158,6 +160,87 @@ function escape(s: string): string {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+function renderWoW(r: RecapData): string {
+  const w = r.wow;
+  if (!w.available || !w.prior) {
+    return section(
+      `vs. ${escape(w.prior_date_label)}`,
+      `<div style="padding:16px 20px;border:1px dashed rgba(255,255,255,0.08);font-size:12px;color:#9a958d;letter-spacing:0.3px;">
+        No snapshot available for ${escape(w.prior_date_label)}. Week-over-week comparison will populate once ${escape(w.prior_date_label.split(",")[0])} of next week has data on file.
+      </div>`
+    );
+  }
+
+  const cells = [
+    deltaCell("Tickets", r.stats.admission_tickets, w.prior.tickets, w.deltas.tickets),
+    deltaCell("Revenue", formatCurrency(r.stats.revenue), formatCurrency(w.prior.revenue), w.deltas.revenue, (n) => (n >= 0 ? `+${formatCurrency(n)}` : `−${formatCurrency(Math.abs(n))}`)),
+    deltaCell(
+      "Capacity",
+      `${(r.stats.capacity_percent * 100).toFixed(0)}%`,
+      `${(w.prior.capacity_percent * 100).toFixed(0)}%`,
+      w.deltas.capacity_percent,
+      (n) => `${n >= 0 ? "+" : "−"}${Math.abs(n * 100).toFixed(0)} pts`
+    ),
+    deltaCell("Food Items", r.stats.food_items, w.prior.food_items, w.deltas.food_items),
+  ];
+
+  const packageRows = w.packages
+    .filter((p) => p.current > 0 || p.prior > 0)
+    .map((p) => {
+      const arrow = p.delta > 0 ? "▲" : p.delta < 0 ? "▼" : "—";
+      const color = p.delta > 0 ? "#27ae60" : p.delta < 0 ? "#c0392b" : "#9a958d";
+      return `<tr>
+        <td style="padding:8px 12px;border-top:1px solid rgba(255,255,255,0.06);font-family:Georgia,serif;font-size:14px;">${escape(p.short_label)}</td>
+        <td style="padding:8px 12px;border-top:1px solid rgba(255,255,255,0.06);text-align:right;font-family:Georgia,serif;font-size:16px;color:#e8e4dd;">${p.current}</td>
+        <td style="padding:8px 12px;border-top:1px solid rgba(255,255,255,0.06);text-align:right;font-size:13px;color:#9a958d;">${p.prior}</td>
+        <td style="padding:8px 12px;border-top:1px solid rgba(255,255,255,0.06);text-align:right;font-size:13px;color:${color};">
+          ${arrow} ${p.delta >= 0 ? "+" : ""}${p.delta}
+        </td>
+      </tr>`;
+    })
+    .join("");
+
+  return section(
+    `vs. ${escape(w.prior_date_label)}`,
+    `<table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+      <tr>${cells.join("")}</tr>
+    </table>
+    ${packageRows ? `<table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.06);">
+      <tr style="background:rgba(255,255,255,0.03);">
+        <td style="padding:8px 12px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;">Package</td>
+        <td style="padding:8px 12px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;text-align:right;">This Week</td>
+        <td style="padding:8px 12px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;text-align:right;">Last Week</td>
+        <td style="padding:8px 12px;font-size:9px;letter-spacing:2px;color:#c9a84c;text-transform:uppercase;font-weight:500;text-align:right;">Δ</td>
+      </tr>
+      ${packageRows}
+    </table>` : ""}`
+  );
+}
+
+function deltaCell(
+  label: string,
+  current: string | number,
+  prior: string | number,
+  deltaRaw: number,
+  formatter?: (n: number) => string
+): string {
+  const up = deltaRaw > 0;
+  const down = deltaRaw < 0;
+  const color = up ? "#27ae60" : down ? "#c0392b" : "#9a958d";
+  const arrow = up ? "▲" : down ? "▼" : "—";
+  const deltaText = formatter
+    ? formatter(deltaRaw)
+    : `${deltaRaw >= 0 ? "+" : ""}${deltaRaw}`;
+  return `<td style="padding:0;border:1px solid rgba(255,255,255,0.06);">
+    <div style="padding:14px 12px;text-align:center;">
+      <div style="font-size:9px;letter-spacing:2px;color:#9a958d;text-transform:uppercase;font-weight:500;margin-bottom:4px;">${escape(label)}</div>
+      <div style="font-family:Georgia,serif;font-size:20px;color:#e8e4dd;line-height:1;">${escape(String(current))}</div>
+      <div style="font-size:11px;color:${color};margin-top:6px;letter-spacing:0.3px;">${arrow} ${escape(deltaText)}</div>
+      <div style="font-size:9px;color:#5a5650;letter-spacing:1px;margin-top:2px;text-transform:uppercase;">was ${escape(String(prior))}</div>
+    </div>
+  </td>`;
 }
 
 function capacityColor(percent: number): string {

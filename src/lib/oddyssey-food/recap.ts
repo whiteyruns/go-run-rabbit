@@ -1,3 +1,4 @@
+import { buildWeekOverWeek, type WeekOverWeek } from "./history";
 import { getMenuCatalog } from "./normalizer";
 import { buildSummary, type PackageBreakdown } from "./summary";
 import type { DashboardState } from "./types";
@@ -22,6 +23,7 @@ export interface RecapData {
     capacity_percent: number; // 0-1
   };
   packages: PackageBreakdown[];
+  wow: WeekOverWeek;
   item_totals: { id: string; label: string; count: number }[];
   sessions: {
     time: string; // "7:30 PM"
@@ -169,6 +171,7 @@ export function buildRecap(state: DashboardState, date?: string): RecapData | nu
       capacity_percent: summary.capacity_percent,
     },
     packages: summary.packages,
+    wow: buildWeekOverWeek(summary),
     item_totals,
     sessions,
     notes,

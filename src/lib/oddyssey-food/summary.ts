@@ -166,9 +166,9 @@ export function buildSummary(state: DashboardState, date?: string): NightSummary
     ? d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })
     : target;
 
-  const capacityTotal = sessions.length > 0
-    ? sessions.length * SESSION_CAPACITY
-    : SESSIONS_PER_NIGHT * SESSION_CAPACITY;
+  // Always report against the full-night capacity so percent is
+  // comparable across dates regardless of which sessions have tickets.
+  const capacityTotal = SESSIONS_PER_NIGHT * SESSION_CAPACITY;
 
   return {
     date: target,
