@@ -112,21 +112,84 @@ async function main() {
     console.log(`[pull] go ${attendeesUrl}`);
     await page.goto(attendeesUrl, { waitUntil: "networkidle" }).catch(() => {});
 
-    // 2. Login flow. Ticketure legacy login uses labeled email + password
-    //    inputs and a "Sign in" button.
-    const onLogin = await page.getByRole("heading", { name: /sign in/i })
+    // 2. Login flow. Ticketure shows a Legacy login form + a "New staff
+    //    account login" button for SSO-style auth. For @consultant.area15
+    //    accounts we typically need the staff path.
+    const onLogin = await page
+      .getByRole("heading", { name: /sign in/i })
       .isVisible({ timeout: 5000 })
       .catch(() => false);
 
     if (onLogin) {
-      console.log("[pull] login page detected — submitting credentials");
-      await page.getByLabel(/email/i).first().fill(EMAIL);
-      await page.getByLabel(/password/i).first().fill(PASSWORD);
+      console.log("[pull] login page detected");
+
+      // Try the explicit staff account button first, since the email is
+      // @consultant.area15.com (corporate SSO). If that button isn't there
+      // or SSO kicks us to something we can't fill, fall through to legacy.
+      const staffBtn = page.getByRole("button", { name: /new staff account login/i });
+      const useStaff = await staffBtn.isVisible({ timeout: 1500 }).catch(() => false);
+
+      if (useStaff) {
+        console.log("[pull] clicking 'New staff account login'");
+        await Promise.all([
+          page.waitForLoadState("networkidle").catch(() => {}),
+          staffBtn.click(),
+        ]);
+        await page.waitForTimeout(1500);
+
+        await page
+          .screenshot({ path: path.join(outDir, "last-after-staff-click.png") })
+          .catch(() => {});
+      }
+
+      // Whether we arrived via staff SSO or are still on the legacy form,
+      // fill the visible email + password fields. Use multiple strategies
+      // so a changed label doesn't break us silently.
+      const emailField =
+        (await page.locator('input[type="email"]').count()) > 0
+          ? page.locator('input[type="email"]').first()
+          : page.getByLabel(/email/i).first();
+      const pwField =
+        (await page.locator('input[type="password"]').count()) > 0
+          ? page.locator('input[type="password"]').first()
+          : page.getByLabel(/password/i).first();
+
+      await emailField.click({ timeout: 5000 });
+      await emailField.fill(EMAIL);
+      await pwField.click({ timeout: 5000 });
+      await pwField.fill(PASSWORD);
+
+      // Verify values actually stuck before submitting — helps us detect
+      // when Playwright is filling the wrong elements.
+      const filledEmail = await emailField.inputValue().catch(() => "");
+      const filledPw = await pwField.inputValue().catch(() => "");
+      console.log(
+        `[pull] filled — email length=${filledEmail.length}, pw length=${filledPw.length}`
+      );
+      if (filledEmail.length === 0 || filledPw.length === 0) {
+        await page.screenshot({ path: path.join(outDir, "last-fill-empty.png") }).catch(() => {});
+        throw new Error("Login fields did not accept input — check selectors");
+      }
+
+      await page.screenshot({ path: path.join(outDir, "last-before-submit.png") }).catch(() => {});
+
+      // Submit
+      const submit = page.getByRole("button", { name: /^sign in$|^log in$|^login$/i });
       await Promise.all([
-        page.waitForLoadState("networkidle"),
-        page.getByRole("button", { name: /^sign in$/i }).click(),
+        page.waitForNavigation({ waitUntil: "networkidle", timeout: 15000 }).catch(() => null),
+        submit.click(),
       ]);
-      // Ticketure may land on a dashboard. Navigate to the filter URL.
+
+      // Post-submit — ensure we reach the attendees URL (not stuck on login).
+      const stillOnLogin = await page
+        .getByRole("heading", { name: /sign in/i })
+        .isVisible({ timeout: 2000 })
+        .catch(() => false);
+      if (stillOnLogin) {
+        await page.screenshot({ path: path.join(outDir, "last-login-failed.png") }).catch(() => {});
+        throw new Error("Login appeared to fail — still on sign-in page after submit");
+      }
+
       await page.goto(attendeesUrl, { waitUntil: "networkidle" });
     }
 
