@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { buildNoirState, buildNoirSummary } from "@/lib/oddyssey-noir/pipeline";
-import { buildNoirWeekOverWeek } from "@/lib/oddyssey-noir/history";
+import { buildNoirWeekOverWeek, loadNoirReportOverlay } from "@/lib/oddyssey-noir/history";
 import { renderNoirRecapHtml, noirRecapSubject } from "@/lib/oddyssey-noir/recap-html";
 
 export const runtime = "nodejs";
@@ -22,7 +22,8 @@ export async function GET(request: Request) {
   const summary = buildNoirSummary(state, date);
   if (!summary) return NextResponse.json({ status: "error", message: "No data for that date." }, { status: 400 });
   const wow = buildNoirWeekOverWeek(summary);
-  const html = renderNoirRecapHtml(summary, wow);
+  const report = loadNoirReportOverlay(summary.date);
+  const html = renderNoirRecapHtml(summary, wow, report);
   return new NextResponse(html, { headers: { "content-type": "text/html; charset=utf-8" } });
 }
 
@@ -36,8 +37,9 @@ export async function POST(request: Request) {
   const summary = buildNoirSummary(state, body.date);
   if (!summary) return NextResponse.json({ status: "error", message: "No data for that date." }, { status: 400 });
   const wow = buildNoirWeekOverWeek(summary);
-  const html = renderNoirRecapHtml(summary, wow);
-  const subject = body.test ? `[TEST] ${noirRecapSubject(summary)}` : noirRecapSubject(summary);
+  const report = loadNoirReportOverlay(summary.date);
+  const html = renderNoirRecapHtml(summary, wow, report);
+  const subject = body.test ? `[TEST] ${noirRecapSubject(summary, report)}` : noirRecapSubject(summary, report);
   const recipients = body.recipients ?? (body.test ? ["kwhite@consultant.area15.com"] : DEFAULT_RECIPIENTS);
 
   if (!process.env.RESEND_API_KEY) {

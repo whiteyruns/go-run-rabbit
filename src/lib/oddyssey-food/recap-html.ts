@@ -23,20 +23,40 @@ export function renderRecapHtml(r: RecapData): string {
     <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:300;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0;color:#e8e4dd;">${escape(r.date_label)}</h1>
   </div>
 
-  <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
-    <tr>
-      ${statCell("Tickets Sold", String(r.stats.admission_tickets))}
-      ${statCell("Revenue", formatCurrency(r.stats.revenue))}
-      ${statCell("Capacity", `${capPct}%`, capacityColor(r.stats.capacity_percent))}
-      ${statCell("Parties", String(r.stats.parties))}
-    </tr>
-    <tr>
-      ${statCell("Food Items", String(r.stats.food_items))}
-      ${statCell("Redeemed", `${r.stats.redeemed} · ${pct}%`, "#27ae60")}
-      ${statCell("VIPs", String(r.stats.vip_parties), "#d4b85e")}
-      ${statCell("Notes", String(r.stats.note_parties), "#c0392b")}
-    </tr>
-  </table>
+  ${r.report?.available && r.report.totals ? `
+    <div style="margin-bottom:12px;padding:8px 14px;background:rgba(39,174,96,0.08);border-left:3px solid #27ae60;font-size:10px;letter-spacing:1px;color:#27ae60;text-transform:uppercase;font-weight:500;">
+      ✓ Actuals from Ticketure Summary Report
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+      <tr>
+        ${statCell("Tickets Sold", String(r.report.totals.reserved))}
+        ${statCell("Gross Revenue", formatCurrency(r.report.totals.gross_revenue))}
+        ${statCell("Capacity", `${(r.report.totals.capacity_percent * 100).toFixed(1)}%`, capacityColor(r.report.totals.capacity_percent))}
+        ${statCell("Food Items", String(r.stats.food_items))}
+      </tr>
+      <tr>
+        ${statCell("Paid", String(r.report.totals.tickets_paid), "#27ae60")}
+        ${statCell("Free (Comps)", String(r.report.totals.tickets_free), "#9a958d")}
+        ${statCell("Net to Bank", formatCurrency(r.report.totals.net_to_bank))}
+        ${statCell("Orders", String(r.report.totals.total_orders))}
+      </tr>
+    </table>
+  ` : `
+    <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+      <tr>
+        ${statCell("Tickets Sold", String(r.stats.admission_tickets))}
+        ${statCell("Revenue (est.)", formatCurrency(r.stats.revenue))}
+        ${statCell("Capacity", `${capPct}%`, capacityColor(r.stats.capacity_percent))}
+        ${statCell("Parties", String(r.stats.parties))}
+      </tr>
+      <tr>
+        ${statCell("Food Items", String(r.stats.food_items))}
+        ${statCell("Redeemed", `${r.stats.redeemed} · ${pct}%`, "#27ae60")}
+        ${statCell("VIPs", String(r.stats.vip_parties), "#d4b85e")}
+        ${statCell("Notes", String(r.stats.note_parties), "#c0392b")}
+      </tr>
+    </table>
+  `}
 
   ${renderWoW(r)}
 
@@ -254,5 +274,8 @@ export function recapSubject(r: RecapData): string {
   const date = new Date(r.date + "T00:00:00");
   const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
   const monthDay = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  return `Manor Recap · ${weekday} ${monthDay} · ${r.stats.admission_tickets} tix · ${formatCurrency(r.stats.revenue)} · ${r.stats.food_items} items`;
+  const t = r.report?.available && r.report.totals;
+  const tix = t ? t.reserved : r.stats.admission_tickets;
+  const rev = t ? t.gross_revenue : r.stats.revenue;
+  return `Manor Recap · ${weekday} ${monthDay} · ${tix} tix · ${formatCurrency(rev)} · ${r.stats.food_items} items`;
 }

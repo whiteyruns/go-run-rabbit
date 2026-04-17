@@ -1,8 +1,12 @@
 import type { NoirSummary } from "./pipeline";
 import { formatNoirCurrency } from "./pipeline";
-import type { NoirWeekOverWeek } from "./history";
+import type { NoirReportOverlay, NoirWeekOverWeek } from "./history";
 
-export function renderNoirRecapHtml(s: NoirSummary, wow: NoirWeekOverWeek): string {
+export function renderNoirRecapHtml(
+  s: NoirSummary,
+  wow: NoirWeekOverWeek,
+  report?: NoirReportOverlay
+): string {
   const capPct = (s.capacity_percent * 100).toFixed(0);
   const redPct = (s.redemption_rate * 100).toFixed(0);
   const pulledAt = new Date(s.source.pulled_at).toLocaleString("en-US");
@@ -17,14 +21,34 @@ export function renderNoirRecapHtml(s: NoirSummary, wow: NoirWeekOverWeek): stri
     <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:300;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0;color:#e8e4dd;">${escape(s.date_label)}</h1>
   </div>
 
-  <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
-    <tr>
-      ${statCell("Tickets Sold", String(s.tickets_sold))}
-      ${statCell("Revenue", formatNoirCurrency(s.revenue))}
-      ${statCell("Capacity", `${capPct}%`, capacityColor(s.capacity_percent))}
-      ${statCell("Redeemed", `${s.redeemed} · ${redPct}%`, "#27ae60")}
-    </tr>
-  </table>
+  ${report?.available && report.totals ? `
+    <div style="margin-bottom:12px;padding:8px 14px;background:rgba(39,174,96,0.08);border-left:3px solid #27ae60;font-size:10px;letter-spacing:1px;color:#27ae60;text-transform:uppercase;font-weight:500;">
+      ✓ Actuals from Ticketure Summary Report
+    </div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
+      <tr>
+        ${statCell("Tickets Sold", String(report.totals.reserved))}
+        ${statCell("Gross Revenue", formatNoirCurrency(report.totals.gross_revenue))}
+        ${statCell("Capacity", `${(report.totals.capacity_percent * 100).toFixed(1)}%`, capacityColor(report.totals.capacity_percent))}
+        ${statCell("Redeemed", `${report.totals.redeemed} · ${report.totals.reserved > 0 ? Math.round(report.totals.redeemed / report.totals.reserved * 100) : 0}%`, "#27ae60")}
+      </tr>
+      <tr>
+        ${statCell("Paid", String(report.totals.tickets_paid), "#27ae60")}
+        ${statCell("Free (Comps)", String(report.totals.tickets_free), "#9a958d")}
+        ${statCell("Net to Bank", formatNoirCurrency(report.totals.net_to_bank))}
+        ${statCell("Orders", String(report.totals.total_orders))}
+      </tr>
+    </table>
+  ` : `
+    <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+      <tr>
+        ${statCell("Tickets Sold", String(s.tickets_sold))}
+        ${statCell("Revenue (est.)", formatNoirCurrency(s.revenue))}
+        ${statCell("Capacity", `${capPct}%`, capacityColor(s.capacity_percent))}
+        ${statCell("Redeemed", `${s.redeemed} · ${redPct}%`, "#27ae60")}
+      </tr>
+    </table>
+  `}
 
   ${renderWoW(s, wow)}
 
@@ -147,9 +171,12 @@ function capacityColor(percent: number) {
   return "#9a958d";
 }
 
-export function noirRecapSubject(s: NoirSummary): string {
+export function noirRecapSubject(s: NoirSummary, report?: NoirReportOverlay): string {
   const date = new Date(s.date + "T00:00:00");
   const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
   const monthDay = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  return `Noir Recap · ${weekday} ${monthDay} · ${s.tickets_sold} tix · ${formatNoirCurrency(s.revenue)}`;
+  const t = report?.available && report.totals;
+  const tix = t ? t.reserved : s.tickets_sold;
+  const rev = t ? t.gross_revenue : s.revenue;
+  return `Noir Recap · ${weekday} ${monthDay} · ${tix} tix · ${formatNoirCurrency(rev)}`;
 }
