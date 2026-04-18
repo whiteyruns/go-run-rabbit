@@ -104,21 +104,30 @@ export function buildNoirWeekOverWeek(current: NoirSummary): NoirWeekOverWeek {
     };
   }
 
+  // Prefer session-report actuals on both sides for apples-to-apples
+  const curReport = loadNoirReportOverlay(current.date);
+  const priReport = loadNoirReportOverlay(priorDate);
+
+  const curRevenue = curReport.available && curReport.totals ? curReport.totals.gross_revenue : current.revenue;
+  const priRevenue = priReport.available && priReport.totals ? priReport.totals.gross_revenue : prior.revenue;
+  const curRedeemed = curReport.available && curReport.totals ? curReport.totals.redeemed : current.redeemed;
+  const priRedeemed = priReport.available && priReport.totals ? priReport.totals.redeemed : prior.redeemed;
+
   return {
     prior_date: priorDate,
     prior_date_label: priorDateLabel,
     available: true,
     deltas: {
       tickets: current.tickets_sold - prior.tickets_sold,
-      revenue: current.revenue - prior.revenue,
+      revenue: curRevenue - priRevenue,
       capacity_percent: current.capacity_percent - prior.capacity_percent,
-      redeemed: current.redeemed - prior.redeemed,
+      redeemed: curRedeemed - priRedeemed,
     },
     prior: {
       tickets: prior.tickets_sold,
-      revenue: prior.revenue,
+      revenue: priRevenue,
       capacity_percent: prior.capacity_percent,
-      redeemed: prior.redeemed,
+      redeemed: priRedeemed,
     },
     packages: current.packages.map((p) => {
       const priorPkg = prior.packages.find((x) => x.type === p.type);

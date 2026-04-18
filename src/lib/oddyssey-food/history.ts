@@ -117,6 +117,21 @@ export function buildWeekOverWeek(current: NightSummary): WeekOverWeek {
     };
   }
 
+  // Prefer session-report actuals for revenue + capacity on BOTH sides
+  // so WoW is apples-to-apples. Fall back to CSV list-price estimate
+  // only when the session report for that date wasn't scraped.
+  const curReport = loadManorReportOverlay(current.date);
+  const priReport = loadManorReportOverlay(priorDate);
+
+  const curRevenue = curReport.available && curReport.totals ? curReport.totals.gross_revenue : current.revenue;
+  const priRevenue = priReport.available && priReport.totals ? priReport.totals.gross_revenue : prior.revenue;
+  const curCapPct = curReport.available && curReport.totals && curReport.totals.capacity > 0
+    ? current.tickets_sold / curReport.totals.capacity
+    : current.capacity_percent;
+  const priCapPct = priReport.available && priReport.totals && priReport.totals.capacity > 0
+    ? prior.tickets_sold / priReport.totals.capacity
+    : prior.capacity_percent;
+
   const packages = current.packages.map((p) => {
     const priorPkg = prior.packages.find((x) => x.type === p.type);
     const priorCount = priorPkg?.count ?? 0;
@@ -134,15 +149,16 @@ export function buildWeekOverWeek(current: NightSummary): WeekOverWeek {
     prior_date_label: priorDateLabel,
     available: true,
     deltas: {
+      // Use admission counts (CSV-derived, excludes food inclusions)
       tickets: current.tickets_sold - prior.tickets_sold,
-      revenue: current.revenue - prior.revenue,
-      capacity_percent: current.capacity_percent - prior.capacity_percent,
+      revenue: curRevenue - priRevenue,
+      capacity_percent: curCapPct - priCapPct,
       food_items: current.food_items - prior.food_items,
     },
     prior: {
       tickets: prior.tickets_sold,
-      revenue: prior.revenue,
-      capacity_percent: prior.capacity_percent,
+      revenue: priRevenue,
+      capacity_percent: priCapPct,
       food_items: prior.food_items,
     },
     packages,
