@@ -22,6 +22,8 @@ export default function NoirSummaryPage() {
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [recapStatus, setRecapStatus] = useState<string | null>(null);
+  const [pulling, setPulling] = useState(false);
+  const [pullStatus, setPullStatus] = useState<string | null>(null);
 
   function loadForDate(d?: string) {
     setLoading(true);
@@ -48,6 +50,26 @@ export default function NoirSummaryPage() {
 
   useEffect(() => { loadForDate(); /* eslint-disable-line react-hooks/exhaustive-deps */ }, []);
   useEffect(() => { if (date) loadForDate(date); /* eslint-disable-line react-hooks/exhaustive-deps */ }, [date]);
+
+  async function pullNow() {
+    setPulling(true);
+    setPullStatus(null);
+    try {
+      const res = await fetch("/api/oddyssey-noir/pull", { method: "POST", body: "{}" });
+      const data = await res.json();
+      if (data.status !== "ok") {
+        setPullStatus(`× ${data.stderr ?? data.message ?? "Pull failed"}`);
+        return;
+      }
+      // After pull, re-fetch the summary + overlay
+      loadForDate(date || undefined);
+      setPullStatus(`✓ Pulled ${data.meta?.filename ?? "CSV"} · sessions ${data.sessions?.ok ? "ok" : "failed"}`);
+    } catch (e) {
+      setPullStatus(`× ${String(e)}`);
+    } finally {
+      setPulling(false);
+    }
+  }
 
   async function sendRecap(test: boolean) {
     if (!summary) return;
@@ -99,6 +121,20 @@ export default function NoirSummaryPage() {
           <p style={{ marginTop: 12, fontSize: 12, color: "var(--text-muted)", letterSpacing: 0.5 }}>
             Source: {summary.source.filename} · pulled {new Date(summary.source.pulled_at).toLocaleString("en-US")}
           </p>
+          <div style={{ marginTop: 12, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+            <button onClick={pullNow} disabled={pulling} style={{
+              padding: "8px 18px", background: "var(--accent)", color: "var(--bg)",
+              fontSize: 10, letterSpacing: 2, textTransform: "uppercase", fontWeight: 500,
+              border: "none", cursor: pulling ? "wait" : "pointer", opacity: pulling ? 0.5 : 1,
+            }}>
+              {pulling ? "Pulling (≈30s)…" : "Pull Now"}
+            </button>
+            {pullStatus && (
+              <span style={{ fontSize: 11, color: pullStatus.startsWith("✓") ? "#27ae60" : "#c0392b", letterSpacing: 0.3 }}>
+                {pullStatus}
+              </span>
+            )}
+          </div>
         </div>
         {summary.available_dates.length > 1 && (
           <div>

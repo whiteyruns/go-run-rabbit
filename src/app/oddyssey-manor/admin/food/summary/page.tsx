@@ -22,6 +22,8 @@ export default function SummaryPage() {
   const [wow, setWow] = useState<WeekOverWeek | null>(null);
   const [report, setReport] = useState<ManorReportOverlay | null>(null);
   const [bullets, setBullets] = useState<string[]>([]);
+  const [pulling, setPulling] = useState(false);
+  const [pullResult, setPullResult] = useState<string | null>(null);
 
   useEffect(() => {
     setState(loadStateWithWalkups());
@@ -68,6 +70,39 @@ export default function SummaryPage() {
   }
   if (!summary) return null;
 
+  async function pullNow() {
+    setPulling(true);
+    setPullResult(null);
+    try {
+      const res = await fetch("/api/oddyssey-food/pull", { method: "POST", body: "{}" });
+      const data = await res.json();
+      if (data.status !== "ok" || !data.csv) {
+        setPullResult(`× ${data.stderr ?? data.message ?? "Pull failed"}`);
+        return;
+      }
+      // Refresh client state from the new CSV + reload overlays
+      const mod = await import("@/lib/oddyssey-food/build-state");
+      const { state: next } = mod.buildStateFromCsv(data.meta.filename, data.csv);
+      const storage = await import("@/lib/oddyssey-food/storage");
+      storage.saveState(next);
+      setState(next);
+      // Refetch WoW + report overlay
+      const wowRes = await fetch(`/api/oddyssey-food/wow?date=${next.source.filename ? next.by_date[next.by_date.length - 1]?.session_date : ""}`).then((r) => r.json()).catch(() => null);
+      if (wowRes?.status === "ok") {
+        setWow(wowRes.wow);
+        setReport(wowRes.report ?? null);
+      }
+      // Refetch bullets
+      const brief = await fetch(`/api/oddyssey-food/briefing?date=${next.by_date[next.by_date.length - 1]?.session_date}&format=json`).then((r) => r.json()).catch(() => null);
+      if (brief?.status === "ok") setBullets(brief.bullets ?? []);
+      setPullResult(`✓ Pulled ${data.meta.filename} · sessions ${data.sessions?.ok ? "ok" : "failed"}`);
+    } catch (e) {
+      setPullResult(`× ${String(e)}`);
+    } finally {
+      setPulling(false);
+    }
+  }
+
   async function sendRecap(test: boolean) {
     setSendingRecap(true);
     setRecapResult(null);
@@ -104,6 +139,20 @@ export default function SummaryPage() {
           <p style={{ marginTop: 12, fontSize: 12, color: "var(--text-muted)", letterSpacing: 0.5 }}>
             Source: {summary.source.filename} · pulled {new Date(summary.source.pulled_at).toLocaleString("en-US")}
           </p>
+          <div style={{ marginTop: 12, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+            <button onClick={pullNow} disabled={pulling} style={{
+              padding: "8px 18px", background: "var(--accent)", color: "var(--bg)",
+              fontSize: 10, letterSpacing: 2, textTransform: "uppercase", fontWeight: 500,
+              border: "none", cursor: pulling ? "wait" : "pointer", opacity: pulling ? 0.5 : 1,
+            }}>
+              {pulling ? "Pulling (≈30s)…" : "Pull Now"}
+            </button>
+            {pullResult && (
+              <span style={{ fontSize: 11, color: pullResult.startsWith("✓") ? "#27ae60" : "#c0392b", letterSpacing: 0.3 }}>
+                {pullResult}
+              </span>
+            )}
+          </div>
         </div>
         {summary.available_dates.length > 1 && (
           <div>

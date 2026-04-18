@@ -48,41 +48,41 @@ export async function GET(request: Request) {
 }
 
 // POST — trigger a fresh pull. Returns new metadata + CSV body.
+function runScript(scriptPath: string, args: string[]) {
+  return new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
+    const proc = spawn("npx", ["tsx", scriptPath, ...args], {
+      cwd: process.cwd(),
+      env: { ...process.env },
+    });
+    let stdout = "";
+    let stderr = "";
+    proc.stdout.on("data", (d) => (stdout += d.toString()));
+    proc.stderr.on("data", (d) => (stderr += d.toString()));
+    proc.on("close", (code) => resolve({ code: code ?? 0, stdout, stderr }));
+  });
+}
+
 export async function POST(request: Request) {
   const body = await request.json().catch(() => ({}));
   const date: string | undefined = body?.date;
 
-  const cmd = "npx";
-  const args = ["tsx", "scripts/oddyssey-food-pull.ts"];
-  if (date) args.push(`--date=${date}`);
+  const pullArgs: string[] = [];
+  if (date) pullArgs.push(`--date=${date}`);
 
-  const result = await new Promise<{ code: number; stdout: string; stderr: string }>(
-    (resolve) => {
-      const proc = spawn(cmd, args, {
-        cwd: process.cwd(),
-        env: { ...process.env },
-      });
-      let stdout = "";
-      let stderr = "";
-      proc.stdout.on("data", (d) => (stdout += d.toString()));
-      proc.stderr.on("data", (d) => (stderr += d.toString()));
-      proc.on("close", (code) =>
-        resolve({ code: code ?? 0, stdout, stderr })
-      );
-    }
-  );
-
-  if (result.code !== 0) {
+  // 1. Attendees CSV pull (fast, ~10-15s)
+  const pullResult = await runScript("scripts/oddyssey-food-pull.ts", pullArgs);
+  if (pullResult.code !== 0) {
     return NextResponse.json(
-      {
-        status: "error",
-        code: result.code,
-        stdout: result.stdout,
-        stderr: result.stderr,
-      },
+      { status: "error", stage: "attendees", code: pullResult.code, stdout: pullResult.stdout, stderr: pullResult.stderr },
       { status: 500 }
     );
   }
+
+  // 2. Chain session Summary Report scrape (15-30s) so Gross/Net/
+  // Paid/Free stay synced with the fresh attendees data.
+  const sessionsArgs = ["--venue=manor"];
+  if (date) sessionsArgs.push(`--date=${date}`);
+  const sessionsResult = await runScript("scripts/oddyssey-sessions-pull.ts", sessionsArgs);
 
   const meta = await readMeta();
   const csv = await readLatestCsv();
@@ -90,6 +90,11 @@ export async function POST(request: Request) {
     status: "ok",
     meta,
     csv,
-    log: result.stdout,
+    log: pullResult.stdout,
+    sessions: {
+      ok: sessionsResult.code === 0,
+      log: sessionsResult.stdout,
+      stderr: sessionsResult.stderr,
+    },
   });
 }

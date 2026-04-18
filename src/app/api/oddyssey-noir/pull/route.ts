@@ -20,28 +20,43 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
-  const body = await request.json().catch(() => ({}));
-  const date: string | undefined = body?.date;
-  const args = ["tsx", "scripts/oddyssey-food-pull.ts", "--venue=noir"];
-  if (date) args.push(`--date=${date}`);
-
-  const result = await new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
-    const proc = spawn("npx", args, { cwd: process.cwd(), env: { ...process.env } });
+function runScript(scriptPath: string, args: string[]) {
+  return new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
+    const proc = spawn("npx", ["tsx", scriptPath, ...args], {
+      cwd: process.cwd(),
+      env: { ...process.env },
+    });
     let stdout = "", stderr = "";
     proc.stdout.on("data", (d) => (stdout += d.toString()));
     proc.stderr.on("data", (d) => (stderr += d.toString()));
     proc.on("close", (code) => resolve({ code: code ?? 0, stdout, stderr }));
   });
+}
 
-  if (result.code !== 0) {
-    return NextResponse.json({ status: "error", stdout: result.stdout, stderr: result.stderr }, { status: 500 });
+export async function POST(request: Request) {
+  const body = await request.json().catch(() => ({}));
+  const date: string | undefined = body?.date;
+
+  // 1. Attendees pull
+  const pullArgs = ["--venue=noir"];
+  if (date) pullArgs.push(`--date=${date}`);
+  const pullResult = await runScript("scripts/oddyssey-food-pull.ts", pullArgs);
+  if (pullResult.code !== 0) {
+    return NextResponse.json({ status: "error", stage: "attendees", stdout: pullResult.stdout, stderr: pullResult.stderr }, { status: 500 });
   }
+
+  // 2. Session Summary Report scrape for fresh revenue/paid/free numbers
+  const sessionsArgs = ["--venue=noir"];
+  if (date) sessionsArgs.push(`--date=${date}`);
+  const sessionsResult = await runScript("scripts/oddyssey-sessions-pull.ts", sessionsArgs);
 
   try {
     const meta = JSON.parse(await fs.readFile(path.join(PULLS_DIR, "latest.json"), "utf-8"));
     const csv = await fs.readFile(LATEST_CSV, "utf-8");
-    return NextResponse.json({ status: "ok", meta, csv, log: result.stdout });
+    return NextResponse.json({
+      status: "ok", meta, csv, log: pullResult.stdout,
+      sessions: { ok: sessionsResult.code === 0, log: sessionsResult.stdout, stderr: sessionsResult.stderr },
+    });
   } catch (e) {
     return NextResponse.json({ status: "error", message: String(e) }, { status: 500 });
   }
