@@ -89,6 +89,12 @@ function HubContent() {
               <p>Attendance, revenue, capacity, and package mix for Noir. Auto-pull, nightly recap with week-over-week.</p>
               <span className="hub-card-link">Open Tool &rarr;</span>
             </Link>
+            <Link href="/oddyssey-manor/admin/pour-log" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#d4a574", borderColor: "#d4a574" }}>Admin Tool</div>
+              <h3>Golden Hour · Pour Log</h3>
+              <p>Capture bottle counts for the featured tequila (Bandido / Telsen) and champagne (KU). Feeds the sponsor recap.</p>
+              <span className="hub-card-link">Open Tool &rarr;</span>
+            </Link>
           </div>
         </div>
 

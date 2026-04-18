@@ -1,0 +1,450 @@
+/* ═══════════════════════════════════════════════════════════
+   Pour Log — scoped styles.
+   Mirrors the /admin visual system:
+     bg #060606 · accent #c9a84c · Cormorant serif · Inter body · JetBrains mono labels
+   Mobile-first. GM fills this on a phone at bar close.
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.page {
+  --bg: #060606;
+  --surface: #0d0d0d;
+  --surface-elevated: #111111;
+  --surface-hi: #161616;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(201, 168, 76, 0.22);
+  --border-strong: rgba(201, 168, 76, 0.38);
+  --accent: #c9a84c;
+  --accent-dim: rgba(201, 168, 76, 0.10);
+  --accent-warm: #d4a574;
+  --text: #e8e4dd;
+  --text-secondary: #9a958d;
+  --text-muted: #5a5650;
+  --up: #6dc77f;
+  --down: #d87060;
+  --amber: #f39c12;
+  --cool: #6a7b8a;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding: 28px 18px 80px;
+}
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ─── Header ─── */
+.header {
+  border-bottom: 1px solid var(--border-accent);
+  padding-bottom: 20px;
+  margin-bottom: 28px;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+.title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+}
+.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ─── Section ─── */
+.section {
+  margin-bottom: 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 22px 20px;
+}
+
+.sectLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sectLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── Fields ─── */
+.fieldGrid {
+  display: grid;
+  gap: 16px;
+}
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 560px) {
+  .fieldRow.two { grid-template-columns: 1fr 1fr; }
+  .fieldRow.three { grid-template-columns: 1fr 1fr 1fr; }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.label {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.label .req {
+  color: var(--accent);
+  margin-left: 4px;
+}
+.input,
+.select,
+.textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  font-family: var(--sans);
+  font-size: 16px;          /* 16px prevents iOS auto-zoom */
+  font-weight: 300;
+  color: var(--text);
+  border-radius: 0;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.input:focus,
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--border-strong);
+  background: var(--surface-elevated);
+}
+.textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.computed {
+  background: var(--accent-dim);
+  border-color: var(--border-strong);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-weight: 500;
+  cursor: default;
+}
+.hint {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ─── Cocktail counter ─── */
+.cocktailList {
+  background: var(--bg);
+  border: 1px solid var(--border);
+}
+.cocktailRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.cocktailRow:last-child { border-bottom: none; }
+.cocktailName {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.2;
+}
+.cocktailSpec {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+.step {
+  width: 38px;
+  height: 38px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+  touch-action: manipulation;
+}
+.step:hover,
+.step:focus-visible {
+  border-color: var(--border-strong);
+  color: var(--accent);
+  outline: none;
+}
+.step:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.stepVal {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 18px;
+  color: var(--accent);
+  min-width: 38px;
+  text-align: center;
+}
+
+/* ─── Submit ─── */
+.submitRow {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.saveNote {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.submit {
+  background: var(--accent);
+  color: var(--bg);
+  border: 1px solid var(--accent);
+  padding: 16px 28px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.submit:hover:not(:disabled) { background: var(--accent-warm); }
+.submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* ─── Status ─── */
+.status {
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  margin-bottom: 18px;
+  border-left: 2px solid var(--cool);
+}
+.status.success {
+  background: rgba(109, 199, 127, 0.06);
+  border-color: rgba(109, 199, 127, 0.2);
+  border-left-color: var(--up);
+  color: var(--text);
+}
+.status.error {
+  background: rgba(216, 112, 96, 0.06);
+  border-color: rgba(216, 112, 96, 0.22);
+  border-left-color: var(--down);
+  color: var(--text);
+}
+.status strong { color: var(--accent); font-weight: 500; }
+
+/* ─── Notes panel ─── */
+.notes {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: rgba(106, 123, 138, 0.04);
+  border: 1px solid rgba(106, 123, 138, 0.16);
+  border-left: 2px solid var(--cool);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.notes .noteLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cool);
+  margin-bottom: 6px;
+}
+.notes strong { color: var(--text); }
+
+/* ─── Link back / nav ─── */
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 18px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.navRow a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-accent);
+  padding-bottom: 1px;
+}
+.navRow a:hover { color: var(--accent); border-bottom-color: var(--border-strong); }
+
+/* ─── Entries list ─── */
+.entriesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.entriesTable th {
+  text-align: left;
+  padding: 12px 14px 10px;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+.entriesTable th.num,
+.entriesTable td.num {
+  text-align: right;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.entriesTable td {
+  padding: 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+  vertical-align: middle;
+}
+.entriesTable td:first-child {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--text);
+}
+.entriesTable td.num { color: var(--text); }
+.entriesTable tr.themeLg { background: rgba(201, 168, 76, 0.025); }
+.entriesTable tr.themeAim { background: rgba(106, 123, 138, 0.035); }
+.entriesTable tr:hover td { background: rgba(201, 168, 76, 0.03); }
+
+.pill {
+  display: inline-block;
+  padding: 3px 9px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.pill.lg { border-color: var(--border-strong); color: var(--accent); }
+.pill.aim { border-color: rgba(106, 123, 138, 0.4); color: var(--cool); }
+
+.emptyState {
+  padding: 48px 24px;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text-secondary);
+}
+
+/* ─── Photo upload ─── */
+.photoField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.photoInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+.photoLabel {
+  background: var(--bg);
+  border: 1px dashed var(--border-accent);
+  padding: 14px 18px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+.photoLabel:hover,
+.photoInput:focus-visible + .photoLabel {
+  border-color: var(--border-strong);
+  color: var(--accent);
+}
+.photoLabel.hasFile {
+  color: var(--accent);
+  border-color: var(--border-strong);
+  background: var(--accent-dim);
+}
