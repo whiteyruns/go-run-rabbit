@@ -118,13 +118,15 @@ export function buildWeekOverWeek(current: NightSummary): WeekOverWeek {
   }
 
   // Prefer session-report actuals for revenue + capacity on BOTH sides
-  // so WoW is apples-to-apples. Fall back to CSV list-price estimate
-  // only when the session report for that date wasn't scraped.
+  // so WoW is apples-to-apples. Uses Net to Bank (post-fees, what the
+  // venue actually receives) since that's the number the business
+  // tracks for performance. Falls back to CSV list-price estimate when
+  // the session report for that date wasn't scraped.
   const curReport = loadManorReportOverlay(current.date);
   const priReport = loadManorReportOverlay(priorDate);
 
-  const curRevenue = curReport.available && curReport.totals ? curReport.totals.gross_revenue : current.revenue;
-  const priRevenue = priReport.available && priReport.totals ? priReport.totals.gross_revenue : prior.revenue;
+  const curRevenue = curReport.available && curReport.totals ? curReport.totals.net_to_bank : current.revenue;
+  const priRevenue = priReport.available && priReport.totals ? priReport.totals.net_to_bank : prior.revenue;
   const curCapPct = curReport.available && curReport.totals && curReport.totals.capacity > 0
     ? current.tickets_sold / curReport.totals.capacity
     : current.capacity_percent;

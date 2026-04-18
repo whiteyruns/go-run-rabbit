@@ -104,12 +104,13 @@ export function buildNoirWeekOverWeek(current: NoirSummary): NoirWeekOverWeek {
     };
   }
 
-  // Prefer session-report actuals on both sides for apples-to-apples
+  // Prefer session-report actuals on both sides for apples-to-apples.
+  // Uses Net to Bank (post-fees) since that's what the business tracks.
   const curReport = loadNoirReportOverlay(current.date);
   const priReport = loadNoirReportOverlay(priorDate);
 
-  const curRevenue = curReport.available && curReport.totals ? curReport.totals.gross_revenue : current.revenue;
-  const priRevenue = priReport.available && priReport.totals ? priReport.totals.gross_revenue : prior.revenue;
+  const curRevenue = curReport.available && curReport.totals ? curReport.totals.net_to_bank : current.revenue;
+  const priRevenue = priReport.available && priReport.totals ? priReport.totals.net_to_bank : prior.revenue;
   const curRedeemed = curReport.available && curReport.totals ? curReport.totals.redeemed : current.redeemed;
   const priRedeemed = priReport.available && priReport.totals ? priReport.totals.redeemed : prior.redeemed;
 
