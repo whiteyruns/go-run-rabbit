@@ -29,9 +29,9 @@ export function renderRecapHtml(r: RecapData): string {
     </div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:10px;">
       <tr>
-        ${statCell("Tickets Sold", String(r.report.totals.reserved))}
+        ${statCell("Admissions", String(r.stats.admission_tickets))}
         ${statCell("Gross Revenue", formatCurrency(r.report.totals.gross_revenue))}
-        ${statCell("Capacity", `${(r.report.totals.capacity_percent * 100).toFixed(1)}%`, capacityColor(r.report.totals.capacity_percent))}
+        ${statCell("Capacity", `${((r.stats.admission_tickets / r.stats.capacity_total) * 100).toFixed(1)}%`, capacityColor(r.stats.admission_tickets / r.stats.capacity_total))}
         ${statCell("Food Items", String(r.stats.food_items))}
       </tr>
       <tr>
@@ -41,6 +41,9 @@ export function renderRecapHtml(r: RecapData): string {
         ${statCell("Orders", String(r.report.totals.total_orders))}
       </tr>
     </table>
+    <div style="margin-bottom:28px;padding:8px 14px;background:rgba(201,168,76,0.06);border-left:3px solid #c9a84c;font-size:10px;color:#9a958d;line-height:1.6;">
+      <strong style="color:#c9a84c;">Note:</strong> Ticketure counts each food inclusion as a separate ticket. Sessions tab total: ${r.report.totals.reserved} line items (${r.stats.admission_tickets} admissions + ${r.report.totals.reserved - r.stats.admission_tickets} food vouchers).
+    </div>
   ` : `
     <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
       <tr>
@@ -274,8 +277,8 @@ export function recapSubject(r: RecapData): string {
   const date = new Date(r.date + "T00:00:00");
   const weekday = date.toLocaleDateString("en-US", { weekday: "short" });
   const monthDay = date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  const t = r.report?.available && r.report.totals;
-  const tix = t ? t.reserved : r.stats.admission_tickets;
-  const rev = t ? t.gross_revenue : r.stats.revenue;
-  return `Manor Recap · ${weekday} ${monthDay} · ${tix} tix · ${formatCurrency(rev)} · ${r.stats.food_items} items`;
+  const rev = r.report?.available && r.report.totals ? r.report.totals.gross_revenue : r.stats.revenue;
+  // Subject uses admission count (actual attendance), not Ticketure's inflated
+  // "line items" count which includes food inclusions.
+  return `Manor Recap · ${weekday} ${monthDay} · ${r.stats.admission_tickets} admits · ${formatCurrency(rev)} · ${r.stats.food_items} items`;
 }

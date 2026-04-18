@@ -128,16 +128,23 @@ export default function SummaryPage() {
             ✓ Actuals from Ticketure Summary Report · pulled {report.pulled_at ? new Date(report.pulled_at).toLocaleString("en-US") : ""}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
-            <HeadlineStat label="Tickets Sold" value={String(report.totals.reserved)} sub={`of ${report.totals.capacity} capacity`} />
+            <HeadlineStat label="Admissions" value={String(summary.tickets_sold)} sub={`butts in seats · Ticketure count: ${report.totals.reserved}`} />
             <HeadlineStat label="Gross Revenue" value={formatCurrency(report.totals.gross_revenue)} sub={`Net $${report.totals.net_to_bank.toFixed(0)} to bank`} />
-            <HeadlineStat label="Capacity" value={`${(report.totals.capacity_percent * 100).toFixed(1)}%`} sub={capacityLabel(report.totals.capacity_percent)} />
+            <HeadlineStat label="Capacity" value={`${((summary.tickets_sold / summary.capacity_total) * 100).toFixed(1)}%`} sub={capacityLabel(summary.tickets_sold / summary.capacity_total)} />
             <HeadlineStat label="Food to Prep" value={String(summary.food_items)} sub={`${summary.food.by_item.length} menu item${summary.food.by_item.length === 1 ? "" : "s"}`} />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
             <HeadlineStat label="Paid" value={String(report.totals.tickets_paid)} sub="actually paid" />
             <HeadlineStat label="Free (Comps)" value={String(report.totals.tickets_free)} sub="$0 tickets" />
             <HeadlineStat label="Orders" value={String(report.totals.total_orders)} sub="distinct purchases" />
             <HeadlineStat label="Redeemed" value={`${report.totals.redeemed} · ${report.totals.reserved > 0 ? Math.round(report.totals.redeemed / report.totals.reserved * 100) : 0}%`} sub="scanned at door" />
+          </div>
+          <div style={{
+            marginBottom: 40, padding: "10px 14px", background: "rgba(201,168,76,0.06)",
+            borderLeft: "3px solid var(--accent)", fontSize: 11, color: "var(--text-muted)",
+            letterSpacing: 0.3, lineHeight: 1.6,
+          }}>
+            <strong style={{ color: "var(--accent)" }}>Note:</strong> Ticketure counts each food inclusion as a separate &ldquo;ticket.&rdquo; The Sessions tab reports {report.totals.reserved} line items total ({summary.tickets_sold} admissions + {report.totals.reserved - summary.tickets_sold} food vouchers).
           </div>
         </>
       ) : (

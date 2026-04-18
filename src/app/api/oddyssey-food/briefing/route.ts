@@ -33,6 +33,7 @@ function buildInputForDate(date?: string) {
     date_label: summary.date_label,
     totals: report.available ? report.totals : undefined,
     sessions: report.available ? report.sessions : undefined,
+    admissions: summary.tickets_sold,
     fallback_tickets: summary.tickets_sold,
     fallback_revenue: summary.revenue,
     fallback_capacity_percent: summary.capacity_percent,

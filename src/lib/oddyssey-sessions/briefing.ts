@@ -17,6 +17,10 @@ export interface BriefingInput {
   date_label: string;
   totals?: SessionReportTotals; // from session report
   sessions?: SessionReport[];
+  // Actual admission count from CSV (excludes food inclusions which
+  // Ticketure counts as separate tickets). For Manor this is the real
+  // butts-in-seats number.
+  admissions?: number;
   fallback_tickets?: number;
   fallback_revenue?: number;
   fallback_capacity_percent?: number;
@@ -42,9 +46,16 @@ export function buildBriefing(input: BriefingInput): string[] {
   // Headline — tickets + revenue
   if (input.totals) {
     const { reserved, tickets_paid, tickets_free, gross_revenue, net_to_bank, capacity_percent, total_orders } = input.totals;
-    const compPct = reserved > 0 ? Math.round((tickets_free / reserved) * 100) : 0;
+    // Prefer admission count (excludes food inclusions) for Manor;
+    // for Noir admissions ≈ reserved since there are no inclusions.
+    const headline = input.admissions ?? reserved;
+    const compPct = headline > 0 ? Math.round((tickets_free / reserved) * 100) : 0;
+    const inclusionNote =
+      input.admissions != null && reserved > input.admissions
+        ? ` (Ticketure counts ${reserved} line items incl. ${reserved - input.admissions} food vouchers)`
+        : "";
     bullets.push(
-      `${venueName} tonight: ${reserved} tickets reserved (${tickets_paid} paid, ${tickets_free} comps${compPct > 0 ? ` · ${compPct}%` : ""}) across ${total_orders} orders`
+      `${venueName} tonight: ${headline} admissions (${tickets_paid} paid, ${tickets_free} comps${compPct > 0 ? ` · ${compPct}%` : ""}) across ${total_orders} orders${inclusionNote}`
     );
     bullets.push(
       `Gross ${formatCurrency(gross_revenue)} · Net to Bank ${formatCurrency(net_to_bank)} · running ${(capacity_percent * 100).toFixed(0)}% of capacity`
