@@ -96,10 +96,24 @@ function indexAdmissions(rows: InclusionRow[]): AdmissionIndex {
   const byGroup = new Map<string, AdmissionEntry[]>();
 
   for (const r of rows) {
-    const gn = r.ticket_group_name?.trim().toLowerCase();
+    const rawGroup = r.ticket_group_name?.trim();
+    const gn = rawGroup?.toLowerCase();
     if (!gn || gn === "inclusions") continue;
-    const tt = GROUP_TO_TYPE.get(gn);
-    if (!tt) continue; // Unknown group (e.g. VIP Admission, Employee) — skip
+    // Any non-Inclusions row is an admission. If the group isn't in
+    // the seed (e.g. Guest List, Member RSVP, Employee, Third Party),
+    // treat it as a $0 comp admission so it still counts toward
+    // attendance — a seeded entry would give us a real price and label.
+    const tt: TicketType =
+      GROUP_TO_TYPE.get(gn) ?? {
+        ticket_sku: `AUTO-${gn.toUpperCase().replace(/\s+/g, "-")}`,
+        ticket_group_name: rawGroup!,
+        package_type: gn.replace(/\s+/g, "_"),
+        package_label: rawGroup!,
+        short_label: rawGroup!.toUpperCase(),
+        price: 0,
+        included_items: 0,
+        menu_group: null,
+      };
     if (!r.scan_code) continue;
     byScanCode.set(r.scan_code, tt);
 
