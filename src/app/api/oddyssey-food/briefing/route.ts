@@ -57,6 +57,7 @@ function buildInputForDate(date?: string) {
     notes: notes.notes,
     notes_updated_at: notes.updated_at,
     totals: report.available ? report.totals : undefined,
+    admissions: summary.tickets_sold,
     fallback_tickets: summary.tickets_sold,
     fallback_revenue: summary.revenue,
     dashboard_url: "https://gorunrabbit.com/oddyssey-manor/admin/food/summary",

@@ -10,6 +10,9 @@ export interface BriefingEmailInput {
   notes: string; // free-text GM notes (may be empty)
   notes_updated_at: string | null;
   totals?: SessionReportTotals;
+  // Actual admission count (excludes food inclusions which Ticketure
+  // counts as separate tickets). Used for the subject + headline tile.
+  admissions?: number;
   fallback_tickets?: number;
   fallback_revenue?: number;
   dashboard_url: string;
@@ -20,12 +23,15 @@ export function renderBriefingHtml(input: BriefingEmailInput): string {
   const accent = input.venue === "manor" ? "#c9a84c" : "#b46ec8";
   const venueName = input.venue === "manor" ? "Oddyssey Manor" : "Oddyssey Noir";
 
+  const admissions = input.admissions ?? input.totals?.reserved ?? input.fallback_tickets ?? 0;
   const reserved = input.totals?.reserved ?? input.fallback_tickets ?? 0;
   const gross = input.totals?.gross_revenue ?? input.fallback_revenue ?? 0;
   const paid = input.totals?.tickets_paid ?? null;
   const free = input.totals?.tickets_free ?? null;
   const cap = input.totals?.capacity ?? 0;
-  const capPct = input.totals?.capacity_percent ?? 0;
+  const inclusionGap = reserved - admissions;
+  // Capacity % should also be based on admissions, not Ticketure line items
+  const capPct = cap > 0 ? admissions / cap : (input.totals?.capacity_percent ?? 0);
 
   return `<!DOCTYPE html>
 <html><head><meta charset="utf-8" /><title>${venueName} Briefing · ${esc(input.date_label)}</title></head>
@@ -37,14 +43,19 @@ export function renderBriefingHtml(input: BriefingEmailInput): string {
     <h1 style="font-family:Georgia,serif;font-size:32px;font-weight:300;letter-spacing:2px;text-transform:uppercase;margin:4px 0 0;color:#e8e4dd;">${esc(input.date_label)}</h1>
   </div>
 
-  <table style="width:100%;border-collapse:collapse;margin-bottom:28px;">
+  <table style="width:100%;border-collapse:collapse;margin-bottom:${inclusionGap > 0 ? "10" : "28"}px;">
     <tr>
-      ${tile("Tickets Sold", `${reserved}${cap > 0 ? ` / ${cap}` : ""}`, accent)}
+      ${tile("Admissions", `${admissions}${cap > 0 ? ` / ${cap}` : ""}`, accent)}
       ${tile("Gross", formatMoney(gross), accent)}
       ${tile("Capacity", `${(capPct * 100).toFixed(0)}%`, accent)}
       ${tile("Paid vs Comp", paid != null && free != null ? `${paid} / ${free}` : "—", accent)}
     </tr>
   </table>
+  ${inclusionGap > 0 ? `
+    <div style="margin-bottom:28px;padding:8px 14px;background:${alpha(accent, 0.06)};border-left:3px solid ${accent};font-size:10px;color:#9a958d;line-height:1.6;">
+      <strong style="color:${accent};">Note:</strong> Ticketure counts ${reserved} line items (${admissions} admissions + ${inclusionGap} food vouchers).
+    </div>
+  ` : ""}
 
   <div style="margin-bottom:28px;">
     <h2 style="font-family:Georgia,serif;font-size:18px;font-weight:400;letter-spacing:2px;text-transform:uppercase;margin:0 0 14px;color:#e8e4dd;border-bottom:1px solid ${alpha(accent, 0.25)};padding-bottom:8px;">GM Talking Points</h2>
@@ -72,10 +83,12 @@ export function renderBriefingHtml(input: BriefingEmailInput): string {
 
 export function briefingSubject(input: BriefingEmailInput): string {
   const date = input.date_label;
-  const reserved = input.totals?.reserved ?? input.fallback_tickets ?? 0;
+  // Subject uses admission count (real attendance), not Ticketure's
+  // inflated line-items count which includes food vouchers.
+  const admissions = input.admissions ?? input.totals?.reserved ?? input.fallback_tickets ?? 0;
   const gross = input.totals?.gross_revenue ?? input.fallback_revenue ?? 0;
   const venue = input.venue === "manor" ? "Manor" : "Noir";
-  return `${venue} Briefing · ${date} · ${reserved} tix · ${formatMoney(gross)}`;
+  return `${venue} Briefing · ${date} · ${admissions} admits · ${formatMoney(gross)}`;
 }
 
 function tile(label: string, value: string, accent: string): string {
