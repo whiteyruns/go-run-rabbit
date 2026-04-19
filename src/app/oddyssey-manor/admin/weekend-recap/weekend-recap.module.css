@@ -242,13 +242,37 @@
   background: var(--border);
   border: 1px solid var(--border);
 }
-/* Manor runs Thu–Sun so it needs 4 columns instead of 2. */
+/* Manor runs Thu–Sun so it needs 4 columns instead of 2. In this narrow
+   layout, labels won't fit on one line next to a 7-char money value, so
+   we stack the stat rows (label above, value below right-aligned) and
+   trim the column padding. */
 .nightGrid4 {
   grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.nightGrid4 .nightCol {
+  padding: 14px 10px;
+}
+.nightGrid4 .statRow {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  padding: 7px 0;
+}
+.nightGrid4 .statLbl {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+}
+.nightGrid4 .statVal {
+  font-size: 13px;
+  font-weight: 500;
+  text-align: right;
 }
 @media (max-width: 900px) {
   .nightGrid4 {
     grid-template-columns: 1fr 1fr;
+  }
+  .nightGrid4 .nightCol {
+    padding: 14px 14px;
   }
 }
 .nightCol {
