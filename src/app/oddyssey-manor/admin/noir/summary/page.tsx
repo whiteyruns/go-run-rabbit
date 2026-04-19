@@ -11,7 +11,8 @@ import {
   type NoirTicketGroupRow,
 } from "@/lib/oddyssey-noir/pipeline";
 import type { NoirWeekOverWeek, NoirReportOverlay } from "@/lib/oddyssey-noir/history";
-import type { TicketGroupReport } from "@/lib/oddyssey-sessions/loader";
+import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/loader";
+import { ChannelMixPanel } from "@/components/oddyssey-sessions/ChannelMix";
 
 export default function NoirSummaryPage() {
   const [summary, setSummary] = useState<NoirSummary | null>(null);
@@ -208,6 +209,11 @@ export default function NoirSummaryPage() {
             Run <em>Pull Now</em> to refresh actuals.
           </div>
         </Section>
+      )}
+
+      {/* Channel Mix — direct vs. third-party resellers */}
+      {report?.available && report.ticket_groups && (
+        <ChannelMixPanel mix={computeChannelMix(report.ticket_groups)} />
       )}
 
       {/* Packages (seeded types only) */}

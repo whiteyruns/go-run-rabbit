@@ -4,7 +4,14 @@
 
 import fs from "fs";
 import path from "path";
-import { loadSessionReport, sumSessionReport, type SessionReport, type SessionReportTotals } from "@/lib/oddyssey-sessions/loader";
+import {
+  loadSessionReport,
+  sumSessionReport,
+  aggregateTicketGroups,
+  type SessionReport,
+  type SessionReportTotals,
+  type TicketGroupReport,
+} from "@/lib/oddyssey-sessions/loader";
 import { buildStateFromCsv } from "./build-state";
 import { buildSummary, type NightSummary } from "./summary";
 
@@ -13,6 +20,7 @@ export interface ManorReportOverlay {
   pulled_at?: string;
   totals?: SessionReportTotals;
   sessions?: SessionReport[];
+  ticket_groups?: TicketGroupReport[] | null;
 }
 
 export function loadManorReportOverlay(date: string): ManorReportOverlay {
@@ -23,6 +31,7 @@ export function loadManorReportOverlay(date: string): ManorReportOverlay {
     pulled_at: report.pulled_at,
     totals: sumSessionReport(report),
     sessions: report.sessions,
+    ticket_groups: aggregateTicketGroups(report),
   };
 }
 

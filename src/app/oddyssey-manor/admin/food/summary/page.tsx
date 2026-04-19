@@ -1,6 +1,7 @@
 "use client";
 
 import { GMBriefingPanel } from "@/components/oddyssey-sessions/GMBriefingPanel";
+import { ChannelMixPanel } from "@/components/oddyssey-sessions/ChannelMix";
 import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
 import type { ManorReportOverlay, WeekOverWeek } from "@/lib/oddyssey-food/history";
 import {
@@ -11,6 +12,7 @@ import {
   type SessionOccupancy,
 } from "@/lib/oddyssey-food/summary";
 import type { DashboardState } from "@/lib/oddyssey-food/types";
+import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/loader";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
@@ -210,6 +212,22 @@ export default function SummaryPage() {
       {/* Week over week */}
       {wow && <WoWStrip wow={wow} summary={summary} />}
 
+      {/* Ticket Groups — actuals from Ticketure. Shown when the sessions
+          scraper has ticket-group breakdown on disk. */}
+      {report?.available && report.ticket_groups && report.ticket_groups.length > 0 && (
+        <Section
+          title="Ticket Groups"
+          subtitle={<span style={{ color: "#27ae60" }}>Actuals · from Ticketure Summary Report</span>}
+        >
+          <ManorTicketGroupsTable groups={report.ticket_groups} />
+        </Section>
+      )}
+
+      {/* Channel Mix — direct vs. third-party resellers */}
+      {report?.available && report.ticket_groups && (
+        <ChannelMixPanel mix={computeChannelMix(report.ticket_groups)} />
+      )}
+
       {/* Package mix */}
       <Section title="Package Mix" subtitle={`${summary.packages.reduce((s, p) => s + p.count, 0)} tickets · ${formatCurrency(summary.revenue)} total`}>
         <PackageTable packages={summary.packages} />
@@ -354,6 +372,76 @@ function Section({ title, subtitle, children }: { title: string; subtitle?: Reac
         )}
       </div>
       {children}
+    </div>
+  );
+}
+
+function ManorTicketGroupsTable({ groups }: { groups: TicketGroupReport[] }) {
+  // Sort highest-grossing first so third-party and revenue leaders pop.
+  const sorted = [...groups].sort((a, b) => (b.gross_revenue ?? 0) - (a.gross_revenue ?? 0));
+  const totalGross = sorted.reduce((s, g) => s + (g.gross_revenue ?? 0), 0);
+  const totalReserved = sorted.reduce((s, g) => s + (g.reserved ?? 0), 0);
+  const totalRedeemed = sorted.reduce((s, g) => s + (g.redeemed ?? 0), 0);
+  const isThirdParty = (name: string) => /third[\s-]?party|commission/i.test(name);
+  return (
+    <div style={{ border: "1px solid var(--border-subtle)" }}>
+      <div style={{
+        display: "grid", gridTemplateColumns: "2.2fr 0.9fr 1fr 1.2fr",
+        padding: "12px 20px", fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
+        color: "var(--accent)", fontWeight: 500, borderBottom: "1px solid var(--border-subtle)",
+        background: "var(--bg-elevated)", gap: 8,
+      }}>
+        <div>Ticket Group</div>
+        <div style={{ textAlign: "right" }}>Reserved</div>
+        <div style={{ textAlign: "right" }}>Redeemed</div>
+        <div style={{ textAlign: "right" }}>Gross (actual)</div>
+      </div>
+      {sorted.map((g) => {
+        const tp = isThirdParty(g.ticket_group_name);
+        const redemptionPct = g.reserved && g.reserved > 0
+          ? Math.round((g.redeemed ?? 0) / g.reserved * 100)
+          : 0;
+        return (
+          <div key={g.ticket_group_name} style={{
+            display: "grid", gridTemplateColumns: "2.2fr 0.9fr 1fr 1.2fr",
+            padding: "14px 20px", fontSize: 13, alignItems: "center",
+            borderBottom: "1px solid var(--border-subtle)", gap: 8,
+          }}>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
+              {g.ticket_group_name}
+              {tp && (
+                <span style={{
+                  marginLeft: 10, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase",
+                  color: "#8b6fb0", padding: "2px 8px", border: "1px solid rgba(139,111,176,0.4)",
+                  verticalAlign: "middle",
+                }}>
+                  Third-party
+                </span>
+              )}
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 20, color: "var(--accent)" }}>
+              {g.reserved ?? "—"}
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text-secondary)" }}>
+              {g.redeemed ?? "—"}
+              <span style={{ color: "var(--text-muted)", fontSize: 11 }}> · {redemptionPct}%</span>
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: (g.gross_revenue ?? 0) > 0 ? "#27ae60" : "var(--text-muted)" }}>
+              {formatCurrency(g.gross_revenue ?? 0)}
+            </div>
+          </div>
+        );
+      })}
+      <div style={{
+        display: "grid", gridTemplateColumns: "2.2fr 0.9fr 1fr 1.2fr",
+        padding: "14px 20px", gap: 8, background: "var(--bg-elevated)",
+        fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500,
+      }}>
+        <div>Total</div>
+        <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>{totalReserved}</div>
+        <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>{totalRedeemed}</div>
+        <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "#27ae60" }}>{formatCurrency(totalGross)}</div>
+      </div>
     </div>
   );
 }
