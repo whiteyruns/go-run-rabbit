@@ -423,7 +423,9 @@ export function formatMoney(n: number | null | undefined, opts: { compact?: bool
   if (opts.compact && abs >= 1000) {
     return `${sign}$${(abs / 1000).toFixed(1)}K`;
   }
-  return `${sign}$${abs.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+  // Two decimals everywhere else — matches the rest of the admin and
+  // the Ticketure reconciliation spec (don't hide cents).
+  return `${sign}$${abs.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function formatInt(n: number | null | undefined): string {
