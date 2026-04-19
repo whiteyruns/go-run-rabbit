@@ -117,6 +117,38 @@ export default function PourLogForm({ defaults }: { defaults: PourLogDefaults })
     setState((prev) => ({ ...prev, [key]: value }));
   }
 
+  // When the GM picks a night theme, snap the date to the most recent
+  // matching weekday (LG → Friday, AIM → Saturday) if the current date's
+  // DOW doesn't already match. Common workflow: GM opens the form Sunday
+  // night about Friday's Golden Hour; date defaults to today (Sun), but
+  // picking "LG" should route the entry to Friday.
+  function onNightThemeChange(next: 'LG' | 'AIM') {
+    const wantDow = next === 'LG' ? 5 : 6; // 5=Fri, 6=Sat
+    const [y, m, d] = state.date.split('-').map(Number);
+    const dt = new Date(y, m - 1, d);
+    if (dt.getDay() !== wantDow) {
+      // Walk backwards until we hit the target DOW (max 7 steps).
+      for (let i = 0; i < 7; i++) {
+        if (dt.getDay() === wantDow) break;
+        dt.setDate(dt.getDate() - 1);
+      }
+      const snapped = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      setState((prev) => ({ ...prev, nightTheme: next, date: snapped }));
+      return;
+    }
+    update('nightTheme', next);
+  }
+
+  // DOW mismatch warning — shown as an inline nudge under the date field
+  // when the chosen theme doesn't match the date's weekday.
+  const dateDow = (() => {
+    const [y, m, d] = state.date.split('-').map(Number);
+    return new Date(y, m - 1, d).getDay();
+  })();
+  const themeMismatch =
+    (state.nightTheme === 'LG' && dateDow !== 5) ||
+    (state.nightTheme === 'AIM' && dateDow !== 6);
+
   function bumpCocktail(key: keyof Cocktails, delta: number) {
     setState((prev) => ({
       ...prev,
@@ -193,6 +225,19 @@ export default function PourLogForm({ defaults }: { defaults: PourLogDefaults })
                 onChange={(e) => update('date', e.target.value)}
                 required
               />
+              {themeMismatch && (
+                <div style={{
+                  marginTop: 6,
+                  fontSize: 11,
+                  color: '#d4a574',
+                  letterSpacing: 0.2,
+                  lineHeight: 1.4,
+                }}>
+                  ⚠ {state.nightTheme} runs on{' '}
+                  {state.nightTheme === 'LG' ? 'Fridays' : 'Saturdays'} — this date is a{' '}
+                  {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][dateDow]}. Re-pick the theme to auto-snap the date.
+                </div>
+              )}
             </div>
             <div className={styles.field}>
               <label className={styles.label} htmlFor="nightTheme">
@@ -203,7 +248,7 @@ export default function PourLogForm({ defaults }: { defaults: PourLogDefaults })
                 name="nightTheme"
                 className={styles.select}
                 value={state.nightTheme}
-                onChange={(e) => update('nightTheme', e.target.value as 'LG' | 'AIM')}
+                onChange={(e) => onNightThemeChange(e.target.value as 'LG' | 'AIM')}
                 required
               >
                 {NIGHT_THEME_OPTIONS.map((o) => (
