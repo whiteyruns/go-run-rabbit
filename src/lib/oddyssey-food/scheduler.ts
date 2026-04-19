@@ -171,17 +171,20 @@ async function sendEmail(
 const sendRecap = (venue: "manor" | "noir", date: string) => sendEmail("recap", venue, date);
 const sendBriefing = (venue: "manor" | "noir", date: string) => sendEmail("briefing", venue, date);
 
-// Monday 8 AM PT weekend-recap upload reminder. Dynamic import keeps the
-// dependency out of the scheduler's static graph so a failed require
-// can't break the other jobs.
+// Monday 8 AM PT weekend-recap upload reminder. Posts to a Node-runtime
+// API route instead of importing reminder.ts directly — mirrors the
+// sendEmail() pattern above and keeps fs-using code out of the
+// instrumentation module graph (Edge runtime rejects fs/path specifiers).
 async function runWeekendRecapReminder() {
+  const port = process.env.PORT ?? "3102";
+  const url = `http://localhost:${port}/api/cron/weekend-recap-reminder`;
   const stamp = new Date().toISOString();
   console.log(`[oddyssey-scheduler] ${stamp} fire: weekend-recap-reminder`);
   try {
-    const mod = await import("@/app/oddyssey-manor/admin/weekend-recap/reminder");
-    const result = await mod.runMondayReminder();
+    const res = await fetch(url, { method: "POST" });
+    const data = await res.json();
     console.log(
-      `[oddyssey-scheduler] weekend-recap-reminder → sent=${result.sent} friday=${result.fridayAnchor} ${result.skippedReason ?? result.error ?? ""}`,
+      `[oddyssey-scheduler] weekend-recap-reminder → sent=${data.sent ?? false} friday=${data.fridayAnchor ?? "?"} ${data.skippedReason ?? data.error ?? ""}`,
     );
   } catch (err) {
     console.log(`[oddyssey-scheduler] weekend-recap-reminder failed: ${String(err)}`);
