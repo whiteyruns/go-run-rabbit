@@ -581,9 +581,15 @@ function ExecutiveSummary({
   const champBtls = (pourLog.fri?.champagneBottles.consumed ?? 0) + (pourLog.sat?.champagneBottles.consumed ?? 0);
   const tequilaPours = tequilaPoursFromBottles(tequilaBtls);
   const champPours = champagnePoursFromBottles(champBtls);
-  const attachDenom = noir.red ?? 0;
-  const attachRate = attachDenom > 0 ? (tequilaPours / attachDenom) * 100 : null;
+  const poursDenom = noir.red ?? 0;
+  const poursPerGuest = poursDenom > 0 ? tequilaPours / poursDenom : null;
+  const sponsorValue = (tequilaPours + champPours) * COCKTAIL_RETAIL_PRICE;
   const featuredTequila = pourLog.fri?.featuredTequila ?? pourLog.sat?.featuredTequila ?? null;
+  const featuredChampagne = pourLog.fri?.champagne ?? pourLog.sat?.champagne ?? null;
+  const tequilaCost = (costPerBottle(featuredTequila) ?? 0) * tequilaBtls;
+  const champCost = (costPerBottle(featuredChampagne) ?? 0) * champBtls;
+  const totalCost = tequilaCost + champCost;
+  const multiplier = totalCost > 0 ? sponsorValue / totalCost : null;
 
   const deltaBadge = (delta: number | null, label: string) => {
     if (delta == null) return null;
@@ -626,14 +632,48 @@ function ExecutiveSummary({
             {champBtls > 0 && (
               <> · <strong>{champBtls.toFixed(1)}</strong> btl champagne ({champPours} flutes)</>
             )}
-            {attachRate != null && (
-              <> · <strong>{attachRate.toFixed(0)}%</strong> attach</>
+            {poursPerGuest != null && (
+              <> · <strong>{poursPerGuest.toFixed(1)}×</strong> pours/guest</>
+            )}
+            {sponsorValue > 0 && (
+              <>
+                {' '}· <strong>{formatMoney(sponsorValue)}</strong> retail value
+                {totalCost > 0 && (
+                  <> on <strong>{formatMoney(totalCost)}</strong> product cost{' '}
+                    {multiplier != null && (
+                      <span style={{ color: 'var(--up)' }}>
+                        (<strong>{multiplier.toFixed(1)}×</strong> multiplier)
+                      </span>
+                    )}
+                  </>
+                )}
+              </>
             )}
           </span>
         </div>
       )}
     </div>
   );
+}
+
+// Retail price per open-bar pour (tequila cocktail OR champagne flute).
+// Used to estimate guest-experience / sponsor activation value.
+const COCKTAIL_RETAIL_PRICE = 14;
+
+// Venue's actual wholesale cost per 750ml bottle. Drives COGS + sponsor
+// multiplier math (retail equivalent / product cost). Update as new
+// brands come on or prices change.
+const BRAND_COST_PER_BOTTLE: Record<string, number> = {
+  'El Bandido': 38.30,
+  'Telsen': 39.49,
+  'Telson': 39.49, // tolerate the alt spelling from the form
+  'KU': 28.83,
+};
+
+function costPerBottle(brand: string | undefined | null): number | null {
+  if (!brand) return null;
+  const trimmed = brand.trim();
+  return BRAND_COST_PER_BOTTLE[trimmed] ?? null;
 }
 
 // ─── WoW sparkline ────────────────────────────────────────────────────────
@@ -704,7 +744,12 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
     const tPours = tequilaPoursFromBottles(entry.tequila.consumed);
     const cPours = champagnePoursFromBottles(entry.champagneBottles.consumed);
     const red = noirNight?.ticketsRedeemed;
-    const attach = red && red > 0 ? (tPours / red) * 100 : null;
+    const ppg = red && red > 0 ? tPours / red : null;
+    const tCost = (costPerBottle(entry.featuredTequila) ?? 0) * entry.tequila.consumed;
+    const cCost = (costPerBottle(entry.champagne) ?? 0) * entry.champagneBottles.consumed;
+    const nightCost = tCost + cCost;
+    const nightRetail = (tPours + cPours) * COCKTAIL_RETAIL_PRICE;
+    const nightMult = nightCost > 0 ? nightRetail / nightCost : null;
     return (
       <div className={styles.openBarNight}>
         <div className={styles.openBarNightLbl}>{nightLabel}</div>
@@ -721,10 +766,33 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
           </span>
         </div>
         <div className={styles.openBarRow}>
-          <span className={styles.openBarK}>Attach</span>
+          <span className={styles.openBarK}>Pours / Guest</span>
           <span>
-            {attach != null ? <strong>{attach.toFixed(0)}%</strong> : <em>—</em>}{' '}
-            {red != null && <span className={styles.openBarMuted}>({tPours} / {red})</span>}
+            {ppg != null ? <strong>{ppg.toFixed(1)}×</strong> : <em>—</em>}{' '}
+            {red != null && <span className={styles.openBarMuted}>({tPours} tequila / {red} guests)</span>}
+          </span>
+        </div>
+        <div className={styles.openBarRow}>
+          <span className={styles.openBarK}>Product Cost</span>
+          <span>
+            <strong>{formatMoney(nightCost)}</strong>{' '}
+            <span className={styles.openBarMuted}>
+              (tequila {formatMoney(tCost)} + champ {formatMoney(cCost)})
+            </span>
+          </span>
+        </div>
+        <div className={styles.openBarRow}>
+          <span className={styles.openBarK}>Retail Value</span>
+          <span>
+            <strong>{formatMoney(nightRetail)}</strong>{' '}
+            <span className={styles.openBarMuted}>({tPours + cPours} drinks × ${COCKTAIL_RETAIL_PRICE})</span>
+          </span>
+        </div>
+        <div className={styles.openBarRow}>
+          <span className={styles.openBarK}>Multiplier</span>
+          <span style={{ color: nightMult && nightMult >= 3 ? 'var(--up)' : 'var(--text)' }}>
+            {nightMult != null ? <strong>{nightMult.toFixed(1)}×</strong> : <em>—</em>}{' '}
+            <span className={styles.openBarMuted}>retail / cost</span>
           </span>
         </div>
         {entry.notes && <div className={styles.openBarNotes}>&ldquo;{entry.notes}&rdquo;</div>}
@@ -735,7 +803,7 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
     <div className={styles.openBar}>
       <div className={styles.openBarHeader}>
         <div className={styles.openBarEyebrow}>Golden Hour · Open Bar</div>
-        <div className={styles.openBarMeta}>Pour Log · pours / attach rate</div>
+        <div className={styles.openBarMeta}>Pour Log · pours per guest · sponsor value</div>
       </div>
       <div className={styles.openBarGrid}>
         {line(pourLog.fri, 'Friday', recap.noir.fri)}
