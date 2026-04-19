@@ -261,14 +261,20 @@ async function scrapeSessionSummary(
 }
 
 /**
- * Scrape the per-ticket-group breakdown table from the session Summary
- * Report. Ticketure renders this as a `<table>` below the top-line stats,
- * with columns roughly: Ticket Group | Reserved | Redeemed | Revenue | ...
+ * Scrape the per-ticket-group breakdown from the session Summary Report.
  *
- * Strategy: find every table inside the iframe, detect the one whose
- * header row matches the ticket-group pattern, then extract header cells
- * + body rows as strings. Numeric parsing is done in TS (below) so we
- * can keep the in-browser function body minimal.
+ * Ticketure renders each group as a `<div class="SessionSummaryTicketGroup">`
+ * containing an `<h3 class="SessionSummaryItem__Heading__Major">` with the
+ * group name, then a row of `__Overview__Item` blocks, each with a label
+ * (`Heading__Minor`) and a main value (`Info__Main`).
+ *
+ * Only three metrics are exposed per group: Tickets Reserved, Tickets
+ * Redeemed, Gross Revenue. Paid/Free/Net breakdowns only exist at the
+ * session level, not per-group, so we store just these three.
+ *
+ * We filter to groups that have activity (reserved > 0 OR revenue > 0)
+ * because Ticketure lists every configured group regardless of sales,
+ * and showing 17 zero-rows on a 3-active-group night is just noise.
  */
 async function scrapeTicketGroups(
   inner: Frame,
@@ -277,59 +283,33 @@ async function scrapeTicketGroups(
   reserved: number | null;
   redeemed: number | null;
   gross_revenue: number | null;
+  // Kept for backwards-compat with the loader type; Ticketure does not
+  // expose these per-group so they stay null.
   net_to_bank: number | null;
   tickets_paid: number | null;
   tickets_free: number | null;
   tickets_refunded: number | null;
   revenue_refunded: number | null;
-  raw: Record<string, string>;
 }>> {
   try {
-    const tables = await inner.evaluate(() => {
-      const out: { header: string[]; rows: string[][] }[] = [];
-      const ts = document.querySelectorAll("table");
-      for (const t of Array.from(ts)) {
-        let header: string[] = [];
-        const thead = t.querySelector("thead");
-        if (thead) {
-          header = Array.from(thead.querySelectorAll("th, td")).map(
-            (c) => ((c as HTMLElement).textContent || "").trim(),
-          );
+    const scraped = await inner.evaluate(() => {
+      const out: { name: string; items: { label: string; value: string }[] }[] = [];
+      const blocks = document.querySelectorAll("div.SessionSummaryTicketGroup");
+      for (const block of Array.from(blocks)) {
+        const h3 = block.querySelector("h3.SessionSummaryItem__Heading__Major");
+        const name = (h3?.textContent || "").trim();
+        if (!name) continue;
+        const items: { label: string; value: string }[] = [];
+        const itemEls = block.querySelectorAll(".SessionSummaryTicketGroup__Overview__Item");
+        for (const it of Array.from(itemEls)) {
+          const lbl = (it.querySelector(".SessionSummaryItem__Heading__Minor")?.textContent || "").trim();
+          const val = (it.querySelector(".SessionSummaryItem__Info__Main")?.textContent || "").trim();
+          if (lbl) items.push({ label: lbl, value: val });
         }
-        if (header.length === 0) {
-          const first = t.querySelector("tr");
-          if (first) {
-            header = Array.from(first.querySelectorAll("th, td")).map(
-              (c) => ((c as HTMLElement).textContent || "").trim(),
-            );
-          }
-        }
-        const tbody = t.querySelector("tbody");
-        const rowEls = tbody
-          ? Array.from(tbody.querySelectorAll("tr"))
-          : Array.from(t.querySelectorAll("tr")).slice(1);
-        const rows = rowEls.map((r) =>
-          Array.from(r.querySelectorAll("th, td")).map(
-            (c) => ((c as HTMLElement).textContent || "").trim(),
-          ),
-        );
-        out.push({ header, rows });
+        out.push({ name, items });
       }
       return out;
     });
-
-    // Find the table whose header looks like the ticket-group breakdown.
-    // We keep this loose because Ticketure's column labels drift.
-    const groupRe = /ticket group|ticket type|name/i;
-    const metricRe = /reserved|redeemed|revenue|paid|free|refund|net/i;
-    const candidate = tables.find((t) => {
-      if (t.header.length < 2) return false;
-      const hasGroupCol = t.header.some((h) => groupRe.test(h));
-      const hasMetricCol = t.header.filter((h) => metricRe.test(h)).length >= 2;
-      return hasGroupCol && hasMetricCol;
-    });
-
-    if (!candidate) return [];
 
     const parseMoneyT = (s: string | undefined): number | null => {
       if (!s) return null;
@@ -346,42 +326,28 @@ async function scrapeTicketGroups(
       return isNaN(n) ? null : n;
     };
 
-    // Build header → index map with tolerant matching.
-    const h = candidate.header.map((x) => x.toLowerCase());
-    const idx = {
-      name: h.findIndex((x) => /ticket group|ticket type|name/.test(x)),
-      reserved: h.findIndex((x) => /reserved/.test(x)),
-      redeemed: h.findIndex((x) => /redeemed/.test(x)),
-      gross: h.findIndex((x) => /gross/.test(x)),
-      net: h.findIndex((x) => /net/.test(x)),
-      paid: h.findIndex((x) => /paid/.test(x)),
-      free: h.findIndex((x) => /free|comp/.test(x)),
-      refunded: h.findIndex((x) => /refund/.test(x) && !/revenue/.test(x)),
-      revenueRefund: h.findIndex((x) => /refund/.test(x) && /revenue/.test(x)),
-    };
-
     const results = [];
-    for (const row of candidate.rows) {
-      if (row.length < 2) continue;
-      const name = idx.name >= 0 ? row[idx.name] : row[0];
-      if (!name || /^total/i.test(name)) continue; // skip footer totals row
-      const raw: Record<string, string> = {};
-      candidate.header.forEach((hh, i) => { raw[hh] = row[i] ?? ""; });
+    for (const g of scraped) {
+      const byLabel = new Map(g.items.map((i) => [i.label.toLowerCase(), i.value]));
+      const reserved = parseIntT(byLabel.get("tickets reserved"));
+      const redeemed = parseIntT(byLabel.get("tickets redeemed"));
+      const gross = parseMoneyT(byLabel.get("gross revenue"));
+      // Skip inactive groups (ticketure lists every configured group)
+      if ((reserved ?? 0) === 0 && (gross ?? 0) === 0) continue;
       results.push({
-        ticket_group_name: name,
-        reserved: idx.reserved >= 0 ? parseIntT(row[idx.reserved]) : null,
-        redeemed: idx.redeemed >= 0 ? parseIntT(row[idx.redeemed]) : null,
-        gross_revenue: idx.gross >= 0 ? parseMoneyT(row[idx.gross]) : null,
-        net_to_bank: idx.net >= 0 ? parseMoneyT(row[idx.net]) : null,
-        tickets_paid: idx.paid >= 0 ? parseIntT(row[idx.paid]) : null,
-        tickets_free: idx.free >= 0 ? parseIntT(row[idx.free]) : null,
-        tickets_refunded: idx.refunded >= 0 ? parseIntT(row[idx.refunded]) : null,
-        revenue_refunded: idx.revenueRefund >= 0 ? parseMoneyT(row[idx.revenueRefund]) : null,
-        raw,
+        ticket_group_name: g.name,
+        reserved,
+        redeemed,
+        gross_revenue: gross,
+        net_to_bank: null,
+        tickets_paid: null,
+        tickets_free: null,
+        tickets_refunded: null,
+        revenue_refunded: null,
       });
     }
 
-    console.log(`[sessions] scraped ${results.length} ticket group rows`);
+    console.log(`[sessions] scraped ${results.length} active ticket group rows (of ${scraped.length} configured)`);
     return results;
   } catch (err) {
     console.warn("[sessions] ticket-group scrape failed:", err);

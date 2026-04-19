@@ -331,61 +331,90 @@ function TicketGroupsActualsTable({
   groups: TicketGroupReport[];
   csvGroups: NoirTicketGroupRow[];
 }) {
-  // CSV redemption rate gives us the redeemed% column when Ticketure's
-  // per-group table doesn't include it explicitly.
+  // Ticketure's Summary Report exposes Reserved / Redeemed / Gross per
+  // group. Paid/Free/Net are session totals only. For context we also
+  // show the CSV's list-price estimate alongside actual gross so the
+  // comp spread is legible at a glance.
   const csvByName = new Map(csvGroups.map((g) => [g.ticket_group_name.toLowerCase(), g]));
+  const totalActual = groups.reduce((s, g) => s + (g.gross_revenue ?? 0), 0);
   return (
-    <div style={{ border: "1px solid var(--border-subtle)" }}>
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1.8fr 0.8fr 0.7fr 0.7fr 1fr 1fr",
-        padding: "12px 20px", fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
-        color: "var(--accent)", fontWeight: 500, borderBottom: "1px solid var(--border-subtle)",
-        background: "var(--bg-elevated)", gap: 8,
-      }}>
-        <div>Ticket Group</div>
-        <div style={{ textAlign: "right" }}>Reserved</div>
-        <div style={{ textAlign: "right" }}>Paid</div>
-        <div style={{ textAlign: "right" }}>Free</div>
-        <div style={{ textAlign: "right" }}>Gross</div>
-        <div style={{ textAlign: "right" }}>Net to bank</div>
-      </div>
-      {groups.map((g) => {
-        const csv = csvByName.get(g.ticket_group_name.toLowerCase());
-        return (
-          <div key={g.ticket_group_name} style={{
-            display: "grid",
-            gridTemplateColumns: "1.8fr 0.8fr 0.7fr 0.7fr 1fr 1fr",
-            padding: "14px 20px", fontSize: 13, alignItems: "center",
-            borderBottom: "1px solid var(--border-subtle)", gap: 8,
-          }}>
-            <div style={{ fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
-              {g.ticket_group_name}
-              {csv && csv.reserved > 0 && (
-                <span style={{ marginLeft: 8, fontSize: 10, color: "var(--text-muted)", letterSpacing: 0.3 }}>
-                  · {csv.redeemed}/{csv.reserved} scanned
-                </span>
-              )}
+    <>
+      <div style={{ border: "1px solid var(--border-subtle)" }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 0.9fr 1fr 1.1fr 1.1fr",
+          padding: "12px 20px", fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
+          color: "var(--accent)", fontWeight: 500, borderBottom: "1px solid var(--border-subtle)",
+          background: "var(--bg-elevated)", gap: 8,
+        }}>
+          <div>Ticket Group</div>
+          <div style={{ textAlign: "right" }}>Reserved</div>
+          <div style={{ textAlign: "right" }}>Redeemed</div>
+          <div style={{ textAlign: "right" }}>List-price est.</div>
+          <div style={{ textAlign: "right" }}>Gross (actual)</div>
+        </div>
+        {groups.map((g) => {
+          const csv = csvByName.get(g.ticket_group_name.toLowerCase());
+          const listEst = csv?.revenue_estimate ?? 0;
+          const actual = g.gross_revenue ?? 0;
+          const redemptionPct = g.reserved && g.reserved > 0
+            ? Math.round((g.redeemed ?? 0) / g.reserved * 100)
+            : 0;
+          return (
+            <div key={g.ticket_group_name} style={{
+              display: "grid",
+              gridTemplateColumns: "2fr 0.9fr 1fr 1.1fr 1.1fr",
+              padding: "14px 20px", fontSize: 13, alignItems: "center",
+              borderBottom: "1px solid var(--border-subtle)", gap: 8,
+            }}>
+              <div style={{ fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
+                {g.ticket_group_name}
+                {csv && !csv.price_known && (
+                  <span style={{ marginLeft: 8, fontSize: 9, letterSpacing: 1.5, textTransform: "uppercase", color: "#d4a574", padding: "2px 6px", border: "1px solid rgba(212,165,116,0.3)", verticalAlign: "middle" }}>
+                    No price seeded
+                  </span>
+                )}
+              </div>
+              <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 20, color: "var(--accent)" }}>
+                {g.reserved ?? "—"}
+              </div>
+              <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text-secondary)" }}>
+                {g.redeemed ?? "—"} <span style={{ color: "var(--text-muted)", fontSize: 11 }}>· {redemptionPct}%</span>
+              </div>
+              <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text-muted)" }}>
+                {csv && csv.price_known ? formatNoirCurrency(listEst) : "—"}
+              </div>
+              <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: actual > 0 ? "#27ae60" : "var(--text-muted)" }}>
+                {formatNoirCurrency(actual)}
+              </div>
             </div>
-            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 20, color: "var(--accent)" }}>
-              {g.reserved ?? "—"}
-            </div>
-            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
-              {g.tickets_paid ?? "—"}
-            </div>
-            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text-muted)" }}>
-              {g.tickets_free ?? "—"}
-            </div>
-            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
-              {g.gross_revenue != null ? formatNoirCurrency(g.gross_revenue) : "—"}
-            </div>
-            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "#27ae60" }}>
-              {g.net_to_bank != null ? formatNoirCurrency(g.net_to_bank) : "—"}
-            </div>
+          );
+        })}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 0.9fr 1fr 1.1fr 1.1fr",
+          padding: "14px 20px", gap: 8, background: "var(--bg-elevated)",
+          fontSize: 11, letterSpacing: 1.5, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500,
+        }}>
+          <div>Total</div>
+          <div />
+          <div />
+          <div />
+          <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "#27ae60" }}>
+            {formatNoirCurrency(totalActual)}
           </div>
-        );
-      })}
-    </div>
+        </div>
+      </div>
+      <div style={{
+        marginTop: 12, padding: "10px 14px", background: "rgba(39,174,96,0.06)",
+        borderLeft: "3px solid #27ae60", fontSize: 12, color: "var(--text-muted)",
+        letterSpacing: 0.3, lineHeight: 1.5,
+      }}>
+        <strong style={{ color: "#27ae60" }}>Gross = money actually collected</strong> (from Ticketure&rsquo;s per-group
+        Summary Report). The List-price estimate column shows what each group <em>would</em> have
+        grossed if every reserved ticket paid list price — the gap is comps, promoters, and guest list.
+      </div>
+    </>
   );
 }
 
