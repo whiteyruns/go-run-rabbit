@@ -548,6 +548,17 @@
   color: var(--accent);
 }
 
+/* Small caveat line directly under the YTD strip — softer than .notes,
+   no label, no border: a whispered-in-the-margin tone, not a callout. */
+.ytdCaveat {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-style: italic;
+  letter-spacing: 0.1px;
+  line-height: 1.5;
+}
+
 /* ─── Empty state ─── */
 .emptyState {
   padding: 48px 24px;

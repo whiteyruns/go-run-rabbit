@@ -127,6 +127,11 @@ export default async function WeekendRecapPage({
 
         <YTDStrip manor={manorYTD} noir={noirYTD} />
 
+        <div className={styles.ytdCaveat}>
+          YTD reflects closed periods (from the GM&apos;s P&amp;L tabs).
+          Current-month actuals lag Ticketure totals until the month closes.
+        </div>
+
         <RecentWeekends list={recentList} current={friday} />
 
         <div className={styles.notes}>
