@@ -161,12 +161,23 @@ async function enumerateSessions(page: Page, flocator: FrameLocator, date: strin
     if (curIdx !== targetIdx) return [];
   }
 
-  // Click the target day within the current (now correct) month. Only
-  // match cells in the .day class — "old" and "new" classes are used
-  // for prev/next month spillover cells which have the same day number.
-  const dayCell = flocator.locator(`td.day:not(.old):not(.new):has-text("${targetD}")`).first();
-  await dayCell.click({ timeout: 4000 }).catch(() => {});
-  await page.waitForTimeout(800);
+  // Click the target day within the current (now-correct) month. Use
+  // an exact-text match (trimmed === day) instead of :has-text() which
+  // uses substring match — that caused day "6" to match "16" and "26"
+  // and silently click the wrong cell. Scoped to td.day without the
+  // .old / .new classes which are prev-/next-month spillover cells.
+  const clicked = await frame.evaluate((day) => {
+    const cells = Array.from(document.querySelectorAll("td.day:not(.old):not(.new)"));
+    const match = cells.find((c) => (c.textContent || "").trim() === day);
+    if (!match) return false;
+    (match as HTMLElement).click();
+    return true;
+  }, String(targetD));
+  if (!clicked) {
+    console.log(`[sessions] could not find day cell for ${targetD} in current month`);
+    return [];
+  }
+  await page.waitForTimeout(1200);
 
   const sessions = await frame.evaluate(() => {
     const out: { session_id: string; time_label: string }[] = [];
