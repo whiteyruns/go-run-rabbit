@@ -196,6 +196,55 @@ function todayLocal(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+// Enumerate show dates for the next N days, grouped by venue. Manor
+// runs Thu-Sun, Noir runs Fri-Sat.
+function upcomingShowDates(daysAhead: number): Array<{ venue: "manor" | "noir"; date: string }> {
+  const out: Array<{ venue: "manor" | "noir"; date: string }> = [];
+  const base = new Date();
+  for (let i = 1; i <= daysAhead; i++) {
+    const d = new Date(base);
+    d.setDate(base.getDate() + i);
+    const iso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const dow = d.getDay(); // 0=Sun..6=Sat
+    if ([0, 4, 5, 6].includes(dow)) out.push({ venue: "manor", date: iso });
+    if ([5, 6].includes(dow)) out.push({ venue: "noir", date: iso });
+  }
+  return out;
+}
+
+/**
+ * Pre-sale pull — refresh advance pacing for every show date in the
+ * next 7 days so the Monday scrum view + venue dashboards always show
+ * what's on the books for the week ahead. Runs attendees CSV then
+ * sessions summary for each date, sequentially, with small delays to
+ * be polite to Ticketure. Idempotent — re-pulling just overwrites the
+ * latest JSON + adds a new timestamped CSV (our dashboards always read
+ * the latest-for-date).
+ */
+async function runPreSalePulls() {
+  const stamp = new Date().toISOString();
+  const dates = upcomingShowDates(7);
+  console.log(`[oddyssey-scheduler] ${stamp} fire: pre-sale (${dates.length} show dates)`);
+  for (const { venue, date } of dates) {
+    try {
+      // Reuse the attendees wrapper script (handles env + tsx invocation).
+      const { spawnSync } = getChildProcess();
+      spawnSync(WRAPPER, [`--venue=${venue}`, `--date=${date}`], { cwd: REPO, timeout: 120_000 });
+      // Then the sessions scrape — same shell-with-env pattern as
+      // runSessionsScrape above.
+      const path = nodeRequire("path") as typeof import("path");
+      const shCmd = `set -a; source .env.local; set +a; export PATH=/Users/white/.nvm/versions/node/v22.22.0/bin:$PATH; cd ${REPO}; npx tsx scripts/oddyssey-sessions-pull.ts --venue=${venue} --date=${date}`;
+      spawnSync("/bin/bash", ["-c", shCmd], { cwd: REPO, timeout: 120_000 });
+      console.log(`[oddyssey-scheduler] pre-sale ✓ ${venue} ${date}`);
+      // Light rate-limit between pulls.
+      await new Promise((r) => setTimeout(r, 3000));
+      void path;
+    } catch (err) {
+      console.log(`[oddyssey-scheduler] pre-sale ✗ ${venue} ${date}: ${String(err)}`);
+    }
+  }
+}
+
 export function startScheduler(): void {
   // Diagnostic: prove startScheduler() was invoked
   try {
@@ -246,6 +295,13 @@ export function startScheduler(): void {
     // Monday 8 AM PT — nudge Keith to upload MANOR P&L + NOIR Budgets workbooks.
     // Idempotent: skips once the weekend file lands on disk.
     ["weekend-recap-reminder", "0 8 * * 1", () => void runWeekendRecapReminder()],
+
+    // --- PRE-SALE PACING ---
+    // Daily 6 AM PT — scrape attendees + sessions for every show date in
+    // the next 7 days so the scrum view + dashboards always show pacing
+    // for the week ahead. Runs BEFORE anyone's in the office looking at
+    // the board; same-day hourly pulls take over once the show arrives.
+    ["pre-sale", "0 6 * * *", () => void runPreSalePulls()],
   ];
 
   for (const [name, pattern, handler] of jobs) {
