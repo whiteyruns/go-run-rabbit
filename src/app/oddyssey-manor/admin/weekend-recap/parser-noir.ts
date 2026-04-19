@@ -225,13 +225,19 @@ function parseNoirYTDSheet(rows: unknown[][], year: number): YTDMonthRow[] {
 
     const actualRev =
       rev == null && bar == null ? null : (rev ?? 0) + (bar ?? 0);
-    const budgetRev =
-      bRev == null && bBar == null ? null : (bRev ?? 0) + (bBar ?? 0);
 
     out[monthIdx].actualRev = actualRev === 0 ? null : actualRev;
     out[monthIdx].actualNet = net;
-    out[monthIdx].budgetRev = budgetRev === 0 ? null : budgetRev;
-    out[monthIdx].budgetNet = bNet;
+    // Budget columns intentionally left blank — Oddyssey_Monthly (in the
+    // 2026 Budget workbook) is the canonical budget source for BOTH
+    // venues. The budget column on the NOIR YTD REPORT sheet is a
+    // different lens (venue-level operational target) that would
+    // conflict with Manor's forecast-based budget. Voiding the write
+    // here; the 2026 Budget workbook upload provides authoritative
+    // budgetRev + budgetNet via mergeYTDBudget().
+    // (Variables bRev/bBar/bNet still computed above for future use if
+    // we ever expose the "operational target" as a separate metric.)
+    void bRev; void bBar; void bNet;
   }
 
   return out;

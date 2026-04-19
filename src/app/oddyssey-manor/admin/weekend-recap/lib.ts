@@ -317,15 +317,12 @@ export async function upsertVenueNight(night: VenueNight): Promise<string> {
 /**
  * Merge a Budget-workbook rollup into the existing YTD file for a venue.
  *
- * The Budget workbook is the authoritative 2026 budget source for Manor
- * (Manor P&L doesn't carry a budget column), but for Noir the NOIR
- * Budgets & Reports file already populates budget columns from its YTD
- * REPORT sheet — and the numbers come from a different lens (venue
- * operating target vs rolled-up monthly forecast). So we only overlay
- * budget cells that are currently null; actuals are never touched.
- *
- * This keeps the two uploads independent: whichever workbook touched a
- * given (month, field) first wins, unless that field is still null.
+ * `Oddyssey_Monthly` (P&L Assumptions) is the authoritative 2026 budget
+ * source for both venues — Finance's master forecast. This helper
+ * OVERWRITES budget columns (even if they'd been populated by an earlier
+ * venue-file upload) so we have one consistent definition of "budget"
+ * across all months and venues. Actuals (actualRev/actualNet) are never
+ * touched.
  */
 export async function mergeYTDBudget(
   venue: Venue,
@@ -338,11 +335,11 @@ export async function mergeYTDBudget(
   for (const incoming of budgetRows) {
     const current = byMonth.get(incoming.month);
     if (!current) continue;
-    if (current.budgetRev == null && incoming.budgetRev != null) {
+    if (current.budgetRev !== incoming.budgetRev) {
       current.budgetRev = incoming.budgetRev;
       updatedFields += 1;
     }
-    if (current.budgetNet == null && incoming.budgetNet != null) {
+    if (current.budgetNet !== incoming.budgetNet) {
       current.budgetNet = incoming.budgetNet;
       updatedFields += 1;
     }

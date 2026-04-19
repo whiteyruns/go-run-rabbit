@@ -69,6 +69,17 @@ export function parseManorWorkbook(buf: ArrayBuffer | Buffer, year = 2026): Mano
   const nights: VenueNight[] = [];
   const ytd = emptyMonthRows(year);
 
+  // Skip future-month sheets when processing the current calendar year.
+  // Nov/Dec tabs in this workbook are legacy 2025 data left over from the
+  // prior-year template; stamping them as 2026 produced phantom actuals
+  // in the YTD strip. If Finance keeps the workbook updated past month N,
+  // we only process sheets ≤ the current real-world month.
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth(); // 0=Jan..11=Dec
+  const isLegacyFutureMonth = (monthIdx: number) =>
+    year === currentYear && monthIdx > currentMonth;
+
   for (const sheetName of wb.SheetNames) {
     const sheet = wb.Sheets[sheetName];
     const rows = XLSX.utils.sheet_to_json<unknown[]>(sheet, {
@@ -78,6 +89,11 @@ export function parseManorWorkbook(buf: ArrayBuffer | Buffer, year = 2026): Mano
     });
 
     if (REV_TAB_RE.test(sheetName)) {
+      const monthIdx = monthFromSheetName(sheetName);
+      if (monthIdx != null && isLegacyFutureMonth(monthIdx)) {
+        warnings.push(`Skipped "${sheetName}" — legacy/future month for ${year}.`);
+        continue;
+      }
       try {
         nights.push(...parseManorRevSheet(rows, sheetName, year));
       } catch (err) {
@@ -90,6 +106,10 @@ export function parseManorWorkbook(buf: ArrayBuffer | Buffer, year = 2026): Mano
       try {
         const monthIdx = monthFromSheetName(sheetName);
         if (monthIdx == null) continue; // OCTOBER P&L template etc.
+        if (isLegacyFutureMonth(monthIdx)) {
+          warnings.push(`Skipped "${sheetName}" — legacy/future month for ${year}.`);
+          continue;
+        }
         const r = parseManorPnlSheet(rows);
         if (r) {
           ytd[monthIdx].actualRev = r.actualRev;
