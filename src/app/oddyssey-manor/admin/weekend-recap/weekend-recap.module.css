@@ -559,6 +559,211 @@
   line-height: 1.5;
 }
 
+/* ─── Executive summary ─── */
+.execSummary {
+  margin: 18px 0 24px;
+  padding: 18px 22px;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-left: 3px solid var(--accent);
+  background: rgba(201, 168, 76, 0.04);
+}
+.execEyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.execHeadline {
+  font-family: var(--serif);
+  font-size: 22px;
+  color: var(--text);
+  line-height: 1.35;
+  margin-bottom: 12px;
+}
+.execMoney { color: var(--accent); }
+.execMuted { color: var(--text-muted); font-size: 18px; }
+.execRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+  line-height: 1.65;
+}
+.execRow strong { color: var(--text); }
+
+/* ─── WoW sparkline (inside each venue card) ─── */
+.sparkline {
+  padding: 10px 14px 4px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(255,255,255,0.015);
+}
+.sparkLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.sparkAxis {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ─── Open Bar panel ─── */
+.openBar {
+  margin-top: 26px;
+  padding: 18px 22px;
+  border: 1px solid rgba(212, 165, 116, 0.25);
+  border-left: 3px solid #d4a574;
+  background: rgba(212, 165, 116, 0.03);
+}
+.openBarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.openBarEyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #d4a574;
+}
+.openBarMeta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.openBarGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.openBarNight {
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+}
+.openBarNightLbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #d4a574;
+  margin-bottom: 8px;
+}
+.openBarNightEmpty {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+.openBarRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  padding: 5px 0;
+  border-bottom: 1px dotted rgba(255,255,255,0.04);
+}
+.openBarRow:last-child { border-bottom: none; }
+.openBarK {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.openBarMuted { color: var(--text-muted); font-size: 11px; }
+.openBarNotes {
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.02);
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+  line-height: 1.5;
+}
+.openBarEmpty {
+  padding: 14px 0 4px;
+  font-size: 12.5px;
+}
+.openBarEmpty a {
+  color: #d4a574;
+  text-decoration: none;
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+.openBarEmpty a:hover { text-decoration: underline; }
+@media (max-width: 700px) {
+  .openBarGrid { grid-template-columns: 1fr; }
+}
+
+/* ─── YTD chart ─── */
+.ytdChart {
+  margin-top: 18px;
+  padding: 16px 20px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface);
+}
+.ytdChartLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.ytdChartAxis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.ytdChartLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.ytdChartLegend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.swatchAccent, .swatchAccentDim, .swatchNoir, .swatchNoirDim {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+.swatchAccent    { background: var(--accent); }
+.swatchAccentDim { background: rgba(201,168,76,0.35); }
+.swatchNoir      { background: #b46ec8; }
+.swatchNoirDim   { background: rgba(180,110,200,0.35); }
+
 /* ─── Empty state ─── */
 .emptyState {
   padding: 48px 24px;

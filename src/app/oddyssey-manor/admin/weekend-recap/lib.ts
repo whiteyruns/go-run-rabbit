@@ -562,6 +562,116 @@ export function formatInt(n: number | null | undefined): string {
   return Math.round(n).toLocaleString('en-US');
 }
 
+// ─── Pour Log (Golden Hour open bar) ───────────────────────────────────────
+
+// Slim local type — mirror of pour-log/lib.ts PourLogEntry. Redefining
+// here instead of importing to keep weekend-recap independent of the
+// pour-log module's file layout.
+export interface PourLogEntryShape {
+  date: string;
+  nightTheme: 'LG' | 'AIM';
+  featuredTequila: string;
+  champagne: string;
+  tequila: { opened: number; leftAtClose: number; consumed: number };
+  champagneBottles: { opened: number; leftAtClose: number; consumed: number };
+  notes?: string;
+  filedBy?: string;
+}
+
+export interface PourLogWeekend {
+  fri: PourLogEntryShape | null;
+  sat: PourLogEntryShape | null;
+}
+
+const POUR_LOG_DIR = path.resolve(process.cwd(), 'data', 'oddyssey', 'pour-log');
+
+export async function loadPourLogForWeekend(fridayISO: string): Promise<PourLogWeekend> {
+  const read = async (date: string): Promise<PourLogEntryShape | null> => {
+    try {
+      const raw = await fs.readFile(path.join(POUR_LOG_DIR, `${date}.json`), 'utf-8');
+      return JSON.parse(raw) as PourLogEntryShape;
+    } catch {
+      return null;
+    }
+  };
+  const [fri, sat] = await Promise.all([
+    read(fridayISO),
+    read(dateForNight(fridayISO, 'sat')),
+  ]);
+  return { fri, sat };
+}
+
+// Pour math helpers (duplicated from pour-log/lib.ts for module isolation)
+export function tequilaPoursFromBottles(bottles: number): number {
+  // 750ml bottle / 1.5oz (~44.4ml) serve = ~16.9 pours
+  return Math.round(bottles * 16.9);
+}
+export function champagnePoursFromBottles(bottles: number): number {
+  // 750ml bottle / 2oz (~59ml) serve = ~12.7 flutes
+  return Math.round(bottles * 12.7);
+}
+
+// ─── Week-over-week series (for sparklines) ────────────────────────────────
+
+export interface WoWPoint {
+  fridayAnchor: string;     // "2026-04-10"
+  label: string;            // "Apr 10"
+  netRev: number | null;    // sum across venue's show nights (null if no data)
+  redeemed: number | null;  // sum across venue's show nights
+}
+
+/**
+ * Build a series of the last `count` weekends (ending at `currentFri`)
+ * aggregating net ticket rev + redeemed per venue. Uses the same
+ * enrichWeekend pipeline as the scrum view so live overlays apply.
+ */
+export async function buildWoWSeries(
+  venue: Venue,
+  currentFri: string,
+  count = 8,
+): Promise<WoWPoint[]> {
+  const anchors: string[] = [];
+  for (let i = count - 1; i >= 0; i--) {
+    const [y, m, d] = currentFri.split('-').map(Number);
+    const dt = new Date(Date.UTC(y, m - 1, d));
+    dt.setUTCDate(dt.getUTCDate() - i * 7);
+    const y2 = dt.getUTCFullYear();
+    const m2 = String(dt.getUTCMonth() + 1).padStart(2, '0');
+    const d2 = String(dt.getUTCDate()).padStart(2, '0');
+    anchors.push(`${y2}-${m2}-${d2}`);
+  }
+  const points = await Promise.all(
+    anchors.map(async (fri): Promise<WoWPoint> => {
+      const raw = await readWeekendJSON(fri);
+      const enriched = await enrichWeekend(raw);
+      const slots: (VenueNight | null)[] =
+        venue === 'manor'
+          ? [enriched.manor.thu, enriched.manor.fri, enriched.manor.sat, enriched.manor.sun]
+          : [enriched.noir.fri, enriched.noir.sat];
+      let netRev = 0;
+      let redeemed = 0;
+      let anyRev = false;
+      let anyRed = false;
+      for (const n of slots) {
+        if (!n) continue;
+        if (n.netTicketRev != null) { netRev += n.netTicketRev; anyRev = true; }
+        if (n.ticketsRedeemed != null) { redeemed += n.ticketsRedeemed; anyRed = true; }
+      }
+      const [yy, mm, dd] = fri.split('-').map(Number);
+      const lbl = new Date(Date.UTC(yy, mm - 1, dd)).toLocaleString('en-US', {
+        timeZone: 'UTC', month: 'short', day: 'numeric',
+      });
+      return {
+        fridayAnchor: fri,
+        label: lbl,
+        netRev: anyRev ? netRev : null,
+        redeemed: anyRed ? redeemed : null,
+      };
+    }),
+  );
+  return points;
+}
+
 // ─── Internals ─────────────────────────────────────────────────────────────
 
 function emptyWeekend(fridayISO: string): WeekendRecap {
