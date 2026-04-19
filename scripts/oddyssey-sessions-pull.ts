@@ -130,29 +130,35 @@ async function enumerateSessions(page: Page, flocator: FrameLocator, date: strin
   };
 
   let cur = await readCurrentMonth();
-  if (!cur) {
-    console.log(`[sessions] could not parse calendar header — falling back to raw day click`);
-  } else {
+  console.log(`[sessions] initial calendar month: ${cur ? `${cur.year}-${String(cur.month + 1).padStart(2, "0")}` : "(unreadable)"}`);
+  if (cur) {
     const targetIdx = targetY * 12 + targetMonthIdx;
     let curIdx = cur.year * 12 + cur.month;
     let hops = 0;
     while (curIdx !== targetIdx && hops < 48) {
       const selector = curIdx > targetIdx ? "th.prev" : "th.next";
       const arrow = await frame.$(selector);
-      if (!arrow) break;
+      if (!arrow) {
+        console.log(`[sessions] nav arrow ${selector} missing at hop ${hops}`);
+        break;
+      }
       await arrow.click();
-      await page.waitForTimeout(150);
+      await page.waitForTimeout(200);
       const next = await readCurrentMonth();
-      if (!next) break;
-      if (next.year === cur.year && next.month === cur.month) break; // hit min/max range
+      if (!next) {
+        console.log(`[sessions] lost calendar header at hop ${hops}`);
+        break;
+      }
+      if (next.year === cur.year && next.month === cur.month) {
+        console.log(`[sessions] calendar stuck at ${cur.year}-${String(cur.month + 1).padStart(2, "0")} (range min/max?)`);
+        break;
+      }
       cur = next;
       curIdx = cur.year * 12 + cur.month;
       hops += 1;
     }
-    if (curIdx !== targetIdx) {
-      console.log(`[sessions] could not navigate calendar to ${targetY}-${String(targetM).padStart(2, "0")} (stopped at ${cur?.year}-${String((cur?.month ?? 0) + 1).padStart(2, "0")})`);
-      return [];
-    }
+    console.log(`[sessions] landed on ${cur.year}-${String(cur.month + 1).padStart(2, "0")} after ${hops} hop(s)`);
+    if (curIdx !== targetIdx) return [];
   }
 
   // Click the target day within the current (now correct) month. Only
