@@ -82,8 +82,9 @@ export default async function WeekendRecapPage({
             How did the weekend <em>land?</em>
           </h1>
           <p className={styles.sub}>
-            Fri + Sat snapshot per venue, plus YTD trajectory. Upload the GM&apos;s
-            xlsx files on Monday morning to refresh.
+            Manor Thu–Sun + Noir Fri–Sat, plus YTD trajectory. Ticket revenue
+            auto-fills from Ticketure; drop the GM&apos;s xlsx files Monday for
+            bar and per-night cost lines.
           </p>
         </header>
 
@@ -232,7 +233,7 @@ function NightColumn({
       <StatRow label="Tickets Sold" value={formatInt(night.ticketsIssued)} />
       <StatRow label="Redeemed" value={formatInt(night.ticketsRedeemed)} />
       <StatRow
-        label="Net Ticket Rev"
+        label="Net Rev"
         value={formatMoney(night.netTicketRev)}
         badge={night.netTicketRevSource === 'live' ? 'live' : undefined}
         badgeTooltip={
@@ -286,30 +287,26 @@ function StatRow({
     tone === 'good' ? styles.good : tone === 'bad' ? styles.bad : tone === 'muted' ? styles.muted : '';
   return (
     <div className={styles.statRow}>
-      <div className={styles.statLbl}>
-        {label}
+      <div className={styles.statLbl}>{label}</div>
+      <div className={`${styles.statVal} ${cls}`} style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end' }}>
         {badge === 'live' && (
           <span
             title={badgeTooltip}
+            aria-label={badgeTooltip ?? 'Live from Ticketure'}
             style={{
-              marginLeft: 8,
-              fontSize: 8,
-              letterSpacing: 1.5,
-              textTransform: 'uppercase',
-              color: '#27ae60',
-              padding: '1px 6px',
-              border: '1px solid rgba(39,174,96,0.35)',
-              borderRadius: 2,
-              verticalAlign: 'middle',
-              fontWeight: 600,
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: '#27ae60',
+              boxShadow: '0 0 0 2px rgba(39,174,96,0.15)',
+              flexShrink: 0,
               cursor: badgeTooltip ? 'help' : 'default',
+              display: 'inline-block',
             }}
-          >
-            ● Live
-          </span>
+          />
         )}
+        <span>{value}</span>
       </div>
-      <div className={`${styles.statVal} ${cls}`}>{value}</div>
     </div>
   );
 }

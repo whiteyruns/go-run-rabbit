@@ -503,18 +503,21 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
 // ─── Display helpers ───────────────────────────────────────────────────────
 
 export function formatWeekendLabel(fridayISO: string): string {
-  // "Fri–Sat, Apr 17–18, 2026"
+  // "Thu–Sun, Apr 16–19, 2026" — spans the widest venue schedule (Manor
+  // runs Thu–Sun; Noir's Fri–Sat sits inside it).
   const [y, m, d] = fridayISO.split('-').map(Number);
   const fri = new Date(Date.UTC(y, m - 1, d));
-  const sat = new Date(fri);
-  sat.setUTCDate(fri.getUTCDate() + 1);
+  const thu = new Date(fri);
+  thu.setUTCDate(fri.getUTCDate() - 1);
+  const sun = new Date(fri);
+  sun.setUTCDate(fri.getUTCDate() + 2);
   const mShort = (dt: Date) =>
     dt.toLocaleString('en-US', { timeZone: 'UTC', month: 'short' });
-  const sameMonth = fri.getUTCMonth() === sat.getUTCMonth();
+  const sameMonth = thu.getUTCMonth() === sun.getUTCMonth();
   if (sameMonth) {
-    return `Fri–Sat, ${mShort(fri)} ${fri.getUTCDate()}–${sat.getUTCDate()}, ${fri.getUTCFullYear()}`;
+    return `Thu–Sun, ${mShort(thu)} ${thu.getUTCDate()}–${sun.getUTCDate()}, ${sun.getUTCFullYear()}`;
   }
-  return `Fri–Sat, ${mShort(fri)} ${fri.getUTCDate()} – ${mShort(sat)} ${sat.getUTCDate()}, ${fri.getUTCFullYear()}`;
+  return `Thu–Sun, ${mShort(thu)} ${thu.getUTCDate()} – ${mShort(sun)} ${sun.getUTCDate()}, ${sun.getUTCFullYear()}`;
 }
 
 export function formatMoney(n: number | null | undefined, opts: { compact?: boolean } = {}): string {
