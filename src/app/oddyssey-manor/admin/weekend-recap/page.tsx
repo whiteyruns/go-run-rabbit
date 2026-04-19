@@ -65,7 +65,8 @@ export default async function WeekendRecapPage({
     : null;
 
   const hasAnyData =
-    recap.manor.fri || recap.manor.sat || recap.noir.fri || recap.noir.sat;
+    recap.manor.thu || recap.manor.fri || recap.manor.sat || recap.manor.sun ||
+    recap.noir.fri || recap.noir.sat;
 
   return (
     <main className={styles.page}>
@@ -118,18 +119,8 @@ export default async function WeekendRecapPage({
           </div>
         ) : (
           <div className={styles.venueGrid}>
-            <VenueCard
-              name="Manor"
-              slug="manor"
-              fri={recap.manor.fri}
-              sat={recap.manor.sat}
-            />
-            <VenueCard
-              name="Noir"
-              slug="noir"
-              fri={recap.noir.fri}
-              sat={recap.noir.sat}
-            />
+            <ManorVenueCard manor={recap.manor} />
+            <NoirVenueCard noir={recap.noir} />
           </div>
         )}
 
@@ -151,37 +142,56 @@ export default async function WeekendRecapPage({
   );
 }
 
-// ─── Venue card ────────────────────────────────────────────────────────────
+// ─── Venue cards ───────────────────────────────────────────────────────────
 
-function VenueCard({
-  name,
-  slug,
-  fri,
-  sat,
+function ManorVenueCard({
+  manor,
 }: {
-  name: string;
-  slug: 'manor' | 'noir';
-  fri: VenueNight | null;
-  sat: VenueNight | null;
+  manor: { thu: VenueNight | null; fri: VenueNight | null; sat: VenueNight | null; sun: VenueNight | null };
 }) {
-  const any = fri || sat;
-  const eveningLabel = slug === 'noir' ? 'Liber Gigante · Noir' : 'Manor · Fri + Sat';
-
+  const any = manor.thu || manor.fri || manor.sat || manor.sun;
   return (
     <div className={styles.venueCard}>
       <div className={styles.venueCardHeader}>
         <div className={styles.venueName}>
-          <em>{name}</em>
+          <em>Manor</em>
         </div>
-        <div className={styles.venueMeta}>{eveningLabel}</div>
+        <div className={styles.venueMeta}>Thu → Sun</div>
       </div>
+      {!any ? (
+        <div className={styles.nightEmpty}>No data yet for this weekend.</div>
+      ) : (
+        <div className={`${styles.nightPair} ${styles.nightGrid4}`}>
+          <NightColumn label="Thursday" night={manor.thu} venue="manor" />
+          <NightColumn label="Friday" night={manor.fri} venue="manor" />
+          <NightColumn label="Saturday" night={manor.sat} venue="manor" />
+          <NightColumn label="Sunday" night={manor.sun} venue="manor" />
+        </div>
+      )}
+    </div>
+  );
+}
 
+function NoirVenueCard({
+  noir,
+}: {
+  noir: { fri: VenueNight | null; sat: VenueNight | null };
+}) {
+  const any = noir.fri || noir.sat;
+  return (
+    <div className={styles.venueCard}>
+      <div className={styles.venueCardHeader}>
+        <div className={styles.venueName}>
+          <em>Noir</em>
+        </div>
+        <div className={styles.venueMeta}>Liber Gigante · Fri + Sat</div>
+      </div>
       {!any ? (
         <div className={styles.nightEmpty}>No data yet for this weekend.</div>
       ) : (
         <div className={styles.nightPair}>
-          <NightColumn label="Friday" night={fri} venue={slug} />
-          <NightColumn label="Saturday" night={sat} venue={slug} />
+          <NightColumn label="Friday" night={noir.fri} venue="noir" />
+          <NightColumn label="Saturday" night={noir.sat} venue="noir" />
         </div>
       )}
     </div>

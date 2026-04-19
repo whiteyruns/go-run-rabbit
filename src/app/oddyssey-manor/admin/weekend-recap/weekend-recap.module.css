@@ -242,6 +242,15 @@
   background: var(--border);
   border: 1px solid var(--border);
 }
+/* Manor runs Thu–Sun so it needs 4 columns instead of 2. */
+.nightGrid4 {
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+@media (max-width: 900px) {
+  .nightGrid4 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 .nightCol {
   background: var(--surface);
   padding: 14px 14px;

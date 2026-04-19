@@ -23,7 +23,9 @@ import path from 'node:path';
 // ─── Types ─────────────────────────────────────────────────────────────────
 
 export type Venue = 'manor' | 'noir';
-export type Weeknight = 'fri' | 'sat';
+// Manor runs Thu–Sun; Noir runs Fri–Sat. The union covers both — the
+// weekend recap structure narrows which slots exist per venue.
+export type Weeknight = 'thu' | 'fri' | 'sat' | 'sun';
 
 /**
  * Per-night data shared between venues. Venue-specific cost lines live in
@@ -57,14 +59,32 @@ export interface VenueNight {
 
 /**
  * What the weekend-recap page renders at the top of the view.
- * `fri` and `sat` nullable because upload might only include one of the two.
+ * Manor runs Thu–Sun (four slots); Noir runs Fri–Sat. Slots are
+ * nullable because the xlsx may only cover some nights (and Thu/Sun
+ * for Manor are Ticketure-only, filled by enrichWeekend).
  */
+export interface ManorWeekend {
+  thu: VenueNight | null;
+  fri: VenueNight | null;
+  sat: VenueNight | null;
+  sun: VenueNight | null;
+}
+export interface NoirWeekend {
+  fri: VenueNight | null;
+  sat: VenueNight | null;
+}
 export interface WeekendRecap {
   weekendOf: string;                   // Friday ISO date (anchor of the weekend)
-  manor: { fri: VenueNight | null; sat: VenueNight | null };
-  noir:  { fri: VenueNight | null; sat: VenueNight | null };
+  manor: ManorWeekend;
+  noir: NoirWeekend;
   lastUploadedAt: string | null;       // ISO8601, updated on any weekend-file write
 }
+
+/** Weeknights each venue operates — drives display + enrichment. */
+export const VENUE_NIGHTS: Record<Venue, Weeknight[]> = {
+  manor: ['thu', 'fri', 'sat', 'sun'],
+  noir: ['fri', 'sat'],
+};
 
 /**
  * One row in the YTD strip — one calendar month, per venue.
@@ -152,25 +172,32 @@ export function mostRecentWeekend(now: Date = new Date()): {
 }
 
 /**
- * Derive the weekend anchor (Friday ISO) for any Fri or Sat date.
- * Used by the upload action when the GM uploads a workbook whose sheets
- * are keyed by individual Sat dates and we need the pair key.
+ * Derive the weekend anchor (Friday ISO) for any show-night date.
+ * Manor runs Thu–Sun, so the anchor-for mapping is:
+ *   Thu → next day Fri
+ *   Fri → same day
+ *   Sat → previous day
+ *   Sun → two days back
+ * Any other DOW falls back to "most recent Friday on/before".
  */
 export function weekendAnchorFor(dateISO: string): string {
   const [y, m, d] = dateISO.split('-').map(Number);
   const dt = new Date(Date.UTC(y, m - 1, d));
   const dow = dt.getUTCDay();
-  if (dow === 5) return dateISO;            // Friday
-  if (dow === 6) {                          // Saturday → previous Friday
-    const fri = new Date(dt);
-    fri.setUTCDate(dt.getUTCDate() - 1);
-    return isoDate(fri);
-  }
-  // For any other DOW, fall back to "most recent Friday on/before this date".
-  const back = (dow + 7 - 5) % 7;
+  if (dow === 5) return dateISO;             // Friday
+  const shift = dow === 4 ? 1 : dow === 6 ? -1 : dow === 0 ? -2 : -((dow + 7 - 5) % 7);
   const fri = new Date(dt);
-  fri.setUTCDate(dt.getUTCDate() - back);
+  fri.setUTCDate(dt.getUTCDate() + shift);
   return isoDate(fri);
+}
+
+/** Map a weeknight identifier to its date, given the Friday anchor. */
+export function dateForNight(friAnchor: string, night: Weeknight): string {
+  const [y, m, d] = friAnchor.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  const offset = night === 'thu' ? -1 : night === 'fri' ? 0 : night === 'sat' ? 1 : 2;
+  dt.setUTCDate(dt.getUTCDate() + offset);
+  return isoDate(dt);
 }
 
 // ─── Read helpers ──────────────────────────────────────────────────────────
@@ -273,9 +300,16 @@ export async function writeYTDRollup(rollup: YTDRollup): Promise<void> {
 export async function upsertVenueNight(night: VenueNight): Promise<string> {
   const anchor = weekendAnchorFor(night.date);
   const existing = await readWeekendJSON(anchor);
-  const slot = existing[night.venue];
-  if (night.weeknight === 'fri') slot.fri = night;
-  else slot.sat = night;
+  if (night.venue === 'manor') {
+    const slot = existing.manor;
+    slot[night.weeknight] = night;
+  } else {
+    // Noir only operates Fri/Sat — any Thu/Sun night hitting this branch
+    // is a data error upstream; drop it rather than crash.
+    if (night.weeknight === 'fri' || night.weeknight === 'sat') {
+      existing.noir[night.weeknight] = night;
+    }
+  }
   await writeWeekendJSON({ ...existing, weekendOf: anchor });
   return anchor;
 }
@@ -361,14 +395,72 @@ export async function loadLiveNetTicketRev(
 }
 
 /**
- * Overlay Ticketure-scraped net ticket revenue onto a weekend recap.
- * Preserves everything else (cost lines, bar net, ticket counts) from
- * the xlsx source. The net-ticket-rev number comes from Ticketure's
- * Summary Report because that's fresher than the Monday xlsx — the GM
- * already sees the same number on the main Manor/Noir dashboards.
+ * Read live ticket issued + redeemed counts from the session summary.
+ * Manor's Ticketure "reserved" count includes food-inclusion line items,
+ * so for Manor this is an over-count vs the xlsx `T-Issued` column.
+ * Noir has no food inclusions; its numbers match cleanly.
+ */
+async function loadLiveTicketCounts(
+  venue: Venue,
+  dateISO: string,
+): Promise<{ issued: number | null; redeemed: number | null }> {
+  try {
+    const file = path.join(SESSION_SUMMARY_DIR[venue], `${dateISO}.json`);
+    const raw = await fs.readFile(file, 'utf8');
+    const parsed = JSON.parse(raw) as {
+      sessions?: { data?: { reserved?: number | null; redeemed?: number | null } }[];
+    };
+    let issued = 0;
+    let redeemed = 0;
+    let any = false;
+    for (const s of parsed.sessions ?? []) {
+      const r = s.data?.reserved;
+      const d = s.data?.redeemed;
+      if (typeof r === 'number') { issued += r; any = true; }
+      if (typeof d === 'number') { redeemed += d; any = true; }
+    }
+    return any ? { issued, redeemed } : { issued: null, redeemed: null };
+  } catch {
+    return { issued: null, redeemed: null };
+  }
+}
+
+/**
+ * Build an entirely Ticketure-sourced VenueNight for a date that has no
+ * xlsx row (Manor Thu + Sun nights — xlsx only carries Fri+Sat).
+ * Cost lines stay empty; the UI renders "—" until the GM fills them in.
+ */
+async function synthesizeNightFromLive(
+  venue: Venue,
+  weeknight: Weeknight,
+  dateISO: string,
+): Promise<VenueNight | null> {
+  const [netRev, counts] = await Promise.all([
+    loadLiveNetTicketRev(venue, dateISO),
+    loadLiveTicketCounts(venue, dateISO),
+  ]);
+  // Nothing to show for this date yet — no scrape on disk.
+  if (netRev == null && counts.issued == null) return null;
+  return {
+    date: dateISO,
+    venue,
+    weeknight,
+    ticketsIssued: counts.issued,
+    ticketsRedeemed: counts.redeemed,
+    netTicketRev: netRev,
+    barNet: null,
+    costs: {},
+    netTicketRevSource: 'live',
+  };
+}
+
+/**
+ * Overlay Ticketure-scraped data onto a weekend recap. For every xlsx
+ * night, we replace netTicketRev with the live Ticketure total (fresher).
+ * For nights that have no xlsx row at all (Manor Thu + Sun), we synthesize
+ * a Ticketure-only VenueNight so the scrum view still shows them.
  *
- * A `netTicketRevSource` tag is added to each VenueNight so the UI can
- * render a subtle indicator showing whether a value is live or xlsx.
+ * Cost lines + bar NET stay xlsx-only — Ticketure doesn't expose those.
  */
 export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
   const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
@@ -385,16 +477,25 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
     };
   };
 
-  const [manorFri, manorSat, noirFri, noirSat] = await Promise.all([
+  const anchor = recap.weekendOf;
+  // Manor: all four nights. Fri/Sat overlay xlsx → live; Thu/Sun are
+  // fully synthesized from Ticketure because xlsx doesn't carry those rows.
+  const [manorThu, manorFri, manorSat, manorSun, noirFri, noirSat] = await Promise.all([
+    recap.manor.thu
+      ? enrichNight(recap.manor.thu)
+      : synthesizeNightFromLive('manor', 'thu', dateForNight(anchor, 'thu')),
     enrichNight(recap.manor.fri),
     enrichNight(recap.manor.sat),
+    recap.manor.sun
+      ? enrichNight(recap.manor.sun)
+      : synthesizeNightFromLive('manor', 'sun', dateForNight(anchor, 'sun')),
     enrichNight(recap.noir.fri),
     enrichNight(recap.noir.sat),
   ]);
 
   return {
     ...recap,
-    manor: { fri: manorFri, sat: manorSat },
+    manor: { thu: manorThu, fri: manorFri, sat: manorSat, sun: manorSun },
     noir: { fri: noirFri, sat: noirSat },
   };
 }
@@ -438,7 +539,7 @@ export function formatInt(n: number | null | undefined): string {
 function emptyWeekend(fridayISO: string): WeekendRecap {
   return {
     weekendOf: fridayISO,
-    manor: { fri: null, sat: null },
+    manor: { thu: null, fri: null, sat: null, sun: null },
     noir:  { fri: null, sat: null },
     lastUploadedAt: null,
   };
