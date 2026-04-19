@@ -11,6 +11,7 @@ import {
   type NoirTicketGroupRow,
 } from "@/lib/oddyssey-noir/pipeline";
 import type { NoirWeekOverWeek, NoirReportOverlay } from "@/lib/oddyssey-noir/history";
+import type { TicketGroupReport } from "@/lib/oddyssey-sessions/loader";
 
 export default function NoirSummaryPage() {
   const [summary, setSummary] = useState<NoirSummary | null>(null);
@@ -182,23 +183,32 @@ export default function NoirSummaryPage() {
       {/* WoW */}
       {wow && <WoWStrip wow={wow} summary={summary} />}
 
-      {/* Ticket Groups — mirrors Ticketure's Summary Report rows */}
-      <Section
-        title="Ticket Groups"
-        subtitle={<span style={{ color: "var(--text-muted)" }}>From attendees CSV · list-price estimate</span>}
-      >
-        <TicketGroupsTable groups={summary.ticket_groups} />
-        <div style={{
-          marginTop: 12, padding: "10px 14px", background: "rgba(180,110,200,0.06)",
-          borderLeft: "3px solid var(--accent)", fontSize: 12, color: "var(--text-muted)",
-          letterSpacing: 0.3, lineHeight: 1.5,
-        }}>
-          <strong style={{ color: "var(--accent)" }}>Revenue is list-price × ticket count.</strong>{" "}
-          Ticketure&rsquo;s Summary Report shows actual paid-vs-free breakdown and net-to-bank
-          (these are not exposed in the attendees CSV). We&rsquo;ll wire those in once the
-          Summary Report scraper ships.
-        </div>
-      </Section>
+      {/* Ticket Groups — actuals from Ticketure's Summary Report when
+          available; falls back to CSV list-price estimate otherwise. */}
+      {report?.available && report.ticket_groups && report.ticket_groups.length > 0 ? (
+        <Section
+          title="Ticket Groups"
+          subtitle={<span style={{ color: "#27ae60" }}>Actuals · from Ticketure Summary Report</span>}
+        >
+          <TicketGroupsActualsTable groups={report.ticket_groups} csvGroups={summary.ticket_groups} />
+        </Section>
+      ) : (
+        <Section
+          title="Ticket Groups"
+          subtitle={<span style={{ color: "var(--text-muted)" }}>From attendees CSV · list-price estimate</span>}
+        >
+          <TicketGroupsTable groups={summary.ticket_groups} />
+          <div style={{
+            marginTop: 12, padding: "10px 14px", background: "rgba(180,110,200,0.06)",
+            borderLeft: "3px solid var(--accent)", fontSize: 12, color: "var(--text-muted)",
+            letterSpacing: 0.3, lineHeight: 1.5,
+          }}>
+            <strong style={{ color: "var(--accent)" }}>Revenue is list-price × ticket count.</strong>{" "}
+            Ticketure&rsquo;s Summary Report shows actual paid-vs-free breakdown and net-to-bank.
+            Run <em>Pull Now</em> to refresh actuals.
+          </div>
+        </Section>
+      )}
 
       {/* Packages (seeded types only) */}
       {summary.packages.some((p) => p.count > 0) && (
@@ -310,6 +320,71 @@ function TicketGroupsTable({ groups }: { groups: NoirTicketGroupRow[] }) {
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+function TicketGroupsActualsTable({
+  groups,
+  csvGroups,
+}: {
+  groups: TicketGroupReport[];
+  csvGroups: NoirTicketGroupRow[];
+}) {
+  // CSV redemption rate gives us the redeemed% column when Ticketure's
+  // per-group table doesn't include it explicitly.
+  const csvByName = new Map(csvGroups.map((g) => [g.ticket_group_name.toLowerCase(), g]));
+  return (
+    <div style={{ border: "1px solid var(--border-subtle)" }}>
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "1.8fr 0.8fr 0.7fr 0.7fr 1fr 1fr",
+        padding: "12px 20px", fontSize: 9, letterSpacing: 2, textTransform: "uppercase",
+        color: "var(--accent)", fontWeight: 500, borderBottom: "1px solid var(--border-subtle)",
+        background: "var(--bg-elevated)", gap: 8,
+      }}>
+        <div>Ticket Group</div>
+        <div style={{ textAlign: "right" }}>Reserved</div>
+        <div style={{ textAlign: "right" }}>Paid</div>
+        <div style={{ textAlign: "right" }}>Free</div>
+        <div style={{ textAlign: "right" }}>Gross</div>
+        <div style={{ textAlign: "right" }}>Net to bank</div>
+      </div>
+      {groups.map((g) => {
+        const csv = csvByName.get(g.ticket_group_name.toLowerCase());
+        return (
+          <div key={g.ticket_group_name} style={{
+            display: "grid",
+            gridTemplateColumns: "1.8fr 0.8fr 0.7fr 0.7fr 1fr 1fr",
+            padding: "14px 20px", fontSize: 13, alignItems: "center",
+            borderBottom: "1px solid var(--border-subtle)", gap: 8,
+          }}>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
+              {g.ticket_group_name}
+              {csv && csv.reserved > 0 && (
+                <span style={{ marginLeft: 8, fontSize: 10, color: "var(--text-muted)", letterSpacing: 0.3 }}>
+                  · {csv.redeemed}/{csv.reserved} scanned
+                </span>
+              )}
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 20, color: "var(--accent)" }}>
+              {g.reserved ?? "—"}
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
+              {g.tickets_paid ?? "—"}
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text-muted)" }}>
+              {g.tickets_free ?? "—"}
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "var(--text)" }}>
+              {g.gross_revenue != null ? formatNoirCurrency(g.gross_revenue) : "—"}
+            </div>
+            <div style={{ textAlign: "right", fontFamily: "var(--serif)", fontSize: 16, color: "#27ae60" }}>
+              {g.net_to_bank != null ? formatNoirCurrency(g.net_to_bank) : "—"}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

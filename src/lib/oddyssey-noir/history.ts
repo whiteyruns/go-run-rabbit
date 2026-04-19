@@ -4,7 +4,14 @@
 
 import fs from "fs";
 import path from "path";
-import { loadSessionReport, sumSessionReport, type SessionReport, type SessionReportTotals } from "@/lib/oddyssey-sessions/loader";
+import {
+  loadSessionReport,
+  sumSessionReport,
+  aggregateTicketGroups,
+  type SessionReport,
+  type SessionReportTotals,
+  type TicketGroupReport,
+} from "@/lib/oddyssey-sessions/loader";
 import { buildNoirState, buildNoirSummary } from "./pipeline";
 import type { NoirSummary } from "./pipeline";
 
@@ -13,6 +20,10 @@ export interface NoirReportOverlay {
   pulled_at?: string;
   totals?: SessionReportTotals;
   sessions?: SessionReport[];
+  // Per-ticket-group actuals aggregated across all sessions. Null when
+  // the stored summary was pulled before the scraper learned to read
+  // the per-group breakdown table (pre-2026-04-19 pulls).
+  ticket_groups?: TicketGroupReport[] | null;
 }
 
 export function loadNoirReportOverlay(date: string): NoirReportOverlay {
@@ -23,6 +34,7 @@ export function loadNoirReportOverlay(date: string): NoirReportOverlay {
     pulled_at: report.pulled_at,
     totals: sumSessionReport(report),
     sessions: report.sessions,
+    ticket_groups: aggregateTicketGroups(report),
   };
 }
 

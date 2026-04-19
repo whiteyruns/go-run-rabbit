@@ -11,6 +11,21 @@ export interface SessionReport {
   data: SessionReportData;
 }
 
+// Per-ticket-group row scraped from Ticketure's session Summary Report.
+// Fields are nullable because column presence drifts depending on venue
+// and whether the session has any refunds.
+export interface TicketGroupReport {
+  ticket_group_name: string;
+  reserved: number | null;
+  redeemed: number | null;
+  gross_revenue: number | null;
+  net_to_bank: number | null;
+  tickets_paid: number | null;
+  tickets_free: number | null;
+  tickets_refunded: number | null;
+  revenue_refunded: number | null;
+}
+
 export interface SessionReportData {
   title: string;
   reserved: number | null;
@@ -28,6 +43,9 @@ export interface SessionReportData {
   net_to_bank: number | null;
   revenue_sold: number | null;
   revenue_refunded: number | null;
+  // Added 2026-04-19: per-ticket-group breakdown from Ticketure. Empty
+  // array on older summaries pulled before the scraper was extended.
+  ticket_groups?: TicketGroupReport[];
 }
 
 export interface DateSessionReport {
@@ -97,4 +115,47 @@ export function sumSessionReport(r: DateSessionReport): SessionReportTotals {
   }
   totals.capacity_percent = totals.capacity > 0 ? totals.reserved / totals.capacity : 0;
   return totals;
+}
+
+/**
+ * Aggregate per-ticket-group rows across all sessions for a date. Manor
+ * (9 sessions) and Noir (1 session) both flatten cleanly — sums the same
+ * ticket_group_name across sessions. Returns null if no session has
+ * per-group data yet (pulls from before the scraper was extended).
+ */
+export function aggregateTicketGroups(
+  r: DateSessionReport,
+): TicketGroupReport[] | null {
+  const anyHasGroups = r.sessions.some((s) => (s.data.ticket_groups?.length ?? 0) > 0);
+  if (!anyHasGroups) return null;
+
+  const merged = new Map<string, TicketGroupReport>();
+  for (const s of r.sessions) {
+    const groups = s.data.ticket_groups ?? [];
+    for (const g of groups) {
+      const key = g.ticket_group_name.trim();
+      if (!key) continue;
+      const existing = merged.get(key);
+      if (!existing) {
+        merged.set(key, { ...g, ticket_group_name: key });
+        continue;
+      }
+      const addN = (a: number | null, b: number | null) =>
+        a == null && b == null ? null : (a ?? 0) + (b ?? 0);
+      merged.set(key, {
+        ticket_group_name: key,
+        reserved: addN(existing.reserved, g.reserved),
+        redeemed: addN(existing.redeemed, g.redeemed),
+        gross_revenue: addN(existing.gross_revenue, g.gross_revenue),
+        net_to_bank: addN(existing.net_to_bank, g.net_to_bank),
+        tickets_paid: addN(existing.tickets_paid, g.tickets_paid),
+        tickets_free: addN(existing.tickets_free, g.tickets_free),
+        tickets_refunded: addN(existing.tickets_refunded, g.tickets_refunded),
+        revenue_refunded: addN(existing.revenue_refunded, g.revenue_refunded),
+      });
+    }
+  }
+  return Array.from(merged.values()).sort(
+    (a, b) => (b.reserved ?? 0) - (a.reserved ?? 0),
+  );
 }
