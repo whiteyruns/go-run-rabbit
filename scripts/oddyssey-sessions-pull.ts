@@ -93,22 +93,74 @@ async function loginIfNeeded(page: Page, email: string, password: string) {
  * session URL pattern and extract the UUIDs.
  */
 async function enumerateSessions(page: Page, flocator: FrameLocator, date: string) {
-  // The Sessions tab shows a calendar. Click the target date first.
-  const [, , d] = date.split("-").map(Number);
-  const targetDay = d;
-  const dayCell = flocator
-    .locator(`td:has-text("${targetDay}"), button:has-text("${targetDay}")`)
-    .first();
-  await dayCell.click({ timeout: 4000 }).catch(() => {});
-  await page.waitForTimeout(800);
+  // The Sessions tab shows a Bootstrap datepicker (.datepicker). The
+  // header button `.datepicker-switch` shows the current month like
+  // "Apr 2026"; `.prev` and `.next` step months. We must navigate to the
+  // target month BEFORE clicking the day number — otherwise we click
+  // the target day in whatever month the calendar happens to be showing
+  // (usually the current month), which is why historical dates silently
+  // returned 0 sessions prior to this fix.
+  const [targetY, targetM, targetD] = date.split("-").map(Number);
+  const targetMonthIdx = targetM - 1; // 0=Jan..11=Dec
 
-  // Get the actual Frame object so we can call evaluate()
+  // Read the calendar's current month label + step prev/next until we
+  // land on the target. Guard with a hop limit to avoid infinite loops
+  // if the datepicker hits its min/max range (Noir's range starts
+  // Apr 2025).
   const iframeEl = await page.locator("iframe").first().elementHandle();
   const frame: Frame | null = iframeEl ? await iframeEl.contentFrame() : null;
   if (!frame) {
     console.log("[sessions] could not access iframe content");
     return [];
   }
+
+  const readCurrentMonth = async (): Promise<{ year: number; month: number } | null> => {
+    const text = await frame.$eval(".datepicker-switch", (el) => (el.textContent || "").trim()).catch(() => "");
+    // Expected formats: "Apr 2026" or "April 2026"
+    const m = text.match(/^(\w+)\s+(\d{4})$/);
+    if (!m) return null;
+    const months = [
+      "january", "february", "march", "april", "may", "june",
+      "july", "august", "september", "october", "november", "december",
+    ];
+    const monthKey = m[1].toLowerCase().slice(0, 3);
+    const monthIdx = months.findIndex((n) => n.startsWith(monthKey));
+    if (monthIdx < 0) return null;
+    return { year: parseInt(m[2], 10), month: monthIdx };
+  };
+
+  let cur = await readCurrentMonth();
+  if (!cur) {
+    console.log(`[sessions] could not parse calendar header — falling back to raw day click`);
+  } else {
+    const targetIdx = targetY * 12 + targetMonthIdx;
+    let curIdx = cur.year * 12 + cur.month;
+    let hops = 0;
+    while (curIdx !== targetIdx && hops < 48) {
+      const selector = curIdx > targetIdx ? "th.prev" : "th.next";
+      const arrow = await frame.$(selector);
+      if (!arrow) break;
+      await arrow.click();
+      await page.waitForTimeout(150);
+      const next = await readCurrentMonth();
+      if (!next) break;
+      if (next.year === cur.year && next.month === cur.month) break; // hit min/max range
+      cur = next;
+      curIdx = cur.year * 12 + cur.month;
+      hops += 1;
+    }
+    if (curIdx !== targetIdx) {
+      console.log(`[sessions] could not navigate calendar to ${targetY}-${String(targetM).padStart(2, "0")} (stopped at ${cur?.year}-${String((cur?.month ?? 0) + 1).padStart(2, "0")})`);
+      return [];
+    }
+  }
+
+  // Click the target day within the current (now correct) month. Only
+  // match cells in the .day class — "old" and "new" classes are used
+  // for prev/next month spillover cells which have the same day number.
+  const dayCell = flocator.locator(`td.day:not(.old):not(.new):has-text("${targetD}")`).first();
+  await dayCell.click({ timeout: 4000 }).catch(() => {});
+  await page.waitForTimeout(800);
 
   const sessions = await frame.evaluate(() => {
     const out: { session_id: string; time_label: string }[] = [];
