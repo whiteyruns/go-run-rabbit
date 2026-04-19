@@ -1,6 +1,6 @@
 "use client";
 
-import type { ChannelMix as ChannelMixData } from "@/lib/oddyssey-sessions/loader";
+import type { ChannelMix as ChannelMixData } from "@/lib/oddyssey-sessions/channel-mix";
 
 function fmtUsd(n: number): string {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 });

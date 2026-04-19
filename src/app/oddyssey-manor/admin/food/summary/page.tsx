@@ -12,7 +12,7 @@ import {
   type SessionOccupancy,
 } from "@/lib/oddyssey-food/summary";
 import type { DashboardState } from "@/lib/oddyssey-food/types";
-import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/loader";
+import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/channel-mix";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 

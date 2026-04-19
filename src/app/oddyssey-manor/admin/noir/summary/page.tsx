@@ -11,7 +11,7 @@ import {
   type NoirTicketGroupRow,
 } from "@/lib/oddyssey-noir/pipeline";
 import type { NoirWeekOverWeek, NoirReportOverlay } from "@/lib/oddyssey-noir/history";
-import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/loader";
+import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/channel-mix";
 import { ChannelMixPanel } from "@/components/oddyssey-sessions/ChannelMix";
 
 export default function NoirSummaryPage() {
