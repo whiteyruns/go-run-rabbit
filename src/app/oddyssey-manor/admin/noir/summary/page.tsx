@@ -160,7 +160,7 @@ export default function NoirSummaryPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
             <HeadlineStat label="Tickets Sold" value={String(report.totals.reserved)} sub={`of ${report.totals.capacity} capacity`} />
-            <HeadlineStat label="Gross Revenue" value={formatNoirCurrency(report.totals.gross_revenue)} sub={`Net $${report.totals.net_to_bank.toFixed(0)} to bank`} />
+            <HeadlineStat label="Gross Revenue" value={formatNoirCurrency(report.totals.gross_revenue)} sub={`Net ${formatNoirCurrency(report.totals.net_to_bank)} to bank`} />
             <HeadlineStat label="Capacity" value={`${(report.totals.capacity_percent * 100).toFixed(1)}%`} sub={capacityLabel(report.totals.capacity_percent)} />
             <HeadlineStat label="Redeemed" value={`${report.totals.redeemed} · ${report.totals.reserved > 0 ? Math.round(report.totals.redeemed / report.totals.reserved * 100) : 0}%`} sub={`${report.totals.total_orders} orders`} />
           </div>

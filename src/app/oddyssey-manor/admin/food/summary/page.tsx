@@ -180,7 +180,7 @@ export default function SummaryPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
             <HeadlineStat label="Admissions" value={String(summary.tickets_sold)} sub={`butts in seats · Ticketure count: ${report.totals.reserved}`} />
-            <HeadlineStat label="Gross Revenue" value={formatCurrency(report.totals.gross_revenue)} sub={`Net $${report.totals.net_to_bank.toFixed(0)} to bank`} />
+            <HeadlineStat label="Gross Revenue" value={formatCurrency(report.totals.gross_revenue)} sub={`Net ${formatCurrency(report.totals.net_to_bank)} to bank`} />
             <HeadlineStat label="Capacity" value={`${((summary.tickets_sold / summary.capacity_total) * 100).toFixed(1)}%`} sub={capacityLabel(summary.tickets_sold / summary.capacity_total)} />
             <HeadlineStat label="Food to Prep" value={String(summary.food_items)} sub={`${summary.food.by_item.length} menu item${summary.food.by_item.length === 1 ? "" : "s"}`} />
           </div>

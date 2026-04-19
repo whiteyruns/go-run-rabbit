@@ -101,7 +101,7 @@ function tile(label: string, value: string, accent: string): string {
 }
 
 function formatMoney(n: number): string {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 function esc(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");

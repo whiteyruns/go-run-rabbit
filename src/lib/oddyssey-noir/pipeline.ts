@@ -273,5 +273,5 @@ export function buildNoirSummary(state: NoirState, date?: string): NoirSummary |
 }
 
 export function formatNoirCurrency(n: number): string {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
