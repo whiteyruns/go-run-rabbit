@@ -86,6 +86,18 @@ export default async function WeekendRecapPage({
           <Link href="/oddyssey-manor/admin/weekend-recap/upload">Upload xlsx →</Link>
         </div>
 
+        <div className={styles.masthead}>
+          <Link href="/oddyssey-manor" aria-label="Oddyssey home" className={styles.mastheadLogoLink}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/oddyssey/oddyssey-logo.svg"
+              alt="Oddyssey"
+              className={styles.mastheadLogo}
+            />
+          </Link>
+          <div className={styles.mastheadRule} />
+        </div>
+
         <header className={styles.header}>
           <div className={styles.eyebrow}>Monday Scrum · Weekend Recap</div>
           <h1 className={styles.title}>
