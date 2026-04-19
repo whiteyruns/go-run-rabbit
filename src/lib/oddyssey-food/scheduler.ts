@@ -171,6 +171,23 @@ async function sendEmail(
 const sendRecap = (venue: "manor" | "noir", date: string) => sendEmail("recap", venue, date);
 const sendBriefing = (venue: "manor" | "noir", date: string) => sendEmail("briefing", venue, date);
 
+// Monday 8 AM PT weekend-recap upload reminder. Dynamic import keeps the
+// dependency out of the scheduler's static graph so a failed require
+// can't break the other jobs.
+async function runWeekendRecapReminder() {
+  const stamp = new Date().toISOString();
+  console.log(`[oddyssey-scheduler] ${stamp} fire: weekend-recap-reminder`);
+  try {
+    const mod = await import("@/app/oddyssey-manor/admin/weekend-recap/reminder");
+    const result = await mod.runMondayReminder();
+    console.log(
+      `[oddyssey-scheduler] weekend-recap-reminder → sent=${result.sent} friday=${result.fridayAnchor} ${result.skippedReason ?? result.error ?? ""}`,
+    );
+  } catch (err) {
+    console.log(`[oddyssey-scheduler] weekend-recap-reminder failed: ${String(err)}`);
+  }
+}
+
 function todayLocal(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -221,6 +238,11 @@ export function startScheduler(): void {
     // Post-show pull at 03:00 Sat/Sun (after 2 AM close), recap at 03:15
     ["noir-postshow", "0 3 * * 6,0", () => runPull("noir-postshow", "noir", yesterdayLocal())],
     ["noir-recap", "15 3 * * 6,0", () => sendRecap("noir", yesterdayLocal())],
+
+    // --- WEEKEND RECAP ---
+    // Monday 8 AM PT — nudge Keith to upload MANOR P&L + NOIR Budgets workbooks.
+    // Idempotent: skips once the weekend file lands on disk.
+    ["weekend-recap-reminder", "0 8 * * 1", () => void runWeekendRecapReminder()],
   ];
 
   for (const [name, pattern, handler] of jobs) {

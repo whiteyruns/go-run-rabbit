@@ -1,0 +1,530 @@
+/* ═══════════════════════════════════════════════════════════
+   Weekend Recap — scoped styles.
+   Inherits the same visual system as Pour Log / Sponsor Recap / /admin:
+     bg #060606 · accent #c9a84c · Cormorant serif · Inter body · JetBrains mono labels
+
+   Layout pattern (Phase 3):
+     - Two venue cards side-by-side (Manor | Noir), each with Fri / Sat columns.
+     - YTD strip = horizontally scrollable monthly grid w/ Actual vs Budget.
+     - Upload page = drop-zone + dry-run summary table.
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.page {
+  --bg: #060606;
+  --surface: #0d0d0d;
+  --surface-elevated: #111111;
+  --surface-hi: #161616;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(201, 168, 76, 0.22);
+  --border-strong: rgba(201, 168, 76, 0.38);
+  --accent: #c9a84c;
+  --accent-dim: rgba(201, 168, 76, 0.10);
+  --accent-warm: #d4a574;
+  --text: #e8e4dd;
+  --text-secondary: #9a958d;
+  --text-muted: #5a5650;
+  --up: #6dc77f;
+  --down: #d87060;
+  --amber: #f39c12;
+  --cool: #6a7b8a;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding: 28px 18px 80px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* ─── Header ─── */
+.header {
+  border-bottom: 1px solid var(--border-accent);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+.title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+}
+.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ─── Section ─── */
+.section {
+  margin-bottom: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 20px;
+}
+.sectLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sectLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.sectLabelMeta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+/* ─── Nav row ─── */
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 18px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.navRow a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-accent);
+  padding-bottom: 1px;
+}
+.navRow a:hover { color: var(--accent); border-bottom-color: var(--border-strong); }
+
+/* ─── Week picker (matches Sponsor Recap) ─── */
+.weekPicker {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 22px;
+}
+.weekNav {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: border-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+.weekNav:hover { color: var(--accent); border-color: var(--border-strong); }
+.weekLabel { text-align: center; }
+.weekLabelEyebrow {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.weekLabelRange {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  color: var(--accent);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+.weekLabelDates {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Venue grid (Manor | Noir) ─── */
+.venueGrid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: 1fr;
+  margin-bottom: 22px;
+}
+@media (min-width: 880px) {
+  .venueGrid { grid-template-columns: 1fr 1fr; }
+}
+
+.venueCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 20px;
+}
+.venueCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px dotted var(--border);
+}
+.venueName {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 24px;
+  color: var(--text);
+}
+.venueName em { color: var(--accent); font-style: italic; }
+.venueMeta {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Fri/Sat columns inside a venue card */
+.nightPair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+}
+.nightCol {
+  background: var(--surface);
+  padding: 14px 14px;
+}
+.nightLabel {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.nightDate {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 0;
+  border-bottom: 1px dotted rgba(255,255,255,0.04);
+  font-size: 12.5px;
+}
+.statRow:last-child { border-bottom: none; }
+.statLbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.statVal {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  color: var(--text);
+  font-weight: 400;
+}
+.statVal.good { color: var(--up); }
+.statVal.bad { color: var(--down); }
+.statVal.muted { color: var(--text-muted); }
+
+.costGroup {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dotted var(--border);
+}
+.costGroupLbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.nightEmpty {
+  background: var(--surface);
+  padding: 36px 14px;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+/* ─── YTD strip ─── */
+.ytdStrip {
+  margin-bottom: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 20px;
+}
+.ytdScroll {
+  overflow-x: auto;
+  margin: 0 -20px;
+  padding: 0 20px;
+}
+.ytdTable {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 11px;
+}
+.ytdTable th {
+  text-align: right;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.ytdTable th:first-child { text-align: left; }
+.ytdTable th.month {
+  color: var(--accent);
+  border-bottom-color: var(--border-accent);
+}
+.ytdTable td {
+  padding: 8px 12px;
+  text-align: right;
+  border-bottom: 1px dotted rgba(255,255,255,0.04);
+  color: var(--text);
+}
+.ytdTable td:first-child {
+  text-align: left;
+  font-family: var(--sans);
+  color: var(--text-secondary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 10.5px;
+}
+.ytdTable td.bad { color: var(--down); }
+.ytdTable td.good { color: var(--up); }
+.ytdTable td.muted { color: var(--text-muted); }
+.ytdTable .rowBudget td {
+  color: var(--text-muted);
+  font-size: 10.5px;
+}
+.ytdTable .rowBudget td:first-child { color: var(--text-muted); }
+.ytdRowVenue td:first-child {
+  color: var(--accent);
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  text-transform: none;
+  letter-spacing: 0;
+  padding-top: 18px;
+}
+
+/* ─── Upload page ─── */
+.uploadCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 28px;
+  margin-bottom: 22px;
+}
+.dropZone {
+  border: 2px dashed var(--border-accent);
+  background: var(--bg);
+  padding: 36px 20px;
+  text-align: center;
+  margin-bottom: 18px;
+}
+.dropZone input[type="file"] {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  background: var(--surface-hi);
+  border: 1px solid var(--border);
+  padding: 8px 10px;
+  margin-top: 12px;
+}
+.dropHint {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+.dropHint code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 1px 6px;
+  font-style: normal;
+}
+
+.summaryTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  margin-top: 14px;
+}
+.summaryTable th {
+  text-align: left;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--accent);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.summaryTable td {
+  padding: 8px 10px;
+  border-bottom: 1px dotted rgba(255,255,255,0.04);
+  color: var(--text);
+}
+.warning {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--down);
+  margin-top: 8px;
+}
+
+.submit {
+  background: var(--accent);
+  color: var(--bg);
+  border: 1px solid var(--accent);
+  padding: 16px 28px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.submit:hover:not(:disabled) { background: var(--accent-warm); }
+.submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ─── Status banners ─── */
+.status {
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  margin-bottom: 18px;
+  border-left: 2px solid var(--cool);
+}
+.status.success {
+  background: rgba(109, 199, 127, 0.06);
+  border-color: rgba(109, 199, 127, 0.2);
+  border-left-color: var(--up);
+  color: var(--text);
+}
+.status.error {
+  background: rgba(216, 112, 96, 0.06);
+  border-color: rgba(216, 112, 96, 0.22);
+  border-left-color: var(--down);
+  color: var(--text);
+}
+.status strong { color: var(--accent); font-weight: 500; }
+.status code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--accent);
+}
+
+/* ─── Notes ─── */
+.notes {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: rgba(106, 123, 138, 0.04);
+  border: 1px solid rgba(106, 123, 138, 0.16);
+  border-left: 2px solid var(--cool);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.notes .noteLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cool);
+  margin-bottom: 6px;
+}
+.notes strong { color: var(--text); }
+.notes code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--accent);
+}
+
+/* ─── Empty state ─── */
+.emptyState {
+  padding: 48px 24px;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text-secondary);
+}
+.emptyState a {
+  color: var(--accent);
+  text-decoration: underline dotted;
+}

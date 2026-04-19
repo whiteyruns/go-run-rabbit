@@ -1,0 +1,446 @@
+/**
+ * Weekend Recap — Monday scrum view.
+ *
+ * Top: Fri + Sat snapshot per venue (Manor | Noir).
+ * Bottom: YTD strip — month-over-month trajectory, Actual vs Budget, per venue.
+ *
+ * `?weekend=YYYY-MM-DD` picks a specific Friday anchor; default = most recent.
+ */
+
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import styles from './weekend-recap.module.css';
+import {
+  formatInt,
+  formatMoney,
+  formatWeekendLabel,
+  isValidDate,
+  listRecentWeekends,
+  mostRecentWeekend,
+  readWeekendJSON,
+  readYTDRollup,
+  type VenueNight,
+  type YTDRollup,
+  type WeekendRecap,
+} from './lib';
+
+export const metadata: Metadata = {
+  title: 'Weekend Recap · Oddyssey',
+  description: 'Monday-scrum snapshot: Fri + Sat per venue, plus YTD trajectory.',
+};
+
+export const dynamic = 'force-dynamic';
+
+export default async function WeekendRecapPage({
+  searchParams,
+}: {
+  searchParams: { weekend?: string };
+}) {
+  const friday =
+    searchParams?.weekend && isValidDate(searchParams.weekend)
+      ? searchParams.weekend
+      : mostRecentWeekend().friday;
+
+  const [recap, manorYTD, noirYTD, recentList] = await Promise.all([
+    readWeekendJSON(friday),
+    readYTDRollup('manor', 2026),
+    readYTDRollup('noir', 2026),
+    listRecentWeekends(16),
+  ]);
+
+  const prev = shiftFriday(friday, -7);
+  const next = shiftFriday(friday, 7);
+  const label = formatWeekendLabel(friday);
+
+  const lastUpload = recap.lastUploadedAt
+    ? new Date(recap.lastUploadedAt).toLocaleString('en-US', {
+        timeZone: 'America/Los_Angeles',
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+      })
+    : null;
+
+  const hasAnyData =
+    recap.manor.fri || recap.manor.sat || recap.noir.fri || recap.noir.sat;
+
+  return (
+    <main className={styles.page}>
+      <div className={styles.container}>
+        <div className={styles.navRow}>
+          <Link href="/oddyssey-manor/admin">← Admin</Link>
+          <Link href="/oddyssey-manor/admin/weekend-recap/upload">Upload xlsx →</Link>
+        </div>
+
+        <header className={styles.header}>
+          <div className={styles.eyebrow}>Monday Scrum · Weekend Recap</div>
+          <h1 className={styles.title}>
+            How did the weekend <em>land?</em>
+          </h1>
+          <p className={styles.sub}>
+            Fri + Sat snapshot per venue, plus YTD trajectory. Upload the GM&apos;s
+            xlsx files on Monday morning to refresh.
+          </p>
+        </header>
+
+        <div className={styles.weekPicker}>
+          <Link
+            href={`/oddyssey-manor/admin/weekend-recap?weekend=${prev}`}
+            className={styles.weekNav}
+          >
+            ← Prev weekend
+          </Link>
+          <div className={styles.weekLabel}>
+            <div className={styles.weekLabelEyebrow}>Weekend of</div>
+            <div className={styles.weekLabelRange}>{label}</div>
+            <div className={styles.weekLabelDates}>
+              {lastUpload ? `Uploaded ${lastUpload}` : 'Not yet uploaded'}
+            </div>
+          </div>
+          <Link
+            href={`/oddyssey-manor/admin/weekend-recap?weekend=${next}`}
+            className={styles.weekNav}
+          >
+            Next weekend →
+          </Link>
+        </div>
+
+        {!hasAnyData ? (
+          <div className={`${styles.section} ${styles.emptyState}`}>
+            No data yet for this weekend.
+            <br />
+            <Link href="/oddyssey-manor/admin/weekend-recap/upload">
+              Upload the Manor P&amp;L + Noir Budgets &amp; Reports xlsx files →
+            </Link>
+          </div>
+        ) : (
+          <div className={styles.venueGrid}>
+            <VenueCard
+              name="Manor"
+              slug="manor"
+              fri={recap.manor.fri}
+              sat={recap.manor.sat}
+            />
+            <VenueCard
+              name="Noir"
+              slug="noir"
+              fri={recap.noir.fri}
+              sat={recap.noir.sat}
+            />
+          </div>
+        )}
+
+        <YTDStrip manor={manorYTD} noir={noirYTD} />
+
+        <RecentWeekends list={recentList} current={friday} />
+
+        <div className={styles.notes}>
+          <div className={styles.noteLabel}>Data lineage</div>
+          Tickets come from the Ticketure nightly scrape. Bar and per-night cost
+          lines come from the GM&apos;s weekly <code>MANOR P&amp;L.xlsx</code> +{' '}
+          <code>NOIR Budgets &amp; Reports.xlsx</code> uploads. YTD rollup
+          matches the P&amp;L tabs (Manor) and the YTD REPORT sheet (Noir).
+          SharePoint auto-fetch lands once the GoDaddy → Microsoft 365 migration
+          completes.
+        </div>
+      </div>
+    </main>
+  );
+}
+
+// ─── Venue card ────────────────────────────────────────────────────────────
+
+function VenueCard({
+  name,
+  slug,
+  fri,
+  sat,
+}: {
+  name: string;
+  slug: 'manor' | 'noir';
+  fri: VenueNight | null;
+  sat: VenueNight | null;
+}) {
+  const any = fri || sat;
+  const eveningLabel = slug === 'noir' ? 'Liber Gigante · Noir' : 'Manor · Fri + Sat';
+
+  return (
+    <div className={styles.venueCard}>
+      <div className={styles.venueCardHeader}>
+        <div className={styles.venueName}>
+          <em>{name}</em>
+        </div>
+        <div className={styles.venueMeta}>{eveningLabel}</div>
+      </div>
+
+      {!any ? (
+        <div className={styles.nightEmpty}>No data yet for this weekend.</div>
+      ) : (
+        <div className={styles.nightPair}>
+          <NightColumn label="Friday" night={fri} venue={slug} />
+          <NightColumn label="Saturday" night={sat} venue={slug} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NightColumn({
+  label,
+  night,
+  venue,
+}: {
+  label: string;
+  night: VenueNight | null;
+  venue: 'manor' | 'noir';
+}) {
+  if (!night) {
+    return (
+      <div className={styles.nightCol}>
+        <div className={styles.nightLabel}>{label}</div>
+        <div className={styles.nightEmpty}>No {label.toLowerCase()} data</div>
+      </div>
+    );
+  }
+
+  const dayLabel = new Date(`${night.date}T00:00:00Z`).toLocaleString('en-US', {
+    timeZone: 'UTC',
+    month: 'short',
+    day: 'numeric',
+  });
+
+  const costs = venue === 'manor' ? MANOR_COSTS : NOIR_COSTS;
+
+  return (
+    <div className={styles.nightCol}>
+      <div className={styles.nightLabel}>{label}</div>
+      <div className={styles.nightDate}>{dayLabel}</div>
+
+      <StatRow label="Tickets Sold" value={formatInt(night.ticketsIssued)} />
+      <StatRow label="Redeemed" value={formatInt(night.ticketsRedeemed)} />
+      <StatRow label="Net Ticket Rev" value={formatMoney(night.netTicketRev)} />
+      <StatRow label="Bar NET" value={formatMoney(night.barNet)} />
+
+      <div className={styles.costGroup}>
+        <div className={styles.costGroupLbl}>
+          {venue === 'manor' ? 'Per-night cost lines' : 'Per-night cost lines'}
+        </div>
+        {costs.map(([key, label]) => (
+          <StatRow
+            key={key}
+            label={label}
+            value={formatMoney(night.costs[key] ?? null)}
+            tone={night.costs[key] != null && night.costs[key]! < 0 ? 'bad' : 'default'}
+          />
+        ))}
+        {venue === 'noir' && night.totalNet != null && (
+          <StatRow
+            label="Total Net"
+            value={formatMoney(night.totalNet)}
+            tone={night.totalNet < 0 ? 'bad' : 'good'}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function StatRow({
+  label,
+  value,
+  tone = 'default',
+}: {
+  label: string;
+  value: string;
+  tone?: 'default' | 'good' | 'bad' | 'muted';
+}) {
+  const cls =
+    tone === 'good' ? styles.good : tone === 'bad' ? styles.bad : tone === 'muted' ? styles.muted : '';
+  return (
+    <div className={styles.statRow}>
+      <div className={styles.statLbl}>{label}</div>
+      <div className={`${styles.statVal} ${cls}`}>{value}</div>
+    </div>
+  );
+}
+
+const MANOR_COSTS: [string, string][] = [
+  ['cast', 'Cast'],
+  ['rehearsals', 'Rehearsals'],
+  ['rigger', 'Rigger'],
+];
+
+const NOIR_COSTS: [string, string][] = [
+  ['staciaTalent', 'Stacia Talent'],
+  ['dj', 'DJ'],
+  ['totalStaffing', 'Total Staffing'],
+  ['houseTab', 'House Tab'],
+  ['incentives', 'Incentives'],
+];
+
+// ─── YTD strip ─────────────────────────────────────────────────────────────
+
+function YTDStrip({ manor, noir }: { manor: YTDRollup; noir: YTDRollup }) {
+  // Only show months that have any data (actual or budget) in either venue.
+  const relevant = manor.rows
+    .map((mRow, i) => ({
+      i,
+      m: mRow,
+      n: noir.rows[i],
+    }))
+    .filter(
+      ({ m, n }) =>
+        hasAny(m) || hasAny(n),
+    );
+
+  if (relevant.length === 0) {
+    return (
+      <div className={styles.ytdStrip}>
+        <div className={styles.sectLabel}>YTD 2026 <span className={styles.sectLabelMeta}>(upload to populate)</span></div>
+        <div className={styles.emptyState}>
+          No YTD data yet. Upload the Manor P&amp;L + Noir YTD Report to populate.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.ytdStrip}>
+      <div className={styles.sectLabel}>
+        YTD 2026 <span className={styles.sectLabelMeta}>— Actual vs Budget</span>
+      </div>
+      <div className={styles.ytdScroll}>
+        <table className={styles.ytdTable}>
+          <thead>
+            <tr>
+              <th>Venue · Line</th>
+              {relevant.map(({ m }) => (
+                <th key={m.month} className={styles.month}>
+                  {shortMonth(m.month)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr className={styles.ytdRowVenue}>
+              <td colSpan={relevant.length + 1}>Manor</td>
+            </tr>
+            <tr>
+              <td>Actual Rev</td>
+              {relevant.map(({ m }) => (
+                <td key={`mrev-${m.month}`}>{formatMoney(m.actualRev, { compact: true })}</td>
+              ))}
+            </tr>
+            <tr>
+              <td>Actual Net</td>
+              {relevant.map(({ m }) => (
+                <td
+                  key={`mnet-${m.month}`}
+                  className={netTone(m.actualNet)}
+                >
+                  {formatMoney(m.actualNet, { compact: true })}
+                </td>
+              ))}
+            </tr>
+            <tr className={styles.rowBudget}>
+              <td>Budget Net</td>
+              {relevant.map(({ m }) => (
+                <td key={`mbnet-${m.month}`}>{formatMoney(m.budgetNet, { compact: true })}</td>
+              ))}
+            </tr>
+
+            <tr className={styles.ytdRowVenue}>
+              <td colSpan={relevant.length + 1}>Noir</td>
+            </tr>
+            <tr>
+              <td>Actual Rev</td>
+              {relevant.map(({ n }) => (
+                <td key={`nrev-${n.month}`}>{formatMoney(n.actualRev, { compact: true })}</td>
+              ))}
+            </tr>
+            <tr>
+              <td>Actual Net</td>
+              {relevant.map(({ n }) => (
+                <td key={`nnet-${n.month}`} className={netTone(n.actualNet)}>
+                  {formatMoney(n.actualNet, { compact: true })}
+                </td>
+              ))}
+            </tr>
+            <tr className={styles.rowBudget}>
+              <td>Budget Net</td>
+              {relevant.map(({ n }) => (
+                <td key={`nbnet-${n.month}`}>{formatMoney(n.budgetNet, { compact: true })}</td>
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function hasAny(row: { actualRev: number | null; actualNet: number | null; budgetRev: number | null; budgetNet: number | null }): boolean {
+  return row.actualRev != null || row.actualNet != null || row.budgetRev != null || row.budgetNet != null;
+}
+
+function netTone(n: number | null): string {
+  if (n == null) return '';
+  return n < 0 ? styles.bad : styles.good;
+}
+
+function shortMonth(ym: string): string {
+  const [y, m] = ym.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, 1)).toLocaleString('en-US', {
+    timeZone: 'UTC',
+    month: 'short',
+  });
+}
+
+// ─── Recent weekends nav ───────────────────────────────────────────────────
+
+function RecentWeekends({ list, current }: { list: string[]; current: string }) {
+  if (list.length === 0) return null;
+  return (
+    <div className={styles.section}>
+      <div className={styles.sectLabel}>Recent uploads</div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {list.map((friday) => {
+          const isCurrent = friday === current;
+          return (
+            <Link
+              key={friday}
+              href={`/oddyssey-manor/admin/weekend-recap?weekend=${friday}`}
+              className={styles.weekNav}
+              style={
+                isCurrent
+                  ? {
+                      borderColor: 'var(--accent)',
+                      color: 'var(--accent)',
+                    }
+                  : undefined
+              }
+            >
+              {friday}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Date helpers ──────────────────────────────────────────────────────────
+
+function shiftFriday(iso: string, days: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  const yy = dt.getUTCFullYear();
+  const mm = String(dt.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(dt.getUTCDate()).padStart(2, '0');
+  return `${yy}-${mm}-${dd}`;
+}
+
+// unused export stub so tsc is happy with WeekendRecap import (actual consumer: recap arg)
+export type _WR = WeekendRecap;
