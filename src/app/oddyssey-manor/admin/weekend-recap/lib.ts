@@ -275,6 +275,48 @@ export async function upsertVenueNight(night: VenueNight): Promise<string> {
   return anchor;
 }
 
+/**
+ * Merge a Budget-workbook rollup into the existing YTD file for a venue.
+ *
+ * The Budget workbook is the authoritative 2026 budget source for Manor
+ * (Manor P&L doesn't carry a budget column), but for Noir the NOIR
+ * Budgets & Reports file already populates budget columns from its YTD
+ * REPORT sheet — and the numbers come from a different lens (venue
+ * operating target vs rolled-up monthly forecast). So we only overlay
+ * budget cells that are currently null; actuals are never touched.
+ *
+ * This keeps the two uploads independent: whichever workbook touched a
+ * given (month, field) first wins, unless that field is still null.
+ */
+export async function mergeYTDBudget(
+  venue: Venue,
+  year: number,
+  budgetRows: YTDMonthRow[],
+): Promise<{ updatedFields: number }> {
+  const existing = await readYTDRollup(venue, year);
+  const byMonth = new Map(existing.rows.map((r) => [r.month, r]));
+  let updatedFields = 0;
+  for (const incoming of budgetRows) {
+    const current = byMonth.get(incoming.month);
+    if (!current) continue;
+    if (current.budgetRev == null && incoming.budgetRev != null) {
+      current.budgetRev = incoming.budgetRev;
+      updatedFields += 1;
+    }
+    if (current.budgetNet == null && incoming.budgetNet != null) {
+      current.budgetNet = incoming.budgetNet;
+      updatedFields += 1;
+    }
+  }
+  await writeYTDRollup({
+    venue,
+    year,
+    rows: Array.from(byMonth.values()),
+    lastUploadedAt: existing.lastUploadedAt,
+  });
+  return { updatedFields };
+}
+
 // ─── Display helpers ───────────────────────────────────────────────────────
 
 export function formatWeekendLabel(fridayISO: string): string {

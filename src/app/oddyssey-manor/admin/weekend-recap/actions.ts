@@ -14,19 +14,20 @@
 import { revalidatePath } from 'next/cache';
 import { parseManorWorkbook } from './parser-manor';
 import { parseNoirWorkbook } from './parser-noir';
+import { parseBudgetWorkbook } from './parser-budget';
 import type { VenueNight, YTDMonthRow } from './lib';
-import { upsertVenueNight, writeYTDRollup } from './lib';
+import { upsertVenueNight, writeYTDRollup, mergeYTDBudget } from './lib';
 import * as XLSX from 'xlsx';
 
 export interface UploadOutcome {
   ok: boolean;
   error?: string;
   summary?: {
-    workbookType: 'manor' | 'noir';
+    workbookType: 'manor' | 'noir' | 'budget';
     filename: string;
     nightsWritten: number;
     ytdMonthsPopulated: number;
-    weekendsTouched: string[];   // ISO Friday anchors
+    weekendsTouched: string[];   // ISO Friday anchors (empty for budget workbooks)
     warnings: string[];
   }[];
 }
@@ -72,7 +73,7 @@ export async function uploadWorkbooks(formData: FormData): Promise<UploadOutcome
         weekendsTouched: touched,
         warnings: result.warnings,
       });
-    } else {
+    } else if (workbookType === 'noir') {
       const result = parseNoirWorkbook(buf, DEFAULT_YEAR);
       const touched = await writeNightsAndYTD('noir', result.nights, result.ytd);
       summary.push({
@@ -81,6 +82,20 @@ export async function uploadWorkbooks(formData: FormData): Promise<UploadOutcome
         nightsWritten: result.nights.length,
         ytdMonthsPopulated: result.ytd.filter((m) => m.actualNet != null).length,
         weekendsTouched: touched,
+        warnings: result.warnings,
+      });
+    } else {
+      // Budget workbook: overlay (don't overwrite) budget cells on both
+      // venue YTD rollups. Fields that already have values stay as-is.
+      const result = parseBudgetWorkbook(buf, DEFAULT_YEAR);
+      const manorMerge = await mergeYTDBudget('manor', DEFAULT_YEAR, result.manor);
+      const noirMerge = await mergeYTDBudget('noir', DEFAULT_YEAR, result.noir);
+      summary.push({
+        workbookType: 'budget',
+        filename: entry.name,
+        nightsWritten: 0,
+        ytdMonthsPopulated: manorMerge.updatedFields + noirMerge.updatedFields,
+        weekendsTouched: [],
         warnings: result.warnings,
       });
     }
@@ -113,11 +128,16 @@ async function writeNightsAndYTD(
  * Decide which parser to run by inspecting sheet names.
  *   - Manor P&L has "<Month> P&L" sheets and "<Month> Rev" sheets.
  *   - Noir Budgets & Reports has "YTD REPORT" and "LG <date> Report" / "NOIR <date> Report".
+ *   - 2026 Budget workbook has the "Oddyssey_Monthly" roll-up sheet. Checked
+ *     first because some budget workbooks also include "<Month>-like" tabs
+ *     that would otherwise be mistaken for a P&L workbook.
  */
-function detectWorkbookType(buf: Buffer): 'manor' | 'noir' | null {
+function detectWorkbookType(buf: Buffer): 'manor' | 'noir' | 'budget' | null {
   try {
     const wb = XLSX.read(buf, { bookSheets: true }); // fast: only sheet names
-    const names = wb.SheetNames.map((n) => n.toUpperCase());
+    const namesOriginal = wb.SheetNames;
+    const names = namesOriginal.map((n) => n.toUpperCase());
+    if (namesOriginal.includes('Oddyssey_Monthly')) return 'budget';
     if (names.some((n) => n === 'YTD REPORT' || /NOIR\s+\d|\bLG\s+\d/.test(n))) return 'noir';
     if (names.some((n) => /MANOR PER SHOW COST|P\s*&\s*L/.test(n) && names.some((n2) => /\bREV\b/.test(n2))))
       return 'manor';

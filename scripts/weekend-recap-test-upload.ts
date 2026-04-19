@@ -9,7 +9,8 @@ import fs from "fs";
 import path from "path";
 import { parseManorWorkbook } from "@/app/oddyssey-manor/admin/weekend-recap/parser-manor";
 import { parseNoirWorkbook } from "@/app/oddyssey-manor/admin/weekend-recap/parser-noir";
-import { upsertVenueNight, writeYTDRollup } from "@/app/oddyssey-manor/admin/weekend-recap/lib";
+import { parseBudgetWorkbook } from "@/app/oddyssey-manor/admin/weekend-recap/parser-budget";
+import { upsertVenueNight, writeYTDRollup, mergeYTDBudget } from "@/app/oddyssey-manor/admin/weekend-recap/lib";
 
 const DEFAULT_YEAR = 2026;
 const UPLOAD_DIR = path.join(process.env.HOME || "/Users/white", "tmp-upload-test");
@@ -28,7 +29,7 @@ async function main() {
     const anchors = new Set<string>();
     for (const n of result.nights) anchors.add(await upsertVenueNight(n));
     await writeYTDRollup({ venue: "manor", year: DEFAULT_YEAR, rows: result.ytd, lastUploadedAt: null });
-    console.log(`  weekends touched: ${[...anchors].sort().join(", ")}`);
+    console.log(`  weekends touched: ${Array.from(anchors).sort().join(", ")}`);
   } else {
     console.log(`  ${manorPath} missing — skipping`);
   }
@@ -43,9 +44,23 @@ async function main() {
     const anchors = new Set<string>();
     for (const n of result.nights) anchors.add(await upsertVenueNight(n));
     await writeYTDRollup({ venue: "noir", year: DEFAULT_YEAR, rows: result.ytd, lastUploadedAt: null });
-    console.log(`  weekends touched: ${[...anchors].sort().join(", ")}`);
+    console.log(`  weekends touched: ${Array.from(anchors).sort().join(", ")}`);
   } else {
     console.log(`  ${noirPath} missing — skipping`);
+  }
+
+  const budgetPath = path.join(UPLOAD_DIR, "2026 Budget.xlsx");
+  console.log("\n=== 2026 Budget workbook ===");
+  if (fs.existsSync(budgetPath)) {
+    const buf = fs.readFileSync(budgetPath);
+    const result = parseBudgetWorkbook(buf, DEFAULT_YEAR);
+    if (result.warnings.length) console.log(`  warnings:`, result.warnings);
+    const manorMerge = await mergeYTDBudget("manor", DEFAULT_YEAR, result.manor);
+    const noirMerge = await mergeYTDBudget("noir", DEFAULT_YEAR, result.noir);
+    console.log(`  manor budget fields filled: ${manorMerge.updatedFields}`);
+    console.log(`  noir budget fields filled (null slots only): ${noirMerge.updatedFields}`);
+  } else {
+    console.log(`  ${budgetPath} missing — skipping`);
   }
 
   console.log("\n=== Files on disk ===");
