@@ -478,19 +478,28 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
   };
 
   const anchor = recap.weekendOf;
-  // Manor: all four nights. Fri/Sat overlay xlsx → live; Thu/Sun are
-  // fully synthesized from Ticketure because xlsx doesn't carry those rows.
+  // For every venue-night slot: if the xlsx carried a row, overlay the
+  // live Ticketure net-ticket-rev; if it didn't, synthesize entirely
+  // from Ticketure (reserved/redeemed/net_to_bank). Cost lines + bar
+  // NET only come from xlsx, so synthesized nights leave those blank.
+  // This is what makes historical weekends render even when the GM
+  // never uploaded an xlsx for them.
+  const slot = async (
+    existing: VenueNight | null,
+    venue: Venue,
+    night: Weeknight,
+  ) =>
+    existing
+      ? enrichNight(existing)
+      : synthesizeNightFromLive(venue, night, dateForNight(anchor, night));
+
   const [manorThu, manorFri, manorSat, manorSun, noirFri, noirSat] = await Promise.all([
-    recap.manor.thu
-      ? enrichNight(recap.manor.thu)
-      : synthesizeNightFromLive('manor', 'thu', dateForNight(anchor, 'thu')),
-    enrichNight(recap.manor.fri),
-    enrichNight(recap.manor.sat),
-    recap.manor.sun
-      ? enrichNight(recap.manor.sun)
-      : synthesizeNightFromLive('manor', 'sun', dateForNight(anchor, 'sun')),
-    enrichNight(recap.noir.fri),
-    enrichNight(recap.noir.sat),
+    slot(recap.manor.thu, 'manor', 'thu'),
+    slot(recap.manor.fri, 'manor', 'fri'),
+    slot(recap.manor.sat, 'manor', 'sat'),
+    slot(recap.manor.sun, 'manor', 'sun'),
+    slot(recap.noir.fri, 'noir', 'fri'),
+    slot(recap.noir.sat, 'noir', 'sat'),
   ]);
 
   return {
