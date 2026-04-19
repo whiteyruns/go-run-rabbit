@@ -82,6 +82,11 @@ export interface WeekendRecap {
   manor: ManorWeekend;
   noir: NoirWeekend;
   lastUploadedAt: string | null;       // ISO8601, updated on any weekend-file write
+  // Freeform qualitative notes for the Monday scrum — photo/video shoots,
+  // media visits, VIP bookings, celebrity drop-ins, anything the numbers
+  // won't tell us. Edited inline on the scrum page, persisted here.
+  highlights?: string | null;
+  highlightsUpdatedAt?: string | null; // ISO8601
 }
 
 /** Weeknights each venue operates — drives display + enrichment. */
@@ -301,6 +306,23 @@ export async function writeYTDRollup(rollup: YTDRollup): Promise<void> {
  * they extract, so one upload of MANOR P&L updates Manor without clobbering
  * any prior Noir upload for the same weekend.
  */
+/**
+ * Patch only the `highlights` field on a weekend JSON, preserving all
+ * venue rows + budget data. Creates the file if it doesn't exist yet.
+ */
+export async function saveWeekendHighlights(
+  fridayISO: string,
+  highlights: string,
+): Promise<void> {
+  const existing = await readWeekendJSON(fridayISO);
+  await writeWeekendJSON({
+    ...existing,
+    weekendOf: fridayISO,
+    highlights: highlights.trim() || null,
+    highlightsUpdatedAt: new Date().toISOString(),
+  });
+}
+
 export async function upsertVenueNight(night: VenueNight): Promise<string> {
   const anchor = weekendAnchorFor(night.date);
   const existing = await readWeekendJSON(anchor);

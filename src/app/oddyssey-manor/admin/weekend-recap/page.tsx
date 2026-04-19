@@ -10,6 +10,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import styles from './weekend-recap.module.css';
+import HighlightsEditor from './HighlightsEditor';
 import {
   buildWoWSeries,
   champagnePoursFromBottles,
@@ -118,6 +119,12 @@ export default async function WeekendRecapPage({
             Next weekend →
           </Link>
         </div>
+
+        <HighlightsEditor
+          weekendOf={friday}
+          initial={recap.highlights ?? ''}
+          updatedAt={recap.highlightsUpdatedAt ?? null}
+        />
 
         {hasAnyData && (
           <ExecutiveSummary
