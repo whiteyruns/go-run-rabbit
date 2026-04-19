@@ -128,6 +128,14 @@ function buildNoirNight(
     const r = findByLabel(label);
     return r != null ? num(rows[r]?.[valueCol]) : null;
   };
+  // Stacia's Noir report template pre-fills a lot of rows with `0` as a
+  // placeholder for "not yet entered" (Net POS Beverage, Final Click,
+  // F&B PPA, etc.). A Noir show with hundreds of redemptions having
+  // literally $0 in bar revenue is implausible, so we flip a literal
+  // zero to null for barNet so the UI renders — instead of a misleading
+  // $0.00. True-zero bar nights can set something non-zero or we revise
+  // when we see a false negative.
+  const barRaw = get('Net POS Beverage');
   return {
     date,
     venue: 'noir',
@@ -135,7 +143,7 @@ function buildNoirNight(
     ticketsIssued: get('Tickets Reserved'),
     ticketsRedeemed: get('Tickets Redeemed'),
     netTicketRev: get('Net Ticket Rev'),
-    barNet: get('Net POS Beverage'),
+    barNet: barRaw === 0 ? null : barRaw,
     costs: {
       marketing: get('Marketing'),
       staciaTalent: get('Stacia Talent'),
