@@ -230,8 +230,18 @@ function NightColumn({
       <div className={styles.nightLabel}>{label}</div>
       <div className={styles.nightDate}>{dayLabel}</div>
 
-      <StatRow label="Tickets Sold" value={formatInt(night.ticketsIssued)} />
-      <StatRow label="Redeemed" value={formatInt(night.ticketsRedeemed)} />
+      <StatRow
+        label="Tickets Sold"
+        value={formatInt(night.ticketsIssued)}
+        badge={night.ticketCountSource === 'live' ? 'live' : undefined}
+        badgeTooltip={night.ticketCountSource === 'live' ? 'From Ticketure (xlsx blank)' : undefined}
+      />
+      <StatRow
+        label="Redeemed"
+        value={formatInt(night.ticketsRedeemed)}
+        badge={night.ticketCountSource === 'live' ? 'live' : undefined}
+        badgeTooltip={night.ticketCountSource === 'live' ? 'From Ticketure (xlsx blank)' : undefined}
+      />
       <StatRow
         label="Net Rev"
         value={formatMoney(night.netTicketRev)}

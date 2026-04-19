@@ -55,6 +55,10 @@ export interface VenueNight {
   // was parsed from the xlsx — same field, fresher source.
   netTicketRevSource?: 'live' | 'xlsx';
   xlsxNetTicketRev?: number | null;    // preserved original for reference
+  // Ticket-count fields are only overlaid from live data when the xlsx
+  // row has them blank — the xlsx + Ticketure agree on these values
+  // when both are present, so we don't bother replacing filled cells.
+  ticketCountSource?: 'live' | 'xlsx';
 }
 
 /**
@@ -448,6 +452,7 @@ async function synthesizeNightFromLive(
     barNet: null,
     costs: {},
     netTicketRevSource: 'live',
+    ticketCountSource: 'live',
   };
 }
 
@@ -462,14 +467,28 @@ async function synthesizeNightFromLive(
 export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
   const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
     if (!n) return null;
-    const live = await loadLiveNetTicketRev(n.venue, n.date);
-    if (live == null) {
-      return { ...n, netTicketRevSource: 'xlsx' };
+    const [liveRev, liveCounts] = await Promise.all([
+      loadLiveNetTicketRev(n.venue, n.date),
+      loadLiveTicketCounts(n.venue, n.date),
+    ]);
+    // Ticket counts: fill in only when the xlsx has them null (common on
+    // the newest Sat row before the GM enters it). If the xlsx already
+    // has values, keep them — they should match Ticketure anyway.
+    const ticketsIssued = n.ticketsIssued ?? liveCounts.issued;
+    const ticketsRedeemed = n.ticketsRedeemed ?? liveCounts.redeemed;
+    const ticketCountSource: 'live' | 'xlsx' =
+      n.ticketsIssued == null && liveCounts.issued != null ? 'live' : 'xlsx';
+
+    if (liveRev == null) {
+      return { ...n, ticketsIssued, ticketsRedeemed, ticketCountSource, netTicketRevSource: 'xlsx' };
     }
     return {
       ...n,
+      ticketsIssued,
+      ticketsRedeemed,
+      ticketCountSource,
       xlsxNetTicketRev: n.netTicketRev,
-      netTicketRev: live,
+      netTicketRev: liveRev,
       netTicketRevSource: 'live',
     };
   };
