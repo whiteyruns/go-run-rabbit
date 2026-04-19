@@ -1,0 +1,407 @@
+/* ═══════════════════════════════════════════════════════════
+   Sponsor Recap — scoped styles.
+   Inherits the same visual system as Pour Log / /admin:
+     bg #060606 · accent #c9a84c · Cormorant serif · Inter body · JetBrains mono labels
+   ═══════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+.page {
+  --bg: #060606;
+  --surface: #0d0d0d;
+  --surface-elevated: #111111;
+  --surface-hi: #161616;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-accent: rgba(201, 168, 76, 0.22);
+  --border-strong: rgba(201, 168, 76, 0.38);
+  --accent: #c9a84c;
+  --accent-dim: rgba(201, 168, 76, 0.10);
+  --accent-warm: #d4a574;
+  --text: #e8e4dd;
+  --text-secondary: #9a958d;
+  --text-muted: #5a5650;
+  --up: #6dc77f;
+  --down: #d87060;
+  --amber: #f39c12;
+  --cool: #6a7b8a;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-weight: 300;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  padding: 28px 18px 80px;
+}
+
+.container {
+  max-width: 780px;
+  margin: 0 auto;
+}
+
+/* ─── Header ─── */
+.header {
+  border-bottom: 1px solid var(--border-accent);
+  padding-bottom: 20px;
+  margin-bottom: 24px;
+}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+}
+.title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 8px;
+}
+.title em {
+  font-style: italic;
+  color: var(--accent);
+}
+.sub {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ─── Section ─── */
+.section {
+  margin-bottom: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 20px 20px;
+}
+.sectLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.sectLabel::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* ─── Nav row ─── */
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 18px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.navRow a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--border-accent);
+  padding-bottom: 1px;
+}
+.navRow a:hover { color: var(--accent); border-bottom-color: var(--border-strong); }
+
+/* ─── Week picker ─── */
+.weekPicker {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin-bottom: 22px;
+}
+.weekNav {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  transition: border-color 0.15s ease, color 0.15s ease;
+  white-space: nowrap;
+}
+.weekNav:hover { color: var(--accent); border-color: var(--border-strong); }
+.weekLabel { text-align: center; }
+.weekLabelEyebrow {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.weekLabelRange {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 20px;
+  color: var(--accent);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+.weekLabelDates {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  letter-spacing: 0.08em;
+}
+
+/* ─── Activation grid ─── */
+.activationGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 560px) {
+  .activationGrid { grid-template-columns: 1fr 1fr; }
+}
+
+.activationCard {
+  display: block;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 18px 20px;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+}
+.activationCard:hover {
+  border-color: var(--border-strong);
+  background: var(--surface-elevated);
+}
+.activationKind {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.activationKind.kindTequila { color: var(--accent); }
+.activationKind.kindChampagne { color: var(--cool); }
+.activationBrand {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  color: var(--text);
+  margin-top: 6px;
+  line-height: 1.2;
+}
+.activationMeta {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ─── Summary strip on draft page ─── */
+.summaryStrip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  margin-bottom: 22px;
+}
+@media (max-width: 600px) {
+  .summaryStrip { grid-template-columns: repeat(2, 1fr); }
+  .summaryStrip .summaryTile:nth-child(5) { grid-column: 1 / -1; }
+}
+.summaryTile {
+  background: var(--surface);
+  padding: 16px 12px;
+  text-align: center;
+}
+.summaryVal {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 22px;
+  color: var(--accent);
+  line-height: 1.1;
+}
+.summaryLbl {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ─── Subject row ─── */
+.subjectRow {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--text);
+  padding: 12px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  line-height: 1.4;
+}
+
+/* ─── Email preview ─── */
+.emailPreview {
+  width: 100%;
+  background: #060606;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 14px;
+  overflow: auto;
+}
+/* The preview's innerHTML brings its own inline styles — we don't need to
+   re-style it. We just need to ensure it scrolls on narrow viewports. */
+.emailPreview table { max-width: 100%; }
+
+/* ─── Send panel ─── */
+.sendPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  background: var(--surface);
+}
+.sendHint {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+.sendHint code {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  padding: 1px 6px;
+}
+.sendHint strong { color: var(--text); font-weight: 500; }
+.submit {
+  background: var(--accent);
+  color: var(--bg);
+  border: 1px solid var(--accent);
+  padding: 16px 28px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.submit:hover:not(:disabled) { background: var(--accent-warm); }
+.submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.saveNote {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ─── Status banners ─── */
+.status {
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  font-family: var(--sans);
+  font-size: 13.5px;
+  margin-bottom: 18px;
+  border-left: 2px solid var(--cool);
+}
+.status.success {
+  background: rgba(109, 199, 127, 0.06);
+  border-color: rgba(109, 199, 127, 0.2);
+  border-left-color: var(--up);
+  color: var(--text);
+}
+.status.error {
+  background: rgba(216, 112, 96, 0.06);
+  border-color: rgba(216, 112, 96, 0.22);
+  border-left-color: var(--down);
+  color: var(--text);
+}
+.status strong { color: var(--accent); font-weight: 500; }
+.status code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--accent);
+}
+.resendId {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+/* ─── Notes panel ─── */
+.notes {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: rgba(106, 123, 138, 0.04);
+  border: 1px solid rgba(106, 123, 138, 0.16);
+  border-left: 2px solid var(--cool);
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.notes .noteLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cool);
+  margin-bottom: 6px;
+}
+.notes strong { color: var(--text); }
+.notes code {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--accent);
+}
+
+/* ─── Empty state ─── */
+.emptyState {
+  padding: 48px 24px;
+  text-align: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: var(--text-secondary);
+}
