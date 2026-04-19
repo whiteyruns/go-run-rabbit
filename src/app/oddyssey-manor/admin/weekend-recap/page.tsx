@@ -11,6 +11,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import styles from './weekend-recap.module.css';
 import {
+  enrichWeekend,
   formatInt,
   formatMoney,
   formatWeekendLabel,
@@ -41,12 +42,13 @@ export default async function WeekendRecapPage({
       ? searchParams.weekend
       : mostRecentWeekend().friday;
 
-  const [recap, manorYTD, noirYTD, recentList] = await Promise.all([
+  const [rawRecap, manorYTD, noirYTD, recentList] = await Promise.all([
     readWeekendJSON(friday),
     readYTDRollup('manor', 2026),
     readYTDRollup('noir', 2026),
     listRecentWeekends(16),
   ]);
+  const recap = await enrichWeekend(rawRecap);
 
   const prev = shiftFriday(friday, -7);
   const next = shiftFriday(friday, 7);
@@ -219,7 +221,18 @@ function NightColumn({
 
       <StatRow label="Tickets Sold" value={formatInt(night.ticketsIssued)} />
       <StatRow label="Redeemed" value={formatInt(night.ticketsRedeemed)} />
-      <StatRow label="Net Ticket Rev" value={formatMoney(night.netTicketRev)} />
+      <StatRow
+        label="Net Ticket Rev"
+        value={formatMoney(night.netTicketRev)}
+        badge={night.netTicketRevSource === 'live' ? 'live' : undefined}
+        badgeTooltip={
+          night.netTicketRevSource === 'live' && night.xlsxNetTicketRev != null
+            ? `Ticketure actual; xlsx said ${formatMoney(night.xlsxNetTicketRev)}`
+            : night.netTicketRevSource === 'live'
+              ? 'Live Ticketure Summary Report'
+              : undefined
+        }
+      />
       <StatRow label="Bar NET" value={formatMoney(night.barNet)} />
 
       <div className={styles.costGroup}>
@@ -250,16 +263,42 @@ function StatRow({
   label,
   value,
   tone = 'default',
+  badge,
+  badgeTooltip,
 }: {
   label: string;
   value: string;
   tone?: 'default' | 'good' | 'bad' | 'muted';
+  badge?: 'live';
+  badgeTooltip?: string;
 }) {
   const cls =
     tone === 'good' ? styles.good : tone === 'bad' ? styles.bad : tone === 'muted' ? styles.muted : '';
   return (
     <div className={styles.statRow}>
-      <div className={styles.statLbl}>{label}</div>
+      <div className={styles.statLbl}>
+        {label}
+        {badge === 'live' && (
+          <span
+            title={badgeTooltip}
+            style={{
+              marginLeft: 8,
+              fontSize: 8,
+              letterSpacing: 1.5,
+              textTransform: 'uppercase',
+              color: '#27ae60',
+              padding: '1px 6px',
+              border: '1px solid rgba(39,174,96,0.35)',
+              borderRadius: 2,
+              verticalAlign: 'middle',
+              fontWeight: 600,
+              cursor: badgeTooltip ? 'help' : 'default',
+            }}
+          >
+            ● Live
+          </span>
+        )}
+      </div>
       <div className={`${styles.statVal} ${cls}`}>{value}</div>
     </div>
   );

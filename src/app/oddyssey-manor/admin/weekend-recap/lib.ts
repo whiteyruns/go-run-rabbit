@@ -48,6 +48,11 @@ export interface VenueNight {
   costs: Record<string, number | null>;// venue-specific, see comment above
   totalNet?: number | null;            // Noir only: "Total Rev with Incentive". Manor omits.
   notes?: string;
+  // Set by enrichWeekend() when the Ticketure session Summary Report
+  // scraper has data for this date. The scraped number overrides whatever
+  // was parsed from the xlsx — same field, fresher source.
+  netTicketRevSource?: 'live' | 'xlsx';
+  xlsxNetTicketRev?: number | null;    // preserved original for reference
 }
 
 /**
@@ -315,6 +320,83 @@ export async function mergeYTDBudget(
     lastUploadedAt: existing.lastUploadedAt,
   });
   return { updatedFields };
+}
+
+// ─── Live data overlay (Ticketure session Summary Report) ─────────────────
+
+const SESSION_SUMMARY_DIR: Record<Venue, string> = {
+  manor: path.resolve(process.cwd(), 'data', 'oddyssey-food', 'summaries'),
+  noir: path.resolve(process.cwd(), 'data', 'oddyssey-noir', 'summaries'),
+};
+
+/**
+ * Read the aggregated Net-to-Bank for a night from the session summary
+ * JSON that our Playwright scraper archives. Returns null when the file
+ * doesn't exist (no pull yet) or no session reports a net_to_bank.
+ */
+export async function loadLiveNetTicketRev(
+  venue: Venue,
+  dateISO: string,
+): Promise<number | null> {
+  try {
+    const file = path.join(SESSION_SUMMARY_DIR[venue], `${dateISO}.json`);
+    const raw = await fs.readFile(file, 'utf8');
+    const parsed = JSON.parse(raw) as {
+      sessions?: { data?: { net_to_bank?: number | null } }[];
+    };
+    const sessions = parsed.sessions ?? [];
+    let sum = 0;
+    let any = false;
+    for (const s of sessions) {
+      const n = s.data?.net_to_bank;
+      if (typeof n === 'number' && Number.isFinite(n)) {
+        sum += n;
+        any = true;
+      }
+    }
+    return any ? sum : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Overlay Ticketure-scraped net ticket revenue onto a weekend recap.
+ * Preserves everything else (cost lines, bar net, ticket counts) from
+ * the xlsx source. The net-ticket-rev number comes from Ticketure's
+ * Summary Report because that's fresher than the Monday xlsx — the GM
+ * already sees the same number on the main Manor/Noir dashboards.
+ *
+ * A `netTicketRevSource` tag is added to each VenueNight so the UI can
+ * render a subtle indicator showing whether a value is live or xlsx.
+ */
+export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
+  const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
+    if (!n) return null;
+    const live = await loadLiveNetTicketRev(n.venue, n.date);
+    if (live == null) {
+      return { ...n, netTicketRevSource: 'xlsx' };
+    }
+    return {
+      ...n,
+      xlsxNetTicketRev: n.netTicketRev,
+      netTicketRev: live,
+      netTicketRevSource: 'live',
+    };
+  };
+
+  const [manorFri, manorSat, noirFri, noirSat] = await Promise.all([
+    enrichNight(recap.manor.fri),
+    enrichNight(recap.manor.sat),
+    enrichNight(recap.noir.fri),
+    enrichNight(recap.noir.sat),
+  ]);
+
+  return {
+    ...recap,
+    manor: { fri: manorFri, sat: manorSat },
+    noir: { fri: noirFri, sat: noirSat },
+  };
 }
 
 // ─── Display helpers ───────────────────────────────────────────────────────
