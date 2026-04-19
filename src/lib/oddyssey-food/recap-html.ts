@@ -1,5 +1,6 @@
 import type { RecapData } from "./recap";
 import { formatCurrency } from "./summary";
+import { renderChannelMixHtml } from "@/lib/oddyssey-sessions/recap-channel-html";
 
 // Produces a standalone HTML email body. Styled with noir palette, inlined
 // CSS (email-client compatible), no external dependencies.
@@ -62,6 +63,8 @@ export function renderRecapHtml(r: RecapData): string {
   `}
 
   ${renderWoW(r)}
+
+  ${renderChannelMixHtml(r.report?.ticket_groups, { accent: "#c9a84c", thirdParty: "#8b6fb0" })}
 
   ${hasPackages ? section("Ticket Sales by Package", `
     <table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.06);">

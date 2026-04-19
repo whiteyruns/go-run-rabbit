@@ -1,6 +1,7 @@
 import type { NoirSummary } from "./pipeline";
 import { formatNoirCurrency } from "./pipeline";
 import type { NoirReportOverlay, NoirWeekOverWeek } from "./history";
+import { renderChannelMixHtml } from "@/lib/oddyssey-sessions/recap-channel-html";
 
 export function renderNoirRecapHtml(
   s: NoirSummary,
@@ -51,6 +52,8 @@ export function renderNoirRecapHtml(
   `}
 
   ${renderWoW(s, wow)}
+
+  ${renderChannelMixHtml(report?.ticket_groups, { accent: "#b46ec8", thirdParty: "#8b6fb0" })}
 
   ${section("Ticket Sales by Package", `
     <table style="width:100%;border-collapse:collapse;border:1px solid rgba(255,255,255,0.06);">
