@@ -92,10 +92,16 @@ const config: Config = {
         "ce-outline": "#aa8a7e",
         "ce-outline-variant": "#5a4137",
         "ce-tertiary": "#d0c4bc",
+        // Forest House — bone & red, May 2026 art-car deployment
+        "fh-bg": "#0A0A0F",
+        "fh-card": "#12121A",
+        "fh-text": "#D4C4B0",
+        "fh-accent": "#C42525",
       },
       fontFamily: {
         sans: ["var(--font-manrope)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
+        fh: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       keyframes: {
         fadeUp: {

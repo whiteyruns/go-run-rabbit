@@ -25,3 +25,6 @@ _old/
 
 # Oddyssey food auto-pull artifacts (local only)
 data/oddyssey-food/pulls/
+
+# Forest House crew registrations (runtime data — seeded from seed.json)
+data/forest-house/crew.json

@@ -1,0 +1,86 @@
+{
+  "crew": [
+    {
+      "id": "seed-01-maya-patel",
+      "name": "Maya Patel",
+      "email": "maya@example.org",
+      "phone": "+1 702 555 0142",
+      "roles": ["sound", "lighting", "support"],
+      "preferredRole": "sound",
+      "backupRole": "lighting",
+      "availability": [
+        "2026-05-10",
+        "2026-05-11",
+        "2026-05-12",
+        "2026-05-13",
+        "2026-05-14",
+        "2026-05-15",
+        "2026-05-16",
+        "2026-05-17",
+        "2026-05-18"
+      ],
+      "buildCrew": true,
+      "strikeCrew": false,
+      "paradeCrew": true,
+      "skills": ["electrical"],
+      "critical": true,
+      "notes": "Primary FOH. Bringing my own IEM rack.",
+      "createdAt": "2026-04-10T15:22:00.000Z",
+      "updatedAt": "2026-04-10T15:22:00.000Z"
+    },
+    {
+      "id": "seed-02-jax-rivera",
+      "name": "Jax Rivera",
+      "email": "jax@example.org",
+      "phone": "702-555-0177",
+      "roles": ["driver", "build", "strike", "support"],
+      "preferredRole": "driver",
+      "backupRole": "build",
+      "availability": [
+        "2026-05-08",
+        "2026-05-09",
+        "2026-05-10",
+        "2026-05-11",
+        "2026-05-12",
+        "2026-05-13",
+        "2026-05-14",
+        "2026-05-15",
+        "2026-05-16",
+        "2026-05-17",
+        "2026-05-18",
+        "2026-05-19",
+        "2026-05-20"
+      ],
+      "buildCrew": true,
+      "strikeCrew": true,
+      "paradeCrew": false,
+      "skills": ["driver", "forklift", "lift"],
+      "critical": true,
+      "notes": "Full deployment availability. CDL Class B.",
+      "createdAt": "2026-04-11T09:04:00.000Z",
+      "updatedAt": "2026-04-12T14:00:00.000Z"
+    },
+    {
+      "id": "seed-03-ren-okafor",
+      "name": "Ren Okafor",
+      "email": "ren@example.org",
+      "phone": "(415) 555 0199",
+      "roles": ["laser", "safety"],
+      "preferredRole": "laser",
+      "availability": [
+        "2026-05-13",
+        "2026-05-14",
+        "2026-05-15",
+        "2026-05-16",
+        "2026-05-17"
+      ],
+      "buildCrew": false,
+      "strikeCrew": false,
+      "paradeCrew": true,
+      "skills": ["laser", "EMT"],
+      "critical": false,
+      "createdAt": "2026-04-12T18:47:00.000Z",
+      "updatedAt": "2026-04-12T18:47:00.000Z"
+    }
+  ]
+}
