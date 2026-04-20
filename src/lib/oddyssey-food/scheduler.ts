@@ -278,7 +278,10 @@ export function startScheduler(): void {
     // to make the 5 PM GM briefing email up-to-date.
     ["manor-regular", "0 9-17 * * 4,5,6,0", () => runPull("manor-regular", "manor")],
     // 5 PM PT GM briefing email — talking points for the evening
-    ["manor-briefing", "0 17 * * 4,5,6,0", () => sendBriefing("manor", todayLocal())],
+    // Brief fires 5 min after the regular 17:00 pull so latest.csv has
+    // finished writing. Same-minute race produced a 0-admission briefing
+    // for Sun 4/19 (pull overwrote CSV while briefing was reading it).
+    ["manor-briefing", "5 17 * * 4,5,6,0", () => sendBriefing("manor", todayLocal())],
     ["manor-postshow", "15 0 * * 5,6,0,1", () => runPull("manor-postshow", "manor", yesterdayLocal())],
     ["manor-recap", "30 0 * * 5,6,0,1", () => sendRecap("manor", yesterdayLocal())],
 
@@ -286,7 +289,9 @@ export function startScheduler(): void {
     // Hourly 9 AM – 10 PM, Fri/Sat (captures last-minute sales as doors open)
     ["noir-regular", "0 9-22 * * 5,6", () => runPull("noir-regular", "noir")],
     // 9 PM PT GM briefing email (one hour before doors at 10 PM)
-    ["noir-briefing", "0 21 * * 5,6", () => sendBriefing("noir", todayLocal())],
+    // Same offset rationale as manor-briefing — avoid same-minute race
+    // with the 21:00 regular pull.
+    ["noir-briefing", "5 21 * * 5,6", () => sendBriefing("noir", todayLocal())],
     // Post-show pull at 03:00 Sat/Sun (after 2 AM close), recap at 03:15
     ["noir-postshow", "0 3 * * 6,0", () => runPull("noir-postshow", "noir", yesterdayLocal())],
     ["noir-recap", "15 3 * * 6,0", () => sendRecap("noir", yesterdayLocal())],
