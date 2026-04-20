@@ -351,7 +351,8 @@ function RosterRow({ member }: { member: CrewRecord }) {
       <div className="flex flex-wrap gap-1.5 mb-3">
         {member.buildCrew && <Badge>Build</Badge>}
         {member.strikeCrew && <Badge>Strike</Badge>}
-        {member.paradeCrew && <Badge>Parade</Badge>}
+        {member.edcParade && <Badge>EDC Parade</Badge>}
+        {member.edcFestival && <Badge>EDC Festival</Badge>}
         {member.skills.map((sk) => (
           <Badge key={sk} muted>
             {SKILL_LABELS[sk]}

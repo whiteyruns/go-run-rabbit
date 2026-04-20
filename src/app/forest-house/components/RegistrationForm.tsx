@@ -24,7 +24,8 @@ type FormState = {
   availability: DeployDate[];
   buildCrew: boolean;
   strikeCrew: boolean;
-  paradeCrew: boolean;
+  edcParade: boolean;
+  edcFestival: boolean;
   skills: Skill[];
   critical: boolean;
   notes: string;
@@ -41,7 +42,8 @@ const INITIAL: FormState = {
   availability: [],
   buildCrew: false,
   strikeCrew: false,
-  paradeCrew: false,
+  edcParade: false,
+  edcFestival: false,
   skills: [],
   critical: false,
   notes: "",
@@ -57,7 +59,8 @@ function toPayload(s: FormState): Record<string, unknown> {
     availability: s.availability,
     buildCrew: s.buildCrew,
     strikeCrew: s.strikeCrew,
-    paradeCrew: s.paradeCrew,
+    edcParade: s.edcParade,
+    edcFestival: s.edcFestival,
     skills: s.skills,
     critical: s.critical,
     website: s.website,
@@ -304,8 +307,8 @@ export default function RegistrationForm() {
         />
       </FieldGroup>
 
-      <FieldGroup label="Crew commitments">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <FieldGroup label="Crew commitments" hint="Build / Strike windows">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Toggle
             label="Build Crew"
             hint="Pre-deploy assembly"
@@ -318,11 +321,25 @@ export default function RegistrationForm() {
             checked={state.strikeCrew}
             onChange={(v) => setState((s) => ({ ...s, strikeCrew: v }))}
           />
+        </div>
+      </FieldGroup>
+
+      <FieldGroup
+        label="Which EDC events?"
+        hint="Pick one or both"
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Toggle
-            label="Parade Crew"
-            hint="Wednesday 5/16"
-            checked={state.paradeCrew}
-            onChange={(v) => setState((s) => ({ ...s, paradeCrew: v }))}
+            label="EDC Parade"
+            hint="The parade event"
+            checked={state.edcParade}
+            onChange={(v) => setState((s) => ({ ...s, edcParade: v }))}
+          />
+          <Toggle
+            label="EDC Festival"
+            hint="The main festival weekend"
+            checked={state.edcFestival}
+            onChange={(v) => setState((s) => ({ ...s, edcFestival: v }))}
           />
         </div>
       </FieldGroup>

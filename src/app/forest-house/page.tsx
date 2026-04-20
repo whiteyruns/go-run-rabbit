@@ -59,7 +59,7 @@ export default function ForestHouseLanding() {
         <CalloutCard
           label="Event"
           range={formatRange(EVENT_DATES)}
-          body="Seven nights on the road. Lighting, drivers, support, safety. Parade pass 5/16."
+          body="Seven nights on the road. Lighting, drivers, support, safety — for the EDC Parade and Festival weekend."
           accent
         />
         <CalloutCard
