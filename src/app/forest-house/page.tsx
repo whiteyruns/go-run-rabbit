@@ -19,47 +19,47 @@ function formatRange(dates: readonly string[]): string {
 export default function ForestHouseLanding() {
   return (
     <div className="mx-auto max-w-6xl px-6 pt-16 pb-24">
-      <p className="text-xs uppercase tracking-[0.4em] text-fh-accent mb-8">
+      <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-fh-accent mb-10">
         Crew Call · May 2026
       </p>
-      <h1 className="font-fh text-5xl sm:text-6xl md:text-8xl font-black uppercase tracking-tight leading-[0.95]">
+      <h1 className="font-fh text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-[-0.02em] leading-[0.9]">
         Forest
         <br />
         <span className="text-fh-accent">House</span>
       </h1>
       <p className="mt-10 max-w-xl text-fh-text/80 leading-relaxed">
-        A thirteen-day deployment on the desert floor. Build starts{" "}
-        {formatRange(BUILD_DATES)}, event window {formatRange(EVENT_DATES)},
-        strike {formatRange(STRIKE_DATES)}. We need crew for sound, lighting,
-        laser, drivers, build, strike, support, and safety. Register below —
-        you can update your registration any time before the 12th.
+        From its Burning Man roots to festivals across the U.S., ForestHouse
+        rolls on — ever-evolving, ever-inspiring. For May&nbsp;12–18 the bus
+        is on the floor again. Build starts {formatRange(BUILD_DATES)}, event
+        window {formatRange(EVENT_DATES)}, strike {formatRange(STRIKE_DATES)}.
+        Pick your role, your days, and tell us what you bring.
       </p>
 
-      <div className="mt-12 flex flex-wrap gap-4">
+      <div className="mt-12 flex flex-wrap gap-3">
         <Link
           href="/forest-house/register"
-          className="inline-flex items-center gap-3 bg-fh-accent text-fh-bg px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] hover:brightness-110 active:scale-[0.98] transition-all"
+          className="inline-flex items-center gap-3 bg-fh-accent text-fh-bg px-8 py-4 text-xs font-black uppercase tracking-[0.3em] hover:brightness-110 active:scale-[0.98] transition-all"
         >
-          Register → Crew
+          Sign On → Crew
         </Link>
         <Link
           href="/forest-house/admin"
-          className="inline-flex items-center gap-3 border border-fh-text/20 px-8 py-4 text-sm font-bold uppercase tracking-[0.25em] hover:border-fh-accent hover:text-fh-accent transition-colors"
+          className="inline-flex items-center gap-3 border border-fh-border px-8 py-4 text-xs font-black uppercase tracking-[0.3em] text-fh-text/80 hover:border-fh-accent hover:text-fh-accent transition-colors"
         >
-          Staffing Dashboard
+          Staffing Board
         </Link>
       </div>
 
-      <div className="mt-24 grid grid-cols-1 sm:grid-cols-3 gap-6">
+      <div className="mt-24 grid grid-cols-1 sm:grid-cols-3 gap-px bg-fh-border">
         <CalloutCard
           label="Build"
           range={formatRange(BUILD_DATES)}
-          body="Pre-deploy assembly on the playa. Forklift, electrical, and rigging help especially needed."
+          body="Pre-deploy assembly on the playa. Forklift, lift, and electrical hands especially welcome."
         />
         <CalloutCard
           label="Event"
           range={formatRange(EVENT_DATES)}
-          body="Seven nights on the road. Sound, lights, laser ops, drivers, safety. Parade pass 5/16."
+          body="Seven nights on the road. Lighting, drivers, support, safety. Parade pass 5/16."
           accent
         />
         <CalloutCard
@@ -68,6 +68,11 @@ export default function ForestHouseLanding() {
           body="Two-day teardown. Anyone who stays through strike has our undying love."
         />
       </div>
+
+      <p className="mt-16 text-[11px] font-bold uppercase tracking-[0.3em] text-fh-muted max-w-lg leading-relaxed">
+        It&apos;s not just an art car. It&apos;s a living piece of the
+        community it was built to serve.
+      </p>
     </div>
   );
 }
@@ -84,16 +89,14 @@ function CalloutCard({
   accent?: boolean;
 }) {
   return (
-    <div
-      className={`p-6 bg-fh-card border ${accent ? "border-fh-accent/40" : "border-fh-text/10"}`}
-    >
-      <div className="flex items-baseline justify-between mb-4">
+    <div className="p-8 bg-fh-card">
+      <div className="flex items-baseline justify-between mb-5">
         <span
-          className={`text-xs font-bold uppercase tracking-[0.3em] ${accent ? "text-fh-accent" : "text-fh-text/60"}`}
+          className={`text-[11px] font-black uppercase tracking-[0.35em] ${accent ? "text-fh-accent" : "text-fh-muted"}`}
         >
           {label}
         </span>
-        <span className="text-xs tabular-nums text-fh-text/60">{range}</span>
+        <span className="text-[11px] tabular-nums text-fh-muted">{range}</span>
       </div>
       <p className="text-sm leading-relaxed text-fh-text/80">{body}</p>
     </div>

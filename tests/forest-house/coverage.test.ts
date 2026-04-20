@@ -25,8 +25,8 @@ function makeCrew(overrides: Partial<CrewRecord>): CrewRecord {
     name: overrides.name ?? "Test Person",
     email: overrides.email ?? "test@example.org",
     phone: overrides.phone ?? "+1 702 555 0100",
-    roles: overrides.roles ?? ["sound"],
-    preferredRole: overrides.preferredRole ?? "sound",
+    roles: overrides.roles ?? ["support"],
+    preferredRole: overrides.preferredRole ?? "support",
     backupRole: overrides.backupRole,
     availability: overrides.availability ?? ["2026-05-12"],
     buildCrew: overrides.buildCrew ?? false,
@@ -45,46 +45,46 @@ describe("computeRoleCoverage", () => {
     const crew: CrewRecord[] = [
       makeCrew({
         email: "a@x.org",
-        roles: ["sound", "lighting"],
-        preferredRole: "sound",
+        roles: ["support", "lighting"],
+        preferredRole: "support",
         backupRole: "lighting",
       }),
       makeCrew({
         email: "b@x.org",
-        roles: ["sound", "lighting"],
+        roles: ["support", "lighting"],
         preferredRole: "lighting",
-        backupRole: "sound",
+        backupRole: "support",
       }),
       makeCrew({
         email: "c@x.org",
-        roles: ["driver", "sound"],
+        roles: ["driver", "support"],
         preferredRole: "driver",
       }),
     ];
     const coverage = computeRoleCoverage(crew);
-    const sound = coverage.find((r) => r.role === "sound");
+    const support = coverage.find((r) => r.role === "support");
     const lighting = coverage.find((r) => r.role === "lighting");
     const driver = coverage.find((r) => r.role === "driver");
-    expect(sound?.assigned).toBe(1);
+    expect(support?.assigned).toBe(1);
     expect(lighting?.assigned).toBe(1);
     expect(driver?.assigned).toBe(1);
   });
 
-  it("reflects ROLE_TARGETS: setting sound target to 99 yields gap of 99 - assigned", () => {
+  it("reflects ROLE_TARGETS: bumping lighting target to 99 yields gap of 99 - assigned", () => {
     const crew: CrewRecord[] = [
-      makeCrew({ email: "a@x.org", preferredRole: "sound" }),
-      makeCrew({ email: "b@x.org", preferredRole: "sound" }),
+      makeCrew({ email: "a@x.org", preferredRole: "lighting" }),
+      makeCrew({ email: "b@x.org", preferredRole: "lighting" }),
     ];
-    const original = ROLE_TARGETS.sound;
-    ROLE_TARGETS.sound = 99;
+    const original = ROLE_TARGETS.lighting;
+    ROLE_TARGETS.lighting = 99;
     try {
       const coverage = computeRoleCoverage(crew);
-      const sound = coverage.find((r) => r.role === "sound");
-      expect(sound?.assigned).toBe(2);
-      expect(sound?.target).toBe(99);
-      expect(sound?.gap).toBe(97);
+      const lighting = coverage.find((r) => r.role === "lighting");
+      expect(lighting?.assigned).toBe(2);
+      expect(lighting?.target).toBe(99);
+      expect(lighting?.gap).toBe(97);
     } finally {
-      ROLE_TARGETS.sound = original;
+      ROLE_TARGETS.lighting = original;
     }
   });
 });
@@ -111,7 +111,7 @@ describe("computeDayCoverage", () => {
     const crew: CrewRecord[] = [
       makeCrew({
         email: "a@x.org",
-        preferredRole: "sound",
+        preferredRole: "support",
         availability: [d],
       }),
       makeCrew({
@@ -122,20 +122,20 @@ describe("computeDayCoverage", () => {
     ];
     const coverage = computeDayCoverage(crew);
     const day = coverage.find((x) => x.date === d);
-    expect(day?.roles).toEqual(["lighting", "sound"]);
+    expect(day?.roles).toEqual(["lighting", "support"]);
   });
 });
 
 describe("filterCrew", () => {
   const crew: CrewRecord[] = [
     makeCrew({
-      email: "sound-mon@x.org",
-      preferredRole: "sound",
+      email: "support-mon@x.org",
+      preferredRole: "support",
       availability: ["2026-05-12"],
     }),
     makeCrew({
-      email: "sound-tue@x.org",
-      preferredRole: "sound",
+      email: "support-tue@x.org",
+      preferredRole: "support",
       availability: ["2026-05-13"],
     }),
     makeCrew({
@@ -147,18 +147,16 @@ describe("filterCrew", () => {
 
   it("AND-combines role and day filters", () => {
     expect(filterCrew(crew, { role: "all", day: "all" })).toHaveLength(3);
-    expect(
-      filterCrew(crew, { role: "sound", day: "all" }),
-    ).toHaveLength(2);
+    expect(filterCrew(crew, { role: "support", day: "all" })).toHaveLength(2);
     expect(
       filterCrew(crew, { role: "all", day: "2026-05-12" }),
     ).toHaveLength(2);
-    const soundOnMon = filterCrew(crew, {
-      role: "sound",
+    const supportOnMon = filterCrew(crew, {
+      role: "support",
       day: "2026-05-12",
     });
-    expect(soundOnMon).toHaveLength(1);
-    expect(soundOnMon[0]?.email).toBe("sound-mon@x.org");
+    expect(supportOnMon).toHaveLength(1);
+    expect(supportOnMon[0]?.email).toBe("support-mon@x.org");
   });
 });
 
@@ -186,12 +184,9 @@ describe("CSV export", () => {
       makeCrew({ email: "commas@x.org", notes: 'a, "b"' }),
     ];
     const csv = crewToCsv(crew);
-    // After the header row, find the notes column in the data row.
     const lines = csv.split("\r\n");
     expect(lines[0]).toContain("notes");
-    // The notes field should be properly quoted with doubled inner quotes.
     expect(lines[1]).toContain('"a, ""b"""');
-    // Naive CSV parser: split on unquoted commas and unescape.
     const parsed = parseCsvRow(lines[1] ?? "");
     const headers = parseCsvRow(lines[0] ?? "");
     const notesIdx = headers.indexOf("notes");
@@ -201,7 +196,6 @@ describe("CSV export", () => {
   it("uses \\r\\n line endings", () => {
     const csv = crewToCsv([makeCrew({ email: "le@x.org" })]);
     expect(csv.includes("\r\n")).toBe(true);
-    // Should not end with a trailing \n without \r.
     expect(csv.endsWith("\r\n")).toBe(true);
   });
 });
@@ -253,8 +247,8 @@ describe("upsertCrew", () => {
     name: "Upsert Test",
     email: "upsert@example.org",
     phone: "+1 555 0000",
-    roles: ["sound"],
-    preferredRole: "sound",
+    roles: ["support"],
+    preferredRole: "support",
     availability: ["2026-05-12"],
     buildCrew: false,
     strikeCrew: false,

@@ -50,11 +50,11 @@ export default function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           aria-invalid={error ? true : undefined}
-          className="w-full bg-fh-bg border border-fh-text/20 focus:border-fh-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-fh-accent/40 text-fh-text px-3 py-2.5 text-sm tracking-wider"
+          className="w-full bg-fh-bg border border-fh-border focus:border-fh-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-fh-accent/40 text-fh-text px-3 py-2.5 text-sm tracking-wider"
         />
       </div>
       {error && (
-        <p className="text-xs text-fh-accent" role="alert">
+        <p className="text-xs text-fh-ember" role="alert">
           {error}
         </p>
       )}

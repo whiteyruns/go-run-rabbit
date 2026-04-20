@@ -364,7 +364,7 @@ export default function RegistrationForm() {
           onChange={(e) => setState((s) => ({ ...s, notes: e.target.value }))}
           maxLength={1000}
           rows={4}
-          className="w-full bg-fh-bg border border-fh-text/20 focus:border-fh-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-fh-accent/40 text-fh-text p-3 text-sm leading-relaxed"
+          className="w-full bg-fh-bg border border-fh-border focus:border-fh-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-fh-accent/40 text-fh-text p-3 text-sm leading-relaxed"
         />
         <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-fh-text/40">
           {state.notes.length}/1000
@@ -390,12 +390,12 @@ export default function RegistrationForm() {
       </div>
 
       {errors._form && (
-        <p className="text-fh-accent text-sm" role="alert">
+        <p className="text-fh-ember text-sm" role="alert">
           {errors._form}
         </p>
       )}
 
-      <div className="flex items-center gap-6 pt-4 border-t border-fh-text/10">
+      <div className="flex items-center gap-6 pt-4 border-t border-fh-border/60">
         <button
           type="submit"
           disabled={!isValid || submitting}
@@ -440,7 +440,7 @@ function FieldGroup({
       </div>
       {children}
       {error && (
-        <p className="mt-2 text-xs text-fh-accent" role="alert">
+        <p className="mt-2 text-xs text-fh-ember" role="alert">
           {error}
         </p>
       )}
@@ -480,7 +480,7 @@ function TextInput({
         onChange={(e) => onChange(e.target.value)}
         required={required}
         aria-invalid={error ? true : undefined}
-        className="w-full bg-fh-bg border border-fh-text/20 focus:border-fh-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-fh-accent/40 text-fh-text px-3 py-2.5 text-sm"
+        className="w-full bg-fh-bg border border-fh-border focus:border-fh-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-fh-accent/40 text-fh-text px-3 py-2.5 text-sm"
       />
     </div>
   );
@@ -507,7 +507,7 @@ function Chip({
       className={`px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
         selected
           ? "bg-fh-accent border-fh-accent text-fh-bg"
-          : "bg-transparent border-fh-text/20 text-fh-text/80 hover:border-fh-text/50"
+          : "bg-transparent border-fh-border text-fh-text/80 hover:border-fh-accent/60"
       }`}
     >
       {label}
@@ -534,7 +534,7 @@ function Toggle({
       className={`flex flex-col items-start text-left p-4 border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
         checked
           ? "bg-fh-accent/10 border-fh-accent"
-          : "bg-fh-card border-fh-text/10 hover:border-fh-text/30"
+          : "bg-fh-card border-fh-border/60 hover:border-fh-text/30"
       }`}
     >
       <span
@@ -586,7 +586,7 @@ function DayGrid({
                   className={`px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] tabular-nums border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
                     isSelected
                       ? "bg-fh-accent border-fh-accent text-fh-bg"
-                      : "bg-transparent border-fh-text/20 text-fh-text/70 hover:border-fh-text/50"
+                      : "bg-transparent border-fh-border text-fh-text/70 hover:border-fh-accent/60"
                   }`}
                 >
                   {formatDayLabel(d)}

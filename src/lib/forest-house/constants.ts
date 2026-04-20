@@ -1,7 +1,5 @@
 export const ROLES = [
-  "sound",
   "lighting",
-  "laser",
   "driver",
   "build",
   "strike",
@@ -14,7 +12,6 @@ export const SKILLS = [
   "forklift",
   "lift",
   "electrical",
-  "laser",
   "driver",
   "EMT",
 ] as const;
@@ -60,9 +57,7 @@ export const STRIKE_DATES = [
 ] as const satisfies readonly DeployDate[];
 
 export const ROLE_TARGETS: Record<Role, number> = {
-  sound: 2,
   lighting: 2,
-  laser: 2,
   driver: 3,
   build: 6,
   strike: 4,
@@ -75,9 +70,7 @@ export const DAY_TARGET = 8;
 export const PARADE_DATE = "2026-05-16" satisfies DeployDate;
 
 export const ROLE_LABELS: Record<Role, string> = {
-  sound: "Sound",
   lighting: "Lighting",
-  laser: "Laser",
   driver: "Driver",
   build: "Build",
   strike: "Strike",
@@ -89,7 +82,6 @@ export const SKILL_LABELS: Record<Skill, string> = {
   forklift: "Forklift",
   lift: "Scissor / Boom Lift",
   electrical: "Electrical",
-  laser: "Laser Safety",
   driver: "CDL / Driver",
   EMT: "EMT / Medic",
 };

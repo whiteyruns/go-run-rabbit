@@ -92,16 +92,19 @@ const config: Config = {
         "ce-outline": "#aa8a7e",
         "ce-outline-variant": "#5a4137",
         "ce-tertiary": "#d0c4bc",
-        // Forest House — bone & red, May 2026 art-car deployment
-        "fh-bg": "#0A0A0F",
-        "fh-card": "#12121A",
-        "fh-text": "#D4C4B0",
-        "fh-accent": "#C42525",
+        // ForestHouse — matches foresthou.se palette (night forest, LED glow)
+        "fh-bg": "#0b0a15",
+        "fh-card": "#141128",
+        "fh-text": "#d4dce5",
+        "fh-muted": "#6c6b8c",
+        "fh-accent": "#a4cce9",
+        "fh-ember": "#c84a5c",
+        "fh-border": "#2a2640",
       },
       fontFamily: {
         sans: ["var(--font-manrope)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
-        fh: ["var(--font-inter)", "system-ui", "sans-serif"],
+        fh: ["var(--font-lato)", "system-ui", "sans-serif"],
       },
       keyframes: {
         fadeUp: {
