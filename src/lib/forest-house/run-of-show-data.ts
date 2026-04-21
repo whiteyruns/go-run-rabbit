@@ -66,6 +66,14 @@ export const CORE_TEAM_EMAILS: ReadonlySet<string> = new Set([
   "zokie@cornerbarmgmt.com",
 ]);
 
+// Event-specific core leads — always appear on the Core Leads roster for
+// those specific events only. Used for venue-tied folks (e.g. venue A/V
+// leads) who don't need to appear on every run-of-show.
+export const EVENT_CORE_EMAILS: Record<string, ReadonlySet<string>> = {
+  "cinco-de-mayo": new Set(["shaun@cornerbar.com"]),
+  "june-block-party": new Set(["shaun@cornerbar.com"]),
+};
+
 // ── Team ──────────────────────────────────────────────────────────────
 export const FOREST_HOUSE_TEAM: TeamMember[] = [
   {
@@ -160,7 +168,32 @@ export const FOREST_HOUSE_TEAM: TeamMember[] = [
     responsibilities:
       "Oversees brand presence and artistic direction. Ensures the experience aligns with ForestHouse Art Car's vision.",
   },
+  {
+    name: "Shaun Saville",
+    company: "Corner Bar Management",
+    role: "Lead A/V Tech",
+    phone: "210.204.1465",
+    email: "shaun@cornerbar.com",
+    responsibilities:
+      "Lead A/V technician for East Fremont events. Handles venue audio-visual coordination and on-site A/V support during block parties.",
+  },
 ];
+
+export function getCoreLeadsForEvent(slug?: string): TeamMember[] {
+  const eventEmails = slug ? EVENT_CORE_EMAILS[slug] : undefined;
+  return FOREST_HOUSE_TEAM.filter(
+    (m) =>
+      CORE_TEAM_EMAILS.has(m.email) ||
+      (eventEmails?.has(m.email) ?? false),
+  );
+}
+
+export function isCoreForEvent(email: string, slug?: string): boolean {
+  const lower = email.toLowerCase();
+  if (CORE_TEAM_EMAILS.has(lower)) return true;
+  const eventEmails = slug ? EVENT_CORE_EMAILS[slug] : undefined;
+  return eventEmails?.has(lower) ?? false;
+}
 
 // ── Vehicle specs ────────────────────────────────────────────────────
 export const VEHICLE_SPECS = {

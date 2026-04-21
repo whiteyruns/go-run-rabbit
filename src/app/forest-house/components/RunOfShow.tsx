@@ -1,11 +1,11 @@
 import Image from "next/image";
 import {
   AUDIO_GEAR,
-  CORE_TEAM_EMAILS,
-  FOREST_HOUSE_TEAM,
   LASER_GEAR,
   POWER_REQUIREMENTS,
   VEHICLE_SPECS,
+  getCoreLeadsForEvent,
+  isCoreForEvent,
   type RunOfShowData,
   type TeamMember,
 } from "@/lib/forest-house/run-of-show-data";
@@ -16,16 +16,16 @@ import type { CrewRecord } from "@/lib/forest-house/schema";
 // Gating happens at the page layer.
 export default function RunOfShow({
   data,
+  slug,
   registeredCrew = [],
 }: {
   data: RunOfShowData;
+  slug?: string;
   registeredCrew?: CrewRecord[];
 }) {
-  const coreLeads = FOREST_HOUSE_TEAM.filter((m) =>
-    CORE_TEAM_EMAILS.has(m.email),
-  );
+  const coreLeads = getCoreLeadsForEvent(slug);
   const registered = registeredCrew.filter(
-    (c) => !CORE_TEAM_EMAILS.has(c.email.toLowerCase()),
+    (c) => !isCoreForEvent(c.email, slug),
   );
   return (
     <div className="mx-auto max-w-5xl px-6 sm:px-12 pb-20">

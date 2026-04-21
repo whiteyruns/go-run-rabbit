@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import RunOfShow from "./RunOfShow";
 import SendRosDialog, { type Recipient } from "./SendRosDialog";
 import {
-  CORE_TEAM_EMAILS,
-  FOREST_HOUSE_TEAM,
+  getCoreLeadsForEvent,
+  isCoreForEvent,
   type RunOfShowData,
   type ScheduleItem,
 } from "@/lib/forest-house/run-of-show-data";
@@ -32,16 +32,14 @@ export default function RunOfShowClient({
   const [sendOpen, setSendOpen] = useState(false);
 
   const allRecipients = useMemo<Recipient[]>(() => {
-    const coreLeads = FOREST_HOUSE_TEAM.filter((m) =>
-      CORE_TEAM_EMAILS.has(m.email),
-    ).map<Recipient>((m) => ({
+    const coreLeads = getCoreLeadsForEvent(slug).map<Recipient>((m) => ({
       email: m.email,
       name: m.name,
       role: m.role,
       group: "core",
     }));
     const crewPeople = registeredCrew
-      .filter((c) => !CORE_TEAM_EMAILS.has(c.email.toLowerCase()))
+      .filter((c) => !isCoreForEvent(c.email, slug))
       .map<Recipient>((c) => ({
         email: c.email,
         name: c.name,
@@ -49,7 +47,7 @@ export default function RunOfShowClient({
         group: "crew",
       }));
     return [...coreLeads, ...crewPeople];
-  }, [registeredCrew]);
+  }, [registeredCrew, slug]);
 
   // Keep draft in sync with server data when we're not actively editing.
   useEffect(() => {
@@ -145,7 +143,11 @@ export default function RunOfShowClient({
             Edit
           </button>
         </div>
-        <RunOfShow data={initial} registeredCrew={registeredCrew} />
+        <RunOfShow
+          data={initial}
+          slug={slug}
+          registeredCrew={registeredCrew}
+        />
         <SendRosDialog
           slug={slug}
           eventName={initial.eventName}
