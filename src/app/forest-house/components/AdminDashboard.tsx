@@ -60,6 +60,12 @@ export default function AdminDashboard({ crew }: { crew: CrewRecord[] }) {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <a
+            href="/forest-house/admin/run-of-show/cinco-de-mayo"
+            className="px-5 py-2.5 border border-fh-border/70 text-[11px] font-black uppercase tracking-[0.3em] hover:border-fh-accent hover:text-fh-accent transition-colors"
+          >
+            Cinco ROS
+          </a>
+          <a
             href="/api/forest-house/crew/export"
             className="px-5 py-2.5 border border-fh-border/70 text-[11px] font-black uppercase tracking-[0.3em] hover:border-fh-accent hover:text-fh-accent transition-colors"
           >
