@@ -33,6 +33,18 @@ function pathFor(slug: EventSlug): string {
   return path.join(ROS_DIR, `${slug}.json`);
 }
 
+// Optional fields that are allowed to inherit from the event seed when a
+// runtime JSON file predates the field's existence (i.e. the key is
+// entirely absent from the saved JSON). Present keys — even empty
+// arrays / nulls — are preserved as-is so the user can explicitly clear
+// a section.
+const INHERITABLE_OPTIONAL_KEYS = [
+  "eventSubtitle",
+  "talent",
+  "addOns",
+  "power",
+] as const;
+
 export async function readRunOfShow(slug: string): Promise<RunOfShowData> {
   if (!isKnownEventSlug(slug)) {
     throw new Error(`Unknown event slug: ${slug}`);
@@ -43,7 +55,14 @@ export async function readRunOfShow(slug: string): Promise<RunOfShowData> {
       return RUN_OF_SHOW_SEEDS[slug];
     }
     const raw = await fs.readFile(file, "utf8");
-    const parsed = RunOfShowDataSchema.safeParse(JSON.parse(raw));
+    const rawObj = JSON.parse(raw) as Record<string, unknown>;
+    const seed = RUN_OF_SHOW_SEEDS[slug] as unknown as Record<string, unknown>;
+    for (const key of INHERITABLE_OPTIONAL_KEYS) {
+      if (!(key in rawObj) && seed[key] !== undefined) {
+        rawObj[key] = seed[key];
+      }
+    }
+    const parsed = RunOfShowDataSchema.safeParse(rawObj);
     if (!parsed.success) {
       throw new Error(
         `Invalid run-of-show JSON for ${slug}: ${parsed.error.message}`,
