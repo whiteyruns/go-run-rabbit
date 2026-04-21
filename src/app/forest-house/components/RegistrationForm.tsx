@@ -113,13 +113,6 @@ function formatFestivalRange(): string {
   return `Fri–Sun ${formatMd(first)}–${formatMd(last)}`;
 }
 
-function edcTag(iso: DeployDate): "parade" | "festival" | null {
-  if (iso === EDC_PARADE_DATE) return "parade";
-  if ((EDC_FESTIVAL_DATES as readonly DeployDate[]).includes(iso))
-    return "festival";
-  return null;
-}
-
 function toggle<T>(arr: T[], v: T): T[] {
   return arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v];
 }
@@ -355,13 +348,13 @@ export default function RegistrationForm() {
           />
           <Toggle
             label="EDC Parade"
-            hint={`Prodigal Swan · Thu ${formatMd(EDC_PARADE_DATE)}`}
+            hint={`The Strip · Prodigal Swan · Thu ${formatMd(EDC_PARADE_DATE)}`}
             checked={state.edcParade}
             onChange={(v) => setState((s) => ({ ...s, edcParade: v }))}
           />
           <Toggle
             label="EDC Festival"
-            hint={`ForestHouse · ${formatFestivalRange()}`}
+            hint={`Speedway · ForestHouse · ${formatFestivalRange()}`}
             checked={state.edcFestival}
             onChange={(v) => setState((s) => ({ ...s, edcFestival: v }))}
           />
@@ -380,7 +373,8 @@ export default function RegistrationForm() {
         ) : (
           <DayGrid
             showCinco={state.cincoDeMayo}
-            showEdc={state.edcParade || state.edcFestival}
+            showEdcParade={state.edcParade}
+            showEdcFestival={state.edcFestival}
             selected={state.availability}
             onToggle={(d) =>
               setState((s) => ({ ...s, availability: toggle(s.availability, d) }))
@@ -636,7 +630,7 @@ type DayGroup = {
   label: string;
   subtitle: string;
   dates: readonly DeployDate[];
-  scope: "cinco" | "edc";
+  scope: "cinco" | "edc-any" | "edc-parade" | "edc-festival";
 };
 
 const DAY_GROUPS: readonly DayGroup[] = [
@@ -650,42 +644,55 @@ const DAY_GROUPS: readonly DayGroup[] = [
     label: "Plaza Build",
     subtitle: `Off-site staging · ${formatMd(PLAZA_BUILD_DATES[0])}–${formatMd(PLAZA_BUILD_DATES[PLAZA_BUILD_DATES.length - 1])}`,
     dates: PLAZA_BUILD_DATES,
-    scope: "edc",
+    scope: "edc-any",
   },
   {
     label: "Site Build",
-    subtitle: `Festival grounds · ${formatMd(SITE_BUILD_DATES[0])}–${formatMd(SITE_BUILD_DATES[SITE_BUILD_DATES.length - 1])}`,
+    subtitle: `Speedway load-in · ${formatMd(SITE_BUILD_DATES[0])}–${formatMd(SITE_BUILD_DATES[SITE_BUILD_DATES.length - 1])}`,
     dates: SITE_BUILD_DATES,
-    scope: "edc",
+    scope: "edc-any",
   },
   {
-    label: "EDC Event",
-    subtitle: `Parade + Festival · ${formatMd(EVENT_DATES[0])}–${formatMd(EVENT_DATES[EVENT_DATES.length - 1])}`,
-    dates: EVENT_DATES,
-    scope: "edc",
+    label: "EDC Parade",
+    subtitle: `The Strip · Prodigal Swan · Thu ${formatMd(EDC_PARADE_DATE)}`,
+    dates: [EDC_PARADE_DATE],
+    scope: "edc-parade",
+  },
+  {
+    label: "EDC Festival",
+    subtitle: `Speedway · ForestHouse · Fri–Sun ${formatMd(EDC_FESTIVAL_DATES[0])}–${formatMd(EDC_FESTIVAL_DATES[EDC_FESTIVAL_DATES.length - 1])}`,
+    dates: EDC_FESTIVAL_DATES,
+    scope: "edc-festival",
   },
   {
     label: "EDC Strike",
     subtitle: `Teardown · ${formatMd(STRIKE_DATES[0])}–${formatMd(STRIKE_DATES[STRIKE_DATES.length - 1])}`,
     dates: STRIKE_DATES,
-    scope: "edc",
+    scope: "edc-any",
   },
 ];
 
 function DayGrid({
   showCinco,
-  showEdc,
+  showEdcParade,
+  showEdcFestival,
   selected,
   onToggle,
 }: {
   showCinco: boolean;
-  showEdc: boolean;
+  showEdcParade: boolean;
+  showEdcFestival: boolean;
   selected: DeployDate[];
   onToggle: (d: DeployDate) => void;
 }) {
-  const visible = DAY_GROUPS.filter(
-    (g) => (g.scope === "cinco" && showCinco) || (g.scope === "edc" && showEdc),
-  );
+  const showEdcAny = showEdcParade || showEdcFestival;
+  const visible = DAY_GROUPS.filter((g) => {
+    if (g.scope === "cinco") return showCinco;
+    if (g.scope === "edc-any") return showEdcAny;
+    if (g.scope === "edc-parade") return showEdcParade;
+    if (g.scope === "edc-festival") return showEdcFestival;
+    return false;
+  });
   return (
     <div className="space-y-6">
       {visible.map((group) => (
@@ -705,27 +712,19 @@ function DayGrid({
           >
             {group.dates.map((d) => {
               const isSelected = selected.includes(d);
-              const tag = edcTag(d);
               return (
                 <button
                   key={d}
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => onToggle(d)}
-                  className={`relative min-h-[44px] sm:min-h-0 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] tabular-nums border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
+                  className={`min-h-[44px] sm:min-h-0 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] tabular-nums border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
                     isSelected
                       ? "bg-fh-accent border-fh-accent text-fh-bg"
-                      : `bg-transparent ${tag ? "border-fh-accent/40" : "border-fh-border"} text-fh-text/70 hover:border-fh-accent/60`
+                      : "bg-transparent border-fh-border text-fh-text/70 hover:border-fh-accent/60"
                   }`}
                 >
                   {formatDayLabel(d)}
-                  {tag && (
-                    <span
-                      className={`ml-2 text-[9px] font-black tracking-[0.2em] ${isSelected ? "text-fh-bg/60" : "text-fh-accent"}`}
-                    >
-                      {tag === "parade" ? "· EDC P" : "· EDC F"}
-                    </span>
-                  )}
                 </button>
               );
             })}

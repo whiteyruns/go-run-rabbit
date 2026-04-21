@@ -71,15 +71,18 @@ export const BUILD_DATES = [
   "2026-05-13",
 ] as const satisfies readonly DeployDate[];
 
+// Event days (Parade + Festival combined) — used for landing-page copy
+// and the "EDC Event" spec card. Finer granularity for filtering lives in
+// EDC_PARADE_DATE + EDC_FESTIVAL_DATES below.
 export const EVENT_DATES = [
   "2026-05-14",
   "2026-05-15",
   "2026-05-16",
   "2026-05-17",
-  "2026-05-18",
 ] as const satisfies readonly DeployDate[];
 
 export const STRIKE_DATES = [
+  "2026-05-18",
   "2026-05-19",
   "2026-05-20",
 ] as const satisfies readonly DeployDate[];
@@ -143,7 +146,8 @@ export type DateBucket =
   | "cinco-strike"
   | "build-plaza"
   | "build-site"
-  | "event"
+  | "edc-parade"
+  | "edc-festival"
   | "strike";
 
 export const DATE_BUCKET: Record<DeployDate, DateBucket> = (() => {
@@ -153,7 +157,8 @@ export const DATE_BUCKET: Record<DeployDate, DateBucket> = (() => {
   out[CINCO_STRIKE_DATE] = "cinco-strike";
   for (const d of PLAZA_BUILD_DATES) out[d] = "build-plaza";
   for (const d of SITE_BUILD_DATES) out[d] = "build-site";
-  for (const d of EVENT_DATES) out[d] = "event";
+  out[EDC_PARADE_DATE] = "edc-parade";
+  for (const d of EDC_FESTIVAL_DATES) out[d] = "edc-festival";
   for (const d of STRIKE_DATES) out[d] = "strike";
   return out;
 })();
@@ -164,16 +169,7 @@ export const BUCKET_LABELS: Record<DateBucket, string> = {
   "cinco-strike": "Cinco Strike",
   "build-plaza": "Plaza Build",
   "build-site": "Site Build",
-  event: "EDC Event",
+  "edc-parade": "EDC Parade",
+  "edc-festival": "EDC Festival",
   strike: "EDC Strike",
 };
-
-export const BUCKET_ORDER: readonly DateBucket[] = [
-  "cinco-build",
-  "cinco-event",
-  "cinco-strike",
-  "build-plaza",
-  "build-site",
-  "event",
-  "strike",
-];

@@ -59,11 +59,11 @@ export default function ForestHouseLanding() {
             Three weeks in May, two events back-to-back. The{" "}
             <span className="text-fh-text">Cinco de Mayo Block Party</span> on
             East Fremont Tue&nbsp;{formatMd(CINCO_EVENT_DATE)}, then EDC —{" "}
-            <span className="text-fh-text">Prodigal Swan</span> in the Parade
-            Thu&nbsp;{formatMd(EDC_PARADE_DATE)},{" "}
-            <span className="text-fh-text">ForestHouse</span> on the Festival
-            floor Fri–Sun&nbsp;{formatRange(EDC_FESTIVAL_DATES)}. Crew list is
-            open.
+            <span className="text-fh-text">Prodigal Swan</span> on the Strip
+            for the Parade Thu&nbsp;{formatMd(EDC_PARADE_DATE)}, then{" "}
+            <span className="text-fh-text">ForestHouse</span> at the Speedway
+            for the Festival Fri–Sun&nbsp;{formatRange(EDC_FESTIVAL_DATES)}.
+            Crew list is open.
           </p>
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
             <Link
@@ -105,12 +105,13 @@ export default function ForestHouseLanding() {
               <p>
                 A week later, <span className="text-fh-text">EDC</span> kicks
                 off. Build crew starts at the Plaza{" "}
-                {formatRange(PLAZA_BUILD_DATES)}, moves on-site{" "}
+                {formatRange(PLAZA_BUILD_DATES)}, moves to Speedway load-in{" "}
                 {formatRange(SITE_BUILD_DATES)}.{" "}
-                <span className="text-fh-text">Prodigal Swan</span> in the
-                Parade Thu {formatMd(EDC_PARADE_DATE)}, then{" "}
-                <span className="text-fh-text">ForestHouse</span> on the
-                Festival floor Fri–Sun {formatRange(EDC_FESTIVAL_DATES)}.
+                <span className="text-fh-text">Prodigal Swan</span> rolls
+                down the Strip for the Parade Thu{" "}
+                {formatMd(EDC_PARADE_DATE)}, then{" "}
+                <span className="text-fh-text">ForestHouse</span> plants on
+                the Speedway floor Fri–Sun {formatRange(EDC_FESTIVAL_DATES)}.
                 Strike {formatRange(STRIKE_DATES)}.
               </p>
               <p>
@@ -195,18 +196,18 @@ export default function ForestHouseLanding() {
             <SpecCard
               label="Site Build"
               highlight={formatRange(SITE_BUILD_DATES)}
-              body="Two-day load-in at the festival grounds. Fast, hot, hands-on — set the stage for Parade day."
+              body="Speedway load-in. Fast, hot, hands-on — set the stage for Parade day."
             />
             <SpecCard
               label="Event"
               highlight={formatRange(EVENT_DATES)}
-              body={`Prodigal Swan in the EDC Parade Thu ${formatMd(EDC_PARADE_DATE)}. ForestHouse on the festival floor Fri–Sun ${formatRange(EDC_FESTIVAL_DATES)}.`}
+              body={`Prodigal Swan on the Strip for the Parade Thu ${formatMd(EDC_PARADE_DATE)}. ForestHouse at the Speedway for the Festival Fri–Sun ${formatRange(EDC_FESTIVAL_DATES)}.`}
               accent
             />
             <SpecCard
               label="Strike"
               highlight={formatRange(STRIKE_DATES)}
-              body="Two-day teardown. Anyone who stays through strike has our undying love."
+              body="Three-day teardown starting Monday after the festival. Anyone who stays through strike has our undying love."
             />
           </div>
         </div>
