@@ -48,8 +48,13 @@ export default function RunOfShowClient({
     setError(null);
     // Drop empty power override so the default (shore + CamLock) renders
     // instead of trying to validate an empty summary.
+    const trimmedAddOns = draft.addOns
+      ?.map((s) => s.trim())
+      .filter((s) => s.length > 0);
     const payload: RunOfShowData = {
       ...draft,
+      addOns:
+        trimmedAddOns && trimmedAddOns.length > 0 ? trimmedAddOns : undefined,
       power:
         draft.power && draft.power.summary.trim().length > 0
           ? {
@@ -348,6 +353,26 @@ function Editor({
           }
           placeholder="e.g. (1) 40' Boom Lift"
           addLabel="Add equipment"
+        />
+      </FieldBlock>
+
+      <FieldBlock label="Effects & Add-Ons">
+        <p className="text-xs text-fh-muted mb-3">
+          Optional extras with pricing. Formatting suggestion:{" "}
+          <code className="text-fh-text-secondary">
+            Item (qty) · base price + per-shot price
+          </code>
+        </p>
+        <StringList
+          items={draft.addOns ?? []}
+          onChange={(next) =>
+            setDraft((s) => ({
+              ...s,
+              addOns: next.length > 0 ? next : undefined,
+            }))
+          }
+          placeholder="e.g. Large confetti cannon · $400 + $200 per shot"
+          addLabel="Add effect / add-on"
         />
       </FieldBlock>
 

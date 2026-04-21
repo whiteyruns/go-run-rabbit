@@ -1,4 +1,5 @@
 import {
+  DEFAULT_ADD_ONS,
   DEFAULT_HEAVY_EQUIPMENT,
   type RunOfShowData,
 } from "./run-of-show-data";
@@ -65,6 +66,7 @@ export const CINCO_SEED: RunOfShowData = {
     "Traffic control / street closure coordination for East Fremont.",
   ],
   heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
+  addOns: [...DEFAULT_ADD_ONS],
   power: {
     summary: "On-board generator — no shore power required.",
     details: ["Generac 30 kW diesel generator (ForestHouse)"],
@@ -131,6 +133,7 @@ export const EDC_PARADE_SEED: RunOfShowData = {
     "Work passes w/ access to catering tent (10).",
   ],
   heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
+  addOns: [...DEFAULT_ADD_ONS],
   lastUpdated: "April 21, 2026",
 };
 
@@ -200,6 +203,7 @@ export const EDC_FESTIVAL_SEED: RunOfShowData = {
     "Work passes w/ access to catering tent (10).",
   ],
   heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
+  addOns: [...DEFAULT_ADD_ONS],
   lastUpdated: "April 21, 2026",
 };
 

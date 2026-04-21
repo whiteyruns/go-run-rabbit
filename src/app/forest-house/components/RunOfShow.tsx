@@ -235,6 +235,28 @@ export default function RunOfShow({
               </li>
             ))}
           </ul>
+
+          {data.addOns && data.addOns.length > 0 && (
+            <>
+              <SectionHeading className="mt-12">
+                Effects & Add-Ons
+              </SectionHeading>
+              <p className="mt-3 text-[10px] uppercase tracking-[0.25em] text-fh-muted">
+                Optional · priced separately
+              </p>
+              <ul className="mt-3 space-y-1.5 text-sm">
+                {data.addOns.map((item) => (
+                  <li
+                    key={item}
+                    className="text-fh-text-secondary flex gap-3"
+                  >
+                    <span className="text-fh-accent mt-0.5">→</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </div>
 

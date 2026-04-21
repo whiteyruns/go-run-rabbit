@@ -35,6 +35,8 @@ export const RunOfShowDataSchema = z.object({
   schedule: z.array(ScheduleItemSchema).max(50),
   clientResponsibilities: z.array(z.string().min(1).max(240)).max(20),
   heavyEquipment: z.array(z.string().min(1).max(120)).max(20),
+  // Optional extras with pricing — confetti cannons, cold sparks, etc.
+  addOns: z.array(z.string().min(1).max(200)).max(20).optional(),
   // Per-event power override. If unset, the shared Shore Power + CamLock
   // guide is rendered. If set, the custom summary/details replace it
   // entirely — the CamLock swatches are hidden.
@@ -182,4 +184,10 @@ export const DEFAULT_HEAVY_EQUIPMENT = [
   "(1) 40' Variable Reach Forklift",
   "(1) 40' Boom Lift",
   "(2) Light Towers",
+] as const;
+
+export const DEFAULT_ADD_ONS = [
+  "Large confetti cannon · $400 + $200 per shot",
+  "Small confetti cannons (2 available) · $250 ea + $50 per shot ea",
+  "Cold Sparks (4 pairs available) · $135 per pair",
 ] as const;
