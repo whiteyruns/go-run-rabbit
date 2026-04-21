@@ -49,7 +49,7 @@ export default function RunsDropdown({ runs }: { runs: RunOption[] }) {
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className={`flex items-center gap-1.5 transition-colors ${
+        className={`flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.3em] transition-colors ${
           activeSlug
             ? "text-fh-accent"
             : "text-fh-text-secondary hover:text-fh-text"
