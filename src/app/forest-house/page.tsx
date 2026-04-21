@@ -2,25 +2,27 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   DEPLOY_DATES,
-  ROLES,
   EDC_PARADE_DATE,
   EDC_FESTIVAL_DATES,
   PLAZA_BUILD_DATES,
   SITE_BUILD_DATES,
   EVENT_DATES,
   STRIKE_DATES,
+  CINCO_BUILD_DATES,
+  CINCO_EVENT_DATE,
+  CINCO_STRIKE_DATE,
 } from "@/lib/forest-house/constants";
-
-function formatMd(iso: string): string {
-  const [, m, d] = iso.split("-");
-  return `${Number(m)}/${Number(d)}`;
-}
 
 function formatRange(dates: readonly string[]): string {
   if (dates.length === 0) return "";
   const first = dates[0];
   const last = dates[dates.length - 1];
   return first === last ? formatMd(first) : `${formatMd(first)}–${formatMd(last)}`;
+}
+
+function formatMd(iso: string): string {
+  const [, m, d] = iso.split("-");
+  return `${Number(m)}/${Number(d)}`;
 }
 
 export default function ForestHouseLanding() {
@@ -54,13 +56,14 @@ export default function ForestHouseLanding() {
             House
           </h1>
           <p className="mt-6 sm:mt-8 max-w-2xl text-base sm:text-lg font-light leading-[1.7] text-fh-text-secondary">
-            A two-story art car built at Black Rock City — 30,000 LEDs, ten
-            Class&nbsp;4 lasers, 25 feet tall. For&nbsp;May 8–20, 2026 we roll
-            again: <span className="text-fh-text">Prodigal Swan</span> joins
-            the EDC Parade Thu&nbsp;{formatMd(EDC_PARADE_DATE)}, and{" "}
-            <span className="text-fh-text">ForestHouse</span> is at the EDC
-            Festival Fri–Sun&nbsp;{formatRange(EDC_FESTIVAL_DATES)}. Crew
-            list is open.
+            Three weeks in May, two events back-to-back. The{" "}
+            <span className="text-fh-text">Cinco de Mayo Block Party</span> on
+            East Fremont Tue&nbsp;{formatMd(CINCO_EVENT_DATE)}, then EDC —{" "}
+            <span className="text-fh-text">Prodigal Swan</span> in the Parade
+            Thu&nbsp;{formatMd(EDC_PARADE_DATE)},{" "}
+            <span className="text-fh-text">ForestHouse</span> on the Festival
+            floor Fri–Sun&nbsp;{formatRange(EDC_FESTIVAL_DATES)}. Crew list is
+            open.
           </p>
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
             <Link
@@ -93,25 +96,33 @@ export default function ForestHouseLanding() {
             </h2>
             <div className="mt-8 space-y-5 text-[17px] font-light leading-[1.8] text-fh-text-secondary">
               <p>
-                Six roles across a thirteen-day window. Build crew kicks off
-                at <span className="text-fh-text">the Plaza</span>{" "}
-                {formatRange(PLAZA_BUILD_DATES)}, then moves on-site to the
-                festival grounds {formatRange(SITE_BUILD_DATES)}. Event crew
-                runs <span className="text-fh-text">Prodigal Swan</span>{" "}
-                through the EDC Parade, then pivots to{" "}
-                <span className="text-fh-text">ForestHouse</span> on the
-                festival floor. Strike crew stays late to tear it all down.
+                Six roles across two events in May.{" "}
+                <span className="text-fh-text">Cinco de Mayo</span> rolls onto
+                East Fremont {formatRange(CINCO_BUILD_DATES)} build, Tue{" "}
+                {formatMd(CINCO_EVENT_DATE)} event, Wed{" "}
+                {formatMd(CINCO_STRIKE_DATE)} strike.
               </p>
               <p>
-                Re-submit the form with the same email any time before May 12
-                to update your availability. If you&apos;re on-call or
-                bringing critical gear, flag it — we track it.
+                A week later, <span className="text-fh-text">EDC</span> kicks
+                off. Build crew starts at the Plaza{" "}
+                {formatRange(PLAZA_BUILD_DATES)}, moves on-site{" "}
+                {formatRange(SITE_BUILD_DATES)}.{" "}
+                <span className="text-fh-text">Prodigal Swan</span> in the
+                Parade Thu {formatMd(EDC_PARADE_DATE)}, then{" "}
+                <span className="text-fh-text">ForestHouse</span> on the
+                Festival floor Fri–Sun {formatRange(EDC_FESTIVAL_DATES)}.
+                Strike {formatRange(STRIKE_DATES)}.
+              </p>
+              <p>
+                Re-submit the form with the same email any time to update your
+                availability. If you&apos;re on-call or bringing critical
+                gear, flag it — we track it.
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-8 content-start">
             <Stat number={String(DEPLOY_DATES.length)} label="Days on Site" />
-            <Stat number={String(ROLES.length)} label="Crew Roles" />
+            <Stat number={formatMd(CINCO_EVENT_DATE)} label="Cinco Block Party" size="sm" />
             <Stat
               number={formatMd(EDC_PARADE_DATE)}
               label="EDC Parade"
@@ -126,15 +137,15 @@ export default function ForestHouseLanding() {
         </div>
       </section>
 
-      {/* BUILD / EVENT / STRIKE */}
+      {/* DEPLOYMENT WINDOWS */}
       <section className="bg-fh-surface px-6 sm:px-12 py-14 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionLabel>Deployment Windows</SectionLabel>
-          <div className="mt-5 mb-8 sm:mb-12 flex flex-wrap items-end justify-between gap-4">
+          <div className="mt-5 mb-10 sm:mb-14 flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em]">
-              Thirteen Days
+              Two Events
               <br />
-              On The Floor
+              Three Weeks
             </h2>
             <Link
               href="/forest-house/register"
@@ -143,6 +154,38 @@ export default function ForestHouseLanding() {
               Register →
             </Link>
           </div>
+
+          {/* Cinco de Mayo */}
+          <EventHeading
+            name="Cinco de Mayo"
+            subtitle="East Fremont Block Party"
+            range="5/3–6"
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
+            <SpecCard
+              label="Build"
+              highlight={formatRange(CINCO_BUILD_DATES)}
+              body="Two-day build on East Fremont. Tight window, fast hands."
+            />
+            <SpecCard
+              label="Block Party"
+              highlight={`Tue ${formatMd(CINCO_EVENT_DATE)}`}
+              body="One-night event on Fremont. Lighting, drivers, support, safety."
+              accent
+            />
+            <SpecCard
+              label="Strike"
+              highlight={`Wed ${formatMd(CINCO_STRIKE_DATE)}`}
+              body="Single-day teardown. Clear East Fremont before dawn if we can."
+            />
+          </div>
+
+          {/* EDC Vegas */}
+          <EventHeading
+            name="EDC Vegas"
+            subtitle="Prodigal Swan + ForestHouse"
+            range="5/8–20"
+          />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             <SpecCard
               label="Plaza Build"
@@ -157,7 +200,7 @@ export default function ForestHouseLanding() {
             <SpecCard
               label="Event"
               highlight={formatRange(EVENT_DATES)}
-              body={`Prodigal Swan in the EDC Parade Thu ${formatMd(EDC_PARADE_DATE)}. ForestHouse on the festival floor Fri–Sun ${formatRange(EDC_FESTIVAL_DATES)}. Lighting, drivers, support, safety.`}
+              body={`Prodigal Swan in the EDC Parade Thu ${formatMd(EDC_PARADE_DATE)}. ForestHouse on the festival floor Fri–Sun ${formatRange(EDC_FESTIVAL_DATES)}.`}
               accent
             />
             <SpecCard
@@ -199,6 +242,32 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-fh-muted">
       [ {children} ]
     </p>
+  );
+}
+
+function EventHeading({
+  name,
+  subtitle,
+  range,
+}: {
+  name: string;
+  subtitle: string;
+  range: string;
+}) {
+  return (
+    <div className="flex flex-wrap items-baseline justify-between gap-3 mb-5 pb-3 border-b border-fh-border">
+      <div className="flex flex-wrap items-baseline gap-3">
+        <h3 className="text-[13px] font-bold uppercase tracking-[0.35em] bg-fh-rainbow bg-clip-text text-transparent">
+          {name}
+        </h3>
+        <span className="text-[11px] font-medium uppercase tracking-[0.25em] text-fh-muted">
+          {subtitle}
+        </span>
+      </div>
+      <span className="text-[11px] font-bold tabular-nums text-fh-muted">
+        {range}
+      </span>
+    </div>
   );
 }
 

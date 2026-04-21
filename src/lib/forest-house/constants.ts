@@ -18,6 +18,12 @@ export const SKILLS = [
 export type Skill = (typeof SKILLS)[number];
 
 export const DEPLOY_DATES = [
+  // Cinco de Mayo — East Fremont Block Party
+  "2026-05-03",
+  "2026-05-04",
+  "2026-05-05",
+  "2026-05-06",
+  // EDC Vegas
   "2026-05-08",
   "2026-05-09",
   "2026-05-10",
@@ -34,6 +40,16 @@ export const DEPLOY_DATES = [
 ] as const;
 export type DeployDate = (typeof DEPLOY_DATES)[number];
 
+// ── Cinco de Mayo · East Fremont Block Party ─────────────────────────────
+export const CINCO_BUILD_DATES = [
+  "2026-05-03",
+  "2026-05-04",
+] as const satisfies readonly DeployDate[];
+
+export const CINCO_EVENT_DATE = "2026-05-05" satisfies DeployDate;
+export const CINCO_STRIKE_DATE = "2026-05-06" satisfies DeployDate;
+
+// ── EDC Vegas ────────────────────────────────────────────────────────────
 export const PLAZA_BUILD_DATES = [
   "2026-05-08",
   "2026-05-09",
@@ -46,8 +62,6 @@ export const SITE_BUILD_DATES = [
   "2026-05-13",
 ] as const satisfies readonly DeployDate[];
 
-// Union of both build phases — used for landing-page headline ranges and
-// crew-commitment copy.
 export const BUILD_DATES = [
   "2026-05-08",
   "2026-05-09",
@@ -70,6 +84,15 @@ export const STRIKE_DATES = [
   "2026-05-20",
 ] as const satisfies readonly DeployDate[];
 
+export const EDC_PARADE_DATE = "2026-05-14" satisfies DeployDate;
+
+export const EDC_FESTIVAL_DATES = [
+  "2026-05-15",
+  "2026-05-16",
+  "2026-05-17",
+] as const satisfies readonly DeployDate[];
+
+// ── Roles / skills targets ───────────────────────────────────────────────
 export const ROLE_TARGETS: Record<Role, number> = {
   lighting: 2,
   driver: 3,
@@ -80,14 +103,6 @@ export const ROLE_TARGETS: Record<Role, number> = {
 };
 
 export const DAY_TARGET = 8;
-
-export const EDC_PARADE_DATE = "2026-05-14" satisfies DeployDate;
-
-export const EDC_FESTIVAL_DATES = [
-  "2026-05-15",
-  "2026-05-16",
-  "2026-05-17",
-] as const satisfies readonly DeployDate[];
 
 export const ROLE_LABELS: Record<Role, string> = {
   lighting: "Lighting",
@@ -106,10 +121,21 @@ export const SKILL_LABELS: Record<Skill, string> = {
   EMT: "EMT / Medic",
 };
 
-export type DateBucket = "build-plaza" | "build-site" | "event" | "strike";
+// ── Date bucketing ───────────────────────────────────────────────────────
+export type DateBucket =
+  | "cinco-build"
+  | "cinco-event"
+  | "cinco-strike"
+  | "build-plaza"
+  | "build-site"
+  | "event"
+  | "strike";
 
 export const DATE_BUCKET: Record<DeployDate, DateBucket> = (() => {
   const out = {} as Record<DeployDate, DateBucket>;
+  for (const d of CINCO_BUILD_DATES) out[d] = "cinco-build";
+  out[CINCO_EVENT_DATE] = "cinco-event";
+  out[CINCO_STRIKE_DATE] = "cinco-strike";
   for (const d of PLAZA_BUILD_DATES) out[d] = "build-plaza";
   for (const d of SITE_BUILD_DATES) out[d] = "build-site";
   for (const d of EVENT_DATES) out[d] = "event";
@@ -118,13 +144,19 @@ export const DATE_BUCKET: Record<DeployDate, DateBucket> = (() => {
 })();
 
 export const BUCKET_LABELS: Record<DateBucket, string> = {
+  "cinco-build": "Cinco Build",
+  "cinco-event": "Cinco de Mayo",
+  "cinco-strike": "Cinco Strike",
   "build-plaza": "Plaza Build",
   "build-site": "Site Build",
-  event: "Event",
-  strike: "Strike",
+  event: "EDC Event",
+  strike: "EDC Strike",
 };
 
 export const BUCKET_ORDER: readonly DateBucket[] = [
+  "cinco-build",
+  "cinco-event",
+  "cinco-strike",
   "build-plaza",
   "build-site",
   "event",

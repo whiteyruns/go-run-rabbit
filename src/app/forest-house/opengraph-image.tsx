@@ -89,7 +89,7 @@ export default async function OpengraphImage() {
               display: "flex",
             }}
           >
-            Prodigal Swan · EDC Parade Thu 5/14 &nbsp; · &nbsp; ForestHouse ·
+            Cinco de Mayo 5/5 &nbsp; · &nbsp; EDC Parade 5/14 &nbsp; · &nbsp;
             EDC Festival 5/15–17
           </div>
         </div>

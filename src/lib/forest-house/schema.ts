@@ -16,6 +16,7 @@ const BaseFields = z
       .min(1, "Select at least one day"),
     buildCrew: z.boolean(),
     strikeCrew: z.boolean(),
+    cincoDeMayo: z.boolean().default(false),
     edcParade: z.boolean(),
     edcFestival: z.boolean(),
     skills: z.array(z.enum(SKILLS)),

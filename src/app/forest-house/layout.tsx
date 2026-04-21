@@ -4,7 +4,7 @@ import Link from "next/link";
 
 const OG_TITLE = "ForestHouse Crew Call — May 2026";
 const OG_DESCRIPTION =
-  "Crew list open for the May 2026 deployment. Prodigal Swan joins the EDC Parade, ForestHouse hits the EDC Festival floor. Pick your role, your days, tell us what you bring.";
+  "Crew list open for May 2026. Two events: Cinco de Mayo on East Fremont Tue 5/5, then EDC — Prodigal Swan in the Parade Thu 5/14, ForestHouse on the Festival floor Fri–Sun 5/15–17. Pick your role, your days, tell us what you bring.";
 
 export const metadata: Metadata = {
   title: { absolute: OG_TITLE },

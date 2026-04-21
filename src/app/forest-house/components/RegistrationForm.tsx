@@ -10,6 +10,7 @@ import {
   DATE_BUCKET,
   BUCKET_LABELS,
   BUCKET_ORDER,
+  CINCO_EVENT_DATE,
   EDC_PARADE_DATE,
   EDC_FESTIVAL_DATES,
   type DateBucket,
@@ -29,6 +30,7 @@ type FormState = {
   availability: DeployDate[];
   buildCrew: boolean;
   strikeCrew: boolean;
+  cincoDeMayo: boolean;
   edcParade: boolean;
   edcFestival: boolean;
   skills: Skill[];
@@ -47,6 +49,7 @@ const INITIAL: FormState = {
   availability: [],
   buildCrew: false,
   strikeCrew: false,
+  cincoDeMayo: false,
   edcParade: false,
   edcFestival: false,
   skills: [],
@@ -64,6 +67,7 @@ function toPayload(s: FormState): Record<string, unknown> {
     availability: s.availability,
     buildCrew: s.buildCrew,
     strikeCrew: s.strikeCrew,
+    cincoDeMayo: s.cincoDeMayo,
     edcParade: s.edcParade,
     edcFestival: s.edcFestival,
     skills: s.skills,
@@ -319,7 +323,7 @@ export default function RegistrationForm() {
 
       <FieldGroup
         label="Availability"
-        hint="May 8–20, 2026 · pick every day you can be on site"
+        hint="May 3–20, 2026 · pick every day you can be on site"
         error={errors.availability}
       >
         <DayGrid
@@ -347,8 +351,14 @@ export default function RegistrationForm() {
         </div>
       </FieldGroup>
 
-      <FieldGroup label="Which EDC events?" hint="Pick one or both">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <FieldGroup label="Which events?" hint="Pick any combination">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <Toggle
+            label="Cinco de Mayo"
+            hint={`East Fremont · Tue ${formatMd(CINCO_EVENT_DATE)}`}
+            checked={state.cincoDeMayo}
+            onChange={(v) => setState((s) => ({ ...s, cincoDeMayo: v }))}
+          />
           <Toggle
             label="EDC Parade"
             hint={`Prodigal Swan · Thu ${formatMd(EDC_PARADE_DATE)}`}
@@ -598,6 +608,9 @@ function DayGrid({
   onToggle: (d: DeployDate) => void;
 }) {
   const grouped: Record<DateBucket, DeployDate[]> = {
+    "cinco-build": [],
+    "cinco-event": [],
+    "cinco-strike": [],
     "build-plaza": [],
     "build-site": [],
     event: [],
