@@ -67,6 +67,14 @@ export const ROLE_TARGETS: Record<Role, number> = {
 
 export const DAY_TARGET = 8;
 
+export const EDC_PARADE_DATE = "2026-05-14" satisfies DeployDate;
+
+export const EDC_FESTIVAL_DATES = [
+  "2026-05-15",
+  "2026-05-16",
+  "2026-05-17",
+] as const satisfies readonly DeployDate[];
+
 export const ROLE_LABELS: Record<Role, string> = {
   lighting: "Lighting",
   driver: "Driver",

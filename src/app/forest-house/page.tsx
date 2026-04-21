@@ -3,17 +3,20 @@ import {
   BUILD_DATES,
   EVENT_DATES,
   STRIKE_DATES,
+  EDC_PARADE_DATE,
+  EDC_FESTIVAL_DATES,
 } from "@/lib/forest-house/constants";
 
 function formatRange(dates: readonly string[]): string {
   if (dates.length === 0) return "";
   const first = dates[0];
   const last = dates[dates.length - 1];
-  const fmt = (iso: string) => {
-    const [, m, d] = iso.split("-");
-    return `${Number(m)}/${Number(d)}`;
-  };
-  return first === last ? fmt(first) : `${fmt(first)} – ${fmt(last)}`;
+  return first === last ? formatMd(first) : `${formatMd(first)} – ${formatMd(last)}`;
+}
+
+function formatMd(iso: string): string {
+  const [, m, d] = iso.split("-");
+  return `${Number(m)}/${Number(d)}`;
 }
 
 export default function ForestHouseLanding() {
@@ -59,7 +62,7 @@ export default function ForestHouseLanding() {
         <CalloutCard
           label="Event"
           range={formatRange(EVENT_DATES)}
-          body="Seven nights on the road. Lighting, drivers, support, safety — for the EDC Parade and Festival weekend."
+          body={`Lighting, drivers, support, safety. EDC Parade Thu ${formatMd(EDC_PARADE_DATE)}, Festival Fri–Sun ${formatMd(EDC_FESTIVAL_DATES[0])}–${formatMd(EDC_FESTIVAL_DATES[EDC_FESTIVAL_DATES.length - 1])}.`}
           accent
         />
         <CalloutCard

@@ -8,6 +8,8 @@ import {
   ROLE_LABELS,
   SKILL_LABELS,
   DATE_BUCKET,
+  EDC_PARADE_DATE,
+  EDC_FESTIVAL_DATES,
   type Role,
   type Skill,
   type DeployDate,
@@ -82,6 +84,24 @@ function formatDayLabel(iso: DeployDate): string {
     timeZone: "UTC",
   });
   return `${weekday.toUpperCase()} ${m}/${d}`;
+}
+
+function formatMd(iso: DeployDate): string {
+  const parts = iso.split("-").map(Number);
+  return `${parts[1]}/${parts[2]}`;
+}
+
+function formatFestivalRange(): string {
+  const first = EDC_FESTIVAL_DATES[0];
+  const last = EDC_FESTIVAL_DATES[EDC_FESTIVAL_DATES.length - 1];
+  return `Fri–Sun ${formatMd(first)}–${formatMd(last)}`;
+}
+
+function edcTag(iso: DeployDate): "parade" | "festival" | null {
+  if (iso === EDC_PARADE_DATE) return "parade";
+  if ((EDC_FESTIVAL_DATES as readonly DeployDate[]).includes(iso))
+    return "festival";
+  return null;
 }
 
 function toggle<T>(arr: T[], v: T): T[] {
@@ -331,13 +351,13 @@ export default function RegistrationForm() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Toggle
             label="EDC Parade"
-            hint="The parade event"
+            hint={`Thu ${formatMd(EDC_PARADE_DATE)}`}
             checked={state.edcParade}
             onChange={(v) => setState((s) => ({ ...s, edcParade: v }))}
           />
           <Toggle
             label="EDC Festival"
-            hint="The main festival weekend"
+            hint={formatFestivalRange()}
             checked={state.edcFestival}
             onChange={(v) => setState((s) => ({ ...s, edcFestival: v }))}
           />
@@ -594,19 +614,27 @@ function DayGrid({
           <div className="flex flex-wrap gap-2" role="group" aria-label={bucket}>
             {grouped[bucket].map((d) => {
               const isSelected = selected.includes(d);
+              const tag = edcTag(d);
               return (
                 <button
                   key={d}
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => onToggle(d)}
-                  className={`px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] tabular-nums border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
+                  className={`relative px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] tabular-nums border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
                     isSelected
                       ? "bg-fh-accent border-fh-accent text-fh-bg"
-                      : "bg-transparent border-fh-border text-fh-text/70 hover:border-fh-accent/60"
+                      : `bg-transparent ${tag ? "border-fh-accent/40" : "border-fh-border"} text-fh-text/70 hover:border-fh-accent/60`
                   }`}
                 >
                   {formatDayLabel(d)}
+                  {tag && (
+                    <span
+                      className={`ml-2 text-[9px] font-black tracking-[0.2em] ${isSelected ? "text-fh-bg/60" : "text-fh-accent"}`}
+                    >
+                      {tag === "parade" ? "· EDC P" : "· EDC F"}
+                    </span>
+                  )}
                 </button>
               );
             })}
