@@ -7,15 +7,18 @@ import type {
   RunOfShowData,
   ScheduleItem,
 } from "@/lib/forest-house/run-of-show-data";
+import type { CrewRecord } from "@/lib/forest-house/schema";
 
 type Mode = "view" | "edit";
 
 export default function RunOfShowClient({
   slug,
   initial,
+  registeredCrew = [],
 }: {
   slug: string;
   initial: RunOfShowData;
+  registeredCrew?: CrewRecord[];
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("view");
@@ -43,13 +46,27 @@ export default function RunOfShowClient({
   async function onSave() {
     setSaving(true);
     setError(null);
+    // Drop empty power override so the default (shore + CamLock) renders
+    // instead of trying to validate an empty summary.
+    const payload: RunOfShowData = {
+      ...draft,
+      power:
+        draft.power && draft.power.summary.trim().length > 0
+          ? {
+              summary: draft.power.summary.trim(),
+              details: draft.power.details?.filter(
+                (d) => d.trim().length > 0,
+              ),
+            }
+          : undefined,
+    };
     try {
       const res = await fetch(
         `/api/forest-house/admin/run-of-show/${slug}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(draft),
+          body: JSON.stringify(payload),
         },
       );
       const body = (await res.json()) as {
@@ -86,7 +103,7 @@ export default function RunOfShowClient({
             Edit
           </button>
         </div>
-        <RunOfShow data={initial} />
+        <RunOfShow data={initial} registeredCrew={registeredCrew} />
       </>
     );
   }
@@ -267,6 +284,48 @@ function Editor({
               }))
             }
           />
+        </div>
+      </FieldBlock>
+
+      <FieldBlock label="Power">
+        <p className="text-xs text-fh-muted mb-3">
+          Leave summary blank to fall back to the default Shore Power +
+          CamLock guide. Set a summary to override for this event (e.g.
+          on-board generator, mains tie-in, etc.).
+        </p>
+        <div className="space-y-3">
+          <TextInput
+            value={draft.power?.summary ?? ""}
+            onChange={(v) =>
+              setDraft((s) => ({
+                ...s,
+                power: v
+                  ? { summary: v, details: s.power?.details }
+                  : undefined,
+              }))
+            }
+            placeholder="e.g. On-board generator — no shore power required"
+          />
+          {draft.power && (
+            <StringList
+              items={draft.power.details ?? []}
+              onChange={(next) =>
+                setDraft((s) =>
+                  s.power
+                    ? {
+                        ...s,
+                        power: {
+                          ...s.power,
+                          details: next.length > 0 ? next : undefined,
+                        },
+                      }
+                    : s,
+                )
+              }
+              placeholder="Additional power detail (e.g. generator model)"
+              addLabel="Add power detail"
+            />
+          )}
         </div>
       </FieldBlock>
 

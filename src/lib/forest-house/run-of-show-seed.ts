@@ -2,6 +2,7 @@ import {
   DEFAULT_HEAVY_EQUIPMENT,
   type RunOfShowData,
 } from "./run-of-show-data";
+import type { CrewRecord } from "./schema";
 
 // Seeds are the "known-good" default for each event. When a run-of-show
 // file doesn't exist in data/forest-house/run-of-show/, the storage
@@ -61,12 +62,13 @@ export const CINCO_SEED: RunOfShowData = {
   ],
   clientResponsibilities: [
     "Ensure adequate security for the duration of the event.",
-    "Ensure adequate power for the duration of the event.",
-    "10×10 BOH tent.",
-    "Work passes w/ access to catering tent (10).",
     "Traffic control / street closure coordination for East Fremont.",
   ],
   heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
+  power: {
+    summary: "On-board generator — no shore power required.",
+    details: ["Generac 30 kW diesel generator (ForestHouse)"],
+  },
   lastUpdated: "April 21, 2026",
 };
 
@@ -79,3 +81,12 @@ export type EventSlug = keyof typeof RUN_OF_SHOW_SEEDS;
 export function isKnownEventSlug(slug: string): slug is EventSlug {
   return slug in RUN_OF_SHOW_SEEDS;
 }
+
+// Predicate that picks crew registrations relevant to each event. Used
+// by the run-of-show page to render the event-specific roster.
+export const EVENT_CREW_PREDICATES: Record<
+  EventSlug,
+  (c: CrewRecord) => boolean
+> = {
+  "cinco-de-mayo": (c) => c.cincoDeMayo,
+};

@@ -21,6 +21,12 @@ export const EventDateSchema = z.object({
 });
 export type EventDate = z.infer<typeof EventDateSchema>;
 
+export const PowerConfigSchema = z.object({
+  summary: z.string().min(1).max(200),
+  details: z.array(z.string().min(1).max(160)).max(10).optional(),
+});
+export type PowerConfig = z.infer<typeof PowerConfigSchema>;
+
 export const RunOfShowDataSchema = z.object({
   eventName: z.string().min(1).max(80),
   eventSubtitle: z.string().max(160).optional(),
@@ -29,6 +35,10 @@ export const RunOfShowDataSchema = z.object({
   schedule: z.array(ScheduleItemSchema).max(50),
   clientResponsibilities: z.array(z.string().min(1).max(240)).max(20),
   heavyEquipment: z.array(z.string().min(1).max(120)).max(20),
+  // Per-event power override. If unset, the shared Shore Power + CamLock
+  // guide is rendered. If set, the custom summary/details replace it
+  // entirely — the CamLock swatches are hidden.
+  power: PowerConfigSchema.optional(),
   lastUpdated: z.string().max(80),
 });
 export type RunOfShowData = z.infer<typeof RunOfShowDataSchema>;
@@ -41,6 +51,15 @@ export type TeamMember = {
   email: string;
   responsibilities: string;
 };
+
+// Core leads — always appear on every run-of-show, regardless of whether
+// they registered through the crew form. Everyone else on a given event's
+// roster is pulled from the crew registrations that match the event.
+export const CORE_TEAM_EMAILS: ReadonlySet<string> = new Set([
+  "michael@auraluxsystems.com",
+  "charlie@auraluxsystems.com",
+  "keith@gorunrabbit.com",
+]);
 
 // ── Team ──────────────────────────────────────────────────────────────
 export const FOREST_HOUSE_TEAM: TeamMember[] = [

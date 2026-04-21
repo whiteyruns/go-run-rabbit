@@ -1,6 +1,7 @@
 import Image from "next/image";
 import {
   AUDIO_GEAR,
+  CORE_TEAM_EMAILS,
   FOREST_HOUSE_TEAM,
   LASER_GEAR,
   POWER_REQUIREMENTS,
@@ -8,10 +9,24 @@ import {
   type RunOfShowData,
   type TeamMember,
 } from "@/lib/forest-house/run-of-show-data";
+import { ROLE_LABELS, SKILL_LABELS } from "@/lib/forest-house/constants";
+import type { CrewRecord } from "@/lib/forest-house/schema";
 
 // Server component — renders a run-of-show page from event-specific data.
 // Gating happens at the page layer.
-export default function RunOfShow({ data }: { data: RunOfShowData }) {
+export default function RunOfShow({
+  data,
+  registeredCrew = [],
+}: {
+  data: RunOfShowData;
+  registeredCrew?: CrewRecord[];
+}) {
+  const coreLeads = FOREST_HOUSE_TEAM.filter((m) =>
+    CORE_TEAM_EMAILS.has(m.email),
+  );
+  const registered = registeredCrew.filter(
+    (c) => !CORE_TEAM_EMAILS.has(c.email.toLowerCase()),
+  );
   return (
     <div className="mx-auto max-w-5xl px-6 sm:px-12 pb-20">
       {/* Hero */}
@@ -145,25 +160,42 @@ export default function RunOfShow({ data }: { data: RunOfShowData }) {
           </dl>
 
           <SectionHeading className="mt-12">Power Requirements</SectionHeading>
-          <p className="mt-4 text-sm text-fh-text-secondary">
-            Shore Power — {POWER_REQUIREMENTS.shorePower}
-          </p>
-          <ul className="mt-4 space-y-2">
-            {POWER_REQUIREMENTS.camLock.map((c) => (
-              <li
-                key={c.color}
-                className="flex items-center gap-3 text-sm tabular-nums"
-              >
-                <span
-                  className="inline-block h-4 w-6 border border-fh-border/60"
-                  style={{ backgroundColor: c.swatch }}
-                  aria-hidden
-                />
-                <span className="font-semibold w-16">{c.color}</span>
-                <span className="text-fh-text-secondary">{c.label}</span>
-              </li>
-            ))}
-          </ul>
+          {data.power ? (
+            <>
+              <p className="mt-4 text-sm text-fh-text">
+                {data.power.summary}
+              </p>
+              {data.power.details && data.power.details.length > 0 && (
+                <ul className="mt-3 space-y-1 text-sm text-fh-text-secondary">
+                  {data.power.details.map((d) => (
+                    <li key={d}>• {d}</li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ) : (
+            <>
+              <p className="mt-4 text-sm text-fh-text-secondary">
+                Shore Power — {POWER_REQUIREMENTS.shorePower}
+              </p>
+              <ul className="mt-4 space-y-2">
+                {POWER_REQUIREMENTS.camLock.map((c) => (
+                  <li
+                    key={c.color}
+                    className="flex items-center gap-3 text-sm tabular-nums"
+                  >
+                    <span
+                      className="inline-block h-4 w-6 border border-fh-border/60"
+                      style={{ backgroundColor: c.swatch }}
+                      aria-hidden
+                    />
+                    <span className="font-semibold w-16">{c.color}</span>
+                    <span className="text-fh-text-secondary">{c.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
 
         <div>
@@ -218,20 +250,33 @@ export default function RunOfShow({ data }: { data: RunOfShowData }) {
         </ul>
       </Section>
 
-      {/* Team */}
-      <Section label="ForestHouse Team">
+      {/* Core Leads — always present */}
+      <Section label="Core Leads">
         <p className="text-sm text-fh-text-secondary leading-relaxed mb-8 max-w-3xl">
-          The ForestHouse team is a highly skilled group of professionals
-          dedicated to ensuring the successful execution of sound, lighting,
-          and production. Each team member brings expertise in their
-          respective fields, ensuring seamless setup, operation, and
-          breakdown of the Forest House Art Car.
+          Sound, lighting, and event production leadership for the
+          ForestHouse Art Car.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
-          {FOREST_HOUSE_TEAM.map((m) => (
+          {coreLeads.map((m) => (
             <TeamCard key={m.email} member={m} />
           ))}
         </div>
+      </Section>
+
+      {/* Registered Crew — pulled from the crew sign-up form */}
+      <Section label={`Registered Crew · ${registered.length}`}>
+        {registered.length === 0 ? (
+          <p className="text-sm text-fh-text-secondary max-w-3xl">
+            No crew registered for this event yet. Share the registration
+            link to populate this section.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
+            {registered.map((c) => (
+              <RegisteredCrewCard key={c.id} member={c} />
+            ))}
+          </div>
+        )}
       </Section>
     </div>
   );
@@ -310,6 +355,51 @@ function TeamCard({ member }: { member: TeamMember }) {
       <p className="mt-3 text-sm leading-relaxed text-fh-text-secondary">
         {member.responsibilities}
       </p>
+    </div>
+  );
+}
+
+function RegisteredCrewCard({ member }: { member: CrewRecord }) {
+  const roleLine = member.backupRole
+    ? `${ROLE_LABELS[member.preferredRole]} · Backup ${ROLE_LABELS[member.backupRole]}`
+    : ROLE_LABELS[member.preferredRole];
+  return (
+    <div>
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <h3 className="text-base font-bold">{member.name}</h3>
+        {member.critical && (
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-fh-ember">
+            On-call
+          </span>
+        )}
+      </div>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-fh-muted mt-0.5">
+        {roleLine}
+      </p>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+        <a
+          href={`tel:${member.phone.replace(/[^+0-9]/g, "")}`}
+          className="tabular-nums text-fh-text-secondary hover:text-fh-accent transition-colors"
+        >
+          m. {member.phone}
+        </a>
+        <a
+          href={`mailto:${member.email}`}
+          className="text-fh-text-secondary hover:text-fh-accent transition-colors break-all"
+        >
+          e. {member.email}
+        </a>
+      </div>
+      {member.skills.length > 0 && (
+        <p className="mt-2 text-xs text-fh-text-secondary">
+          Skills: {member.skills.map((s) => SKILL_LABELS[s]).join(", ")}
+        </p>
+      )}
+      {member.notes && (
+        <p className="mt-2 text-xs text-fh-text-secondary/80 italic">
+          “{member.notes}”
+        </p>
+      )}
     </div>
   );
 }
