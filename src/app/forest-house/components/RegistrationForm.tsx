@@ -22,6 +22,10 @@ import {
   STRIKE_DATES,
   EDC_PARADE_DATE,
   EDC_FESTIVAL_DATES,
+  JUNE_ALL_DATES,
+  JUNE_BUILD_DATE,
+  JUNE_EVENT_DATE,
+  JUNE_STRIKE_DATE,
   type Role,
   type Skill,
   type DeployDate,
@@ -41,6 +45,7 @@ type FormState = {
   cincoDeMayo: boolean;
   edcParade: boolean;
   edcFestival: boolean;
+  juneBlockParty: boolean;
   skills: Skill[];
   critical: boolean;
   notes: string;
@@ -60,6 +65,7 @@ const INITIAL: FormState = {
   cincoDeMayo: false,
   edcParade: false,
   edcFestival: false,
+  juneBlockParty: false,
   skills: [],
   critical: false,
   notes: "",
@@ -78,6 +84,7 @@ function toPayload(s: FormState): Record<string, unknown> {
     cincoDeMayo: s.cincoDeMayo,
     edcParade: s.edcParade,
     edcFestival: s.edcFestival,
+    juneBlockParty: s.juneBlockParty,
     skills: s.skills,
     critical: s.critical,
     website: s.website,
@@ -153,12 +160,13 @@ export default function RegistrationForm() {
       const next = s.availability.filter((d) => {
         if (CINCO_ALL_DATES.includes(d) && !s.cincoDeMayo) return false;
         if (EDC_ALL_DATES.includes(d) && !edcOn) return false;
+        if (JUNE_ALL_DATES.includes(d) && !s.juneBlockParty) return false;
         return true;
       });
       if (next.length === s.availability.length) return s;
       return { ...s, availability: next };
     });
-  }, [state.cincoDeMayo, state.edcParade, state.edcFestival]);
+  }, [state.cincoDeMayo, state.edcParade, state.edcFestival, state.juneBlockParty]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -338,7 +346,7 @@ export default function RegistrationForm() {
       </FieldGroup>
 
       <FieldGroup label="Which events?" hint="Pick any combination">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <Toggle
             label="Cinco de Mayo"
             hint={`East Fremont · Tue ${formatMd(CINCO_EVENT_DATE)}`}
@@ -357,6 +365,14 @@ export default function RegistrationForm() {
             checked={state.edcFestival}
             onChange={(v) => setState((s) => ({ ...s, edcFestival: v }))}
           />
+          <Toggle
+            label="June Block Party"
+            hint={`East Fremont · Thu ${formatMd(JUNE_EVENT_DATE)}`}
+            checked={state.juneBlockParty}
+            onChange={(v) =>
+              setState((s) => ({ ...s, juneBlockParty: v }))
+            }
+          />
         </div>
       </FieldGroup>
 
@@ -365,7 +381,10 @@ export default function RegistrationForm() {
         hint="Pick every day you can be on site"
         error={errors.availability}
       >
-        {!state.cincoDeMayo && !state.edcParade && !state.edcFestival ? (
+        {!state.cincoDeMayo &&
+        !state.edcParade &&
+        !state.edcFestival &&
+        !state.juneBlockParty ? (
           <p className="text-xs uppercase tracking-[0.25em] text-fh-muted">
             Pick at least one event above to choose your days
           </p>
@@ -374,6 +393,7 @@ export default function RegistrationForm() {
             showCinco={state.cincoDeMayo}
             showEdcParade={state.edcParade}
             showEdcFestival={state.edcFestival}
+            showJune={state.juneBlockParty}
             selected={state.availability}
             onToggle={(d) =>
               setState((s) => ({ ...s, availability: toggle(s.availability, d) }))
@@ -629,7 +649,7 @@ type DayGroup = {
   label: string;
   subtitle: string;
   dates: readonly DeployDate[];
-  scope: "cinco" | "edc-any" | "edc-parade" | "edc-festival";
+  scope: "cinco" | "edc-any" | "edc-parade" | "edc-festival" | "june";
 };
 
 const DAY_GROUPS: readonly DayGroup[] = [
@@ -669,18 +689,26 @@ const DAY_GROUPS: readonly DayGroup[] = [
     dates: STRIKE_DATES,
     scope: "edc-any",
   },
+  {
+    label: "June Block Party",
+    subtitle: `East Fremont · Build Wed ${formatMd(JUNE_BUILD_DATE)} · Party Thu ${formatMd(JUNE_EVENT_DATE)} · Strike Fri ${formatMd(JUNE_STRIKE_DATE)}`,
+    dates: JUNE_ALL_DATES,
+    scope: "june",
+  },
 ];
 
 function DayGrid({
   showCinco,
   showEdcParade,
   showEdcFestival,
+  showJune,
   selected,
   onToggle,
 }: {
   showCinco: boolean;
   showEdcParade: boolean;
   showEdcFestival: boolean;
+  showJune: boolean;
   selected: DeployDate[];
   onToggle: (d: DeployDate) => void;
 }) {
@@ -690,6 +718,7 @@ function DayGrid({
     if (g.scope === "edc-any") return showEdcAny;
     if (g.scope === "edc-parade") return showEdcParade;
     if (g.scope === "edc-festival") return showEdcFestival;
+    if (g.scope === "june") return showJune;
     return false;
   });
   return (

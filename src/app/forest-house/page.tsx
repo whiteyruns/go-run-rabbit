@@ -11,6 +11,7 @@ import {
   CINCO_BUILD_DATES,
   CINCO_EVENT_DATE,
   CINCO_STRIKE_DATE,
+  JUNE_EVENT_DATE,
 } from "@/lib/forest-house/constants";
 
 function formatRange(dates: readonly string[]): string {
@@ -56,14 +57,17 @@ export default function ForestHouseLanding() {
             House
           </h1>
           <p className="mt-6 sm:mt-8 max-w-2xl text-base sm:text-lg font-light leading-[1.7] text-fh-text-secondary">
-            Three weeks in May, two events back-to-back. The{" "}
+            Four events across May and June. The{" "}
             <span className="text-fh-text">Cinco de Mayo Block Party</span> on
-            East Fremont Tue&nbsp;{formatMd(CINCO_EVENT_DATE)}, then EDC —{" "}
+            East Fremont Tue&nbsp;{formatMd(CINCO_EVENT_DATE)}, EDC —{" "}
             <span className="text-fh-text">Prodigal Swan</span> on the Strip
-            for the Parade Thu&nbsp;{formatMd(EDC_PARADE_DATE)}, then{" "}
+            for the Parade Thu&nbsp;{formatMd(EDC_PARADE_DATE)} and{" "}
             <span className="text-fh-text">ForestHouse</span> at the Speedway
-            for the Festival Fri–Sun&nbsp;{formatRange(EDC_FESTIVAL_DATES)}.
-            Crew list is open.
+            for the Festival Fri–Sun&nbsp;{formatRange(EDC_FESTIVAL_DATES)},
+            then back to{" "}
+            <span className="text-fh-text">East Fremont</span> for the June
+            Block Party Thu&nbsp;{formatMd(JUNE_EVENT_DATE)}. Crew list is
+            open.
           </p>
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
             <Link

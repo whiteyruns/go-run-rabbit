@@ -37,6 +37,10 @@ export const DEPLOY_DATES = [
   "2026-05-18",
   "2026-05-19",
   "2026-05-20",
+  // June Block Party — East Fremont
+  "2026-06-10",
+  "2026-06-11",
+  "2026-06-12",
 ] as const;
 export type DeployDate = (typeof DEPLOY_DATES)[number];
 
@@ -95,6 +99,17 @@ export const EDC_FESTIVAL_DATES = [
   "2026-05-17",
 ] as const satisfies readonly DeployDate[];
 
+// ── June Block Party · East Fremont ──────────────────────────────────────
+export const JUNE_BUILD_DATE = "2026-06-10" satisfies DeployDate;
+export const JUNE_EVENT_DATE = "2026-06-11" satisfies DeployDate;
+export const JUNE_STRIKE_DATE = "2026-06-12" satisfies DeployDate;
+
+export const JUNE_ALL_DATES: readonly DeployDate[] = [
+  JUNE_BUILD_DATE,
+  JUNE_EVENT_DATE,
+  JUNE_STRIKE_DATE,
+];
+
 // Grouped event-scope date sets — used to filter the registration
 // form's availability grid by which events the registrant opted in to.
 export const CINCO_ALL_DATES: readonly DeployDate[] = [
@@ -148,7 +163,10 @@ export type DateBucket =
   | "build-site"
   | "edc-parade"
   | "edc-festival"
-  | "strike";
+  | "strike"
+  | "june-build"
+  | "june-event"
+  | "june-strike";
 
 export const DATE_BUCKET: Record<DeployDate, DateBucket> = (() => {
   const out = {} as Record<DeployDate, DateBucket>;
@@ -160,6 +178,9 @@ export const DATE_BUCKET: Record<DeployDate, DateBucket> = (() => {
   out[EDC_PARADE_DATE] = "edc-parade";
   for (const d of EDC_FESTIVAL_DATES) out[d] = "edc-festival";
   for (const d of STRIKE_DATES) out[d] = "strike";
+  out[JUNE_BUILD_DATE] = "june-build";
+  out[JUNE_EVENT_DATE] = "june-event";
+  out[JUNE_STRIKE_DATE] = "june-strike";
   return out;
 })();
 
@@ -172,4 +193,7 @@ export const BUCKET_LABELS: Record<DateBucket, string> = {
   "edc-parade": "EDC Parade",
   "edc-festival": "EDC Festival",
   strike: "EDC Strike",
+  "june-build": "June Build",
+  "june-event": "June Block Party",
+  "june-strike": "June Strike",
 };

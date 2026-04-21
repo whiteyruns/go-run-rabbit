@@ -19,6 +19,7 @@ const BaseFields = z
     cincoDeMayo: z.boolean().default(false),
     edcParade: z.boolean(),
     edcFestival: z.boolean(),
+    juneBlockParty: z.boolean().default(false),
     skills: z.array(z.enum(SKILLS)),
     critical: z.boolean(),
     notes: z.string().max(1000, "Notes must be 1000 characters or fewer").optional(),

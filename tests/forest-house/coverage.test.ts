@@ -34,6 +34,7 @@ function makeCrew(overrides: Partial<CrewRecord>): CrewRecord {
     cincoDeMayo: overrides.cincoDeMayo ?? false,
     edcParade: overrides.edcParade ?? false,
     edcFestival: overrides.edcFestival ?? false,
+    juneBlockParty: overrides.juneBlockParty ?? false,
     skills: overrides.skills ?? [],
     critical: overrides.critical ?? false,
     notes: overrides.notes,
@@ -257,6 +258,7 @@ describe("upsertCrew", () => {
     cincoDeMayo: false,
     edcParade: false,
     edcFestival: false,
+    juneBlockParty: false,
     skills: [],
     critical: false,
   };

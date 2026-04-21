@@ -19,6 +19,7 @@ export const CSV_COLUMNS: ReadonlyArray<{
   { key: "cincoDeMayo", label: "cincoDeMayo" },
   { key: "edcParade", label: "edcParade" },
   { key: "edcFestival", label: "edcFestival" },
+  { key: "juneBlockParty", label: "juneBlockParty" },
   { key: "skills", label: "skills" },
   { key: "critical", label: "critical" },
   { key: "notes", label: "notes" },

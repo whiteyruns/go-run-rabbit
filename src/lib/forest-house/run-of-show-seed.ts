@@ -208,10 +208,67 @@ export const EDC_FESTIVAL_SEED: RunOfShowData = {
   lastUpdated: "April 21, 2026",
 };
 
+export const JUNE_BLOCK_PARTY_SEED: RunOfShowData = {
+  eventName: "June Block Party",
+  eventSubtitle: "East Fremont Block Party · Thursday, June 11, 2026",
+  location: "East Fremont Street, Las Vegas",
+  dates: [
+    { label: "Build Date", value: "Wednesday, June 10" },
+    { label: "Event Date", value: "Thursday, June 11" },
+    { label: "Strike Date", value: "Friday, June 12" },
+  ],
+  schedule: [
+    {
+      item: "Build-Out (Partial)",
+      date: "Wed 6/10",
+      time: "10:00a",
+      duration: "7:00",
+      notes: "Park on Fremont · Strike Team",
+      lead: "Stefano Kajatt",
+    },
+    {
+      item: "Show Call",
+      date: "Thu 6/11",
+      time: "9:00a",
+      duration: "—",
+      notes: "Full team on-site",
+      lead: "Keith White",
+    },
+    {
+      item: "Block Party",
+      date: "Thu 6/11",
+      time: "TBD",
+      duration: "TBD",
+      notes: "Show run",
+      lead: "—",
+    },
+    {
+      item: "Strike / Breakdown",
+      date: "Fri 6/12",
+      time: "8:00a",
+      duration: "6:00",
+      notes: "Strike Team",
+      lead: "Stefano Kajatt",
+    },
+  ],
+  clientResponsibilities: [
+    "Ensure adequate security for the duration of the event.",
+    "Traffic control / street closure coordination for East Fremont.",
+  ],
+  heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
+  addOns: [...DEFAULT_ADD_ONS],
+  power: {
+    summary: "On-board generator — no shore power required.",
+    details: ["Generac 30 kW diesel generator (ForestHouse)"],
+  },
+  lastUpdated: "April 21, 2026",
+};
+
 export const RUN_OF_SHOW_SEEDS = {
   "cinco-de-mayo": CINCO_SEED,
   "edc-parade": EDC_PARADE_SEED,
   "edc-festival": EDC_FESTIVAL_SEED,
+  "june-block-party": JUNE_BLOCK_PARTY_SEED,
 } as const satisfies Record<string, RunOfShowData>;
 
 export type EventSlug = keyof typeof RUN_OF_SHOW_SEEDS;
@@ -229,4 +286,5 @@ export const EVENT_CREW_PREDICATES: Record<
   "cinco-de-mayo": (c) => c.cincoDeMayo,
   "edc-parade": (c) => c.edcParade,
   "edc-festival": (c) => c.edcFestival,
+  "june-block-party": (c) => c.juneBlockParty,
 };

@@ -5,9 +5,9 @@ import { isFhAdminFromCookies } from "@/lib/forest-house/fh-auth";
 import { RUN_OF_SHOW_SEEDS } from "@/lib/forest-house/run-of-show-seed";
 import RunsDropdown from "./components/RunsDropdown";
 
-const OG_TITLE = "ForestHouse Crew Call — May 2026";
+const OG_TITLE = "ForestHouse Crew Call — May + June 2026";
 const OG_DESCRIPTION =
-  "Crew list open for May 2026. Two events: Cinco de Mayo on East Fremont Tue 5/5, then EDC — Prodigal Swan in the Parade Thu 5/14, ForestHouse on the Festival floor Fri–Sun 5/15–17. Pick your role, your days, tell us what you bring.";
+  "Crew list open for four 2026 events. Cinco de Mayo Block Party on East Fremont Tue 5/5, EDC Parade Thu 5/14, EDC Festival Fri–Sun 5/15–17, and the June Block Party back on East Fremont Thu 6/11. Pick your role, your days, tell us what you bring.";
 
 export const metadata: Metadata = {
   title: { absolute: OG_TITLE },
