@@ -8,6 +8,7 @@ import {
   ROLE_LABELS,
   SKILL_LABELS,
   DATE_BUCKET,
+  BUCKET_LABELS,
   type Role,
   type DeployDate,
 } from "@/lib/forest-house/constants";
@@ -145,8 +146,8 @@ export default function AdminDashboard({ crew }: { crew: CrewRecord[] }) {
                   <td className="py-3 pr-4 tabular-nums">
                     {formatDate(dc.date)}
                   </td>
-                  <td className="py-3 pr-4 text-[10px] uppercase tracking-[0.25em] text-fh-muted">
-                    {DATE_BUCKET[dc.date]}
+                  <td className="py-3 pr-4 text-[10px] uppercase tracking-[0.25em] text-fh-muted whitespace-nowrap">
+                    {BUCKET_LABELS[DATE_BUCKET[dc.date]]}
                   </td>
                   <td className="py-3 pr-4 tabular-nums">
                     <span

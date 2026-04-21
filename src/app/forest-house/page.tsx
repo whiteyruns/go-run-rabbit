@@ -5,7 +5,8 @@ import {
   ROLES,
   EDC_PARADE_DATE,
   EDC_FESTIVAL_DATES,
-  BUILD_DATES,
+  PLAZA_BUILD_DATES,
+  SITE_BUILD_DATES,
   EVENT_DATES,
   STRIKE_DATES,
 } from "@/lib/forest-house/constants";
@@ -92,10 +93,12 @@ export default function ForestHouseLanding() {
             </h2>
             <div className="mt-8 space-y-5 text-[17px] font-light leading-[1.8] text-fh-text-secondary">
               <p>
-                Six roles across a thirteen-day window. Build crew in early to
-                assemble on the playa. Event crew runs{" "}
-                <span className="text-fh-text">Prodigal Swan</span> through
-                the EDC Parade, then pivots to{" "}
+                Six roles across a thirteen-day window. Build crew kicks off
+                at <span className="text-fh-text">the Plaza</span>{" "}
+                {formatRange(PLAZA_BUILD_DATES)}, then moves on-site to the
+                festival grounds {formatRange(SITE_BUILD_DATES)}. Event crew
+                runs <span className="text-fh-text">Prodigal Swan</span>{" "}
+                through the EDC Parade, then pivots to{" "}
                 <span className="text-fh-text">ForestHouse</span> on the
                 festival floor. Strike crew stays late to tear it all down.
               </p>
@@ -140,11 +143,16 @@ export default function ForestHouseLanding() {
               Register →
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             <SpecCard
-              label="Build"
-              highlight={formatRange(BUILD_DATES)}
-              body="Pre-deploy assembly on the playa. Forklift, lift, and electrical hands especially welcome."
+              label="Plaza Build"
+              highlight={formatRange(PLAZA_BUILD_DATES)}
+              body="Off-site staging at the Plaza. Forklift, lift, and electrical hands especially welcome."
+            />
+            <SpecCard
+              label="Site Build"
+              highlight={formatRange(SITE_BUILD_DATES)}
+              body="Two-day load-in at the festival grounds. Fast, hot, hands-on — set the stage for Parade day."
             />
             <SpecCard
               label="Event"

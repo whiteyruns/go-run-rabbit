@@ -34,16 +34,30 @@ export const DEPLOY_DATES = [
 ] as const;
 export type DeployDate = (typeof DEPLOY_DATES)[number];
 
-export const BUILD_DATES = [
+export const PLAZA_BUILD_DATES = [
   "2026-05-08",
   "2026-05-09",
   "2026-05-10",
   "2026-05-11",
 ] as const satisfies readonly DeployDate[];
 
-export const EVENT_DATES = [
+export const SITE_BUILD_DATES = [
   "2026-05-12",
   "2026-05-13",
+] as const satisfies readonly DeployDate[];
+
+// Union of both build phases — used for landing-page headline ranges and
+// crew-commitment copy.
+export const BUILD_DATES = [
+  "2026-05-08",
+  "2026-05-09",
+  "2026-05-10",
+  "2026-05-11",
+  "2026-05-12",
+  "2026-05-13",
+] as const satisfies readonly DeployDate[];
+
+export const EVENT_DATES = [
   "2026-05-14",
   "2026-05-15",
   "2026-05-16",
@@ -92,10 +106,27 @@ export const SKILL_LABELS: Record<Skill, string> = {
   EMT: "EMT / Medic",
 };
 
-export const DATE_BUCKET: Record<DeployDate, "build" | "event" | "strike"> = (() => {
-  const out = {} as Record<DeployDate, "build" | "event" | "strike">;
-  for (const d of BUILD_DATES) out[d] = "build";
+export type DateBucket = "build-plaza" | "build-site" | "event" | "strike";
+
+export const DATE_BUCKET: Record<DeployDate, DateBucket> = (() => {
+  const out = {} as Record<DeployDate, DateBucket>;
+  for (const d of PLAZA_BUILD_DATES) out[d] = "build-plaza";
+  for (const d of SITE_BUILD_DATES) out[d] = "build-site";
   for (const d of EVENT_DATES) out[d] = "event";
   for (const d of STRIKE_DATES) out[d] = "strike";
   return out;
 })();
+
+export const BUCKET_LABELS: Record<DateBucket, string> = {
+  "build-plaza": "Plaza Build",
+  "build-site": "Site Build",
+  event: "Event",
+  strike: "Strike",
+};
+
+export const BUCKET_ORDER: readonly DateBucket[] = [
+  "build-plaza",
+  "build-site",
+  "event",
+  "strike",
+];

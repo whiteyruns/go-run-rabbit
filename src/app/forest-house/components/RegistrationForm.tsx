@@ -8,8 +8,11 @@ import {
   ROLE_LABELS,
   SKILL_LABELS,
   DATE_BUCKET,
+  BUCKET_LABELS,
+  BUCKET_ORDER,
   EDC_PARADE_DATE,
   EDC_FESTIVAL_DATES,
+  type DateBucket,
   type Role,
   type Skill,
   type DeployDate,
@@ -594,21 +597,26 @@ function DayGrid({
   selected: DeployDate[];
   onToggle: (d: DeployDate) => void;
 }) {
-  const grouped: Record<"build" | "event" | "strike", DeployDate[]> = {
-    build: [],
+  const grouped: Record<DateBucket, DeployDate[]> = {
+    "build-plaza": [],
+    "build-site": [],
     event: [],
     strike: [],
   };
   for (const d of DEPLOY_DATES) grouped[DATE_BUCKET[d]].push(d);
 
   return (
-    <div className="space-y-4">
-      {(["build", "event", "strike"] as const).map((bucket) => (
+    <div className="space-y-5">
+      {BUCKET_ORDER.map((bucket) => (
         <div key={bucket}>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-fh-text/40 mb-2">
-            {bucket}
+          <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
+            {BUCKET_LABELS[bucket]}
           </p>
-          <div className="flex flex-wrap gap-2" role="group" aria-label={bucket}>
+          <div
+            className="flex flex-wrap gap-2"
+            role="group"
+            aria-label={BUCKET_LABELS[bucket]}
+          >
             {grouped[bucket].map((d) => {
               const isSelected = selected.includes(d);
               const tag = edcTag(d);
