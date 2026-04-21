@@ -3,14 +3,35 @@
 // team roster are the same across every event — only dates, location,
 // schedule, and client responsibilities change per event.
 
-export type ScheduleItem = {
-  item: string;
-  date: string; // e.g. "Sun 5/3"
-  time?: string; // e.g. "8:00a"
-  duration?: string; // e.g. "1:30" (hours), or "TBD"
-  notes?: string;
-  lead?: string;
-};
+import { z } from "zod";
+
+export const ScheduleItemSchema = z.object({
+  item: z.string().min(1).max(120),
+  date: z.string().min(1).max(40),
+  time: z.string().max(20).optional(),
+  duration: z.string().max(20).optional(),
+  notes: z.string().max(200).optional(),
+  lead: z.string().max(60).optional(),
+});
+export type ScheduleItem = z.infer<typeof ScheduleItemSchema>;
+
+export const EventDateSchema = z.object({
+  label: z.string().min(1).max(40),
+  value: z.string().min(1).max(80),
+});
+export type EventDate = z.infer<typeof EventDateSchema>;
+
+export const RunOfShowDataSchema = z.object({
+  eventName: z.string().min(1).max(80),
+  eventSubtitle: z.string().max(160).optional(),
+  location: z.string().min(1).max(160),
+  dates: z.array(EventDateSchema).max(10),
+  schedule: z.array(ScheduleItemSchema).max(50),
+  clientResponsibilities: z.array(z.string().min(1).max(240)).max(20),
+  heavyEquipment: z.array(z.string().min(1).max(120)).max(20),
+  lastUpdated: z.string().max(80),
+});
+export type RunOfShowData = z.infer<typeof RunOfShowDataSchema>;
 
 export type TeamMember = {
   name: string;
@@ -19,22 +40,6 @@ export type TeamMember = {
   phone: string;
   email: string;
   responsibilities: string;
-};
-
-export type EventDate = {
-  label: string;
-  value: string;
-};
-
-export type RunOfShowData = {
-  eventName: string;
-  eventSubtitle?: string;
-  location: string;
-  dates: EventDate[];
-  schedule: ScheduleItem[];
-  clientResponsibilities: string[];
-  heavyEquipment: string[];
-  lastUpdated: string;
 };
 
 // ── Team ──────────────────────────────────────────────────────────────

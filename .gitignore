@@ -28,3 +28,6 @@ data/oddyssey-food/pulls/
 
 # Forest House crew registrations (runtime data — seeded from seed.json)
 data/forest-house/crew.json
+
+# Forest House run-of-show runtime edits (seed lives in run-of-show-seed.ts)
+data/forest-house/run-of-show/
