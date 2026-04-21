@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { isFhAdminFromCookies } from "@/lib/forest-house/fh-auth";
 import { RUN_OF_SHOW_SEEDS } from "@/lib/forest-house/run-of-show-seed";
+import RunsDropdown from "./components/RunsDropdown";
 
 const OG_TITLE = "ForestHouse Crew Call — May 2026";
 const OG_DESCRIPTION =
@@ -41,9 +42,8 @@ export default async function ForestHouseLayout({
   const runs = isAdmin
     ? Object.entries(RUN_OF_SHOW_SEEDS).map(([slug, data]) => ({
         slug,
-        // Short label for the nav — full name lives on the page itself.
-        // For single-word event names this just collapses to the first word.
         label: data.eventName.split(" ")[0] ?? data.eventName,
+        fullName: data.eventName,
       }))
     : [];
 
@@ -71,15 +71,7 @@ export default async function ForestHouseLayout({
             >
               Register
             </Link>
-            {runs.map((r) => (
-              <Link
-                key={r.slug}
-                href={`/forest-house/admin/run-of-show/${r.slug}`}
-                className="text-fh-text-secondary hover:text-fh-accent transition-colors"
-              >
-                {r.label}
-              </Link>
-            ))}
+            {runs.length > 0 && <RunsDropdown runs={runs} />}
             <Link
               href="/forest-house/admin"
               className={

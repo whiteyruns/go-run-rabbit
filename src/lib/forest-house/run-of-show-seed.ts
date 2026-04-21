@@ -72,8 +72,141 @@ export const CINCO_SEED: RunOfShowData = {
   lastUpdated: "April 21, 2026",
 };
 
+export const EDC_PARADE_SEED: RunOfShowData = {
+  eventName: "EDC Parade",
+  eventSubtitle: "Prodigal Swan on the Strip · Thursday, May 14, 2026",
+  location: "Las Vegas Strip",
+  dates: [
+    { label: "Plaza Build", value: "May 8–11" },
+    { label: "Site Build", value: "May 12–13" },
+    { label: "Parade Day", value: "Thursday, May 14" },
+    { label: "Strike", value: "May 18–20" },
+  ],
+  schedule: [
+    {
+      item: "Plaza Build",
+      date: "Fri 5/8 – Mon 5/11",
+      time: "TBD",
+      duration: "—",
+      notes: "Off-site staging · Strike Team",
+      lead: "Stefano Kajatt",
+    },
+    {
+      item: "Site Build",
+      date: "Tue 5/12 – Wed 5/13",
+      time: "TBD",
+      duration: "—",
+      notes: "Speedway load-in · Strike Team / Auralux",
+      lead: "Stefano Kajatt",
+    },
+    {
+      item: "Parade Call",
+      date: "Thu 5/14",
+      time: "TBD",
+      duration: "—",
+      notes: "Full team on-site",
+      lead: "Keith White",
+    },
+    {
+      item: "Parade Run",
+      date: "Thu 5/14",
+      time: "TBD",
+      duration: "TBD",
+      notes: "Prodigal Swan rolls the Strip",
+      lead: "—",
+    },
+    {
+      item: "Strike / Breakdown",
+      date: "Mon 5/18 – Wed 5/20",
+      time: "TBD",
+      duration: "—",
+      notes: "Strike Team",
+      lead: "Stefano Kajatt",
+    },
+  ],
+  clientResponsibilities: [
+    "Ensure adequate security for the duration of the event.",
+    "Ensure adequate power for the duration of the event.",
+    "10×10 BOH tent.",
+    "Work passes w/ access to catering tent (10).",
+  ],
+  heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
+  lastUpdated: "April 21, 2026",
+};
+
+export const EDC_FESTIVAL_SEED: RunOfShowData = {
+  eventName: "EDC Festival",
+  eventSubtitle: "EDC Las Vegas 2026 · Las Vegas Motor Speedway",
+  location: "EDC Las Vegas, Las Vegas Motor Speedway",
+  dates: [
+    { label: "Build Dates", value: "May 13 & 14" },
+    { label: "Festival", value: "Fri–Sun, May 15–17" },
+    { label: "Strike Dates", value: "May 19 & 20" },
+  ],
+  schedule: [
+    {
+      item: "Transport",
+      date: "Wed 5/13",
+      time: "8:00a",
+      duration: "1:30",
+      notes: "Knight Transportation",
+      lead: "Keith White",
+    },
+    {
+      item: "Build-Out",
+      date: "Wed 5/13",
+      time: "9:30a",
+      duration: "8:00",
+      notes: "Strike Team",
+      lead: "Stefano Kajatt",
+    },
+    {
+      item: "Build-Out / Sound Test",
+      date: "Thu 5/14",
+      time: "9:00a",
+      duration: "8:00",
+      notes: "Strike Team / Auralux",
+      lead: "Mike Saporita",
+    },
+    {
+      item: "Light Test",
+      date: "Thu 5/14",
+      time: "6:00p",
+      duration: "2:00",
+      notes: "Auralux",
+      lead: "Mike Saporita",
+    },
+    {
+      item: "Strike · Day 1",
+      date: "Tue 5/19",
+      time: "TBD",
+      duration: "TBD",
+      notes: "Strike Team",
+      lead: "Stefano Kajatt",
+    },
+    {
+      item: "Strike · Day 2",
+      date: "Wed 5/20",
+      time: "TBD",
+      duration: "TBD",
+      notes: "Strike Team",
+      lead: "Stefano Kajatt",
+    },
+  ],
+  clientResponsibilities: [
+    "Ensure adequate security for the duration of the event.",
+    "Ensure adequate power for the duration of the event.",
+    "10×10 BOH tent.",
+    "Work passes w/ access to catering tent (10).",
+  ],
+  heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
+  lastUpdated: "April 21, 2026",
+};
+
 export const RUN_OF_SHOW_SEEDS = {
   "cinco-de-mayo": CINCO_SEED,
+  "edc-parade": EDC_PARADE_SEED,
+  "edc-festival": EDC_FESTIVAL_SEED,
 } as const satisfies Record<string, RunOfShowData>;
 
 export type EventSlug = keyof typeof RUN_OF_SHOW_SEEDS;
@@ -89,4 +222,6 @@ export const EVENT_CREW_PREDICATES: Record<
   (c: CrewRecord) => boolean
 > = {
   "cinco-de-mayo": (c) => c.cincoDeMayo,
+  "edc-parade": (c) => c.edcParade,
+  "edc-festival": (c) => c.edcFestival,
 };
