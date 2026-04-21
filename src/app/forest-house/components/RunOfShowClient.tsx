@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import RunOfShow from "./RunOfShow";
-import type {
-  RunOfShowData,
-  ScheduleItem,
+import SendRosDialog, { type Recipient } from "./SendRosDialog";
+import {
+  CORE_TEAM_EMAILS,
+  FOREST_HOUSE_TEAM,
+  type RunOfShowData,
+  type ScheduleItem,
 } from "@/lib/forest-house/run-of-show-data";
+import { ROLE_LABELS } from "@/lib/forest-house/constants";
 import type { CrewRecord } from "@/lib/forest-house/schema";
 
 type Mode = "view" | "edit";
@@ -25,6 +29,27 @@ export default function RunOfShowClient({
   const [draft, setDraft] = useState<RunOfShowData>(initial);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sendOpen, setSendOpen] = useState(false);
+
+  const allRecipients = useMemo<Recipient[]>(() => {
+    const coreLeads = FOREST_HOUSE_TEAM.filter((m) =>
+      CORE_TEAM_EMAILS.has(m.email),
+    ).map<Recipient>((m) => ({
+      email: m.email,
+      name: m.name,
+      role: m.role,
+      group: "core",
+    }));
+    const crewPeople = registeredCrew
+      .filter((c) => !CORE_TEAM_EMAILS.has(c.email.toLowerCase()))
+      .map<Recipient>((c) => ({
+        email: c.email,
+        name: c.name,
+        role: ROLE_LABELS[c.preferredRole],
+        group: "crew",
+      }));
+    return [...coreLeads, ...crewPeople];
+  }, [registeredCrew]);
 
   // Keep draft in sync with server data when we're not actively editing.
   useEffect(() => {
@@ -104,7 +129,14 @@ export default function RunOfShowClient({
   if (mode === "view") {
     return (
       <>
-        <div className="mx-auto max-w-5xl px-6 sm:px-12 pt-8 flex justify-end">
+        <div className="mx-auto max-w-5xl px-6 sm:px-12 pt-8 flex flex-wrap justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setSendOpen(true)}
+            className="px-5 py-2.5 border border-fh-border/70 text-[11px] font-bold uppercase tracking-[0.3em] hover:border-fh-accent hover:text-fh-accent transition-colors"
+          >
+            Send to Team
+          </button>
           <button
             type="button"
             onClick={startEdit}
@@ -114,6 +146,13 @@ export default function RunOfShowClient({
           </button>
         </div>
         <RunOfShow data={initial} registeredCrew={registeredCrew} />
+        <SendRosDialog
+          slug={slug}
+          eventName={initial.eventName}
+          recipients={allRecipients}
+          open={sendOpen}
+          onClose={() => setSendOpen(false)}
+        />
       </>
     );
   }
