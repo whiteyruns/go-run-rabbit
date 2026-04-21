@@ -12,50 +12,39 @@ const navGroups = [
     ],
   },
   {
-    label: "Analytics",
-    items: [
-      { href: "/dashboard/pos-data", label: "POS Data", icon: "&#9638;" },
-      { href: "/dashboard/depletions", label: "Depletions", icon: "&#9660;" },
-      { href: "/dashboard/calendar", label: "Vegas Calendar", icon: "&#9733;" },
-    ],
-  },
-  {
-    label: "Portfolio",
+    label: "Venues",
     items: [
       { href: "/dashboard/venues", label: "Venues", icon: "&#9635;" },
       { href: "/dashboard/categories", label: "Categories", icon: "&#9637;" },
       { href: "/dashboard/journey", label: "Guest Journey", icon: "&#10132;" },
-    ],
-  },
-{
-    label: "Strategy",
-    items: [
-      { href: "/dashboard/block-party", label: "Feed the Block", icon: "&#9835;" },
-      { href: "/dashboard/projections", label: "Projections", icon: "&#9650;" },
-      { href: "/dashboard/roadmap", label: "Action Plan", icon: "&#9654;" },
+      { href: "/dashboard/pos-data", label: "POS Data", icon: "&#9638;" },
+      { href: "/dashboard/depletions", label: "Depletions", icon: "&#9660;" },
     ],
   },
   {
-    label: "Outbound",
+    label: "Events",
+    items: [
+      { href: "/dashboard/block-party", label: "Feed the Block", icon: "&#9835;" },
+      { href: "/dashboard/calendar", label: "Vegas Calendar", icon: "&#9733;" },
+      { href: "/dashboard/projections", label: "Projections", icon: "&#9650;" },
+    ],
+  },
+  {
+    label: "Sales",
     items: [
       { href: "/dashboard/efd-pipeline", label: "Lead Pipeline", icon: "&#9670;" },
       { href: "/dashboard/efd-outbound", label: "Campaigns", icon: "&#9654;" },
       { href: "/dashboard/scraper", label: "Scraper", icon: "&#9881;" },
-    ],
-  },
-  {
-    label: "CBM Tools",
-    items: [
-      { href: "/corner-bar-management", label: "Strategy Hub", icon: "&#9670;" },
+      { href: "/dashboard/pipeline", label: "Deal Pipeline", icon: "&#9679;" },
+      { href: "/dashboard/pitch-links", label: "Pitch Links", icon: "&#9741;" },
     ],
   },
   {
     label: "Operations",
     items: [
-      { href: "/dashboard/pipeline", label: "Pipeline", icon: "&#9679;" },
       { href: "/dashboard/inventory", label: "Inventory", icon: "&#9638;" },
       { href: "/dashboard/recaps", label: "Recaps", icon: "&#9993;" },
-      { href: "/dashboard/pitch-links", label: "Pitch Links", icon: "&#9741;" },
+      { href: "/dashboard/roadmap", label: "Action Plan", icon: "&#9654;" },
     ],
   },
 ];
