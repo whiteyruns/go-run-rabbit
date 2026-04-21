@@ -376,17 +376,22 @@ export async function POST(request: NextRequest) {
     let emailStatus = "none";
 
     if (foundEmail) {
-      // Verify email via MX lookup
-      try {
-        const mxResult = await verifyEmailMx(foundEmail);
-        if (mxResult.hasMx) {
-          emailStatus = method === "pattern-guess" ? "pattern-guess" : "mx-valid";
-        } else {
-          emailStatus = "invalid";
-          foundEmail = null; // Don't save invalid emails
+      if (method === "pattern-guess") {
+        // Save pattern guesses without MX verification — they're best-effort
+        emailStatus = "pattern-guess";
+      } else {
+        // Verify non-guess emails via MX lookup
+        try {
+          const mxResult = await verifyEmailMx(foundEmail);
+          if (mxResult.hasMx) {
+            emailStatus = "mx-valid";
+          } else {
+            emailStatus = "invalid";
+            foundEmail = null; // Don't save invalid scraped/dorked emails
+          }
+        } catch {
+          emailStatus = "unverified";
         }
-      } catch {
-        emailStatus = "unverified";
       }
     }
 
