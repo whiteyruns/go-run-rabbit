@@ -38,6 +38,14 @@ const DATA: RunOfShowData = {
       lead: "Keith White",
     },
     {
+      item: "Move to Fremont & 5th",
+      date: "Tue 5/5",
+      time: "10:00a",
+      duration: "0:30",
+      notes: "FH from Park on Fremont → Intersection of 5th",
+      lead: "Keith White",
+    },
+    {
       item: "Block Party",
       date: "Tue 5/5",
       time: "5:00p",
@@ -62,7 +70,7 @@ const DATA: RunOfShowData = {
     "Traffic control / street closure coordination for East Fremont.",
   ],
   heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
-  lastUpdated: "April 21, 2026 · v2",
+  lastUpdated: "April 21, 2026 · v3",
 };
 
 export default async function CincoRunOfShow() {
