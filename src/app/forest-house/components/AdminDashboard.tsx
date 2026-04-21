@@ -46,7 +46,7 @@ export default function AdminDashboard({ crew }: { crew: CrewRecord[] }) {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-6 pt-12 pb-24 space-y-12">
+    <div className="mx-auto max-w-6xl px-6 sm:px-12 pt-10 sm:pt-12 pb-16 sm:pb-24 space-y-10 sm:space-y-12">
       <header className="flex flex-wrap items-end justify-between gap-6 border-b border-fh-border pb-8">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-fh-muted mb-4">
@@ -143,7 +143,7 @@ export default function AdminDashboard({ crew }: { crew: CrewRecord[] }) {
                   key={dc.date}
                   className="border-b border-fh-border/40 last:border-0"
                 >
-                  <td className="py-3 pr-4 tabular-nums">
+                  <td className="py-3 pr-4 tabular-nums whitespace-nowrap">
                     {formatDate(dc.date)}
                   </td>
                   <td className="py-3 pr-4 text-[10px] uppercase tracking-[0.25em] text-fh-muted whitespace-nowrap">
@@ -308,7 +308,7 @@ function FilterRow<T extends string>({
             type="button"
             aria-pressed={active}
             onClick={() => onChange(o.value)}
-            className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.25em] border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
+            className={`min-h-[44px] sm:min-h-0 px-3 py-2 sm:py-1.5 text-[11px] font-bold uppercase tracking-[0.25em] border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
               active
                 ? "bg-fh-accent border-fh-accent text-fh-bg"
                 : "bg-transparent border-fh-border text-fh-text/70 hover:border-fh-accent/60"

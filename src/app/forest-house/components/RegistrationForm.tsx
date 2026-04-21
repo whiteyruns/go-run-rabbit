@@ -432,16 +432,16 @@ export default function RegistrationForm() {
         </p>
       )}
 
-      <div className="flex items-center gap-6 pt-4 border-t border-fh-border/60">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 pt-4 border-t border-fh-border/60">
         <button
           type="submit"
           disabled={!isValid || submitting}
-          className="inline-flex items-center gap-3 bg-fh-accent text-fh-bg px-10 py-4 text-sm font-bold uppercase tracking-[0.25em] hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-fh-text/10 disabled:text-fh-text/30 disabled:cursor-not-allowed"
+          className="inline-flex items-center justify-center gap-3 bg-fh-accent text-fh-bg px-8 sm:px-10 py-4 text-sm font-bold uppercase tracking-[0.25em] hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-fh-text/10 disabled:text-fh-text/30 disabled:cursor-not-allowed"
         >
           {submitting ? "Submitting…" : "Submit Registration"}
         </button>
         {!isValid && (
-          <p className="text-xs uppercase tracking-[0.2em] text-fh-text/40">
+          <p className="text-xs uppercase tracking-[0.2em] text-fh-text/40 text-center sm:text-left">
             Fill required fields to enable
           </p>
         )}
@@ -465,7 +465,7 @@ function FieldGroup({
 }) {
   return (
     <div>
-      <div className="flex items-baseline justify-between mb-3">
+      <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4 mb-3">
         <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-fh-text/80">
           {label}
         </span>
@@ -541,7 +541,7 @@ function Chip({
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={`px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
+      className={`min-h-[44px] sm:min-h-0 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
         selected
           ? "bg-fh-accent border-fh-accent text-fh-bg"
           : "bg-transparent border-fh-border text-fh-text/80 hover:border-fh-accent/60"
@@ -626,7 +626,7 @@ function DayGrid({
                   type="button"
                   aria-pressed={isSelected}
                   onClick={() => onToggle(d)}
-                  className={`relative px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] tabular-nums border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
+                  className={`relative min-h-[44px] sm:min-h-0 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.15em] tabular-nums border transition-colors focus-visible:ring-2 focus-visible:ring-fh-accent/40 focus-visible:outline-none ${
                     isSelected
                       ? "bg-fh-accent border-fh-accent text-fh-bg"
                       : `bg-transparent ${tag ? "border-fh-accent/40" : "border-fh-border"} text-fh-text/70 hover:border-fh-accent/60`

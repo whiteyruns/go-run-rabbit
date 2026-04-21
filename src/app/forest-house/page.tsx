@@ -27,7 +27,7 @@ export default function ForestHouseLanding() {
   return (
     <>
       {/* HERO */}
-      <section className="relative overflow-hidden px-6 sm:px-12 pt-20 pb-24 min-h-[calc(100vh-5rem)] flex flex-col justify-end">
+      <section className="relative overflow-hidden px-6 sm:px-12 pt-12 sm:pt-20 pb-14 sm:pb-24 sm:min-h-[calc(100vh-5rem)] flex flex-col justify-end">
         <div
           aria-hidden
           className="absolute inset-0 -z-10"
@@ -43,7 +43,7 @@ export default function ForestHouseLanding() {
               alt="ForestHouse"
               width={159}
               height={126}
-              className="h-20 w-auto mb-8 opacity-90"
+              className="h-14 sm:h-20 w-auto mb-6 sm:mb-8 opacity-90"
               priority
             />
           </div>
@@ -53,7 +53,7 @@ export default function ForestHouseLanding() {
             <br />
             House
           </h1>
-          <p className="mt-8 max-w-2xl text-lg font-light leading-[1.7] text-fh-text-secondary">
+          <p className="mt-6 sm:mt-8 max-w-2xl text-base sm:text-lg font-light leading-[1.7] text-fh-text-secondary">
             A two-story art car built at Black Rock City — 30,000 LEDs, ten
             Class&nbsp;4 lasers, 25 feet tall. For&nbsp;May 8–20, 2026 we roll
             again: <span className="text-fh-text">Prodigal Swan</span> joins
@@ -62,16 +62,16 @@ export default function ForestHouseLanding() {
             Festival Fri–Sun&nbsp;{formatRange(EDC_FESTIVAL_DATES)}. Crew
             list is open.
           </p>
-          <div className="mt-10 flex flex-wrap gap-3">
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row flex-wrap gap-3">
             <Link
               href="/forest-house/register"
-              className="inline-flex items-center bg-fh-text text-fh-bg px-10 py-4 text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-fh-teal hover:text-fh-bg transition-colors"
+              className="inline-flex items-center justify-center bg-fh-text text-fh-bg px-8 sm:px-10 py-4 text-[11px] font-bold uppercase tracking-[0.35em] sm:tracking-[0.4em] hover:bg-fh-teal hover:text-fh-bg transition-colors"
             >
               Sign On → Crew
             </Link>
             <Link
               href="/forest-house/admin"
-              className="inline-flex items-center border border-fh-border px-10 py-4 text-[11px] font-bold uppercase tracking-[0.4em] text-fh-text-secondary hover:text-fh-text hover:border-fh-text transition-colors"
+              className="inline-flex items-center justify-center border border-fh-border px-8 sm:px-10 py-4 text-[11px] font-bold uppercase tracking-[0.35em] sm:tracking-[0.4em] text-fh-text-secondary hover:text-fh-text hover:border-fh-text transition-colors"
             >
               Staffing Board
             </Link>
@@ -82,8 +82,8 @@ export default function ForestHouseLanding() {
       <div className="h-[3px] bg-fh-rainbow" />
 
       {/* WHAT WE NEED */}
-      <section className="px-6 sm:px-12 py-24">
-        <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <section className="px-6 sm:px-12 py-14 sm:py-24">
+        <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
           <div>
             <SectionLabel>What We Need</SectionLabel>
             <h2 className="mt-5 text-[clamp(2rem,5vw,3.5rem)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em]">
@@ -127,10 +127,10 @@ export default function ForestHouseLanding() {
       </section>
 
       {/* BUILD / EVENT / STRIKE */}
-      <section className="bg-fh-surface px-6 sm:px-12 py-24">
+      <section className="bg-fh-surface px-6 sm:px-12 py-14 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <SectionLabel>Deployment Windows</SectionLabel>
-          <div className="mt-5 mb-12 flex flex-wrap items-end justify-between gap-4">
+          <div className="mt-5 mb-8 sm:mb-12 flex flex-wrap items-end justify-between gap-4">
             <h2 className="text-[clamp(2rem,5vw,3.5rem)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em]">
               Thirteen Days
               <br />
@@ -172,20 +172,20 @@ export default function ForestHouseLanding() {
       <div className="h-[3px] bg-fh-rainbow" />
 
       {/* CTA */}
-      <section className="px-6 sm:px-12 py-32 text-center">
+      <section className="px-6 sm:px-12 py-16 sm:py-32 text-center">
         <SectionLabel>Ready?</SectionLabel>
         <h2 className="mt-5 mx-auto max-w-3xl text-[clamp(2.25rem,6vw,4.5rem)] font-black uppercase leading-[1] tracking-[-0.03em]">
           Sign On
           <br />
           The Line
         </h2>
-        <p className="mt-7 mx-auto max-w-md text-[17px] font-light leading-[1.7] text-fh-text-secondary">
+        <p className="mt-6 sm:mt-7 mx-auto max-w-md text-base sm:text-[17px] font-light leading-[1.7] text-fh-text-secondary">
           Tell us what you can do, when you can do it, and what you bring.
           You&apos;re on the crew list as soon as you submit.
         </p>
         <Link
           href="/forest-house/register"
-          className="mt-10 inline-flex items-center bg-fh-text text-fh-bg px-10 py-4 text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-fh-teal transition-colors"
+          className="mt-8 sm:mt-10 inline-flex items-center justify-center bg-fh-text text-fh-bg px-8 sm:px-10 py-4 text-[11px] font-bold uppercase tracking-[0.35em] sm:tracking-[0.4em] hover:bg-fh-teal transition-colors"
         >
           Register Now
         </Link>
@@ -242,17 +242,17 @@ function SpecCard({
 }) {
   return (
     <div
-      className={`bg-fh-card p-10 border transition-colors hover:border-fh-border ${accent ? "border-fh-teal/40" : "border-fh-border"}`}
+      className={`bg-fh-card p-6 sm:p-10 border transition-colors hover:border-fh-border ${accent ? "border-fh-teal/40" : "border-fh-border"}`}
     >
-      <h3 className="text-[13px] font-bold uppercase tracking-[0.35em] text-fh-text-secondary">
+      <h3 className="text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.3em] sm:tracking-[0.35em] text-fh-text-secondary">
         {label}
       </h3>
       <p
-        className={`mt-4 text-[28px] font-extrabold tracking-[-0.01em] tabular-nums ${accent ? "bg-fh-rainbow bg-clip-text text-transparent" : "text-fh-text"}`}
+        className={`mt-3 sm:mt-4 text-[24px] sm:text-[28px] font-extrabold tracking-[-0.01em] tabular-nums ${accent ? "bg-fh-rainbow bg-clip-text text-transparent" : "text-fh-text"}`}
       >
         {highlight}
       </p>
-      <p className="mt-3 text-[15px] font-light leading-[1.7] text-fh-text-secondary">
+      <p className="mt-2.5 sm:mt-3 text-sm sm:text-[15px] font-light leading-[1.65] sm:leading-[1.7] text-fh-text-secondary">
         {body}
       </p>
     </div>

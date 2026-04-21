@@ -61,7 +61,7 @@ export default function LoginForm() {
       <button
         type="submit"
         disabled={submitting || password.length === 0}
-        className="inline-flex items-center gap-3 bg-fh-accent text-fh-bg px-8 py-3 text-sm font-bold uppercase tracking-[0.25em] hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-fh-text/10 disabled:text-fh-text/30 disabled:cursor-not-allowed"
+        className="inline-flex items-center justify-center gap-3 bg-fh-accent text-fh-bg px-8 py-3.5 text-sm font-bold uppercase tracking-[0.25em] hover:brightness-110 active:scale-[0.98] transition-all disabled:bg-fh-text/10 disabled:text-fh-text/30 disabled:cursor-not-allowed"
       >
         {submitting ? "Verifying…" : "Enter"}
       </button>
