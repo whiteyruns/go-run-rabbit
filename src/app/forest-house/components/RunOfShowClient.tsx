@@ -51,8 +51,13 @@ export default function RunOfShowClient({
     const trimmedAddOns = draft.addOns
       ?.map((s) => s.trim())
       .filter((s) => s.length > 0);
+    const trimmedTalent = draft.talent
+      ?.map((s) => s.trim())
+      .filter((s) => s.length > 0);
     const payload: RunOfShowData = {
       ...draft,
+      talent:
+        trimmedTalent && trimmedTalent.length > 0 ? trimmedTalent : undefined,
       addOns:
         trimmedAddOns && trimmedAddOns.length > 0 ? trimmedAddOns : undefined,
       power:
@@ -193,6 +198,20 @@ function Editor({
           value={draft.location}
           onChange={(v) => setDraft((d) => ({ ...d, location: v }))}
           placeholder="Location"
+        />
+      </FieldBlock>
+
+      <FieldBlock label="Talent">
+        <StringList
+          items={draft.talent ?? []}
+          onChange={(next) =>
+            setDraft((s) => ({
+              ...s,
+              talent: next.length > 0 ? next : undefined,
+            }))
+          }
+          placeholder="e.g. Dillon Francis"
+          addLabel="Add talent"
         />
       </FieldBlock>
 

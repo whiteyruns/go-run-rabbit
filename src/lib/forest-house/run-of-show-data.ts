@@ -32,6 +32,8 @@ export const RunOfShowDataSchema = z.object({
   eventSubtitle: z.string().max(160).optional(),
   location: z.string().min(1).max(160),
   dates: z.array(EventDateSchema).max(10),
+  // Headliners / performers. Rendered under Event Details when set.
+  talent: z.array(z.string().min(1).max(80)).max(20).optional(),
   schedule: z.array(ScheduleItemSchema).max(50),
   clientResponsibilities: z.array(z.string().min(1).max(240)).max(20),
   heavyEquipment: z.array(z.string().min(1).max(120)).max(20),

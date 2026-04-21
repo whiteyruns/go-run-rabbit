@@ -95,6 +95,16 @@ export default function RunOfShow({
             </div>
           ))}
         </dl>
+        {data.talent && data.talent.length > 0 && (
+          <div className="mt-7 pt-5 border-t border-fh-border/60">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
+              Talent
+            </p>
+            <p className="text-xl sm:text-2xl font-extrabold tracking-[-0.01em] bg-fh-rainbow bg-clip-text text-transparent">
+              {data.talent.join(" · ")}
+            </p>
+          </div>
+        )}
       </Section>
 
       {/* Schedule */}

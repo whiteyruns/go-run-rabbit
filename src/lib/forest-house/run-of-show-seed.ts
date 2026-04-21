@@ -19,6 +19,7 @@ export const CINCO_SEED: RunOfShowData = {
     { label: "Event Date", value: "Tuesday, May 5" },
     { label: "Strike Date", value: "Wednesday, May 6" },
   ],
+  talent: ["Dillon Francis", "Flosstradamus"],
   schedule: [
     {
       item: "Build-Out (Partial)",
