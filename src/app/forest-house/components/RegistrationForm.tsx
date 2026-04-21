@@ -344,20 +344,17 @@ export default function RegistrationForm() {
         </div>
       </FieldGroup>
 
-      <FieldGroup
-        label="Which EDC events?"
-        hint="Pick one or both"
-      >
+      <FieldGroup label="Which EDC events?" hint="Pick one or both">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Toggle
             label="EDC Parade"
-            hint={`Thu ${formatMd(EDC_PARADE_DATE)}`}
+            hint={`Prodigal Swan · Thu ${formatMd(EDC_PARADE_DATE)}`}
             checked={state.edcParade}
             onChange={(v) => setState((s) => ({ ...s, edcParade: v }))}
           />
           <Toggle
             label="EDC Festival"
-            hint={formatFestivalRange()}
+            hint={`ForestHouse · ${formatFestivalRange()}`}
             checked={state.edcFestival}
             onChange={(v) => setState((s) => ({ ...s, edcFestival: v }))}
           />

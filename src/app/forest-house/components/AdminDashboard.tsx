@@ -48,11 +48,13 @@ export default function AdminDashboard({ crew }: { crew: CrewRecord[] }) {
     <div className="mx-auto max-w-6xl px-6 pt-12 pb-24 space-y-12">
       <header className="flex flex-wrap items-end justify-between gap-6 border-b border-fh-border pb-8">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.4em] text-fh-accent mb-3">
-            Staffing
+          <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-fh-muted mb-4">
+            [ Staffing Board ]
           </p>
-          <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-[-0.02em]">
-            Crew Board
+          <h1 className="text-[clamp(2.5rem,5vw,3.5rem)] font-black uppercase leading-[0.95] tracking-[-0.03em]">
+            Crew
+            <br />
+            Board
           </h1>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -258,20 +260,23 @@ function StatCard({
   value: number;
   alert?: boolean;
 }) {
-  const zeroSuccess = value === 0 && label !== "Registered";
-  const valueColor = alert
+  const isRegistered = label === "Registered";
+  const zeroSuccess = value === 0 && !isRegistered;
+  const valueClass = alert
     ? "text-fh-ember"
     : zeroSuccess
-      ? "text-fh-accent"
-      : "text-fh-text";
+      ? "text-fh-teal"
+      : isRegistered
+        ? "bg-fh-rainbow bg-clip-text text-transparent"
+        : "text-fh-text";
   return (
     <div
-      className={`p-5 bg-fh-card border ${alert ? "border-fh-ember/50" : "border-fh-border"}`}
+      className={`p-6 bg-fh-card border ${alert ? "border-fh-ember/50" : "border-fh-border"}`}
     >
-      <p className="text-[10px] font-black uppercase tracking-[0.35em] text-fh-muted mb-2">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-fh-muted mb-3">
         {label}
       </p>
-      <p className={`text-4xl font-black tabular-nums ${valueColor}`}>
+      <p className={`text-[42px] font-black tabular-nums tracking-[-0.02em] ${valueClass}`}>
         {value}
       </p>
     </div>

@@ -92,19 +92,33 @@ const config: Config = {
         "ce-outline": "#aa8a7e",
         "ce-outline-variant": "#5a4137",
         "ce-tertiary": "#d0c4bc",
-        // ForestHouse — matches foresthou.se palette (night forest, LED glow)
-        "fh-bg": "#0b0a15",
-        "fh-card": "#141128",
-        "fh-text": "#d4dce5",
-        "fh-muted": "#6c6b8c",
-        "fh-accent": "#a4cce9",
-        "fh-ember": "#c84a5c",
-        "fh-border": "#2a2640",
+        // ForestHouse — matches the FORESTHOUSE brand (logo.png, index.html)
+        "fh-bg": "#0a0a0a",
+        "fh-surface": "#111111",
+        "fh-card": "#1a1a1a",
+        "fh-text": "#ffffff",
+        "fh-text-secondary": "#999999",
+        "fh-muted": "#666666",
+        "fh-border": "rgba(255,255,255,0.08)",
+        // Signature rainbow accents (used as a gradient on stats, dividers)
+        "fh-red": "#e63946",
+        "fh-orange": "#f4845f",
+        "fh-yellow": "#f7b731",
+        "fh-green": "#7bc67e",
+        "fh-teal": "#2ec4b6",
+        "fh-blue": "#48cae4",
+        // Semantic aliases
+        "fh-accent": "#2ec4b6",
+        "fh-ember": "#e63946",
       },
       fontFamily: {
         sans: ["var(--font-manrope)", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "monospace"],
-        fh: ["var(--font-lato)", "system-ui", "sans-serif"],
+        fh: ["var(--font-inter)", "system-ui", "sans-serif"],
+      },
+      backgroundImage: {
+        "fh-rainbow":
+          "linear-gradient(90deg, #e63946, #f4845f, #f7b731, #7bc67e, #2ec4b6, #48cae4)",
       },
       keyframes: {
         fadeUp: {

@@ -1,13 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { Lato } from "next/font/google";
-
-const lato = Lato({
-  subsets: ["latin"],
-  weight: ["300", "400", "900"],
-  variable: "--font-lato",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "ForestHouse Crew — May 12–18, 2026",
@@ -16,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0a15",
+  themeColor: "#0a0a0a",
 };
 
 export default function ForestHouseLayout({
@@ -25,29 +18,32 @@ export default function ForestHouseLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={`${lato.variable} min-h-screen bg-fh-bg text-fh-text font-fh antialiased`}
-    >
-      <header className="sticky top-0 z-20 bg-fh-bg/90 backdrop-blur border-b border-fh-border">
-        <nav className="mx-auto max-w-6xl flex items-center justify-between px-6 py-5">
-          <Link href="/forest-house" className="flex items-baseline gap-2">
-            <span className="text-sm font-black uppercase tracking-[0.35em] text-fh-text">
-              Forest
-            </span>
-            <span className="text-sm font-black uppercase tracking-[0.35em] text-fh-accent">
-              House
+    <div className="min-h-screen bg-fh-bg text-fh-text font-fh antialiased selection:bg-fh-teal/30">
+      <header className="sticky top-0 z-20 bg-fh-bg/85 backdrop-blur-xl border-b border-fh-border">
+        <nav className="mx-auto max-w-6xl flex items-center justify-between px-6 sm:px-12 h-20">
+          <Link href="/forest-house" className="flex items-center gap-3">
+            <Image
+              src="/forest-house/logo.png"
+              alt="ForestHouse"
+              width={40}
+              height={32}
+              className="h-8 w-auto"
+              priority
+            />
+            <span className="hidden sm:inline text-[13px] font-black uppercase tracking-[0.4em]">
+              Foresthouse
             </span>
           </Link>
-          <div className="flex items-center gap-7 text-[11px] font-bold uppercase tracking-[0.3em]">
+          <div className="flex items-center gap-7 text-[11px] font-semibold uppercase tracking-[0.3em]">
             <Link
               href="/forest-house/register"
-              className="hover:text-fh-accent transition-colors"
+              className="text-fh-text-secondary hover:text-fh-text transition-colors"
             >
               Register
             </Link>
             <Link
               href="/forest-house/admin"
-              className="text-fh-muted hover:text-fh-accent transition-colors"
+              className="text-fh-muted hover:text-fh-text transition-colors"
             >
               Admin
             </Link>
@@ -55,18 +51,32 @@ export default function ForestHouseLayout({
         </nav>
       </header>
       <main>{children}</main>
-      <footer className="mx-auto max-w-6xl px-6 py-10 mt-16 text-[10px] font-bold uppercase tracking-[0.35em] text-fh-muted border-t border-fh-border/60">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <span>ForestHouse · Deployment May 12–18, 2026</span>
-          <a
-            href="https://www.foresthou.se"
-            className="hover:text-fh-accent transition-colors"
-            target="_blank"
-            rel="noreferrer"
-          >
-            foresthou.se ↗
-          </a>
+      <div className="h-[3px] bg-fh-rainbow" />
+      <footer className="px-6 sm:px-12 py-12">
+        <div className="mx-auto max-w-6xl flex flex-col sm:flex-row items-center justify-between gap-6">
+          <span className="text-[13px] font-black uppercase tracking-[0.4em]">
+            Foresthouse
+          </span>
+          <div className="flex items-center gap-6 text-[11px] font-medium uppercase tracking-[0.25em] text-fh-muted">
+            <Link
+              href="/forest-house/register"
+              className="hover:text-fh-text transition-colors"
+            >
+              Register
+            </Link>
+            <a
+              href="https://www.foresthou.se"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-fh-text transition-colors"
+            >
+              foresthou.se ↗
+            </a>
+          </div>
         </div>
+        <p className="mt-10 text-center text-[11px] tracking-[0.2em] text-fh-muted">
+          © 2026 ForestHouse · Crew Portal by Go Run Rabbit
+        </p>
       </footer>
     </div>
   );
