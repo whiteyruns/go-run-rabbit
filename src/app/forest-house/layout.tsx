@@ -2,10 +2,28 @@ import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+const OG_TITLE = "ForestHouse Crew Call — May 2026";
+const OG_DESCRIPTION =
+  "Crew list open for the May 2026 deployment. Prodigal Swan joins the EDC Parade, ForestHouse hits the EDC Festival floor. Pick your role, your days, tell us what you bring.";
+
 export const metadata: Metadata = {
-  title: "ForestHouse Crew — May 12–18, 2026",
-  description:
-    "Crew registration for the ForestHouse deployment, May 12–18, 2026.",
+  title: { absolute: OG_TITLE },
+  description: OG_DESCRIPTION,
+  alternates: {
+    canonical: "https://gorunrabbit.com/forest-house",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "ForestHouse",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+    url: "https://gorunrabbit.com/forest-house",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: OG_TITLE,
+    description: OG_DESCRIPTION,
+  },
 };
 
 export const viewport: Viewport = {
