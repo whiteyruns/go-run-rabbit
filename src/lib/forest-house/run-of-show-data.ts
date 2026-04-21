@@ -63,6 +63,7 @@ export const CORE_TEAM_EMAILS: ReadonlySet<string> = new Set([
   "michael@auraluxsystems.com",
   "charlie@auraluxsystems.com",
   "keith@gorunrabbit.com",
+  "zokie@cornerbarmgmt.com",
 ]);
 
 // ── Team ──────────────────────────────────────────────────────────────
@@ -101,6 +102,15 @@ export const FOREST_HOUSE_TEAM: TeamMember[] = [
     email: "keith@gorunrabbit.com",
     responsibilities:
       "Manages overall logistics, scheduling, and coordination. Ensures all aspects of the art car's build, operation, and breakdown align with event requirements.",
+  },
+  {
+    name: "Zokie Djordjevic",
+    company: "Corner Bar Management",
+    role: "Director of Hospitality",
+    phone: "702.927.4623",
+    email: "zokie@cornerbarmgmt.com",
+    responsibilities:
+      "Directs hospitality operations across every ForestHouse deployment. Coordinates guest experience, venue hospitality liaison, and vendor relations.",
   },
   {
     name: "Stefano Kajatt",
