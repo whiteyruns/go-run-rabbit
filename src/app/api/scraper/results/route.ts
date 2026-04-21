@@ -109,3 +109,26 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ exported: inserted, campaign_id });
 }
+
+export async function PATCH(request: NextRequest) {
+  const body = await request.json();
+  const { id, ...updates } = body;
+
+  if (!id) {
+    return NextResponse.json({ error: "id required" }, { status: 400 });
+  }
+
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("cbm_scrape_results")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
+}

@@ -27,6 +27,8 @@ interface ScrapeResult {
   category: string | null;
   source_url: string | null;
   exported: boolean;
+  converted: boolean;
+  converted_at: string | null;
 }
 
 interface Campaign {
@@ -172,6 +174,8 @@ export default function ScrapeJobDetailPage() {
   const unexported = results.filter((r) => !r.exported).length;
   const withEmail = results.filter((r) => r.email).length;
   const withPhone = results.filter((r) => r.phone).length;
+  const converted = results.filter((r) => r.converted).length;
+  const conversionRate = results.length > 0 ? ((converted / results.length) * 100).toFixed(1) : "0";
 
   return (
     <div className="max-w-6xl mx-auto px-8 py-10">
@@ -296,10 +300,10 @@ export default function ScrapeJobDetailPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-5 gap-3 mb-8">
         <div className="bg-surface-container-high rounded-xl p-4 text-center">
           <p className="text-2xl font-extrabold font-mono text-on-surface">{results.length}</p>
-          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Total Results</p>
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Total</p>
         </div>
         <div className="bg-surface-container-high rounded-xl p-4 text-center">
           <p className="text-2xl font-extrabold font-mono text-neon-cyan">{withEmail}</p>
@@ -310,8 +314,12 @@ export default function ScrapeJobDetailPage() {
           <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">With Phone</p>
         </div>
         <div className="bg-surface-container-high rounded-xl p-4 text-center">
-          <p className="text-2xl font-extrabold font-mono text-on-surface">{unexported}</p>
-          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Not Exported</p>
+          <p className="text-2xl font-extrabold font-mono text-neon-cyan">{converted}</p>
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Converted</p>
+        </div>
+        <div className="bg-surface-container-high rounded-xl p-4 text-center">
+          <p className="text-2xl font-extrabold font-mono text-on-surface">{conversionRate}%</p>
+          <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-on-surface-variant">Conv. Rate</p>
         </div>
       </div>
 
@@ -417,11 +425,29 @@ export default function ScrapeJobDetailPage() {
                   )}
                 </td>
                 <td className="py-3 px-3">
-                  {r.exported ? (
-                    <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-neon-cyan">Exported</span>
-                  ) : (
-                    <span className="text-[9px] font-bold uppercase tracking-[0.1em] text-on-surface-variant">Ready</span>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {r.converted ? (
+                      <button
+                        onClick={async () => {
+                          await fetch("/api/scraper/results", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: r.id, converted: false, converted_at: null }) });
+                          await fetchData();
+                        }}
+                        className="text-[9px] font-bold uppercase tracking-[0.1em] px-1.5 py-0.5 rounded-full bg-neon-cyan/20 text-neon-cyan cursor-pointer"
+                      >
+                        Converted
+                      </button>
+                    ) : (
+                      <button
+                        onClick={async () => {
+                          await fetch("/api/scraper/results", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: r.id, converted: true, converted_at: new Date().toISOString() }) });
+                          await fetchData();
+                        }}
+                        className="text-[9px] font-bold uppercase tracking-[0.1em] text-on-surface-variant hover:text-neon-cyan cursor-pointer"
+                      >
+                        {r.exported ? "Exported" : "Ready"}
+                      </button>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}
