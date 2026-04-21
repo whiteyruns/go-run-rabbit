@@ -49,6 +49,7 @@ export default function ScrapeJobDetailPage() {
   const [enrichResult, setEnrichResult] = useState<string | null>(null);
   const [deduping, setDeduping] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [resolving, setResolving] = useState(false);
   const [pipelineEmails, setPipelineEmails] = useState<Record<string, string>>({}); // email -> status
 
   const fetchData = useCallback(async () => {
@@ -254,6 +255,36 @@ export default function ScrapeJobDetailPage() {
             className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-neon-cyan/15 text-neon-cyan hover:bg-neon-cyan/25 transition-colors disabled:opacity-40"
           >
             {verifying ? "Verifying..." : "Verify Emails"}
+          </button>
+          <button
+            onClick={async () => {
+              setResolving(true);
+              setEnrichResult("Resolving Google Maps URLs...");
+              let totalResolved = 0;
+              let remaining = 1;
+              let batch = 1;
+              while (remaining > 0 && batch <= 20) {
+                const res = await fetch("/api/scraper/resolve-urls", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ job_id: jobId, batch_size: 5 }),
+                });
+                if (!res.ok) break;
+                const data = await res.json();
+                totalResolved += data.resolved || 0;
+                remaining = data.remaining || 0;
+                setEnrichResult(`Batch ${batch}: ${totalResolved} resolved, ${remaining} remaining`);
+                await fetchData();
+                batch++;
+                if ((data.resolved || 0) === 0 && remaining > 0) break;
+              }
+              setEnrichResult(`Done: ${totalResolved} URLs resolved to real websites`);
+              setResolving(false);
+            }}
+            disabled={resolving}
+            className="text-xs font-bold uppercase tracking-[0.15em] px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant hover:bg-surface-bright transition-colors disabled:opacity-40"
+          >
+            {resolving ? "Resolving..." : "Resolve URLs"}
           </button>
           <button
             onClick={downloadCSV}

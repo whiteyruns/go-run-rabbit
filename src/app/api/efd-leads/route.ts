@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const property = request.nextUrl.searchParams.get("property");
   const supabase = getSupabase();
-  const { data, error } = await supabase
+
+  let query = supabase
     .from("efd_leads")
     .select("*")
     .order("created_at", { ascending: false });
+
+  if (property) {
+    query = query.eq("property", property);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

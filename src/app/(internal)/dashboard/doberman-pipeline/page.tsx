@@ -62,14 +62,14 @@ function coldIndicator(lead: Lead): string | null {
 
 /* ── Component ────────────────────────────────────────────────────── */
 
-export default function EfdPipelinePage() {
+export default function DobermanPipelinePage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [dragLead, setDragLead] = useState<string | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
 
   const fetchLeads = useCallback(async () => {
-    const res = await fetch("/api/efd-leads?property=efd");
+    const res = await fetch("/api/efd-leads?property=doberman");
     if (res.ok) {
       const data = await res.json();
       setLeads(data);
@@ -117,7 +117,7 @@ export default function EfdPipelinePage() {
   if (loading) {
     return (
       <div className="max-w-full mx-auto px-8 py-10">
-        <h1 className="text-4xl font-extrabold tracking-tight mb-2">EFD PIPELINE</h1>
+        <h1 className="text-4xl font-extrabold tracking-tight mb-2">DOBERMAN PIPELINE</h1>
         <p className="text-on-surface-variant">Loading leads...</p>
       </div>
     );
@@ -128,7 +128,7 @@ export default function EfdPipelinePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight mb-2">EFD PIPELINE</h1>
+          <h1 className="text-4xl font-extrabold tracking-tight mb-2">DOBERMAN PIPELINE</h1>
           <p className="text-on-surface-variant">
             {leads.length} total leads &middot; {totalValue} active
           </p>
@@ -193,7 +193,7 @@ export default function EfdPipelinePage() {
                   return (
                     <Link
                       key={lead.id}
-                      href={`/dashboard/efd-pipeline/${lead.id}`}
+                      href={`/dashboard/doberman-pipeline/${lead.id}`}
                       draggable
                       onDragStart={() => handleDragStart(lead.id)}
                       className={`block bg-surface-container-high rounded-lg p-3 cursor-grab active:cursor-grabbing hover:bg-surface-bright transition-colors ${
@@ -282,7 +282,7 @@ export default function EfdPipelinePage() {
                     <span className="text-[10px] text-on-surface-variant">{stageLeads.length}</span>
                   </div>
                   {stageLeads.map((lead) => (
-                    <Link key={lead.id} href={`/dashboard/efd-pipeline/${lead.id}`} className="block text-on-surface-variant text-xs py-1 hover:text-on-surface transition-colors">
+                    <Link key={lead.id} href={`/dashboard/doberman-pipeline/${lead.id}`} className="block text-on-surface-variant text-xs py-1 hover:text-on-surface transition-colors">
                       {lead.organization_name || lead.email}
                     </Link>
                   ))}
@@ -321,7 +321,7 @@ function AddLeadForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
-    await onSave({ ...form, status: "new" });
+    await onSave({ ...form, status: "new", property: "doberman" });
     setSaving(false);
   }
 
