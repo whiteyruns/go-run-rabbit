@@ -45,6 +45,7 @@ const navGroups = [
       { href: "/dashboard/inventory", label: "Inventory", icon: "&#9638;" },
       { href: "/dashboard/recaps", label: "Recaps", icon: "&#9993;" },
       { href: "/dashboard/roadmap", label: "Action Plan", icon: "&#9654;" },
+      { href: "/corner-bar-management", label: "Strategy Hub", icon: "&#9670;" },
     ],
   },
 ];
