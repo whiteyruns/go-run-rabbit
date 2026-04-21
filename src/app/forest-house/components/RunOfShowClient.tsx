@@ -130,6 +130,13 @@ export default function RunOfShowClient({
         <div className="mx-auto max-w-5xl px-6 sm:px-12 pt-8 flex flex-wrap justify-end gap-2">
           <button
             type="button"
+            onClick={() => openWhatsAppReminder(slug, initial)}
+            className="px-5 py-2.5 border border-fh-border/70 text-[11px] font-bold uppercase tracking-[0.3em] hover:border-fh-accent hover:text-fh-accent transition-colors"
+          >
+            WhatsApp
+          </button>
+          <button
+            type="button"
             onClick={() => setSendOpen(true)}
             className="px-5 py-2.5 border border-fh-border/70 text-[11px] font-bold uppercase tracking-[0.3em] hover:border-fh-accent hover:text-fh-accent transition-colors"
           >
@@ -457,6 +464,37 @@ function Editor({
       </div>
     </div>
   );
+}
+
+// Opens WhatsApp (native or web) with a pre-filled reminder message. User
+// picks the group/contact to send to — no Meta Business setup required.
+function openWhatsAppReminder(slug: string, data: RunOfShowData) {
+  const origin =
+    typeof window !== "undefined" ? window.location.origin : "";
+  const lines: string[] = [];
+  lines.push(`Forest House · ${data.eventName}`);
+  if (data.eventSubtitle) lines.push(data.eventSubtitle);
+  lines.push(`Location: ${data.location}`);
+  if (data.talent && data.talent.length > 0) {
+    lines.push("");
+    lines.push(`Talent: ${data.talent.join(" · ")}`);
+  }
+  if (data.schedule.length > 0) {
+    lines.push("");
+    lines.push("Schedule:");
+    for (const row of data.schedule) {
+      const time =
+        row.time && row.time.toUpperCase() !== "TBD" ? ` ${row.time}` : "";
+      lines.push(`· ${row.date}${time} — ${row.item}`);
+    }
+  }
+  lines.push("");
+  lines.push(
+    `Full ROS: ${origin}/forest-house/admin/run-of-show/${slug}`,
+  );
+  const text = lines.join("\n");
+  const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(url, "_blank", "noopener,noreferrer");
 }
 
 function ScheduleRowEditor({
