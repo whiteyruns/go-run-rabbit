@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { isFhAdminFromCookies } from "@/lib/forest-house/fh-auth";
+import { RUN_OF_SHOW_SEEDS } from "@/lib/forest-house/run-of-show-seed";
 
 const OG_TITLE = "ForestHouse Crew Call — May 2026";
 const OG_DESCRIPTION =
@@ -30,11 +32,21 @@ export const viewport: Viewport = {
   themeColor: "#0a0a0a",
 };
 
-export default function ForestHouseLayout({
+export default async function ForestHouseLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const isAdmin = await isFhAdminFromCookies();
+  const runs = isAdmin
+    ? Object.entries(RUN_OF_SHOW_SEEDS).map(([slug, data]) => ({
+        slug,
+        // Short label for the nav — full name lives on the page itself.
+        // For single-word event names this just collapses to the first word.
+        label: data.eventName.split(" ")[0] ?? data.eventName,
+      }))
+    : [];
+
   return (
     <div className="min-h-screen bg-fh-bg text-fh-text font-fh antialiased selection:bg-fh-teal/30">
       <header className="sticky top-0 z-20 bg-fh-bg/85 backdrop-blur-xl border-b border-fh-border">
@@ -52,16 +64,29 @@ export default function ForestHouseLayout({
               Foresthouse
             </span>
           </Link>
-          <div className="flex items-center gap-7 text-[11px] font-semibold uppercase tracking-[0.3em]">
+          <div className="flex items-center gap-5 sm:gap-7 text-[11px] font-semibold uppercase tracking-[0.3em]">
             <Link
               href="/forest-house/register"
               className="text-fh-text-secondary hover:text-fh-text transition-colors"
             >
               Register
             </Link>
+            {runs.map((r) => (
+              <Link
+                key={r.slug}
+                href={`/forest-house/admin/run-of-show/${r.slug}`}
+                className="text-fh-text-secondary hover:text-fh-accent transition-colors"
+              >
+                {r.label}
+              </Link>
+            ))}
             <Link
               href="/forest-house/admin"
-              className="text-fh-muted hover:text-fh-text transition-colors"
+              className={
+                isAdmin
+                  ? "text-fh-text-secondary hover:text-fh-text transition-colors"
+                  : "text-fh-muted hover:text-fh-text transition-colors"
+              }
             >
               Admin
             </Link>
