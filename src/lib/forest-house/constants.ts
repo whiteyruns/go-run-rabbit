@@ -92,6 +92,21 @@ export const EDC_FESTIVAL_DATES = [
   "2026-05-17",
 ] as const satisfies readonly DeployDate[];
 
+// Grouped event-scope date sets — used to filter the registration
+// form's availability grid by which events the registrant opted in to.
+export const CINCO_ALL_DATES: readonly DeployDate[] = [
+  ...CINCO_BUILD_DATES,
+  CINCO_EVENT_DATE,
+  CINCO_STRIKE_DATE,
+];
+
+export const EDC_ALL_DATES: readonly DeployDate[] = [
+  ...PLAZA_BUILD_DATES,
+  ...SITE_BUILD_DATES,
+  ...EVENT_DATES,
+  ...STRIKE_DATES,
+];
+
 // ── Roles / skills targets ───────────────────────────────────────────────
 export const ROLE_TARGETS: Record<Role, number> = {
   lighting: 2,

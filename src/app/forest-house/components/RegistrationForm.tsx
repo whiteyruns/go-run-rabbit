@@ -1,19 +1,28 @@
 "use client";
 
-import { useMemo, useState, type FormEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import {
   ROLES,
   SKILLS,
-  DEPLOY_DATES,
   ROLE_LABELS,
   SKILL_LABELS,
-  DATE_BUCKET,
-  BUCKET_LABELS,
-  BUCKET_ORDER,
+  CINCO_ALL_DATES,
+  CINCO_BUILD_DATES,
   CINCO_EVENT_DATE,
+  CINCO_STRIKE_DATE,
+  EDC_ALL_DATES,
+  PLAZA_BUILD_DATES,
+  SITE_BUILD_DATES,
+  EVENT_DATES,
+  STRIKE_DATES,
   EDC_PARADE_DATE,
   EDC_FESTIVAL_DATES,
-  type DateBucket,
   type Role,
   type Skill,
   type DeployDate,
@@ -143,6 +152,21 @@ export default function RegistrationForm() {
       return { ...s, roles, preferredRole, backupRole };
     });
   };
+
+  // When an event is unchecked, drop any availability days scoped to it —
+  // otherwise the registrant ends up with "phantom" days they can't see.
+  useEffect(() => {
+    setState((s) => {
+      const edcOn = s.edcParade || s.edcFestival;
+      const next = s.availability.filter((d) => {
+        if (CINCO_ALL_DATES.includes(d) && !s.cincoDeMayo) return false;
+        if (EDC_ALL_DATES.includes(d) && !edcOn) return false;
+        return true;
+      });
+      if (next.length === s.availability.length) return s;
+      return { ...s, availability: next };
+    });
+  }, [state.cincoDeMayo, state.edcParade, state.edcFestival]);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
@@ -321,36 +345,6 @@ export default function RegistrationForm() {
         )}
       </FieldGroup>
 
-      <FieldGroup
-        label="Availability"
-        hint="May 3–20, 2026 · pick every day you can be on site"
-        error={errors.availability}
-      >
-        <DayGrid
-          selected={state.availability}
-          onToggle={(d) =>
-            setState((s) => ({ ...s, availability: toggle(s.availability, d) }))
-          }
-        />
-      </FieldGroup>
-
-      <FieldGroup label="Crew commitments" hint="Build / Strike windows">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Toggle
-            label="Build Crew"
-            hint="Pre-deploy assembly"
-            checked={state.buildCrew}
-            onChange={(v) => setState((s) => ({ ...s, buildCrew: v }))}
-          />
-          <Toggle
-            label="Strike Crew"
-            hint="Post-event teardown"
-            checked={state.strikeCrew}
-            onChange={(v) => setState((s) => ({ ...s, strikeCrew: v }))}
-          />
-        </div>
-      </FieldGroup>
-
       <FieldGroup label="Which events?" hint="Pick any combination">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Toggle
@@ -370,6 +364,44 @@ export default function RegistrationForm() {
             hint={`ForestHouse · ${formatFestivalRange()}`}
             checked={state.edcFestival}
             onChange={(v) => setState((s) => ({ ...s, edcFestival: v }))}
+          />
+        </div>
+      </FieldGroup>
+
+      <FieldGroup
+        label="Availability"
+        hint="Pick every day you can be on site"
+        error={errors.availability}
+      >
+        {!state.cincoDeMayo && !state.edcParade && !state.edcFestival ? (
+          <p className="text-xs uppercase tracking-[0.25em] text-fh-muted">
+            Pick at least one event above to choose your days
+          </p>
+        ) : (
+          <DayGrid
+            showCinco={state.cincoDeMayo}
+            showEdc={state.edcParade || state.edcFestival}
+            selected={state.availability}
+            onToggle={(d) =>
+              setState((s) => ({ ...s, availability: toggle(s.availability, d) }))
+            }
+          />
+        )}
+      </FieldGroup>
+
+      <FieldGroup label="Crew commitments" hint="Build / Strike windows">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Toggle
+            label="Build Crew"
+            hint="Pre-deploy assembly"
+            checked={state.buildCrew}
+            onChange={(v) => setState((s) => ({ ...s, buildCrew: v }))}
+          />
+          <Toggle
+            label="Strike Crew"
+            hint="Post-event teardown"
+            checked={state.strikeCrew}
+            onChange={(v) => setState((s) => ({ ...s, strikeCrew: v }))}
           />
         </div>
       </FieldGroup>
@@ -600,37 +632,78 @@ function Toggle({
   );
 }
 
+type DayGroup = {
+  label: string;
+  subtitle: string;
+  dates: readonly DeployDate[];
+  scope: "cinco" | "edc";
+};
+
+const DAY_GROUPS: readonly DayGroup[] = [
+  {
+    label: "Cinco de Mayo",
+    subtitle: `East Fremont · Build ${formatMd(CINCO_BUILD_DATES[0])}–${formatMd(CINCO_BUILD_DATES[CINCO_BUILD_DATES.length - 1])} · Party Tue ${formatMd(CINCO_EVENT_DATE)} · Strike Wed ${formatMd(CINCO_STRIKE_DATE)}`,
+    dates: [...CINCO_BUILD_DATES, CINCO_EVENT_DATE, CINCO_STRIKE_DATE],
+    scope: "cinco",
+  },
+  {
+    label: "Plaza Build",
+    subtitle: `Off-site staging · ${formatMd(PLAZA_BUILD_DATES[0])}–${formatMd(PLAZA_BUILD_DATES[PLAZA_BUILD_DATES.length - 1])}`,
+    dates: PLAZA_BUILD_DATES,
+    scope: "edc",
+  },
+  {
+    label: "Site Build",
+    subtitle: `Festival grounds · ${formatMd(SITE_BUILD_DATES[0])}–${formatMd(SITE_BUILD_DATES[SITE_BUILD_DATES.length - 1])}`,
+    dates: SITE_BUILD_DATES,
+    scope: "edc",
+  },
+  {
+    label: "EDC Event",
+    subtitle: `Parade + Festival · ${formatMd(EVENT_DATES[0])}–${formatMd(EVENT_DATES[EVENT_DATES.length - 1])}`,
+    dates: EVENT_DATES,
+    scope: "edc",
+  },
+  {
+    label: "EDC Strike",
+    subtitle: `Teardown · ${formatMd(STRIKE_DATES[0])}–${formatMd(STRIKE_DATES[STRIKE_DATES.length - 1])}`,
+    dates: STRIKE_DATES,
+    scope: "edc",
+  },
+];
+
 function DayGrid({
+  showCinco,
+  showEdc,
   selected,
   onToggle,
 }: {
+  showCinco: boolean;
+  showEdc: boolean;
   selected: DeployDate[];
   onToggle: (d: DeployDate) => void;
 }) {
-  const grouped: Record<DateBucket, DeployDate[]> = {
-    "cinco-build": [],
-    "cinco-event": [],
-    "cinco-strike": [],
-    "build-plaza": [],
-    "build-site": [],
-    event: [],
-    strike: [],
-  };
-  for (const d of DEPLOY_DATES) grouped[DATE_BUCKET[d]].push(d);
-
+  const visible = DAY_GROUPS.filter(
+    (g) => (g.scope === "cinco" && showCinco) || (g.scope === "edc" && showEdc),
+  );
   return (
-    <div className="space-y-5">
-      {BUCKET_ORDER.map((bucket) => (
-        <div key={bucket}>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
-            {BUCKET_LABELS[bucket]}
-          </p>
+    <div className="space-y-6">
+      {visible.map((group) => (
+        <div key={group.label}>
+          <div className="mb-2">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-text/80">
+              {group.label}
+            </p>
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.2em] text-fh-muted">
+              {group.subtitle}
+            </p>
+          </div>
           <div
             className="flex flex-wrap gap-2"
             role="group"
-            aria-label={BUCKET_LABELS[bucket]}
+            aria-label={group.label}
           >
-            {grouped[bucket].map((d) => {
+            {group.dates.map((d) => {
               const isSelected = selected.includes(d);
               const tag = edcTag(d);
               return (

@@ -13,8 +13,10 @@ export default function RegisterPage() {
       </h1>
       <p className="max-w-xl text-base sm:text-[17px] font-light leading-[1.7] text-fh-text-secondary mb-10 sm:mb-16">
         Fill this out honestly — tell us what you can do, when you can do it,
-        and what you bring. You can re-submit with the same email any time
-        before May&nbsp;12 to update your registration.
+        and what you bring. Two events back-to-back in May:{" "}
+        <span className="text-fh-text">Cinco de Mayo</span> on East Fremont
+        (5/3–6) and <span className="text-fh-text">EDC Vegas</span> (5/8–20).
+        Re-submit with the same email any time to update your registration.
       </p>
       <RegistrationForm />
     </div>
