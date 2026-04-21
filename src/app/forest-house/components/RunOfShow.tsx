@@ -395,11 +395,6 @@ function RegisteredCrewCard({ member }: { member: CrewRecord }) {
           Skills: {member.skills.map((s) => SKILL_LABELS[s]).join(", ")}
         </p>
       )}
-      {member.notes && (
-        <p className="mt-2 text-xs text-fh-text-secondary/80 italic">
-          “{member.notes}”
-        </p>
-      )}
     </div>
   );
 }
