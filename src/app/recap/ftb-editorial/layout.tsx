@@ -51,14 +51,58 @@ export default function EditorialRecapLayout({
           font-weight: 700;
         }
         @media print {
-          @page { margin: 0.5in; size: letter; }
-          .editorial-scope { background: #fdf9f3 !important; color: #1c1c18 !important; min-height: auto; }
+          /* 0.5in top/bottom leaves room for a fixed running footer. */
+          @page { margin: 0.6in 0.5in 0.7in 0.5in; size: letter; }
+          .editorial-scope {
+            background: #fdf9f3 !important;
+            color: #1c1c18 !important;
+            min-height: auto;
+            /* Print colors exactly — don't let Chrome flatten backgrounds. */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
           .recap-no-print { display: none !important; }
+
+          /* Break *before* a section. */
           .recap-page-break { break-before: page; page-break-before: always; }
+
+          /* Atomic chunks that must never split across a page boundary.
+             We apply these selectively (stat rows, phase cards, photos) rather
+             than on every section — large sections that can't fit one page get
+             ignored by Chrome when using break-inside on the section itself,
+             and split in worse places. */
+          .pdf-avoid-break { break-inside: avoid; page-break-inside: avoid; }
+
+          /* Keep a subhead welded to the content that follows it. */
+          .pdf-keep-with-next { break-after: avoid; page-break-after: avoid; }
+
+          /* Cover page — force exactly one letter page, full bleed. */
+          .pdf-cover-page {
+            break-after: page;
+            page-break-after: always;
+            min-height: 10in; /* 11in paper − 1in combined margin ≈ 10in */
+          }
+
           a { color: inherit !important; text-decoration: none !important; }
-          section { break-inside: avoid; page-break-inside: avoid; }
-          img { filter: grayscale(100%); }
+
+          /* Running footer repeats on every printed page in Chrome because
+             position:fixed elements are re-flowed onto each page. */
+          .pdf-running-footer {
+            display: block !important;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0.25in;
+            text-align: center;
+            font-size: 8.5px;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: #7f5700;
+            font-family: 'Inter', sans-serif;
+          }
         }
+        /* Hide the running footer on-screen; only print shows it. */
+        .pdf-running-footer { display: none; }
       `}</style>
       {children}
     </div>

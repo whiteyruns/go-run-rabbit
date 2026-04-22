@@ -235,16 +235,46 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </div>
       )}
 
+      {/* Running footer — print only. Chrome repeats position:fixed on every page. */}
+      <div className="pdf-running-footer">
+        Feed The Block · {bundle.headliner} · {bundle.eventDate} · Placer.ai Verified
+      </div>
+
       <main className="pt-20 md:pt-24">
-        {/* 1. Cover hero */}
-        <section className="min-h-[70vh] px-8 md:px-20 py-24 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30">
-          <div className="max-w-7xl mx-auto w-full">
+        {/* 1. Cover hero — full-bleed photo behind title for print; text-only on screen falls back gracefully. */}
+        <section className="pdf-cover-page relative min-h-[70vh] md:min-h-[90vh] px-8 md:px-20 py-24 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30 overflow-hidden">
+          {hero && (
+            <div className="absolute inset-0 z-0" aria-hidden="true">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={photoUrl(bundle.photoPathKey, hero.slug, 1920)}
+                alt=""
+                className="w-full h-full object-cover opacity-25"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-[#fdf9f3]/50 via-[#fdf9f3]/80 to-[#fdf9f3]" />
+            </div>
+          )}
+          <div className="max-w-7xl mx-auto w-full relative z-10">
+            <p className="uppercase tracking-[0.35em] text-[10px] text-[#7f5700] mb-8 md:mb-10">
+              Post-Event Recap · Placer.ai Verified
+            </p>
             <h1 className="serif text-6xl md:text-9xl font-bold leading-none tracking-tighter mb-10 max-w-5xl">
               {bundle.headliner} at Feed The Block
             </h1>
-            <p className="serif italic text-xl md:text-3xl text-[#1c1c18]/70 max-w-2xl">
+            <p className="serif italic text-xl md:text-3xl text-[#1c1c18]/70 max-w-2xl mb-16 md:mb-20">
               Independently measured impact from one night on Fremont.
             </p>
+            <div className="flex flex-wrap gap-x-10 gap-y-3 items-baseline">
+              <span className="uppercase tracking-widest text-[10px] text-[#1c1c18]/60">
+                {bundle.eventDay}, {bundle.eventDate}
+              </span>
+              <span className="uppercase tracking-widest text-[10px] text-[#1c1c18]/60">
+                Fremont East District
+              </span>
+              <span className="uppercase tracking-widest text-[10px] text-[#7f5700]">
+                Corner Bar Management × Wynn Nightlife
+              </span>
+            </div>
           </div>
         </section>
 
@@ -279,7 +309,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
             </div>
 
             {/* Headline stats — moved out of the cover hero */}
-            <div className="mt-20 md:mt-28 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+            <div className="pdf-avoid-break mt-20 md:mt-28 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
               <StatRule value={fmtNum(visits)} label="Total Visitors" />
               <StatRule value={`${dwellHrs} Hrs`} label="Avg. Dwell Time" />
               <StatRule value={yoy} label="Visits Year-over-Year" />
@@ -291,12 +321,12 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         {/* 3. The Event (full-bleed) */}
         {hero && (
           <section id="event" className="scroll-mt-20 py-16 md:py-20 recap-page-break">
-            <figure className="w-full h-[400px] md:h-[716px] relative overflow-hidden bg-[#1c1c18]">
+            <figure className="pdf-avoid-break w-full h-[400px] md:h-[716px] relative overflow-hidden bg-[#1c1c18]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photoUrl(bundle.photoPathKey, hero.slug, 1920)}
                 alt={hero.alt}
-                className="w-full h-full object-cover grayscale"
+                className="w-full h-full object-cover"
               />
               <div className="absolute bottom-0 left-0 p-6 md:p-8 bg-gradient-to-t from-black/75 to-transparent w-full">
                 {hero.caption && (
@@ -309,7 +339,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
                 </p>
               </div>
             </figure>
-            <div className="max-w-7xl mx-auto px-8 md:px-20 mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
+            <div className="pdf-avoid-break max-w-7xl mx-auto px-8 md:px-20 mt-12 md:mt-16 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-12">
               <div className="md:col-span-4">
                 <div className="flex flex-col gap-6">
                   <EventFact label="Venue" value="Fremont East District" />
@@ -342,15 +372,17 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         {artist && (
           <section id="headliner" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 border-t-[0.5px] border-[#c9912b]/30 recap-page-break">
             <div className="max-w-7xl mx-auto">
-              <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
-                The Headliner
-              </p>
-              <h2 className="serif text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] font-bold leading-[0.9] tracking-tighter mb-6 -ml-1 break-words">
-                {artist.stageName}
-              </h2>
-              <p className="serif italic text-xl md:text-2xl text-[#1c1c18]/60 mb-12 md:mb-16">
-                {artist.realName} · {artist.nationality} · {artist.yearsActive}
-              </p>
+              <div className="pdf-keep-with-next">
+                <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
+                  The Headliner
+                </p>
+                <h2 className="serif text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] font-bold leading-[0.9] tracking-tighter mb-6 -ml-1 break-words">
+                  {artist.stageName}
+                </h2>
+                <p className="serif italic text-xl md:text-2xl text-[#1c1c18]/60 mb-12 md:mb-16">
+                  {artist.realName} · {artist.nationality} · {artist.yearsActive}
+                </p>
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16">
                 <div className="md:col-span-7">
@@ -440,7 +472,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         {/* Photo gallery — "The Night in Photographs" */}
         {photos.gallery.length > 0 && (
           <section className="py-16 md:py-20 bg-[#1c1c18] recap-page-break">
-            <div className="max-w-7xl mx-auto px-8 md:px-12">
+            <div className="pdf-keep-with-next max-w-7xl mx-auto px-8 md:px-12">
               <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
                 The Night in Photographs
               </p>
@@ -452,7 +484,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
               {photos.gallery.slice(0, 3).map((p) => (
                 <figure
                   key={p.slug}
-                  className="relative aspect-[4/3] overflow-hidden bg-[#0a0a08]"
+                  className="pdf-avoid-break relative aspect-[4/3] overflow-hidden bg-[#0a0a08]"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -475,12 +507,14 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         {topHotels.length > 0 && (
           <section id="footprint" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#ebe8e2] recap-page-break">
             <div className="max-w-7xl mx-auto">
-              <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
-                Footprint
-              </p>
-              <h2 className="serif text-4xl md:text-5xl font-bold mb-16">
-                How the night moved.
-              </h2>
+              <div className="pdf-keep-with-next">
+                <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
+                  Footprint
+                </p>
+                <h2 className="serif text-4xl md:text-5xl font-bold mb-16">
+                  How the night moved.
+                </h2>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-20 items-end">
                 <div className="md:col-span-5">
                   <p className="text-[17px] mb-12 text-[#1c1c18]/80 leading-[1.7]">
@@ -602,16 +636,18 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         {/* 6. Economic Impact */}
         <section id="lift" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 text-center recap-page-break">
           <div className="max-w-4xl mx-auto">
-            <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
-              The Lift
-            </p>
-            <h2 className="serif text-7xl md:text-[11rem] font-bold text-[#7f5700] leading-none mb-4">
-              {fmt(impact)}
-            </h2>
-            <p className="uppercase tracking-widest text-xs mb-20 text-[#1c1c18]/50">
-              Estimated Direct Local Economic Impact · City of Las Vegas Conservative Model
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-left">
+            <div className="pdf-keep-with-next">
+              <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
+                The Lift
+              </p>
+              <h2 className="serif text-7xl md:text-[11rem] font-bold text-[#7f5700] leading-none mb-4">
+                {fmt(impact)}
+              </h2>
+              <p className="uppercase tracking-widest text-xs mb-20 text-[#1c1c18]/50">
+                Estimated Direct Local Economic Impact · City of Las Vegas Conservative Model
+              </p>
+            </div>
+            <div className="pdf-avoid-break grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-left">
               <ImpactBlock
                 title="Casino Crossover"
                 value={fmtNum(hotelCrossover)}
@@ -641,7 +677,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
 
         {/* 8. Sponsors */}
         <section id="sponsors" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20">
-          <div className="max-w-7xl mx-auto text-center">
+          <div className="pdf-avoid-break max-w-7xl mx-auto text-center">
             <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-12 md:mb-16">
               With Gratitude
             </p>
@@ -829,7 +865,7 @@ function RegisteredAudienceSection({
         </p>
 
         {/* Row 1: Geographic split + Top States */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start mb-20">
+        <div className="pdf-avoid-break grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start mb-20">
           {/* Geographic NV vs Other */}
           <div className="md:col-span-5">
             <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
@@ -894,7 +930,7 @@ function RegisteredAudienceSection({
         </div>
 
         {/* Row 2: Gender + Age */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start">
+        <div className="pdf-avoid-break grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-16 items-start">
           {/* Gender */}
           <div className="md:col-span-5">
             <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
@@ -1041,19 +1077,21 @@ function BroadcastSection({
       className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#1c1c18] text-[#fdf9f3] recap-page-break"
     >
       <div className="max-w-7xl mx-auto">
-        <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
-          The Broadcast
-        </p>
-        <h2 className="serif text-4xl md:text-5xl font-bold mb-4">
-          Reach &amp; engagement.
-        </h2>
-        <p className="serif italic text-base md:text-lg text-[#fdf9f3]/60 mb-16 max-w-2xl">
-          {accountsTagged} handles across {platforms} platforms ·{" "}
-          {reportWindow.start} – {reportWindow.end}
-        </p>
+        <div className="pdf-keep-with-next">
+          <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+            The Broadcast
+          </p>
+          <h2 className="serif text-4xl md:text-5xl font-bold mb-4">
+            Reach &amp; engagement.
+          </h2>
+          <p className="serif italic text-base md:text-lg text-[#fdf9f3]/60 mb-16 max-w-2xl">
+            {accountsTagged} handles across {platforms} platforms ·{" "}
+            {reportWindow.start} – {reportWindow.end}
+          </p>
+        </div>
 
         {/* Top-line numbers */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-14 md:gap-y-20 gap-x-12 mb-24">
+        <div className="pdf-avoid-break grid grid-cols-2 md:grid-cols-4 gap-y-14 md:gap-y-20 gap-x-12 mb-24">
           <SocialStat value={formatCompact(totals.impressions)} label="Impressions" />
           <SocialStat value={fmtNum(totals.engagements)} label="Engagements" />
           <SocialStat value={formatCompact(totals.videoViews)} label="Video Views" />
@@ -1061,7 +1099,7 @@ function BroadcastSection({
         </div>
 
         {/* Secondary row */}
-        <div className="grid grid-cols-3 gap-6 md:gap-12 mb-20 pb-20 border-b border-[#fdf9f3]/10">
+        <div className="pdf-avoid-break grid grid-cols-3 gap-6 md:gap-12 mb-20 pb-20 border-b border-[#fdf9f3]/10">
           <SubStat
             value={`${totals.engagementRate.toFixed(1)}%`}
             label="Engagement Rate"
@@ -1074,12 +1112,14 @@ function BroadcastSection({
         </div>
 
         {/* Pre → During → Post funnel */}
-        <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
-          Pre · During · Post
-        </p>
-        <h3 className="serif text-3xl md:text-4xl font-bold mb-12">
-          How the story arced.
-        </h3>
+        <div className="pdf-keep-with-next">
+          <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+            Pre · During · Post
+          </p>
+          <h3 className="serif text-3xl md:text-4xl font-bold mb-12">
+            How the story arced.
+          </h3>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-24">
           <PhaseCard
             label="Pre-Promotion"
@@ -1107,12 +1147,14 @@ function BroadcastSection({
         {/* Top posts */}
         {topPosts.length > 0 && (
           <>
-            <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
-              Top Performing Posts
-            </p>
-            <h3 className="serif text-3xl md:text-4xl font-bold mb-12">
-              The moments that traveled.
-            </h3>
+            <div className="pdf-keep-with-next">
+              <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+                Top Performing Posts
+              </p>
+              <h3 className="serif text-3xl md:text-4xl font-bold mb-12">
+                The moments that traveled.
+              </h3>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {topPosts.slice(0, 6).map((p, i) => (
                 <TopPostCard key={`${p.account}-${p.date}-${i}`} post={p} />
@@ -1155,7 +1197,7 @@ function PhaseCard({
     ? Math.max(3, (phase.impressions / maxImpressions) * 100)
     : 0;
   return (
-    <div className="bg-[#26221e] p-8 md:p-10 flex flex-col">
+    <div className="pdf-avoid-break bg-[#26221e] p-8 md:p-10 flex flex-col">
       <span
         className="uppercase tracking-[0.25em] text-[10px] md:text-xs font-semibold mb-1"
         style={{ color: accent }}
@@ -1208,7 +1250,7 @@ function TopPostCard({
 }) {
   const platformLabel = post.platform.charAt(0).toUpperCase() + post.platform.slice(1);
   return (
-    <div className="bg-[#26221e] p-6 md:p-8 flex flex-col">
+    <div className="pdf-avoid-break bg-[#26221e] p-6 md:p-8 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <span className="uppercase tracking-widest text-[9px] text-[#c9912b]">
           {platformLabel}
