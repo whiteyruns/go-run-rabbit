@@ -636,50 +636,8 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </section>
 
         {/* 7. Social reach — inverse dark section */}
-        <section id="broadcast" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#1c1c18] text-[#fdf9f3] recap-page-break">
-          <div className="max-w-7xl mx-auto">
-            <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
-              The Broadcast
-            </p>
-            <h2 className="serif text-4xl md:text-5xl font-bold mb-16">
-              Series reach &amp; engagement.
-            </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-y-14 md:gap-y-20 gap-x-12">
-              <SocialStat
-                value={`${(feedTheBlock.socialMetrics.impressions / 1000000).toFixed(1)}M`}
-                label="Total Impressions"
-              />
-              <SocialStat
-                value={fmtNum(feedTheBlock.socialMetrics.engagements)}
-                label="Total Engagements"
-              />
-              <SocialStat
-                value={`${(feedTheBlock.socialMetrics.videoViews / 1000000).toFixed(1)}M`}
-                label="Video Views"
-              />
-              <SocialStat
-                value={fmtNum(feedTheBlock.socialMetrics.newFollowers)}
-                label="New Followers"
-              />
-              <SocialStat
-                value={`${(feedTheBlock.socialMetrics.instagramImpressions / 1000).toFixed(0)}K`}
-                label="Instagram Reach"
-              />
-              <SocialStat
-                value={`${(feedTheBlock.socialMetrics.tiktokImpressions / 1000).toFixed(0)}K`}
-                label="TikTok Impressions"
-              />
-              <SocialStat
-                value={feedTheBlock.socialMetrics.tiktokEngagement}
-                label="TikTok Engagement"
-              />
-              <SocialStat
-                value={`${(feedTheBlock.socialMetrics.viralReelViews / 1000000).toFixed(1)}M`}
-                label="Viral Reel Views"
-              />
-            </div>
-          </div>
-        </section>
+        <BroadcastSection social={bundle.social} />
+
 
         {/* 8. Sponsors */}
         <section id="sponsors" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20">
@@ -1019,6 +977,263 @@ function Row({ label, value }: { label: string; value: string }) {
 function pct(num: number, denom: number): string {
   if (!denom) return "—";
   return `${((num / denom) * 100).toFixed(1)}%`;
+}
+
+function formatCompact(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 10_000) return `${Math.round(n / 1_000)}K`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return n.toLocaleString();
+}
+
+function BroadcastSection({
+  social,
+}: {
+  social: import("@/data/feed-the-block/recap/social-metrics").SocialAggregate | null;
+}) {
+  // Fallback: no per-event social data → show series-level.
+  if (!social) {
+    return (
+      <section
+        id="broadcast"
+        className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#1c1c18] text-[#fdf9f3] recap-page-break"
+      >
+        <div className="max-w-7xl mx-auto">
+          <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+            The Broadcast
+          </p>
+          <h2 className="serif text-4xl md:text-5xl font-bold mb-16">
+            Series reach &amp; engagement.
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-14 md:gap-y-20 gap-x-12">
+            <SocialStat
+              value={`${(feedTheBlock.socialMetrics.impressions / 1_000_000).toFixed(1)}M`}
+              label="Total Impressions"
+            />
+            <SocialStat
+              value={fmtNum(feedTheBlock.socialMetrics.engagements)}
+              label="Total Engagements"
+            />
+            <SocialStat
+              value={`${(feedTheBlock.socialMetrics.videoViews / 1_000_000).toFixed(1)}M`}
+              label="Video Views"
+            />
+            <SocialStat
+              value={fmtNum(feedTheBlock.socialMetrics.newFollowers)}
+              label="New Followers"
+            />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const { totals, phases, topPosts, accountsTagged, platforms, reportWindow } = social;
+  const maxPhaseImp = Math.max(
+    phases.pre.impressions,
+    phases.during.impressions,
+    phases.post.impressions,
+  );
+
+  return (
+    <section
+      id="broadcast"
+      className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#1c1c18] text-[#fdf9f3] recap-page-break"
+    >
+      <div className="max-w-7xl mx-auto">
+        <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+          The Broadcast
+        </p>
+        <h2 className="serif text-4xl md:text-5xl font-bold mb-4">
+          Reach &amp; engagement.
+        </h2>
+        <p className="serif italic text-base md:text-lg text-[#fdf9f3]/60 mb-16 max-w-2xl">
+          {accountsTagged} handles across {platforms} platforms ·{" "}
+          {reportWindow.start} – {reportWindow.end}
+        </p>
+
+        {/* Top-line numbers */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-y-14 md:gap-y-20 gap-x-12 mb-24">
+          <SocialStat value={formatCompact(totals.impressions)} label="Impressions" />
+          <SocialStat value={fmtNum(totals.engagements)} label="Engagements" />
+          <SocialStat value={formatCompact(totals.videoViews)} label="Video Views" />
+          <SocialStat value={fmtNum(totals.posts)} label="Tagged Posts" />
+        </div>
+
+        {/* Secondary row */}
+        <div className="grid grid-cols-3 gap-6 md:gap-12 mb-20 pb-20 border-b border-[#fdf9f3]/10">
+          <SubStat
+            value={`${totals.engagementRate.toFixed(1)}%`}
+            label="Engagement Rate"
+          />
+          <SubStat
+            value={fmtNum(totals.avgReachPerPost)}
+            label="Avg Reach / Post"
+          />
+          <SubStat value={fmtNum(accountsTagged)} label="Handles Tagged" />
+        </div>
+
+        {/* Pre → During → Post funnel */}
+        <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+          Pre · During · Post
+        </p>
+        <h3 className="serif text-3xl md:text-4xl font-bold mb-12">
+          How the story arced.
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-24">
+          <PhaseCard
+            label="Pre-Promotion"
+            sub="Anticipation · announce reels"
+            phase={phases.pre}
+            maxImpressions={maxPhaseImp}
+            accent="#ff68a7"
+          />
+          <PhaseCard
+            label="During Event"
+            sub="Live posts · stories · social proof"
+            phase={phases.during}
+            maxImpressions={maxPhaseImp}
+            accent="#5ccfb7"
+          />
+          <PhaseCard
+            label="Post-Promotion"
+            sub="Recap reels · halo effect"
+            phase={phases.post}
+            maxImpressions={maxPhaseImp}
+            accent="#a78bfa"
+          />
+        </div>
+
+        {/* Top posts */}
+        {topPosts.length > 0 && (
+          <>
+            <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
+              Top Performing Posts
+            </p>
+            <h3 className="serif text-3xl md:text-4xl font-bold mb-12">
+              The moments that traveled.
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {topPosts.slice(0, 6).map((p, i) => (
+                <TopPostCard key={`${p.account}-${p.date}-${i}`} post={p} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function SubStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <span className="block serif text-2xl md:text-3xl font-bold text-[#fdf9f3] leading-none mb-2">
+        {value}
+      </span>
+      <span className="uppercase tracking-widest text-[9px] md:text-[10px] text-[#fdf9f3]/60">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function PhaseCard({
+  label,
+  sub,
+  phase,
+  maxImpressions,
+  accent,
+}: {
+  label: string;
+  sub: string;
+  phase: import("@/data/feed-the-block/recap/social-metrics").SocialPhase;
+  maxImpressions: number;
+  accent: string;
+}) {
+  const barPct = maxImpressions
+    ? Math.max(3, (phase.impressions / maxImpressions) * 100)
+    : 0;
+  return (
+    <div className="bg-[#26221e] p-8 md:p-10 flex flex-col">
+      <span
+        className="uppercase tracking-[0.25em] text-[10px] md:text-xs font-semibold mb-1"
+        style={{ color: accent }}
+      >
+        {label}
+      </span>
+      <span className="serif italic text-sm text-[#fdf9f3]/50 mb-8">{sub}</span>
+
+      <div className="mb-8">
+        <span className="block serif text-4xl md:text-5xl font-bold text-[#fdf9f3] leading-none mb-2">
+          {formatCompact(phase.impressions)}
+        </span>
+        <span className="uppercase tracking-widest text-[9px] text-[#fdf9f3]/60">
+          Impressions
+        </span>
+        <div className="mt-3 h-1 bg-[#fdf9f3]/10 overflow-hidden">
+          <div
+            className="h-full transition-all"
+            style={{ width: `${barPct}%`, background: accent }}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3 pt-6 border-t border-[#fdf9f3]/10">
+        <PhaseStat value={fmtNum(phase.posts)} label="Posts" />
+        <PhaseStat value={formatCompact(phase.engagements)} label="Engagements" />
+        <PhaseStat value={formatCompact(phase.videoViews)} label="Video" />
+      </div>
+    </div>
+  );
+}
+
+function PhaseStat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <span className="block serif text-lg md:text-xl font-bold text-[#fdf9f3] leading-none mb-1">
+        {value}
+      </span>
+      <span className="uppercase tracking-widest text-[8px] text-[#fdf9f3]/50">
+        {label}
+      </span>
+    </div>
+  );
+}
+
+function TopPostCard({
+  post,
+}: {
+  post: import("@/data/feed-the-block/recap/social-metrics").SocialPostHighlight;
+}) {
+  const platformLabel = post.platform.charAt(0).toUpperCase() + post.platform.slice(1);
+  return (
+    <div className="bg-[#26221e] p-6 md:p-8 flex flex-col">
+      <div className="flex items-center justify-between mb-4">
+        <span className="uppercase tracking-widest text-[9px] text-[#c9912b]">
+          {platformLabel}
+        </span>
+        <span className="serif italic text-xs text-[#fdf9f3]/50">{post.date}</span>
+      </div>
+      <p className="serif text-sm md:text-base text-[#fdf9f3] mb-6 flex-1">
+        <span className="font-bold">{post.account}</span> — &ldquo;{post.caption}&rdquo;
+      </p>
+      <div className="pt-4 border-t border-[#fdf9f3]/10">
+        <span className="block serif text-3xl font-bold text-[#c9912b] leading-none mb-1">
+          {fmtNum(post.engagements)}
+        </span>
+        <span className="uppercase tracking-widest text-[9px] text-[#fdf9f3]/60">
+          Total Engagements
+        </span>
+        {(post.shares || post.likes) && (
+          <div className="mt-4 flex gap-4 text-[10px] uppercase tracking-widest text-[#fdf9f3]/50">
+            {post.likes !== undefined && <span>{fmtNum(post.likes)} likes</span>}
+            {post.shares !== undefined && <span>{fmtNum(post.shares)} shares</span>}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function SocialStat({ value, label }: { value: string; label: string }) {
