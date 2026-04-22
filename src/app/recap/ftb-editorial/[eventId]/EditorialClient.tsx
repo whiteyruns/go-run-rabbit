@@ -130,6 +130,14 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
   const hero = photos.hero;
   const polaroid = photos.polaroid;
 
+  // Per-event, pre-rendered PDF assets. When present, the "Save as PDF"
+  // button serves this file directly instead of triggering window.print().
+  const STATIC_PDFS = new Set(["marshmello-apr2-2026"]);
+  const pdfHref = STATIC_PDFS.has(bundle.eventId)
+    ? `/feed-the-block/recap/${bundle.eventId}.pdf`
+    : null;
+  const pdfDownloadName = `FeedTheBlock-${bundle.headliner.replace(/\s+/g, "-")}-Recap.pdf`;
+
   return (
     <>
       {/* Fixed nav */}
@@ -157,12 +165,22 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
             <span className="block w-5 h-[1.5px] bg-[#1c1c18]" />
             <span className="block w-5 h-[1.5px] bg-[#1c1c18]" />
           </button>
-          <button
-            onClick={() => window.print()}
-            className="hidden md:inline-block px-4 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
-          >
-            Save as PDF
-          </button>
+          {pdfHref ? (
+            <a
+              href={pdfHref}
+              download={pdfDownloadName}
+              className="hidden md:inline-block px-4 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
+            >
+              Download PDF
+            </a>
+          ) : (
+            <button
+              onClick={() => window.print()}
+              className="hidden md:inline-block px-4 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
+            >
+              Save as PDF
+            </button>
+          )}
           <a
             href="mailto:partnerships@feedtheblock.com?subject=Feed%20The%20Block%20—%20Schedule%20a%20Call"
             className="px-3 md:px-5 py-2 text-[10px] uppercase tracking-widest font-medium bg-[#7f5700] text-white hover:opacity-85 transition-opacity whitespace-nowrap"
@@ -221,15 +239,26 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
               >
                 Schedule a Call
               </a>
-              <button
-                onClick={() => {
-                  setMenuOpen(false);
-                  setTimeout(() => window.print(), 200);
-                }}
-                className="ml-3 inline-block px-6 py-3 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
-              >
-                Save as PDF
-              </button>
+              {pdfHref ? (
+                <a
+                  href={pdfHref}
+                  download={pdfDownloadName}
+                  onClick={() => setMenuOpen(false)}
+                  className="ml-3 inline-block px-6 py-3 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
+                >
+                  Download PDF
+                </a>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    setTimeout(() => window.print(), 200);
+                  }}
+                  className="ml-3 inline-block px-6 py-3 text-[10px] uppercase tracking-widest font-medium border border-[#7f5700] text-[#7f5700] hover:bg-[#7f5700] hover:text-white transition-colors"
+                >
+                  Save as PDF
+                </button>
+              )}
             </div>
           </div>
         </div>
