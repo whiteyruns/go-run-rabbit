@@ -77,14 +77,19 @@ export default function EditorialRecapLayout({
           /* Keep a subhead welded to the content that follows it. */
           .pdf-keep-with-next { break-after: avoid; page-break-after: avoid; }
 
-          /* Cover page — caps height so content fits on one letter page.
-             We *don't* use break-after here; instead the next section
-             (id="series") carries recap-page-break (break-before:page),
-             which paginates cleanly without producing a ghost blank page. */
+          /* Cover page — in print, convert from flex centering to plain
+             block layout with padding-based vertical positioning. Flex
+             containers with fixed heights + break-before on siblings
+             produce a persistent ghost page 2 in Chrome. Blocks don't.
+             The series section uses recap-page-break to start page 2. */
           .pdf-cover-page {
-            min-height: 9.4in !important;
-            max-height: 9.4in !important;
-            overflow: hidden !important;
+            display: block !important;
+            padding-top: 3.8in !important;
+            padding-bottom: 0 !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            height: auto !important;
+            overflow: visible !important;
           }
 
           /* Photo gallery — Tailwind's md:grid-cols-3 sometimes fails to
