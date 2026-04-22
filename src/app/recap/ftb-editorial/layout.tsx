@@ -51,8 +51,9 @@ export default function EditorialRecapLayout({
           font-weight: 700;
         }
         @media print {
-          /* 0.5in top/bottom leaves room for a fixed running footer. */
-          @page { margin: 0.6in 0.5in 0.7in 0.5in; size: letter; }
+          /* 0.9in bottom leaves clearance for the fixed running footer
+             without overlapping the last line of content. */
+          @page { margin: 0.6in 0.5in 0.9in 0.5in; size: letter; }
           .editorial-scope {
             background: #fdf9f3 !important;
             color: #1c1c18 !important;
@@ -77,15 +78,16 @@ export default function EditorialRecapLayout({
           .pdf-keep-with-next { break-after: avoid; page-break-after: avoid; }
 
           /* Cover page — fit exactly within one letter page.
-             Printable height = 11in − 0.6in top − 0.7in bottom = 9.7in.
-             We cap at 9.3in so the following break-after doesn't overflow
-             into a ghost blank page. */
+             !important beats Tailwind's min-h-[90vh] utility which in
+             print evaluates to 9.9in and would overflow into a ghost page.
+             Printable height = 11in − 0.6in top − 0.9in bottom = 9.5in. */
           .pdf-cover-page {
-            break-after: page;
-            page-break-after: always;
-            min-height: 9.3in;
-            max-height: 9.3in;
-            overflow: hidden;
+            break-after: page !important;
+            page-break-after: always !important;
+            height: 9.4in !important;
+            min-height: 9.4in !important;
+            max-height: 9.4in !important;
+            overflow: hidden !important;
           }
 
           /* Photo gallery — Tailwind's md:grid-cols-3 sometimes fails to

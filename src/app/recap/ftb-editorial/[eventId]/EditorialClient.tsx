@@ -635,19 +635,17 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
 
         {/* 6. Economic Impact */}
         <section id="lift" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 text-center recap-page-break">
-          <div className="max-w-4xl mx-auto">
-            <div className="pdf-keep-with-next">
-              <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
-                The Lift
-              </p>
-              <h2 className="serif text-7xl md:text-[11rem] font-bold text-[#7f5700] leading-none mb-4">
-                {fmt(impact)}
-              </h2>
-              <p className="uppercase tracking-widest text-xs mb-20 text-[#1c1c18]/50">
-                Estimated Direct Local Economic Impact · City of Las Vegas Conservative Model
-              </p>
-            </div>
-            <div className="pdf-avoid-break">
+          <div className="pdf-avoid-break max-w-4xl mx-auto">
+            <p className="uppercase tracking-[0.3em] text-xs text-[#7f5700] mb-6">
+              The Lift
+            </p>
+            <h2 className="serif text-7xl md:text-[11rem] font-bold text-[#7f5700] leading-none mb-4">
+              {fmt(impact)}
+            </h2>
+            <p className="uppercase tracking-widest text-xs mb-20 text-[#1c1c18]/50">
+              Estimated Direct Local Economic Impact · City of Las Vegas Conservative Model
+            </p>
+            <div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-left">
                 <ImpactBlock
                   title="Casino Crossover"
