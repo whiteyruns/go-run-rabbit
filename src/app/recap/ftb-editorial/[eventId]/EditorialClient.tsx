@@ -269,7 +269,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         </section>
 
         {/* 2. Executive summary */}
-        <section id="series" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed]">
+        <section id="series" className="scroll-mt-20 py-24 md:py-32 px-8 md:px-20 bg-[#f7f3ed] recap-page-break">
           <div className="max-w-7xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-16 items-start">
               <div className="md:col-span-4">
@@ -401,7 +401,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
                   )}
 
                   {artist.milestones.length > 0 && (
-                    <div>
+                    <div className="pdf-avoid-break">
                       <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
                         Milestones
                       </p>

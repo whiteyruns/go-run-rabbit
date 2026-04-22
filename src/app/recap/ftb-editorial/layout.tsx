@@ -77,14 +77,11 @@ export default function EditorialRecapLayout({
           /* Keep a subhead welded to the content that follows it. */
           .pdf-keep-with-next { break-after: avoid; page-break-after: avoid; }
 
-          /* Cover page — fit exactly within one letter page.
-             !important beats Tailwind's min-h-[90vh] utility which in
-             print evaluates to 9.9in and would overflow into a ghost page.
-             Printable height = 11in − 0.6in top − 0.9in bottom = 9.5in. */
+          /* Cover page — caps height so content fits on one letter page.
+             We *don't* use break-after here; instead the next section
+             (id="series") carries recap-page-break (break-before:page),
+             which paginates cleanly without producing a ghost blank page. */
           .pdf-cover-page {
-            break-after: page !important;
-            page-break-after: always !important;
-            height: 9.4in !important;
             min-height: 9.4in !important;
             max-height: 9.4in !important;
             overflow: hidden !important;
