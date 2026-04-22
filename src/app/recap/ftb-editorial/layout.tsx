@@ -51,28 +51,50 @@ export default function EditorialRecapLayout({
           font-weight: 700;
         }
         @media print {
-          /* 1.0in bottom margin keeps content comfortably above the
-             fixed running footer (which sits ~0.3in from page edge). */
+          /* @page is the single source of truth for margins.
+             1.0in bottom keeps content above the fixed running footer.
+             Playwright's page.pdf() margins are set to 0 to avoid
+             the double-margin issue in some Chromium versions. */
           @page { margin: 0.6in 0.5in 1.0in 0.5in; size: letter; }
+
           .editorial-scope {
             background: #fdf9f3 !important;
             color: #1c1c18 !important;
             min-height: auto;
-            /* Print colors exactly — don't let Chrome flatten backgrounds. */
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
+
+          /* Force background rendering on all elements (images, dark
+             sections, colored bars). */
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+
           .recap-no-print { display: none !important; }
 
           /* Break *before* a section. */
-          .recap-page-break { break-before: page; page-break-before: always; }
+          .recap-page-break {
+            break-before: page;
+            page-break-before: always;
+          }
 
           /* Atomic chunks that must never split across a page boundary.
-             We apply these selectively (stat rows, phase cards, photos) rather
-             than on every section — large sections that can't fit one page get
-             ignored by Chrome when using break-inside on the section itself,
-             and split in worse places. */
-          .pdf-avoid-break { break-inside: avoid; page-break-inside: avoid; }
+             We apply these selectively (stat rows, phase cards, photos)
+             rather than on every section — large sections that can't fit
+             one page get ignored by Chrome when using break-inside on the
+             section itself, and split in worse places.
+
+             break-after: auto prevents the cascade where an avoid-break
+             block gets pushed to the next page AND the next section's
+             break-before:page creates yet another page, leaving a blank
+             gap in between. */
+          .pdf-avoid-break {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            break-after: auto;
+          }
 
           /* Keep a subhead welded to the content that follows it. */
           .pdf-keep-with-next { break-after: avoid; page-break-after: avoid; }
@@ -80,8 +102,7 @@ export default function EditorialRecapLayout({
           /* Cover page — in print, convert from flex centering to plain
              block layout with padding-based vertical positioning. Flex
              containers with fixed heights + break-before on siblings
-             produce a persistent ghost page 2 in Chrome. Blocks don't.
-             The series section uses recap-page-break to start page 2. */
+             produce a persistent ghost page 2 in Chrome. Blocks don't. */
           .pdf-cover-page {
             display: block !important;
             padding-top: 3.8in !important;
@@ -92,30 +113,39 @@ export default function EditorialRecapLayout({
             overflow: visible !important;
           }
 
-          /* Photo gallery — Tailwind's md:grid-cols-3 sometimes fails to
-             apply under print media (Chrome's print viewport is narrower
-             than you'd think). Force 3-up explicitly so the photos pack
-             into one row instead of one per page. */
+          /* Photo gallery — force 3-up for print (Chrome's print viewport
+             is narrower than you'd think, so md:grid-cols-3 can fail).
+             Ensure images render at full quality in print context. */
           .pdf-photo-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+            break-inside: avoid;
+          }
+          .pdf-photo-grid img {
+            max-width: 100%;
+            height: auto;
           }
 
           a { color: inherit !important; text-decoration: none !important; }
 
           /* Running footer repeats on every printed page in Chrome because
-             position:fixed elements are re-flowed onto each page. */
+             position:fixed elements are re-flowed onto each page.
+             White background prevents text collision with page content
+             that lands near the bottom of a page. */
           .pdf-running-footer {
             display: block !important;
             position: fixed;
             left: 0;
             right: 0;
-            bottom: 0.35in;
+            bottom: 0.25in;
+            padding: 4px 0.5in;
             text-align: center;
             font-size: 8.5px;
             letter-spacing: 0.22em;
             text-transform: uppercase;
             color: #7f5700;
             font-family: 'Inter', sans-serif;
+            background: #fdf9f3;
+            z-index: 100;
           }
         }
         /* Hide the running footer on-screen; only print shows it. */
