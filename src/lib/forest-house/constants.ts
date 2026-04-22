@@ -110,6 +110,19 @@ export const JUNE_ALL_DATES: readonly DeployDate[] = [
   JUNE_STRIKE_DATE,
 ];
 
+// EDC Parade · World Party Parade on the Strip — its own load-in and
+// strike windows, distinct from the Festival/Speedway schedule.
+export const PARADE_LOAD_IN_DATES = [
+  "2026-05-11",
+  "2026-05-12",
+  "2026-05-13",
+] as const satisfies readonly DeployDate[];
+
+export const PARADE_STRIKE_DATES = [
+  "2026-05-15",
+  "2026-05-16",
+] as const satisfies readonly DeployDate[];
+
 // Grouped event-scope date sets — used to filter the registration
 // form's availability grid by which events the registrant opted in to.
 export const CINCO_ALL_DATES: readonly DeployDate[] = [
@@ -118,10 +131,16 @@ export const CINCO_ALL_DATES: readonly DeployDate[] = [
   CINCO_STRIKE_DATE,
 ];
 
-export const EDC_ALL_DATES: readonly DeployDate[] = [
+export const EDC_PARADE_ALL_DATES: readonly DeployDate[] = [
+  ...PARADE_LOAD_IN_DATES,
+  EDC_PARADE_DATE,
+  ...PARADE_STRIKE_DATES,
+];
+
+export const EDC_FESTIVAL_ALL_DATES: readonly DeployDate[] = [
   ...PLAZA_BUILD_DATES,
   ...SITE_BUILD_DATES,
-  ...EVENT_DATES,
+  ...EDC_FESTIVAL_DATES,
   ...STRIKE_DATES,
 ];
 

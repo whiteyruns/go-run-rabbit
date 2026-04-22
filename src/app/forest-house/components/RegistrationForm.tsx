@@ -16,12 +16,15 @@ import {
   CINCO_BUILD_DATES,
   CINCO_EVENT_DATE,
   CINCO_STRIKE_DATE,
-  EDC_ALL_DATES,
+  EDC_PARADE_ALL_DATES,
+  EDC_FESTIVAL_ALL_DATES,
   PLAZA_BUILD_DATES,
   SITE_BUILD_DATES,
   STRIKE_DATES,
   EDC_PARADE_DATE,
   EDC_FESTIVAL_DATES,
+  PARADE_LOAD_IN_DATES,
+  PARADE_STRIKE_DATES,
   JUNE_ALL_DATES,
   JUNE_BUILD_DATE,
   JUNE_EVENT_DATE,
@@ -156,11 +159,16 @@ export default function RegistrationForm() {
   // otherwise the registrant ends up with "phantom" days they can't see.
   useEffect(() => {
     setState((s) => {
-      const edcOn = s.edcParade || s.edcFestival;
       const next = s.availability.filter((d) => {
         if (CINCO_ALL_DATES.includes(d) && !s.cincoDeMayo) return false;
-        if (EDC_ALL_DATES.includes(d) && !edcOn) return false;
         if (JUNE_ALL_DATES.includes(d) && !s.juneBlockParty) return false;
+        const inParade = EDC_PARADE_ALL_DATES.includes(d);
+        const inFestival = EDC_FESTIVAL_ALL_DATES.includes(d);
+        if (inParade || inFestival) {
+          const paradeClaims = inParade && s.edcParade;
+          const festivalClaims = inFestival && s.edcFestival;
+          if (!paradeClaims && !festivalClaims) return false;
+        }
         return true;
       });
       if (next.length === s.availability.length) return s;
@@ -649,7 +657,7 @@ type DayGroup = {
   label: string;
   subtitle: string;
   dates: readonly DeployDate[];
-  scope: "cinco" | "edc-any" | "edc-parade" | "edc-festival" | "june";
+  scope: "cinco" | "edc-parade" | "edc-festival" | "june";
 };
 
 const DAY_GROUPS: readonly DayGroup[] = [
@@ -659,23 +667,37 @@ const DAY_GROUPS: readonly DayGroup[] = [
     dates: [...CINCO_BUILD_DATES, CINCO_EVENT_DATE, CINCO_STRIKE_DATE],
     scope: "cinco",
   },
+  // ── EDC Parade ────────────────────────────────────────────────────
+  {
+    label: "Parade Load-In",
+    subtitle: `Strip staging · ${formatMd(PARADE_LOAD_IN_DATES[0])}–${formatMd(PARADE_LOAD_IN_DATES[PARADE_LOAD_IN_DATES.length - 1])}`,
+    dates: PARADE_LOAD_IN_DATES,
+    scope: "edc-parade",
+  },
+  {
+    label: "EDC Parade",
+    subtitle: `World Party Parade · Prodigal Swan · Thu ${formatMd(EDC_PARADE_DATE)}`,
+    dates: [EDC_PARADE_DATE],
+    scope: "edc-parade",
+  },
+  {
+    label: "Parade Strike",
+    subtitle: `Teardown · ${formatMd(PARADE_STRIKE_DATES[0])}–${formatMd(PARADE_STRIKE_DATES[PARADE_STRIKE_DATES.length - 1])}`,
+    dates: PARADE_STRIKE_DATES,
+    scope: "edc-parade",
+  },
+  // ── EDC Festival ──────────────────────────────────────────────────
   {
     label: "Plaza Build",
     subtitle: `Off-site staging · ${formatMd(PLAZA_BUILD_DATES[0])}–${formatMd(PLAZA_BUILD_DATES[PLAZA_BUILD_DATES.length - 1])}`,
     dates: PLAZA_BUILD_DATES,
-    scope: "edc-any",
+    scope: "edc-festival",
   },
   {
     label: "Site Build",
     subtitle: `Speedway load-in · ${formatMd(SITE_BUILD_DATES[0])}–${formatMd(SITE_BUILD_DATES[SITE_BUILD_DATES.length - 1])}`,
     dates: SITE_BUILD_DATES,
-    scope: "edc-any",
-  },
-  {
-    label: "EDC Parade",
-    subtitle: `The Strip · Prodigal Swan · Thu ${formatMd(EDC_PARADE_DATE)}`,
-    dates: [EDC_PARADE_DATE],
-    scope: "edc-parade",
+    scope: "edc-festival",
   },
   {
     label: "EDC Festival",
@@ -684,11 +706,12 @@ const DAY_GROUPS: readonly DayGroup[] = [
     scope: "edc-festival",
   },
   {
-    label: "EDC Strike",
+    label: "Festival Strike",
     subtitle: `Teardown · ${formatMd(STRIKE_DATES[0])}–${formatMd(STRIKE_DATES[STRIKE_DATES.length - 1])}`,
     dates: STRIKE_DATES,
-    scope: "edc-any",
+    scope: "edc-festival",
   },
+  // ── June Block Party ─────────────────────────────────────────────
   {
     label: "June Block Party",
     subtitle: `East Fremont · Build Wed ${formatMd(JUNE_BUILD_DATE)} · Party Thu ${formatMd(JUNE_EVENT_DATE)} · Strike Fri ${formatMd(JUNE_STRIKE_DATE)}`,
@@ -712,10 +735,8 @@ function DayGrid({
   selected: DeployDate[];
   onToggle: (d: DeployDate) => void;
 }) {
-  const showEdcAny = showEdcParade || showEdcFestival;
   const visible = DAY_GROUPS.filter((g) => {
     if (g.scope === "cinco") return showCinco;
-    if (g.scope === "edc-any") return showEdcAny;
     if (g.scope === "edc-parade") return showEdcParade;
     if (g.scope === "edc-festival") return showEdcFestival;
     if (g.scope === "june") return showJune;
