@@ -241,20 +241,10 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
       </div>
 
       <main className="pt-20 md:pt-24">
-        {/* 1. Cover hero — full-bleed photo behind title for print; text-only on screen falls back gracefully. */}
+        {/* 1. Cover hero — classic typographic cover (no background photo;
+            the gradient wash made it barely visible and caused print bleed). */}
         <section className="pdf-cover-page relative min-h-[70vh] md:min-h-[90vh] px-8 md:px-20 py-24 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30 overflow-hidden">
-          {hero && (
-            <div className="absolute inset-0 z-0" aria-hidden="true">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photoUrl(bundle.photoPathKey, hero.slug, 1920)}
-                alt=""
-                className="w-full h-full object-cover opacity-25"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-[#fdf9f3]/50 via-[#fdf9f3]/80 to-[#fdf9f3]" />
-            </div>
-          )}
-          <div className="max-w-7xl mx-auto w-full relative z-10">
+          <div className="max-w-7xl mx-auto w-full">
             <p className="uppercase tracking-[0.35em] text-[10px] text-[#7f5700] mb-8 md:mb-10">
               Post-Event Recap · Placer.ai Verified
             </p>

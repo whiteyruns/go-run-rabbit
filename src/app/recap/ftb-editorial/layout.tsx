@@ -51,9 +51,9 @@ export default function EditorialRecapLayout({
           font-weight: 700;
         }
         @media print {
-          /* 0.9in bottom leaves clearance for the fixed running footer
-             without overlapping the last line of content. */
-          @page { margin: 0.6in 0.5in 0.9in 0.5in; size: letter; }
+          /* 1.0in bottom margin keeps content comfortably above the
+             fixed running footer (which sits ~0.3in from page edge). */
+          @page { margin: 0.6in 0.5in 1.0in 0.5in; size: letter; }
           .editorial-scope {
             background: #fdf9f3 !important;
             color: #1c1c18 !important;
@@ -107,7 +107,7 @@ export default function EditorialRecapLayout({
             position: fixed;
             left: 0;
             right: 0;
-            bottom: 0.25in;
+            bottom: 0.35in;
             text-align: center;
             font-size: 8.5px;
             letter-spacing: 0.22em;
