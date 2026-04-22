@@ -115,6 +115,16 @@ export default function EditorialRecapLayout({
         }
         /* Hide the running footer on-screen; only print shows it. */
         .pdf-running-footer { display: none; }
+
+        /* Screen-only min-height for the cover hero (replaces Tailwind
+           min-h-[90vh] which in print evaluated to 9.9in and caused the
+           cover section to overflow into a ghost page). */
+        @media screen {
+          .screen-only-min-h { min-height: 70vh; }
+        }
+        @media screen and (min-width: 768px) {
+          .screen-only-min-h { min-height: 90vh; }
+        }
       `}</style>
       {children}
     </div>

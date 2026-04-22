@@ -241,9 +241,10 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
       </div>
 
       <main className="pt-20 md:pt-24">
-        {/* 1. Cover hero — classic typographic cover (no background photo;
-            the gradient wash made it barely visible and caused print bleed). */}
-        <section className="pdf-cover-page relative min-h-[70vh] md:min-h-[90vh] px-8 md:px-20 py-24 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30 overflow-hidden">
+        {/* 1. Cover hero — classic typographic cover. On screen we use the
+            screen-only viewport height; in print we use pdf-cover-page
+            to force a fixed height that fits one Letter page cleanly. */}
+        <section className="pdf-cover-page relative screen-only-min-h px-8 md:px-20 py-24 md:py-0 flex flex-col justify-center border-b-[0.5px] border-[#c9912b]/30 overflow-hidden">
           <div className="max-w-7xl mx-auto w-full">
             <p className="uppercase tracking-[0.35em] text-[10px] text-[#7f5700] mb-8 md:mb-10">
               Post-Event Recap · Placer.ai Verified
@@ -401,7 +402,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
                   )}
 
                   {artist.milestones.length > 0 && (
-                    <div className="pdf-avoid-break">
+                    <div>
                       <p className="uppercase tracking-[0.3em] text-[11px] text-[#7f5700] mb-4">
                         Milestones
                       </p>
