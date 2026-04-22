@@ -76,11 +76,24 @@ export default function EditorialRecapLayout({
           /* Keep a subhead welded to the content that follows it. */
           .pdf-keep-with-next { break-after: avoid; page-break-after: avoid; }
 
-          /* Cover page — force exactly one letter page, full bleed. */
+          /* Cover page — fit exactly within one letter page.
+             Printable height = 11in − 0.6in top − 0.7in bottom = 9.7in.
+             We cap at 9.3in so the following break-after doesn't overflow
+             into a ghost blank page. */
           .pdf-cover-page {
             break-after: page;
             page-break-after: always;
-            min-height: 10in; /* 11in paper − 1in combined margin ≈ 10in */
+            min-height: 9.3in;
+            max-height: 9.3in;
+            overflow: hidden;
+          }
+
+          /* Photo gallery — Tailwind's md:grid-cols-3 sometimes fails to
+             apply under print media (Chrome's print viewport is narrower
+             than you'd think). Force 3-up explicitly so the photos pack
+             into one row instead of one per page. */
+          .pdf-photo-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
           }
 
           a { color: inherit !important; text-decoration: none !important; }

@@ -480,11 +480,11 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
                 One block. {fmtNum(visits)}. One set.
               </h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-1 px-1">
+            <div className="pdf-photo-grid pdf-avoid-break grid grid-cols-1 md:grid-cols-3 gap-1 px-1">
               {photos.gallery.slice(0, 3).map((p) => (
                 <figure
                   key={p.slug}
-                  className="pdf-avoid-break relative aspect-[4/3] overflow-hidden bg-[#0a0a08]"
+                  className="relative aspect-[4/3] overflow-hidden bg-[#0a0a08]"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -647,27 +647,29 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
                 Estimated Direct Local Economic Impact · City of Las Vegas Conservative Model
               </p>
             </div>
-            <div className="pdf-avoid-break grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-left">
-              <ImpactBlock
-                title="Casino Crossover"
-                value={fmtNum(hotelCrossover)}
-                caption="Attendees parked at, passed through, or returned to a Downtown casino property during the event window."
-              />
-              <ImpactBlock
-                title="Drink Revenue"
-                value={fmt(hotelCrossover * 0.5 * 12)}
-                caption={`${fmtNum(Math.round(hotelCrossover * 0.5))} crossover visitors × 1 drink @ $12.`}
-              />
-              <ImpactBlock
-                title="Gaming Revenue"
-                value={fmt(hotelCrossover * 0.1 * 50)}
-                caption={`${fmtNum(Math.round(hotelCrossover * 0.1))} players × $50 average gaming volume.`}
-              />
+            <div className="pdf-avoid-break">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 text-left">
+                <ImpactBlock
+                  title="Casino Crossover"
+                  value={fmtNum(hotelCrossover)}
+                  caption="Attendees parked at, passed through, or returned to a Downtown casino property during the event window."
+                />
+                <ImpactBlock
+                  title="Drink Revenue"
+                  value={fmt(hotelCrossover * 0.5 * 12)}
+                  caption={`${fmtNum(Math.round(hotelCrossover * 0.5))} crossover visitors × 1 drink @ $12.`}
+                />
+                <ImpactBlock
+                  title="Gaming Revenue"
+                  value={fmt(hotelCrossover * 0.1 * 50)}
+                  caption={`${fmtNum(Math.round(hotelCrossover * 0.1))} players × $50 average gaming volume.`}
+                />
+              </div>
+              <p className="serif italic text-sm text-[#1c1c18]/50 mt-16 max-w-xl mx-auto">
+                Model excludes dining, retail, rideshare, and ancillary spend — true impact
+                materially higher.
+              </p>
             </div>
-            <p className="serif italic text-sm text-[#1c1c18]/50 mt-16 max-w-xl mx-auto">
-              Model excludes dining, retail, rideshare, and ancillary spend — true impact
-              materially higher.
-            </p>
           </div>
         </section>
 
@@ -717,7 +719,7 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
 
         {/* 9. CTA */}
         <section id="contact" className="scroll-mt-20 py-32 md:py-40 px-8 text-center bg-white">
-          <div className="max-w-4xl mx-auto">
+          <div className="pdf-avoid-break max-w-4xl mx-auto">
             <h2 className="serif text-7xl md:text-9xl font-bold mb-8">Let&rsquo;s talk.</h2>
             <p className="text-[17px] text-[#1c1c18]/60 mb-12 max-w-xl mx-auto">
               Discuss the next Feed The Block activation, custom partnership options, and
@@ -1112,11 +1114,11 @@ function BroadcastSection({
         </div>
 
         {/* Pre → During → Post funnel */}
-        <div className="pdf-keep-with-next">
+        <div className="pdf-keep-with-next mb-12">
           <p className="uppercase tracking-[0.3em] text-xs text-[#c9912b] mb-6">
             Pre · During · Post
           </p>
-          <h3 className="serif text-3xl md:text-4xl font-bold mb-12">
+          <h3 className="serif text-3xl md:text-4xl font-bold">
             How the story arced.
           </h3>
         </div>
