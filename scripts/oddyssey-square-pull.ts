@@ -145,31 +145,32 @@ async function scrapeSalesSummary(page: Page) {
   // Row structure in Square's UI differs between <tr> and flex/grid
   // layouts, so a generic walk-up is more resilient than an xpath.
   const labels = ["Gross Sales", "Returns", "Discounts & Comps", "Net Sales", "Taxes"];
-  const raw = await page.evaluate((lbls) => {
+  // Evaluate body kept as plain JS (no type annotations, no helper
+  // functions) — tsx's TypeScript lowering injects a `__name` helper
+  // into nested declarations that doesn't exist in the browser.
+  const raw: Record<string, string | null> = await page.evaluate((lbls) => {
     const out: Record<string, string | null> = {};
-    const isMoney = (s: string) => /\$?-?\s*[0-9][0-9,]*(?:\.[0-9]{2})?/.test(s);
-
+    const moneyRe = /-?\$?\s*[0-9][0-9,]*(?:\.[0-9]{2})?/;
     for (const label of lbls) {
       out[label] = null;
-      // Walk all text nodes; find one whose trimmed value matches the label
       const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-      let node: Node | null;
-      while ((node = walker.nextNode())) {
+      let node = walker.nextNode();
+      while (node) {
         const text = (node.nodeValue || "").trim();
-        if (text !== label) continue;
-        // Walk up to find a container with a $ sibling
-        let el: HTMLElement | null = node.parentElement;
-        for (let depth = 0; depth < 8 && el; depth++, el = el.parentElement) {
-          const full = (el.textContent || "").trim();
-          // Must still contain the label AND a $ amount that isn't the label
-          const stripped = full.replace(label, "").trim();
-          if (isMoney(stripped)) {
-            // Find the $ substring nearest to the label
-            const m = stripped.match(/-?\$?\s*[0-9][0-9,]*(?:\.[0-9]{2})?/);
+        if (text === label) {
+          let el = node.parentElement;
+          let depth = 0;
+          while (el && depth < 8) {
+            const full = (el.textContent || "").trim();
+            const stripped = full.split(label).join("").trim();
+            const m = stripped.match(moneyRe);
             if (m) { out[label] = m[0]; break; }
+            el = el.parentElement;
+            depth += 1;
           }
+          if (out[label] != null) break;
         }
-        if (out[label] != null) break;
+        node = walker.nextNode();
       }
     }
     return out;
