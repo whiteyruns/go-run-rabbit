@@ -77,6 +77,14 @@ function parseMoney(s: string | null | undefined): number | null {
   return neg ? -n : n;
 }
 
+async function dismissCookieBanner(page: Page) {
+  const btn = page.getByRole("button", { name: /accept all/i }).first();
+  if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await btn.click().catch(() => {});
+    await page.waitForTimeout(500);
+  }
+}
+
 async function pickLocation(page: Page, targetLabel: string) {
   // Open the "All locations" dropdown
   await page.getByRole("button", { name: /locations/i }).first().click({ timeout: 5000 });
@@ -121,30 +129,41 @@ async function pickDate(page: Page, slashDate: string) {
 }
 
 async function scrapeSalesSummary(page: Page) {
-  // Wait for the "Net Sales" row to land after filter changes.
-  await page.getByText(/Net Sales/i).first().waitFor({ timeout: 15000 });
-  await page.waitForTimeout(500);
-
-  // Scan the DOM for each label → nearest-value pattern. Square renders
-  // these as table rows with the label on the left and the $ amount on
-  // the right in a sibling element. We find by text, then look at
-  // parent-row children for the money cell.
+  // Scrape via in-page evaluate — find each label's text node and walk
+  // up to the closest ancestor that also contains a $-formatted sibling.
+  // Row structure in Square's UI differs between <tr> and flex/grid
+  // layouts, so a generic walk-up is more resilient than an xpath.
   const labels = ["Gross Sales", "Returns", "Discounts & Comps", "Net Sales", "Taxes"];
-  const values: Record<string, number | null> = {};
-  for (const lbl of labels) {
-    try {
-      const row = page
-        .locator(`text=/^\\s*${lbl}\\s*$/`)
-        .locator("xpath=ancestor::tr[1]")
-        .first();
-      const text = await row.textContent({ timeout: 2000 });
-      values[lbl] = parseMoney(text);
-    } catch {
-      values[lbl] = null;
-    }
-  }
+  const raw = await page.evaluate((lbls) => {
+    const out: Record<string, string | null> = {};
+    const isMoney = (s: string) => /\$?-?\s*[0-9][0-9,]*(?:\.[0-9]{2})?/.test(s);
 
-  // Grab the reporting-day caption for auditability
+    for (const label of lbls) {
+      out[label] = null;
+      // Walk all text nodes; find one whose trimmed value matches the label
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      let node: Node | null;
+      while ((node = walker.nextNode())) {
+        const text = (node.nodeValue || "").trim();
+        if (text !== label) continue;
+        // Walk up to find a container with a $ sibling
+        let el: HTMLElement | null = node.parentElement;
+        for (let depth = 0; depth < 8 && el; depth++, el = el.parentElement) {
+          const full = (el.textContent || "").trim();
+          // Must still contain the label AND a $ amount that isn't the label
+          const stripped = full.replace(label, "").trim();
+          if (isMoney(stripped)) {
+            // Find the $ substring nearest to the label
+            const m = stripped.match(/-?\$?\s*[0-9][0-9,]*(?:\.[0-9]{2})?/);
+            if (m) { out[label] = m[0]; break; }
+          }
+        }
+        if (out[label] != null) break;
+      }
+    }
+    return out;
+  }, labels);
+
   const reportingDayLabel = await page
     .getByText(/Reporting day/i)
     .first()
@@ -152,11 +171,11 @@ async function scrapeSalesSummary(page: Page) {
     .catch(() => null);
 
   return {
-    gross_sales: values["Gross Sales"],
-    returns: values["Returns"],
-    discounts_and_comps: values["Discounts & Comps"],
-    net_sales: values["Net Sales"],
-    taxes: values["Taxes"],
+    gross_sales: parseMoney(raw["Gross Sales"]),
+    returns: parseMoney(raw["Returns"]),
+    discounts_and_comps: parseMoney(raw["Discounts & Comps"]),
+    net_sales: parseMoney(raw["Net Sales"]),
+    taxes: parseMoney(raw["Taxes"]),
     reporting_day_label: reportingDayLabel?.trim() ?? null,
   };
 }
@@ -197,9 +216,22 @@ async function main() {
       throw new Error("session expired — re-run oddyssey-square-bootstrap.ts");
     }
 
+    // Dismiss OneTrust cookie banner if it's covering the page. Its
+    // "Accept all" button sets consent cookies; we persist them back
+    // to the auth file at the end so subsequent runs skip this step.
+    await dismissCookieBanner(page);
+
     await pickDate(page, toSlashDate(date));
     await pickLocation(page, LOCATION_LABEL[venue]);
-    await page.waitForTimeout(800);
+
+    // Wait for the actual Net Sales row to render (not just the page
+    // shell). Generous timeout — Square's summary can take a beat.
+    await page
+      .getByText(/Net Sales/i)
+      .first()
+      .waitFor({ timeout: 30_000 })
+      .catch(() => {});
+    await page.waitForTimeout(1000);
 
     const data = await scrapeSalesSummary(page);
     console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"}`);
@@ -220,6 +252,10 @@ async function main() {
       ),
     );
     console.log(`[square] saved ${outPath}`);
+
+    // Persist any new cookies (e.g., OneTrust consent) back to the
+    // auth file so subsequent runs skip the banner dismissal.
+    await ctx.storageState({ path: AUTH_PATH });
   } catch (err) {
     console.error("[square] failed:", err);
     await page

@@ -1,0 +1,459 @@
+{
+  "cookies": [
+    {
+      "name": "_GRECAPTCHA",
+      "value": "09AKhCRwje-Vy2SqyiW1B0tlwQIP-hjHxcz83KJV6S_Dfu6Y2nqcc1kqtw2VcZewBY0R5eamcF8ys3dnCjHF1-sJk",
+      "domain": "www.google.com",
+      "path": "/recaptcha",
+      "expires": 1792604809.000665,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "PD7f7uUc6Z3a7fDWOZmmDjWOPblNesbKiHVLyAgVSU8-1777052692-1.0.1.1-GyXbaO7KAcuuljgQ_FT6lMp9IrCXIRKmn9ClGUSOqm0E5pxlXjzGxQjLqzxwSkeBR09_Nm8gzAC8fOussuyyHxhHzV8e79canabnb7rppdI",
+      "domain": ".app.squareup.com",
+      "path": "/",
+      "expires": 1777054492.292477,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_pt_v3_bucket",
+      "value": "control",
+      "domain": "app.squareup.com",
+      "path": "/",
+      "expires": 1808588693.21425,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_pt_v3_src",
+      "value": "avt",
+      "domain": "app.squareup.com",
+      "path": "/",
+      "expires": 1808588693.21433,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cdpCookiesEnabled",
+      "value": "allowed",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612837.984588,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cdpUserEntityType_6c294f35-6704-42cd-9105-d087b8265b10",
+      "value": "anonymous_visitor",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612693.336706,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "dajs_anonymous_id",
+      "value": "%225efcbb01-f8df-4c9b-9d3e-797ef29a2b91%22",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612835.06454,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cdpUserEntityId_6c294f35-6704-42cd-9105-d087b8265b10",
+      "value": "5efcbb01-f8df-4c9b-9d3e-797ef29a2b91",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612693.336823,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "squareGeo",
+      "value": "US-NV",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1779472038.337268,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "AiIi0c9rzog1cLTfzeCqx06xExTCM6h1y80r.IZB1oM-1777052693-1.0.1.1-2L_NaEOOAFAalg_7xOV.10LxbsElgtEnf6fWmbPJfjo7sZjjJPknfsNIXaAZzokMAhRm9VzD6WXySaOTdkz5hz_MiEZD_cb1V.09VxRuBDg",
+      "domain": ".api.squareup.com",
+      "path": "/",
+      "expires": 1777054493.546021,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "thx_guid",
+      "value": "7773ee7d6277c2dd3d9cca0757b77eee",
+      "domain": "h.online-metrix.net",
+      "path": "/",
+      "expires": 1811612693.570682,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "thx_global_guid",
+      "value": "561de6ec5bc14768b87bb4ec8359135e",
+      "domain": "h.online-metrix.net",
+      "path": "/",
+      "expires": 1811612694.26714,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "tmx_guid",
+      "value": "AAw-yRMl5ETe-QQHhSEl9GQPJvcHPA7EzcjdF0bxJcBJFIQDzOMs48AJlumqQe_Rpr7lTPBp2gYO2A_tygvR5QHvVWAegA",
+      "domain": "h.online-metrix.net",
+      "path": "/",
+      "expires": 1811612724.433277,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_js_csrf",
+      "value": "slwbKbAf6XTln5zGLP9GRndpKFP2tMG154nzvq8IkZ8",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1808588838.147727,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_sqdi",
+      "value": "iDglBp3tgg7jRxFMR-UoBqTw80OY",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612809.524322,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "_sqweb_session",
+      "value": "eyJ1c2VyX3Nlc3Npb25fdG9rZW4iOiJDaUV0N3N4UXI4X2poNGVxMjM4dlVxN2VBSW1nRXdVV3hidkJleUtreDZEUUlEb1ZCQUFBQUNpWEFUSU5TRUZZUmxBeU5WUlNVMWN5VFVKQU1USTVNelE0WWpCaU16YzJORGRpWXpnM01XUmlaak0xWmpNMk5tVTFaamc0WmpVeU9USXlZMlU0T0dWbE5ESmlNRFV4T1RNM016Wm1aREJqWm1ZNE9BIiwic2Vzc2lvbl9pZCI6ImI0Mzc2YTBkNGRkNzRkNThiOTc0NGVlYjJjNzk0M2I1IiwiX2NzcmZfdG9rZW4iOiJzbHdiS2JBZjZYVGxuNXpHTFA5R1JuZHBLRlAydE1HMTU0bnp2cThJa1o4In0%3D--e28df73b6319c2f280798a1b3a9998e9ceedcfdaad7a99aa8fb9b9d0d1142f6715443801796f9b77ec8ad2fe4469cfd93aeeb0c3dedbfce5b6fdb0efc94adf9c",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1808588834.148351,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "TRUSTED_person:XEED2YPQXESDANDR",
+      "value": "eyJlbmMiOiJBMTI4R0NNIiwidGFnIjoiS183V3hvNnpVd2JGaE9GNWxUOE5pUSIsImFsZyI6IkExMjhHQ01LVyIsIml2IjoiMk9jZFJ6bUZKU0w0R3lSWSJ9.dfa0P4T3nLMCc9GvsEGbGA.NxSq7JuwolIT9Y-4.ENpfyECb979bZDIOZBglwwW-LREe1fLLbHYhDRVsax-ofQ.z3Qxhs2oCWShbYUneB4smg",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1784828834.148881,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "Strict"
+    },
+    {
+      "name": "cdpUserEntityType_b98a8c1e-125a-4926-aad8-92cff52424d6",
+      "value": "merchant",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612836.526401,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "da_js_user_type",
+      "value": "%22merchant%22",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612838.339166,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cdpUserEntityId_b98a8c1e-125a-4926-aad8-92cff52424d6",
+      "value": "HAXFP25TRSW2M",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612836.526491,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "dajs_user_id",
+      "value": "%22HAXFP25TRSW2M%22",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612838.339325,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "trackedSessionStart",
+      "value": "true",
+      "domain": "app.squareup.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "OptanonConsent",
+      "value": "isGpcEnabled=0&datestamp=Fri+Apr+24+2026+10%3A47%3A15+GMT-0700+(Pacific+Daylight+Time)&version=202603.1.0&browserGpcFlag=0&isIABGlobal=false&hosts=&consentId=f443254c-f67f-42ca-b7b1-7866cea5bce3&interactionCount=1&isAnonUser=1&prevHadToken=0&landingPath=NotLandingPage&groups=C0001%3A1%2CC0002%3A1%2CC0003%3A1%2CC0004%3A1&crTime=1777052834366&AwaitingReconsent=false",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1808588835,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_savt",
+      "value": "5efcbb01-f8df-4c9b-9d3e-797ef29a2b91",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612835.308626,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None",
+      "partitionKey": "https://squareup.com",
+      "_crHasCrossSiteAncestor": false
+    },
+    {
+      "name": "optly_var_square-one-pnp",
+      "value": "",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1808588836,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "__cf_bm",
+      "value": "MZFSA7_EFjOln7kehLYe2fLuYv5ETVZbJ_eTV8kxNis-1777052837-1.0.1.1-MkwHpU6QCb.Q_InGZ2yOkb4.WPckdOshiwq1GrngsZiGflE2PPzx_98vexDelWkf0wlCTkhXZFyjgwvyw3jsRM9cNQ7ldWa4DOEQC3JxHoc",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1777054637.009188,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "dajs_user_id_optimizely",
+      "value": "HAXFP25TRSW2M",
+      "domain": "app.squareup.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "optimizelyEndUserId",
+      "value": "oeu1777052837755r0.008268423584316231",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1792604837,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "optimizelySession",
+      "value": "1777052837853",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1792604837,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cdpUserEntityType",
+      "value": "merchant",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612838.339034,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "cdpUserEntityId",
+      "value": "HAXFP25TRSW2M",
+      "domain": ".squareup.com",
+      "path": "/",
+      "expires": 1811612838.33926,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_dd_s",
+      "value": "rum=2&id=e9763f11-72e1-4328-a1db-7fa1ecfc5993&created=1777052693584&expire=1777053738512",
+      "domain": "app.squareup.com",
+      "path": "/",
+      "expires": 1777053754,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Strict"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://app.squareup.com",
+      "localStorage": [
+        {
+          "name": "cdpUserEntityTraits",
+          "value": "{}"
+        },
+        {
+          "name": "dashboard.salesFilter.reportingHour",
+          "value": "\"CiQ0MmRkODMxYS1iYWI2LTQ0NzctODJkNC02MzIyNDA1NDkyYTAQBBoNSEFYRlAyNVRSU1cyTSIHQWxsIGRheSpbCiEIgMC1pu36iwMQvwciE0FtZXJpY2EvTG9zX0FuZ2VsZXMSIQiAwLWm7fqLAxC/ByITQW1lcmljYS9Mb3NfQW5nZWxlcxoTQW1lcmljYS9Mb3NfQW5nZWxlczABOAE=\""
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$event_queue",
+          "value": "[{\"eb\":{\"n\":\"log_avt_no_timeout\",\"y\":\"custom\",\"c\":\"other\",\"o\":{\"avt\":\"5efcbb01-f8df-4c9b-9d3e-797ef29a2b91\"}},\"h\":\"595b90b5\",\"tb\":1777052837759,\"ts\":[{\"d\":0,\"i\":0}]},{\"eb\":{\"n\":\"log_avt\",\"y\":\"custom\",\"c\":\"other\",\"o\":{\"avt\":\"5efcbb01-f8df-4c9b-9d3e-797ef29a2b91\"}},\"h\":\"ecf17bda\",\"tb\":1777052837853,\"ts\":[{\"d\":0,\"i\":1}]}]"
+        },
+        {
+          "name": "sprig.anon.env.vid.map",
+          "value": "{\"4ffBYY5tAeNx\":\"c3817e86-2b94-4598-aeb8-d130f9393cd3\"}"
+        },
+        {
+          "name": "HAXFP25TRSW2M.square-ai-auto-open-dismissed",
+          "value": "false"
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$contextual_mab",
+          "value": "{}"
+        },
+        {
+          "name": "HAXFP25TRSW2M.notifications_last_auto_opened_timestamp",
+          "value": "null"
+        },
+        {
+          "name": "_grecaptcha",
+          "value": "09AKhCRwju-TvUgZ1SN6PK5CY_sPTf1FjAEs2z_hdtVXfXUZzGaf3-5XaccWCL83PSCaQIsmH2gt4yUOpmQDqEv9aWymyZpGBA_OTt_BR_u0eJ5O2VM-ZFRqCrXW7Rneys"
+        },
+        {
+          "name": "weeblyUserInfo_HAXFP25TRSW2MTTL",
+          "value": "\"2026-04-24T17:47:17.089Z\""
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$layer_map",
+          "value": "{}"
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$tracker_optimizely",
+          "value": "{}"
+        },
+        {
+          "name": "HAXFP25TRSW2M.managerbot-new-user-experience-consent",
+          "value": "false"
+        },
+        {
+          "name": "userleap.ids",
+          "value": "{\"4ffBYY5tAeNx\":{\"sampled\":null,\"vid\":\"16e04b4b-56c3-48fc-8530-e5494c71913e\",\"token\":\"tokenNotNeeded\",\"uid\":\"HAXFP25TRSW2M\"}}"
+        },
+        {
+          "name": "HAXFP25TRSW2M.spotlight-ai/date-provided-square-ai-consent",
+          "value": "null"
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$layer_states",
+          "value": "[]"
+        },
+        {
+          "name": "optimizely_data$$pending_events",
+          "value": "{}"
+        },
+        {
+          "name": "cdpUserEntityTraits_b98a8c1e-125a-4926-aad8-92cff52424d6",
+          "value": "{\"0\":\"H\",\"1\":\"A\",\"2\":\"X\",\"3\":\"F\",\"4\":\"P\",\"5\":\"2\",\"6\":\"5\",\"7\":\"T\",\"8\":\"R\",\"9\":\"S\",\"10\":\"W\",\"11\":\"2\",\"12\":\"M\",\"merchantToken\":\"HAXFP25TRSW2M\",\"employmentToken\":\"TMBgdOOY7C26GWcF\",\"personToken\":\"person:XEED2YPQXESDANDR\"}"
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$visitor_profile",
+          "value": "{\"profile\":{\"custom\":{\"11701651459\":{\"id\":\"11701651459\",\"value\":\"true\",\"name\":\"isPaidSearch\"},\"20602101214\":{\"id\":\"20602101214\",\"value\":\"5efcbb01-f8df-4c9b-9d3e-797ef29a2b91\",\"name\":\"avt\"},\"12128582908\":{\"id\":\"12128582908\",\"value\":\"Prospects\",\"name\":\"User_Type\"}},\"visitorId\":\"oeu1777052837755r0.008268423584316231\",\"customBehavior\":{},\"first_session\":true,\"browserId\":\"gc\",\"browserVersion\":\"147.0.0.0\",\"device\":\"desktop\",\"device_type\":\"desktop_laptop\",\"referrer\":\"https://app.squareup.com/dashboard/sales/reports/sales-summary\",\"source_type\":\"direct\"},\"metadata\":{\"custom\":{\"11701651459\":{\"lastModified\":1777052837754},\"20602101214\":{\"lastModified\":1777052837853},\"12128582908\":{\"lastModified\":1777052837803}},\"visitorId\":{},\"events\":{},\"customBehavior\":{},\"first_session\":{},\"browserId\":{},\"browserVersion\":{},\"device\":{},\"device_type\":{},\"referrer\":{},\"source_type\":{}}}"
+        },
+        {
+          "name": "dashboard.salesFilter.endTime",
+          "value": "1777129200000"
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$session_state",
+          "value": "{\"lastSessionTimestamp\":1777052837756,\"sessionId\":\"7fa60007-66fa-4c47-9e1e-47ef891eef41\"}"
+        },
+        {
+          "name": "cdpUserEntityTraits_6c294f35-6704-42cd-9105-d087b8265b10",
+          "value": "{}"
+        },
+        {
+          "name": "weeblyUserInfo_HAXFP25TRSW2M",
+          "value": "{\"advanced_categories_force_migrated\":true,\"advanced_categories_migrated_at\":1724416397,\"advanced_categories_migration_cohort\":\"5\",\"catalog_configurations_migrated\":true,\"catalog_site_id\":\"913856400602166048\",\"dtc_only\":false,\"has_onboarding_started\":false,\"has_pay_links\":false,\"has_priority_phone_support\":null,\"import_default_items_visibility\":\"visible\",\"import_items_as_unavailable\":true,\"initial_sync_finished\":true,\"is_onboarded\":true,\"is_order_online_onboarding\":false,\"multi_image_sync_enabled\":true,\"onboarding_type\":\"SOS\",\"primary_location_id\":\"AADM8XSWDDDJM\",\"rich_text_sync_enabled\":true,\"seo_attributes_sync_enabled\":true,\"sync_ecom_short_id\":false,\"sync_images\":true,\"sync_in_progress\":false,\"sync_item_channels\":true,\"sync_item_modifiers_ordinals\":true,\"sync_product_types\":true,\"sync_requires_subscription_to_sell\":true,\"sync_text_modifiers\":true,\"uses_advanced_categories\":true,\"website_url\":\"illuminarium.square.site\",\"weebly_user_id\":132236858}"
+        },
+        {
+          "name": "optimizely_data$$oeu1777052837755r0.008268423584316231$$8447815042$$variation_map",
+          "value": "{}"
+        },
+        {
+          "name": "dashboard.salesFilter.timeFilterValue",
+          "value": "\"custom\""
+        },
+        {
+          "name": "dashboard.salesFilter.startTime",
+          "value": "1777042800000"
+        }
+      ]
+    },
+    {
+      "origin": "https://h.online-metrix.net",
+      "localStorage": [
+        {
+          "name": "ed73f20edbf2b73",
+          "value": "7e642faf901847e3b1c1b63b4d6b16ff_1932572693655"
+        },
+        {
+          "name": "5718FABB002E",
+          "value": "AAwCcd7XIU2sIdY64o2S0lZ2ghDz56WpvO2ovuTbqP6Zj-3oc_i7JuYufENhXoycdFZ4Z6fEPe7Zeq0hQnJchMyx6iAiSQ"
+        }
+      ]
+    },
+    {
+      "origin": "https://www.google.com",
+      "localStorage": [
+        {
+          "name": "rc::a",
+          "value": "YWs3cXA1NXFzNHI1"
+        },
+        {
+          "name": "rc::f",
+          "value": "0aACwh5WnEpzk9RfDlwWalfFLDBNkiLAvc1u7kI6Ig0jJeqLqUXgmCcnBmf2LuAoUd1suVZtk"
+        }
+      ]
+    }
+  ]
+}
