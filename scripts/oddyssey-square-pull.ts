@@ -185,6 +185,63 @@ async function pickDate(page: Page, slashDate: string) {
   console.log(`[square] date trigger after nav: ${after}`);
 }
 
+/**
+ * Scrape the "Top 5 Items: Gross Sales" legend — Square renders it as
+ * a list of rows with item name + dollar amount. This is the rep-
+ * activation fingerprint: items named like "El Bandido Yankee Repo"
+ * are the sku ops rings when a brand rep is pouring at Golden Hour.
+ */
+async function scrapeTopItems(page: Page): Promise<{ name: string; gross: number }[]> {
+  // Scroll the items chart into view (might be below the fold)
+  await page.getByText(/Top.{0,5}Items/i).first().scrollIntoViewIfNeeded({ timeout: 3000 }).catch(() => {});
+  await page.waitForTimeout(400);
+  return await page.evaluate(() => {
+    const out: { name: string; gross: number }[] = [];
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let node = walker.nextNode();
+    let headerEl: HTMLElement | null = null;
+    while (node) {
+      const text = (node.nodeValue || "").trim();
+      if (/^top\s*\d*\s*items?.*gross/i.test(text)) {
+        headerEl = node.parentElement;
+        break;
+      }
+      node = walker.nextNode();
+    }
+    if (!headerEl) return [];
+    // Walk up to a container that includes siblings with the item rows.
+    let container: HTMLElement | null = headerEl;
+    for (let d = 0; d < 6 && container; d++) {
+      const candidates = container.querySelectorAll("[class*=item], [class*=legend], [class*=row], li, tr");
+      if (candidates.length >= 3) break;
+      container = container.parentElement;
+    }
+    if (!container) return [];
+    // Collect text nodes in order; pair (name, money) sequences.
+    const texts: string[] = [];
+    const w2 = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+    let n2 = w2.nextNode();
+    while (n2) {
+      const t = (n2.nodeValue || "").trim();
+      if (t) texts.push(t);
+      n2 = w2.nextNode();
+    }
+    const moneyRe = /^\$-?[0-9,]+(?:\.[0-9]{2})?$/;
+    for (let i = 0; i < texts.length - 1; i++) {
+      const t = texts[i];
+      const next = texts[i + 1];
+      // Heuristic: name is non-money, reasonable length; next is money.
+      if (!moneyRe.test(t) && t.length >= 2 && t.length <= 60 && moneyRe.test(next)) {
+        const gross = parseFloat(next.replace(/[$,]/g, ""));
+        if (Number.isFinite(gross)) {
+          out.push({ name: t, gross });
+        }
+      }
+    }
+    return out.slice(0, 10);
+  });
+}
+
 async function scrapeSalesSummary(page: Page) {
   // Scrape via in-page evaluate — find each label's text node and walk
   // up to the closest ancestor that also contains a $-formatted sibling.
@@ -327,7 +384,9 @@ async function main() {
     console.log(`[square] top buttons: ${JSON.stringify(filterState.all_top_buttons)}`);
 
     const data = await scrapeSalesSummary(page);
-    console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"}`);
+    const topItems = await scrapeTopItems(page);
+    console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"} top_items=${topItems.length}`);
+    for (const it of topItems.slice(0, 5)) console.log(`  • ${it.name}: $${it.gross.toFixed(2)}`);
 
     const outPath = path.join(outDir, `${date}.json`);
     await fs.writeFile(
@@ -338,6 +397,7 @@ async function main() {
           date,
           pulled_at: new Date().toISOString(),
           ...data,
+          top_items: topItems,
           filter_state_at_scrape: filterState,
           source: { url, reporting_day_label: data.reporting_day_label },
         },
