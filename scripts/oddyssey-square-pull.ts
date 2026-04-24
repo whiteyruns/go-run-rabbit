@@ -77,12 +77,23 @@ function parseMoney(s: string | null | undefined): number | null {
   return neg ? -n : n;
 }
 
-async function dismissCookieBanner(page: Page) {
-  const btn = page.getByRole("button", { name: /accept all/i }).first();
-  if (await btn.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await btn.click().catch(() => {});
-    await page.waitForTimeout(500);
+async function dismissCookieBanner(page: Page): Promise<boolean> {
+  // OneTrust renders the button as a plain <button id="onetrust-accept-btn-handler">
+  // with inner text "Accept all cookies". Try a few selectors.
+  const selectors = [
+    "#onetrust-accept-btn-handler",
+    "button:has-text('Accept all cookies')",
+    "button:has-text('Accept all')",
+  ];
+  for (const sel of selectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await el.click().catch(() => {});
+      await page.waitForTimeout(500);
+      return true;
+    }
   }
+  return false;
 }
 
 async function pickLocation(page: Page, targetLabel: string) {
@@ -206,32 +217,45 @@ async function main() {
   });
   const page = await ctx.newPage();
 
+  const debugDir = path.join(OUT_DIR, "debug");
+  await fs.mkdir(debugDir, { recursive: true });
+  const snap = async (name: string) => {
+    await page.screenshot({ path: path.join(debugDir, `${venue}-${date}-${name}.png`), fullPage: true }).catch(() => {});
+  };
+
   try {
     const url = "https://app.squareup.com/dashboard/sales/reports/sales-summary";
     await page.goto(url, { waitUntil: "networkidle" });
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(2000);
+    await snap("1-after-goto");
+    console.log(`[square] landed on ${page.url()}`);
 
     // Bail early if we landed on login
     if (/\/login|signin/i.test(page.url())) {
       throw new Error("session expired — re-run oddyssey-square-bootstrap.ts");
     }
 
-    // Dismiss OneTrust cookie banner if it's covering the page. Its
-    // "Accept all" button sets consent cookies; we persist them back
-    // to the auth file at the end so subsequent runs skip this step.
-    await dismissCookieBanner(page);
+    // Dismiss OneTrust cookie banner if it's covering the page.
+    const dismissed = await dismissCookieBanner(page);
+    console.log(`[square] cookie banner dismissed: ${dismissed}`);
+    await snap("2-after-cookie");
 
     await pickDate(page, toSlashDate(date));
+    await snap("3-after-date");
     await pickLocation(page, LOCATION_LABEL[venue]);
+    await snap("4-after-location");
 
     // Wait for the actual Net Sales row to render (not just the page
     // shell). Generous timeout — Square's summary can take a beat.
-    await page
+    const appeared = await page
       .getByText(/Net Sales/i)
       .first()
       .waitFor({ timeout: 30_000 })
-      .catch(() => {});
+      .then(() => true)
+      .catch(() => false);
+    console.log(`[square] "Net Sales" visible: ${appeared}`);
     await page.waitForTimeout(1000);
+    await snap("5-before-scrape");
 
     const data = await scrapeSalesSummary(page);
     console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"}`);
