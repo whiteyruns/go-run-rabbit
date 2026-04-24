@@ -160,9 +160,8 @@ async function pickDate(page: Page, slashDate: string) {
   // Type into each input via keyboard to fire real onChange events.
   for (let idx = 0; idx < 2; idx++) {
     const el = await page.evaluateHandle(
-      (hs: Element[], i: number) => hs[i] as HTMLInputElement,
-      inputHandles,
-      idx,
+      ({ hs, i }: { hs: Element[]; i: number }) => hs[i] as HTMLInputElement,
+      { hs: inputHandles as unknown as Element[], i: idx },
     );
     const handle = el.asElement();
     if (!handle) continue;
