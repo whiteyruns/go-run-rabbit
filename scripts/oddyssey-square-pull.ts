@@ -180,7 +180,7 @@ async function pickDate(page: Page, slashDate: string) {
     );
     if (remaining.length === 0) break;
     const input = page.locator('input[type="text"]').nth(remaining[0].idx);
-    await input.click({ clickCount: 3 });
+    await input.click({ clickCount: 3, force: true });
     await input.press("Delete");
     await page.keyboard.type(slashDate, { delay: 30 });
     await input.press("Tab");
