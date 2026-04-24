@@ -63,6 +63,9 @@ export interface VenueNight {
   // NET column (fresher + reconciled to Square's reporting-day totals).
   barNetSource?: 'live' | 'xlsx';
   xlsxBarNet?: number | null;
+  // Top 5 items from Square's Item Sales report for this night. Name
+  // pattern like "…Yankee Repo" / "…Rep" flags a brand-rep activation.
+  squareTopItems?: { name: string; gross: number }[];
 }
 
 /**
@@ -476,6 +479,37 @@ export async function loadLiveBarNet(
   }
 }
 
+/** Read Top Items from the same Square scrape file. */
+export async function loadLiveTopItems(
+  venue: Venue,
+  dateISO: string,
+): Promise<{ name: string; gross: number }[] | null> {
+  try {
+    const file = path.join(SQUARE_DIR, venue, `${dateISO}.json`);
+    const raw = await fs.readFile(file, 'utf8');
+    const parsed = JSON.parse(raw) as { top_items?: { name: string; gross: number }[] };
+    return Array.isArray(parsed.top_items) && parsed.top_items.length > 0
+      ? parsed.top_items
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Detect a brand-rep activation in the Top Items. Returns the matching
+ * item row when ops has tagged a night with a rep-specific SKU (e.g.,
+ * "El Bandido Yankee Repo"). Heuristic: name contains "rep" / "yankee"
+ * / "ambassador" / "on-premise".
+ */
+export function detectRepItem(
+  items: { name: string; gross: number }[] | null | undefined,
+): { name: string; gross: number } | null {
+  if (!items) return null;
+  const re = /\b(rep|repo|yankee|ambassador|on.premise|promo\s+rep)\b/i;
+  return items.find((i) => re.test(i.name)) ?? null;
+}
+
 /**
  * Build an entirely Ticketure-sourced VenueNight for a date that has no
  * xlsx row (Manor Thu + Sun nights — xlsx only carries Fri+Sat).
@@ -486,10 +520,11 @@ async function synthesizeNightFromLive(
   weeknight: Weeknight,
   dateISO: string,
 ): Promise<VenueNight | null> {
-  const [netRev, counts, barNet] = await Promise.all([
+  const [netRev, counts, barNet, topItems] = await Promise.all([
     loadLiveNetTicketRev(venue, dateISO),
     loadLiveTicketCounts(venue, dateISO),
     loadLiveBarNet(venue, dateISO),
+    loadLiveTopItems(venue, dateISO),
   ]);
   // Nothing to show for this date yet — no scrape on disk.
   if (netRev == null && counts.issued == null && barNet == null) return null;
@@ -505,6 +540,7 @@ async function synthesizeNightFromLive(
     netTicketRevSource: 'live',
     ticketCountSource: 'live',
     barNetSource: barNet != null ? 'live' : 'xlsx',
+    squareTopItems: topItems ?? undefined,
   };
 }
 
@@ -519,10 +555,11 @@ async function synthesizeNightFromLive(
 export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
   const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
     if (!n) return null;
-    const [liveRev, liveCounts, liveBar] = await Promise.all([
+    const [liveRev, liveCounts, liveBar, liveTopItems] = await Promise.all([
       loadLiveNetTicketRev(n.venue, n.date),
       loadLiveTicketCounts(n.venue, n.date),
       loadLiveBarNet(n.venue, n.date),
+      loadLiveTopItems(n.venue, n.date),
     ]);
     const ticketsIssued = n.ticketsIssued ?? liveCounts.issued;
     const ticketsRedeemed = n.ticketsRedeemed ?? liveCounts.redeemed;
@@ -544,6 +581,7 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
       barNet,
       barNetSource,
       xlsxBarNet: n.barNet,
+      squareTopItems: liveTopItems ?? undefined,
     };
     if (liveRev == null) {
       return { ...base, netTicketRevSource: 'xlsx' };

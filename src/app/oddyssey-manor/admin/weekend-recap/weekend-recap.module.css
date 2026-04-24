@@ -818,6 +818,36 @@
   font-style: italic;
   line-height: 1.5;
 }
+.openBarItems {
+  margin-top: 10px;
+  padding: 10px 12px 6px;
+  background: rgba(255,255,255,0.02);
+  border-top: 1px dotted rgba(255,255,255,0.08);
+}
+.openBarItemsLbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.openBarItemRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-bottom: 1px dotted rgba(255,255,255,0.03);
+  gap: 12px;
+}
+.openBarItemRow:last-child { border-bottom: none; }
+.openBarItemRow > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
 .openBarEmpty {
   padding: 14px 0 4px;
   font-size: 12.5px;

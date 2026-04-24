@@ -14,6 +14,7 @@ import HighlightsEditor from './HighlightsEditor';
 import {
   buildWoWSeries,
   champagnePoursFromBottles,
+  detectRepItem,
   enrichWeekend,
   formatInt,
   formatMoney,
@@ -611,6 +612,14 @@ function ExecutiveSummary({
   const champBtls = (pourLog.fri?.champagneBottles.consumed ?? 0) + (pourLog.sat?.champagneBottles.consumed ?? 0);
   const tequilaPours = tequilaPoursFromBottles(tequilaBtls);
   const champPours = champagnePoursFromBottles(champBtls);
+  // Detect any rep activations across the weekend (Friday + Saturday
+  // Noir are the usual Golden Hour nights where a rep would show).
+  const repActivations: { date: string; item: { name: string; gross: number } }[] = [];
+  for (const n of [...noirSlots, ...manorSlots]) {
+    const rep = detectRepItem(n?.squareTopItems);
+    if (rep && n) repActivations.push({ date: n.date, item: rep });
+  }
+
   const poursDenom = noir.red ?? 0;
   const poursPerGuest = poursDenom > 0 ? tequilaPours / poursDenom : null;
   const sponsorValue = (tequilaPours + champPours) * COCKTAIL_RETAIL_PRICE;
@@ -651,6 +660,24 @@ function ExecutiveSummary({
           {deltaBadge(noirDelta, 'vs prior')}
         </span>
       </div>
+      {repActivations.length > 0 && (
+        <div className={styles.execRow}>
+          <span>
+            🤝 <strong>Brand Rep Activation</strong>
+            {repActivations.map((r, i) => (
+              <span key={r.date}>
+                {i === 0 ? ' · ' : ' · '}
+                <strong>{r.item.name}</strong> {formatMoney(r.item.gross)}{' '}
+                <span style={{ color: 'var(--text-muted)' }}>
+                  ({new Date(`${r.date}T00:00:00`).toLocaleDateString('en-US', {
+                    weekday: 'short', month: 'short', day: 'numeric',
+                  })})
+                </span>
+              </span>
+            ))}
+          </span>
+        </div>
+      )}
       {(tequilaBtls > 0 || champBtls > 0) && (
         <div className={styles.execRow}>
           <span>
@@ -825,6 +852,25 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
             <span className={styles.openBarMuted}>retail / cost</span>
           </span>
         </div>
+        {noirNight?.squareTopItems && noirNight.squareTopItems.length > 0 && (
+          <div className={styles.openBarItems}>
+            <div className={styles.openBarItemsLbl}>Top items (Square)</div>
+            {noirNight.squareTopItems.slice(0, 5).map((item) => {
+              const isRep = /\b(rep|repo|yankee|ambassador)\b/i.test(item.name);
+              return (
+                <div key={item.name} className={styles.openBarItemRow}>
+                  <span>
+                    {isRep && <span style={{ color: '#d4a574', marginRight: 4 }}>🤝</span>}
+                    {item.name}
+                  </span>
+                  <span style={{ color: isRep ? '#d4a574' : 'var(--text)' }}>
+                    {formatMoney(item.gross)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
         {entry.notes && <div className={styles.openBarNotes}>&ldquo;{entry.notes}&rdquo;</div>}
       </div>
     );
