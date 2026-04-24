@@ -9,10 +9,13 @@ async function main() {
     viewport: { width: 1440, height: 900 },
   });
   const p = await ctx.newPage();
-  await p.goto("https://app.squareup.com/dashboard/sales/reports/sales-summary", {
-    waitUntil: "networkidle",
-  });
+  const urls = [
+    "https://app.squareup.com/dashboard/sales/reports/item-sales",
+    "https://app.squareup.com/dashboard/sales/reports/sales-summary",
+  ];
+  await p.goto(urls[0], { waitUntil: "networkidle" });
   await p.waitForTimeout(3000);
+  console.log("URL landed:", p.url());
 
   // Scroll full page height to force lazy content to render
   await p.evaluate(() => {
