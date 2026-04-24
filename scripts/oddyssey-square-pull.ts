@@ -144,33 +144,37 @@ async function pickDate(page: Page, slashDate: string) {
   if (!opened) return;
   await page.waitForTimeout(900);
 
-  // Locate the two date input elements in the DOM — need position info
-  // so we can click them and type as a user would. Square's onChange
-  // only fires reliably on real keyboard events.
-  const inputHandles = await page.evaluateHandle(() => {
-    const inputs = Array.from(document.querySelectorAll('input[type="text"]'));
-    return inputs.filter((el) =>
-      /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((el as HTMLInputElement).value),
-    );
+  // Type into each of the two date inputs. Use a positional locator
+  // (nth) that re-resolves each iteration — DOM may reflow after the
+  // first input commits, invalidating any saved handle.
+  // Selector: an input whose value already matches MM/DD/YYYY. Filter
+  // out "Filter Locations" etc. by requiring a date-shaped value.
+  const dateInputs = page.locator('input[type="text"]').filter({
+    // Playwright's .filter({hasText}) doesn't work on input values,
+    // so rely on positional nth and a runtime value check below.
   });
-  const handlesCount = await page.evaluate((hs: Element[]) => hs.length, inputHandles);
-  console.log(`[square] date-format inputs found: ${handlesCount}`);
-  if (handlesCount < 2) return;
 
-  // Type into each input via keyboard to fire real onChange events.
-  for (let idx = 0; idx < 2; idx++) {
-    const el = await page.evaluateHandle(
-      ({ hs, i }: { hs: Element[]; i: number }) => hs[i] as HTMLInputElement,
-      { hs: inputHandles as unknown as Element[], i: idx },
+  for (let i = 0; i < 2; i++) {
+    // Re-find an input that currently has a date-shaped value. First one
+    // NOT matching today's target (i.e. still has an old value) is the
+    // one we haven't updated yet.
+    const target = slashDate;
+    const remaining = await page.locator('input[type="text"]').evaluateAll(
+      (els, t) =>
+        els
+          .map((el, idx) => ({ idx, val: (el as HTMLInputElement).value }))
+          .filter((x) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(x.val) && x.val !== t),
+      target,
     );
-    const handle = el.asElement();
-    if (!handle) continue;
-    await handle.click({ clickCount: 3 }); // triple-click selects all
-    await handle.press("Delete");
+    if (remaining.length === 0) break;
+    const input = page.locator('input[type="text"]').nth(remaining[0].idx);
+    await input.click({ clickCount: 3 });
+    await input.press("Delete");
     await page.keyboard.type(slashDate, { delay: 30 });
-    await handle.press("Tab"); // commit via blur
-    await page.waitForTimeout(400);
+    await input.press("Tab");
+    await page.waitForTimeout(500);
   }
+  void dateInputs;
 
   await page.waitForTimeout(1200);
   await page.keyboard.press("Escape").catch(() => {});
