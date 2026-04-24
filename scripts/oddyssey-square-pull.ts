@@ -128,11 +128,6 @@ async function pickLocation(page: Page, targetLabel: string) {
 }
 
 async function pickDate(page: Page, slashDate: string) {
-  // Square's date-range picker has TWO MM/DD/YYYY text inputs (start
-  // and end). For a single reporting day, set both to the same value.
-  // A direct input.value = "..." doesn't trigger React's onChange, so
-  // we use the native setter + dispatch input/change events. Then blur
-  // and press Enter to commit and close.
   const triggers = [
     page.getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}$/ }).first(),
     page.getByRole("button", { name: /reporting day/i }).first(),
@@ -145,42 +140,56 @@ async function pickDate(page: Page, slashDate: string) {
       break;
     }
   }
-  if (!opened) {
-    console.log(`[square] could not open date picker`);
-    return;
-  }
-  await page.waitForTimeout(700);
+  console.log(`[square] date picker opened: ${opened}`);
+  if (!opened) return;
+  await page.waitForTimeout(900);
+
+  // Pre-check: how many date-format inputs are visible?
+  const precheck = await page.evaluate(() => {
+    const all = Array.from(document.querySelectorAll('input[type="text"]'));
+    const datey = all.filter((el) =>
+      /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((el as HTMLInputElement).value),
+    );
+    return { total: all.length, datey: datey.length, values: datey.slice(0, 4).map((el) => (el as HTMLInputElement).value) };
+  });
+  console.log(`[square] text inputs: total=${precheck.total} date-format=${precheck.datey} values=${JSON.stringify(precheck.values)}`);
 
   const ok = await page.evaluate((date) => {
     const inputs = Array.from(document.querySelectorAll('input[type="text"]'));
     const dateInputs = inputs.filter((el) =>
       /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((el as HTMLInputElement).value),
     );
-    if (dateInputs.length < 2) return false;
+    if (dateInputs.length < 2) return 0;
     const setter = Object.getOwnPropertyDescriptor(
       HTMLInputElement.prototype,
       "value",
     )!.set!;
     for (const el of dateInputs.slice(0, 2)) {
       const input = el as HTMLInputElement;
+      input.focus();
       setter.call(input, date);
       input.dispatchEvent(new Event("input", { bubbles: true }));
       input.dispatchEvent(new Event("change", { bubbles: true }));
     }
     (dateInputs[1] as HTMLInputElement).blur();
-    return true;
+    return dateInputs.length;
   }, slashDate);
 
-  if (!ok) {
-    console.log(`[square] could not find the two date inputs in the picker`);
-    return;
-  }
+  console.log(`[square] date inputs set: ${ok}`);
+  if (ok < 2) return;
 
   await page.keyboard.press("Enter");
-  await page.waitForTimeout(1800);
-  // Close picker if still open
+  await page.waitForTimeout(1500);
   await page.keyboard.press("Escape").catch(() => {});
-  await page.waitForTimeout(400);
+  await page.waitForTimeout(500);
+
+  // Post-check: what does the date trigger show now?
+  const after = await page.evaluate(() => {
+    const btns = Array.from(document.querySelectorAll("button"));
+    const b = btns.find((x) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((x.textContent || "").trim()));
+    return b?.textContent?.trim() ?? null;
+  });
+  console.log(`[square] date trigger after set: ${after}`);
 }
 
 async function scrapeSalesSummary(page: Page) {
