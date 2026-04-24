@@ -128,8 +128,13 @@ async function pickLocation(page: Page, targetLabel: string) {
 }
 
 async function pickDate(page: Page, slashDate: string) {
+  // New strategy — bypass the two-input range picker:
+  //   1. Open date picker, click "Today" preset → single-day range.
+  //   2. Close picker.
+  //   3. Click "Select previous date interval" N times to step backwards
+  //      to the target day. In Reporting-day mode each arrow = -1 day.
   const triggers = [
-    page.getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}$/ }).first(),
+    page.getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}/ }).first(),
     page.getByRole("button", { name: /reporting day/i }).first(),
   ];
   let opened = false;
@@ -142,63 +147,42 @@ async function pickDate(page: Page, slashDate: string) {
   }
   console.log(`[square] date picker opened: ${opened}`);
   if (!opened) return;
-  await page.waitForTimeout(900);
+  await page.waitForTimeout(600);
 
-  // Type into each of the two date inputs. Use a positional locator
-  // (nth) that re-resolves each iteration — DOM may reflow after the
-  // first input commits, invalidating any saved handle.
-  // Selector: an input whose value already matches MM/DD/YYYY. Filter
-  // out "Filter Locations" etc. by requiring a date-shaped value.
-  const dateInputs = page.locator('input[type="text"]').filter({
-    // Playwright's .filter({hasText}) doesn't work on input values,
-    // so rely on positional nth and a runtime value check below.
-  });
-
-  for (let i = 0; i < 2; i++) {
-    // Re-find an input that currently has a date-shaped value. First one
-    // NOT matching today's target (i.e. still has an old value) is the
-    // one we haven't updated yet.
-    const target = slashDate;
-    const remaining = await page.locator('input[type="text"]').evaluateAll(
-      (els, t) =>
-        els
-          .map((el, idx) => {
-            const input = el as HTMLInputElement;
-            return {
-              idx,
-              val: input.value,
-              visible: input.offsetParent !== null,
-            };
-          })
-          .filter(
-            (x) =>
-              x.visible &&
-              /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(x.val) &&
-              x.val !== t,
-          ),
-      target,
-    );
-    if (remaining.length === 0) break;
-    const input = page.locator('input[type="text"]').nth(remaining[0].idx);
-    await input.click({ clickCount: 3, force: true });
-    await input.press("Delete");
-    await page.keyboard.type(slashDate, { delay: 30 });
-    await input.press("Tab");
-    await page.waitForTimeout(500);
+  const todayBtn = page.getByRole("button", { name: /^today$/i }).first();
+  if (await todayBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await todayBtn.click();
+    await page.waitForTimeout(800);
+    console.log(`[square] snapped to Today (single-day)`);
+  } else {
+    console.log(`[square] "Today" preset not visible — aborting`);
+    return;
   }
-  void dateInputs;
-
-  await page.waitForTimeout(1200);
   await page.keyboard.press("Escape").catch(() => {});
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(400);
 
-  // Post-check: what does the date trigger show now?
+  const today = new Date();
+  const [tm, td, ty] = slashDate.split("/").map(Number);
+  const target = new Date(ty, tm - 1, td);
+  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const dayDiff = Math.round((todayMidnight.getTime() - target.getTime()) / 86400000);
+  console.log(`[square] stepping back ${dayDiff} days to reach ${slashDate}`);
+
+  const prevArrow = page.getByRole("button", { name: /previous date interval/i }).first();
+  for (let i = 0; i < Math.abs(dayDiff); i++) {
+    await prevArrow.click({ timeout: 3000 }).catch(() => {});
+    await page.waitForTimeout(250);
+  }
+  await page.waitForTimeout(800);
+
   const after = await page.evaluate(() => {
-    const btns = Array.from(document.querySelectorAll("button"));
-    const b = btns.find((x) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((x.textContent || "").trim()));
-    return b?.textContent?.trim() ?? null;
+    const btns = Array.from(document.querySelectorAll("button"))
+      .filter((b) => (b as HTMLElement).offsetParent !== null)
+      .map((b) => (b.textContent || "").trim())
+      .filter((t) => t.length && t.length < 40);
+    return btns.find((t) => /\d{1,2}\/\d{1,2}\/\d{4}/.test(t)) ?? null;
   });
-  console.log(`[square] date trigger after set: ${after}`);
+  console.log(`[square] date trigger after nav: ${after}`);
 }
 
 async function scrapeSalesSummary(page: Page) {
