@@ -89,18 +89,31 @@ export function parseManorWorkbook(buf: ArrayBuffer | Buffer, year = 2026): Mano
     });
 
     if (REV_TAB_RE.test(sheetName)) {
-      const monthIdx = monthFromSheetName(sheetName);
+      let monthIdx = monthFromSheetName(sheetName);
       if (monthIdx != null && isLegacyFutureMonth(monthIdx)) {
         warnings.push(`Skipped "${sheetName}" — legacy/future month for ${year}.`);
         continue;
       }
       try {
-        nights.push(...parseManorRevSheet(rows, sheetName, year));
+        const parsedNights = parseManorRevSheet(rows, sheetName, year);
+        nights.push(...parsedNights);
+        // Fallback: if the sheet name is too garbled for
+        // monthFromSheetName (Egan typos "ARPIL Rev" for April, etc.),
+        // infer the month from a parsed night's date.
+        if (monthIdx == null && parsedNights.length > 0) {
+          const inferred = Number(parsedNights[0].date.split('-')[1]) - 1;
+          if (Number.isInteger(inferred) && inferred >= 0 && inferred <= 11) {
+            monthIdx = inferred;
+            warnings.push(
+              `Sheet "${sheetName}" → month inferred from dates as month ${inferred + 1}.`,
+            );
+          }
+        }
         // Rev sheets carry the authoritative running month totals in
         // rows 2–7 (Ticket NET, Square NET, TOTAL NET). Read them here
         // because Egan's P&L tabs are sometimes mislabeled (e.g., April
         // P&L tab has "March Ticket Rev" as a copy-paste leftover).
-        if (monthIdx != null) {
+        if (monthIdx != null && !isLegacyFutureMonth(monthIdx)) {
           const totals = parseManorRevSheetTotals(rows);
           if (totals.actualRev != null) {
             ytd[monthIdx].actualRev = totals.actualRev;
