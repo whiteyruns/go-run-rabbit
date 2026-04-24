@@ -144,42 +144,36 @@ async function pickDate(page: Page, slashDate: string) {
   if (!opened) return;
   await page.waitForTimeout(900);
 
-  // Pre-check: how many date-format inputs are visible?
-  const precheck = await page.evaluate(() => {
-    const all = Array.from(document.querySelectorAll('input[type="text"]'));
-    const datey = all.filter((el) =>
-      /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((el as HTMLInputElement).value),
-    );
-    return { total: all.length, datey: datey.length, values: datey.slice(0, 4).map((el) => (el as HTMLInputElement).value) };
-  });
-  console.log(`[square] text inputs: total=${precheck.total} date-format=${precheck.datey} values=${JSON.stringify(precheck.values)}`);
-
-  const ok = await page.evaluate((date) => {
+  // Locate the two date input elements in the DOM — need position info
+  // so we can click them and type as a user would. Square's onChange
+  // only fires reliably on real keyboard events.
+  const inputHandles = await page.evaluateHandle(() => {
     const inputs = Array.from(document.querySelectorAll('input[type="text"]'));
-    const dateInputs = inputs.filter((el) =>
+    return inputs.filter((el) =>
       /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((el as HTMLInputElement).value),
     );
-    if (dateInputs.length < 2) return 0;
-    const setter = Object.getOwnPropertyDescriptor(
-      HTMLInputElement.prototype,
-      "value",
-    )!.set!;
-    for (const el of dateInputs.slice(0, 2)) {
-      const input = el as HTMLInputElement;
-      input.focus();
-      setter.call(input, date);
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-    (dateInputs[1] as HTMLInputElement).blur();
-    return dateInputs.length;
-  }, slashDate);
+  });
+  const handlesCount = await page.evaluate((hs: Element[]) => hs.length, inputHandles);
+  console.log(`[square] date-format inputs found: ${handlesCount}`);
+  if (handlesCount < 2) return;
 
-  console.log(`[square] date inputs set: ${ok}`);
-  if (ok < 2) return;
+  // Type into each input via keyboard to fire real onChange events.
+  for (let idx = 0; idx < 2; idx++) {
+    const el = await page.evaluateHandle(
+      (hs: Element[], i: number) => hs[i] as HTMLInputElement,
+      inputHandles,
+      idx,
+    );
+    const handle = el.asElement();
+    if (!handle) continue;
+    await handle.click({ clickCount: 3 }); // triple-click selects all
+    await handle.press("Delete");
+    await page.keyboard.type(slashDate, { delay: 30 });
+    await handle.press("Tab"); // commit via blur
+    await page.waitForTimeout(400);
+  }
 
-  await page.keyboard.press("Enter");
-  await page.waitForTimeout(1500);
+  await page.waitForTimeout(1200);
   await page.keyboard.press("Escape").catch(() => {});
   await page.waitForTimeout(500);
 
