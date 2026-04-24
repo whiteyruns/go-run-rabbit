@@ -128,13 +128,14 @@ async function pickLocation(page: Page, targetLabel: string) {
 }
 
 async function pickDate(page: Page, slashDate: string) {
-  // Date trigger might display MM/DD/YYYY (numeric) OR the selected-range
-  // label once user has interacted. Try both, then fall back to clicking
-  // the Reporting-day filter button area directly.
+  // Square's date-range picker has TWO MM/DD/YYYY text inputs (start
+  // and end). For a single reporting day, set both to the same value.
+  // A direct input.value = "..." doesn't trigger React's onChange, so
+  // we use the native setter + dispatch input/change events. Then blur
+  // and press Enter to commit and close.
   const triggers = [
     page.getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}$/ }).first(),
     page.getByRole("button", { name: /reporting day/i }).first(),
-    page.locator('button:has-text("/")').first(),
   ];
   let opened = false;
   for (const t of triggers) {
@@ -148,17 +149,38 @@ async function pickDate(page: Page, slashDate: string) {
     console.log(`[square] could not open date picker`);
     return;
   }
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(700);
 
-  const input = page.locator("input[placeholder*='MM'], input[type='text']").first();
-  if (await input.isVisible({ timeout: 1500 }).catch(() => false)) {
-    await input.fill(slashDate);
-    await input.press("Enter");
-  } else {
-    const [, , day] = slashDate.split("/").map(Number);
-    await page.locator(`button:has-text("${day}")`).first().click().catch(() => {});
+  const ok = await page.evaluate((date) => {
+    const inputs = Array.from(document.querySelectorAll('input[type="text"]'));
+    const dateInputs = inputs.filter((el) =>
+      /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((el as HTMLInputElement).value),
+    );
+    if (dateInputs.length < 2) return false;
+    const setter = Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      "value",
+    )!.set!;
+    for (const el of dateInputs.slice(0, 2)) {
+      const input = el as HTMLInputElement;
+      setter.call(input, date);
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    }
+    (dateInputs[1] as HTMLInputElement).blur();
+    return true;
+  }, slashDate);
+
+  if (!ok) {
+    console.log(`[square] could not find the two date inputs in the picker`);
+    return;
   }
-  await page.waitForTimeout(1200);
+
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(1800);
+  // Close picker if still open
+  await page.keyboard.press("Escape").catch(() => {});
+  await page.waitForTimeout(400);
 }
 
 async function scrapeSalesSummary(page: Page) {
