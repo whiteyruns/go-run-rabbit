@@ -97,46 +97,58 @@ async function dismissCookieBanner(page: Page): Promise<boolean> {
 }
 
 async function pickLocation(page: Page, targetLabel: string) {
-  // Open the "All locations" dropdown
   await page.getByRole("button", { name: /locations/i }).first().click({ timeout: 5000 });
+  await page.waitForTimeout(500);
+
+  // Force state: target checked, everything else unchecked. More
+  // reliable than toggling from unknown state between runs.
+  await page.evaluate((target) => {
+    const rows = Array.from(document.querySelectorAll("input[type=checkbox]"));
+    for (const cb of rows) {
+      const input = cb as HTMLInputElement;
+      const labelEl = input.closest("label") || input.parentElement;
+      const label = ((labelEl?.textContent) || "").trim();
+      const want = label.toLowerCase() === target.toLowerCase();
+      if (input.checked !== want) input.click();
+    }
+  }, targetLabel);
   await page.waitForTimeout(400);
-
-  // Uncheck the "All locations" master so only our target is selected
-  const allCb = page.getByRole("checkbox", { name: /^all locations$/i });
-  if (await allCb.isChecked().catch(() => false)) {
-    await allCb.click();
-    await page.waitForTimeout(200);
-  }
-
-  // Check target venue only
-  const target = page.getByRole("checkbox", { name: new RegExp(`^${targetLabel}$`, "i") });
-  if (!(await target.isChecked().catch(() => false))) {
-    await target.click();
-  }
-  await page.waitForTimeout(400);
-
-  // Dismiss the dropdown by clicking the page heading area
   await page.keyboard.press("Escape").catch(() => {});
-  await page.waitForTimeout(300);
+  await page.waitForTimeout(400);
 }
 
 async function pickDate(page: Page, slashDate: string) {
-  // Open the date picker — the button shows the current date like "04/23/2026"
-  await page.getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}$/ }).first().click({ timeout: 5000 });
-  await page.waitForTimeout(400);
+  // Date trigger might display MM/DD/YYYY (numeric) OR the selected-range
+  // label once user has interacted. Try both, then fall back to clicking
+  // the Reporting-day filter button area directly.
+  const triggers = [
+    page.getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}$/ }).first(),
+    page.getByRole("button", { name: /reporting day/i }).first(),
+    page.locator('button:has-text("/")').first(),
+  ];
+  let opened = false;
+  for (const t of triggers) {
+    if (await t.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await t.click().catch(() => {});
+      opened = true;
+      break;
+    }
+  }
+  if (!opened) {
+    console.log(`[square] could not open date picker`);
+    return;
+  }
+  await page.waitForTimeout(500);
 
-  // Square's date picker typically offers a text input. Find the first one
-  // inside the open popover and set it.
   const input = page.locator("input[placeholder*='MM'], input[type='text']").first();
   if (await input.isVisible({ timeout: 1500 }).catch(() => false)) {
     await input.fill(slashDate);
     await input.press("Enter");
   } else {
-    // Fallback: click the date number in the calendar grid
     const [, , day] = slashDate.split("/").map(Number);
     await page.locator(`button:has-text("${day}")`).first().click().catch(() => {});
   }
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(1200);
 }
 
 async function scrapeSalesSummary(page: Page) {
@@ -258,6 +270,19 @@ async function main() {
     await page.waitForTimeout(1000);
     await snap("5-before-scrape");
 
+    // Capture filter state for audit — lets us confirm the date + venue
+    // filters actually applied when we reconcile against xlsx values.
+    const filterState = await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll("button"));
+      const dateBtn = btns.find((b) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((b.textContent || "").trim()));
+      const locBtn = btns.find((b) => /location/i.test((b.textContent || "").trim()));
+      return {
+        date_visible: dateBtn?.textContent?.trim() ?? null,
+        location_visible: locBtn?.textContent?.trim() ?? null,
+      };
+    });
+    console.log(`[square] filter state: date="${filterState.date_visible}" loc="${filterState.location_visible}"`);
+
     const data = await scrapeSalesSummary(page);
     console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"}`);
 
@@ -270,6 +295,7 @@ async function main() {
           date,
           pulled_at: new Date().toISOString(),
           ...data,
+          filter_state_at_scrape: filterState,
           source: { url, reporting_day_label: data.reporting_day_label },
         },
         null,
