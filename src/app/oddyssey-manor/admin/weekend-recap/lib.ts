@@ -59,6 +59,10 @@ export interface VenueNight {
   // row has them blank — the xlsx + Ticketure agree on these values
   // when both are present, so we don't bother replacing filled cells.
   ticketCountSource?: 'live' | 'xlsx';
+  // Square POS scrape for bar net — when present, overrides xlsx SQUARE
+  // NET column (fresher + reconciled to Square's reporting-day totals).
+  barNetSource?: 'live' | 'xlsx';
+  xlsxBarNet?: number | null;
 }
 
 /**
@@ -449,6 +453,30 @@ async function loadLiveTicketCounts(
 }
 
 /**
+ * Read Square Net Sales for a given venue + reporting day from the
+ * oddyssey-square scraper's JSON. Returns null when the file doesn't
+ * exist yet or the scrape didn't land a number (still-Null-at-scrape
+ * stays null).
+ */
+const SQUARE_DIR = path.resolve(process.cwd(), 'data', 'oddyssey-square');
+
+export async function loadLiveBarNet(
+  venue: Venue,
+  dateISO: string,
+): Promise<number | null> {
+  try {
+    const file = path.join(SQUARE_DIR, venue, `${dateISO}.json`);
+    const raw = await fs.readFile(file, 'utf8');
+    const parsed = JSON.parse(raw) as { net_sales?: number | null };
+    return typeof parsed.net_sales === 'number' && Number.isFinite(parsed.net_sales)
+      ? parsed.net_sales
+      : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Build an entirely Ticketure-sourced VenueNight for a date that has no
  * xlsx row (Manor Thu + Sun nights — xlsx only carries Fri+Sat).
  * Cost lines stay empty; the UI renders "—" until the GM fills them in.
@@ -458,12 +486,13 @@ async function synthesizeNightFromLive(
   weeknight: Weeknight,
   dateISO: string,
 ): Promise<VenueNight | null> {
-  const [netRev, counts] = await Promise.all([
+  const [netRev, counts, barNet] = await Promise.all([
     loadLiveNetTicketRev(venue, dateISO),
     loadLiveTicketCounts(venue, dateISO),
+    loadLiveBarNet(venue, dateISO),
   ]);
   // Nothing to show for this date yet — no scrape on disk.
-  if (netRev == null && counts.issued == null) return null;
+  if (netRev == null && counts.issued == null && barNet == null) return null;
   return {
     date: dateISO,
     venue,
@@ -471,10 +500,11 @@ async function synthesizeNightFromLive(
     ticketsIssued: counts.issued,
     ticketsRedeemed: counts.redeemed,
     netTicketRev: netRev,
-    barNet: null,
+    barNet,
     costs: {},
     netTicketRevSource: 'live',
     ticketCountSource: 'live',
+    barNetSource: barNet != null ? 'live' : 'xlsx',
   };
 }
 
@@ -489,26 +519,37 @@ async function synthesizeNightFromLive(
 export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
   const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
     if (!n) return null;
-    const [liveRev, liveCounts] = await Promise.all([
+    const [liveRev, liveCounts, liveBar] = await Promise.all([
       loadLiveNetTicketRev(n.venue, n.date),
       loadLiveTicketCounts(n.venue, n.date),
+      loadLiveBarNet(n.venue, n.date),
     ]);
-    // Ticket counts: fill in only when the xlsx has them null (common on
-    // the newest Sat row before the GM enters it). If the xlsx already
-    // has values, keep them — they should match Ticketure anyway.
     const ticketsIssued = n.ticketsIssued ?? liveCounts.issued;
     const ticketsRedeemed = n.ticketsRedeemed ?? liveCounts.redeemed;
     const ticketCountSource: 'live' | 'xlsx' =
       n.ticketsIssued == null && liveCounts.issued != null ? 'live' : 'xlsx';
 
-    if (liveRev == null) {
-      return { ...n, ticketsIssued, ticketsRedeemed, ticketCountSource, netTicketRevSource: 'xlsx' };
-    }
-    return {
+    // Bar NET: Square scrape always wins when present — reporting-day
+    // math is cleaner than the GM's manual entry, and Square numbers
+    // move as the night rolls while xlsx is captured once a week.
+    // Preserve the xlsx value so the UI can surface any delta.
+    const barNet = liveBar != null ? liveBar : n.barNet;
+    const barNetSource: 'live' | 'xlsx' = liveBar != null ? 'live' : 'xlsx';
+
+    const base = {
       ...n,
       ticketsIssued,
       ticketsRedeemed,
       ticketCountSource,
+      barNet,
+      barNetSource,
+      xlsxBarNet: n.barNet,
+    };
+    if (liveRev == null) {
+      return { ...base, netTicketRevSource: 'xlsx' };
+    }
+    return {
+      ...base,
       xlsxNetTicketRev: n.netTicketRev,
       netTicketRev: liveRev,
       netTicketRevSource: 'live',

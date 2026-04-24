@@ -307,7 +307,18 @@ function NightColumn({
               : undefined
         }
       />
-      <StatRow label="Bar NET" value={formatMoney(night.barNet)} />
+      <StatRow
+        label="Bar NET"
+        value={formatMoney(night.barNet)}
+        badge={night.barNetSource === 'live' ? 'live' : undefined}
+        badgeTooltip={
+          night.barNetSource === 'live' && night.xlsxBarNet != null
+            ? `Square actual; xlsx said ${formatMoney(night.xlsxBarNet)}`
+            : night.barNetSource === 'live'
+              ? 'Live Square Sales Summary'
+              : undefined
+        }
+      />
 
       <div className={styles.costGroup}>
         <div className={styles.costGroupLbl}>

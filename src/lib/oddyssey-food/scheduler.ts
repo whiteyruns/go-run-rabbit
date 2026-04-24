@@ -221,6 +221,34 @@ function upcomingShowDates(daysAhead: number): Array<{ venue: "manor" | "noir"; 
  * latest JSON + adds a new timestamped CSV (our dashboards always read
  * the latest-for-date).
  */
+/**
+ * Square bar-net scrape — pulls yesterday's Net Sales from the Square
+ * dashboard (app.squareup.com) for both venues. Square's reporting day
+ * runs 8 AM → 8 AM, so "yesterday" captures the full previous show
+ * night. Auth state lives at data/.square-auth.json — refresh via
+ * scripts/oddyssey-square-bootstrap.ts if sessions expire (~30–90 days).
+ */
+async function runSquarePulls() {
+  const stamp = new Date().toISOString();
+  const y = new Date();
+  y.setDate(y.getDate() - 1);
+  const yesterday = `${y.getFullYear()}-${String(y.getMonth() + 1).padStart(2, "0")}-${String(y.getDate()).padStart(2, "0")}`;
+  console.log(`[oddyssey-scheduler] ${stamp} fire: square (${yesterday})`);
+  const path = nodeRequire("path") as typeof import("path");
+  const { spawnSync } = getChildProcess();
+  for (const venue of ["manor", "noir"] as const) {
+    try {
+      const shCmd = `set -a; source .env.local 2>/dev/null; set +a; export PATH=/Users/white/.nvm/versions/node/v22.22.0/bin:$PATH; cd ${REPO}; npx tsx scripts/oddyssey-square-pull.ts --venue=${venue} --date=${yesterday}`;
+      spawnSync("/bin/bash", ["-c", shCmd], { cwd: REPO, timeout: 120_000 });
+      console.log(`[oddyssey-scheduler] square ✓ ${venue} ${yesterday}`);
+      await new Promise((r) => setTimeout(r, 3000));
+    } catch (err) {
+      console.log(`[oddyssey-scheduler] square ✗ ${venue} ${yesterday}: ${String(err)}`);
+    }
+  }
+  void path;
+}
+
 async function runPreSalePulls() {
   const stamp = new Date().toISOString();
   const dates = upcomingShowDates(7);
@@ -307,6 +335,12 @@ export function startScheduler(): void {
     // for the week ahead. Runs BEFORE anyone's in the office looking at
     // the board; same-day hourly pulls take over once the show arrives.
     ["pre-sale", "0 6 * * *", () => void runPreSalePulls()],
+
+    // --- SQUARE BAR NET ---
+    // Daily 8 AM PT — scrape yesterday's Square Sales Summary (8 AM PT
+    // reporting day) for both venues. Auto-fills Bar NET on the scrum
+    // view + detaches the GM from manually entering Square totals.
+    ["square-daily", "0 8 * * *", () => void runSquarePulls()],
   ];
 
   for (const [name, pattern, handler] of jobs) {
