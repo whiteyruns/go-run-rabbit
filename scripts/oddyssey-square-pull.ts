@@ -196,14 +196,22 @@ async function scrapeTopItems(
   page: Page,
   locationLabel: string,
 ): Promise<{ name: string; gross: number }[]> {
+  // "networkidle" never resolves on this page (Square long-polls in
+  // the background). Use domcontentloaded + explicit wait for the
+  // "Top 5 Items" text.
   await page.goto("https://app.squareup.com/dashboard/sales/reports/item-sales", {
-    waitUntil: "networkidle",
-  });
-  await page.waitForTimeout(2500);
+    waitUntil: "domcontentloaded",
+    timeout: 30000,
+  }).catch(() => {});
+  await page
+    .getByText(/Top\s*\d*\s*Items?/i)
+    .first()
+    .waitFor({ timeout: 20000 })
+    .catch(() => {});
+  await page.waitForTimeout(1500);
 
   // Re-apply the location filter — navigating to a different report
-  // page can reset location to "All locations" even when the date carries
-  // over. Without this, Manor's top items were coming back as Noir's.
+  // page can reset it to "All locations" even when the date carries over.
   await pickLocation(page, locationLabel).catch(() => {});
   await page.waitForTimeout(1800);
 
