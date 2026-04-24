@@ -41,6 +41,94 @@ async function main() {
   });
   await page.waitForTimeout(1500);
 
+  // Inject print-density overrides so we don't need a deploy cycle.
+  //
+  // IMPORTANT: Only add rules the deployed layout.tsx doesn't already have.
+  // The deployed site handles: @page margins, recap-page-break, pdf-avoid-break,
+  // pdf-cover-page, pdf-photo-grid, gap/margin overrides, pdf-running-footer.
+  // Duplicating those here (especially gap/padding wildcards) causes specificity
+  // conflicts that can ADD pages instead of saving them.
+  await page.addStyleTag({
+    content: `
+      @media print {
+        /* ── Base compaction ── */
+        .recap-page-break {
+          padding-top: 1.5rem !important;
+          padding-bottom: 0.5rem !important;
+        }
+        .pdf-cover-page { padding-top: 3.2in !important; }
+        .pdf-cover-page h1 { font-size: 5rem !important; line-height: 0.95 !important; }
+        #headliner h2 { font-size: 5rem !important; line-height: 0.9 !important; }
+        #event figure { height: 320px !important; }
+
+        /* ── Stats grid: let wrapper split across pages ── */
+        #series .pdf-avoid-break {
+          break-inside: auto !important;
+          page-break-inside: auto !important;
+        }
+        .hairline-gold { break-inside: avoid; }
+        #series .grid-cols-2 {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 1rem 2rem !important;
+        }
+        .hairline-gold .serif { font-size: 2rem !important; }
+
+        /* ── Headliner: single-column, polaroid row ── */
+        #headliner .grid {
+          grid-template-columns: 1fr !important;
+        }
+        #headliner .md\\:col-span-7,
+        #headliner .md\\:col-span-4,
+        #headliner .md\\:col-start-9 {
+          grid-column: 1 / -1 !important;
+        }
+        #headliner .md\\:col-start-9 {
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 1rem !important;
+          align-items: start !important;
+        }
+        #headliner .md\\:col-start-9 .bg-white {
+          max-width: 200px !important;
+          transform: rotate(0deg) !important;
+        }
+        #headliner .md\\:col-start-9 .aspect-square {
+          max-height: 180px !important;
+        }
+        /* Polaroid caption + credit: scale to match shrunk photo */
+        #headliner .md\\:col-start-9 .bg-white .pt-4 {
+          font-size: 10px !important;
+          padding-top: 6px !important;
+          line-height: 1.3 !important;
+        }
+        #headliner .md\\:col-start-9 .bg-white p {
+          font-size: 6px !important;
+        }
+        #headliner .md\\:col-start-9 .serif {
+          font-size: 2.5rem !important;
+        }
+        #headliner ul li {
+          font-size: 14px !important;
+          line-height: 1.45 !important;
+        }
+        #headliner .mb-10 { margin-bottom: 0.5rem !important; }
+
+        /* ── Event: tighter spacing ── */
+        #event { padding-top: 0.5rem !important; padding-bottom: 0.5rem !important; }
+        #event .mt-12 { margin-top: 0.75rem !important; }
+        #event .pdf-avoid-break {
+          break-inside: auto !important;
+          page-break-inside: auto !important;
+        }
+
+        /* ── Tail sections ── */
+        #broadcast { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+        #contact { padding-top: 2rem !important; padding-bottom: 2rem !important; }
+        #sponsors { padding-top: 1.5rem !important; padding-bottom: 1.5rem !important; }
+      }
+    `,
+  });
+
   await page.emulateMedia({ media: "print" });
   await page.pdf({
     path: OUT,
