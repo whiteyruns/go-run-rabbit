@@ -323,15 +323,24 @@ async function main() {
     // Capture filter state for audit — lets us confirm the date + venue
     // filters actually applied when we reconcile against xlsx values.
     const filterState = await page.evaluate(() => {
-      const btns = Array.from(document.querySelectorAll("button"));
-      const dateBtn = btns.find((b) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test((b.textContent || "").trim()));
-      const locBtn = btns.find((b) => /location/i.test((b.textContent || "").trim()));
+      const btns = Array.from(document.querySelectorAll("button"))
+        .filter((b) => (b as HTMLElement).offsetParent !== null)
+        .map((b) => (b.textContent || "").trim())
+        .filter((t) => t && t.length < 40);
+      // Look for any button containing a date (MM/DD/YYYY anywhere in text)
+      const dateBtn = btns.find((t) => /\d{1,2}\/\d{1,2}\/\d{4}/.test(t));
+      const locBtn = btns.find((t) => /location/i.test(t));
+      // Also grab the h1/h2 which shows "Apr 17, 2026" on the report
+      const h1 = document.querySelector("h1, h2")?.textContent?.trim() ?? null;
       return {
-        date_visible: dateBtn?.textContent?.trim() ?? null,
-        location_visible: locBtn?.textContent?.trim() ?? null,
+        date_visible: dateBtn ?? null,
+        location_visible: locBtn ?? null,
+        page_heading: h1,
+        all_top_buttons: btns.slice(0, 12),
       };
     });
-    console.log(`[square] filter state: date="${filterState.date_visible}" loc="${filterState.location_visible}"`);
+    console.log(`[square] filter state: date="${filterState.date_visible}" loc="${filterState.location_visible}" heading="${filterState.page_heading}"`);
+    console.log(`[square] top buttons: ${JSON.stringify(filterState.all_top_buttons)}`);
 
     const data = await scrapeSalesSummary(page);
     console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"}`);
