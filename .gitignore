@@ -31,3 +31,6 @@ data/forest-house/crew.json
 
 # Forest House run-of-show runtime edits (seed lives in run-of-show-seed.ts)
 data/forest-house/run-of-show/
+
+# Square auth state — session cookies, never commit
+data/.square-auth.json
