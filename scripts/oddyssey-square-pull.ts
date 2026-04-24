@@ -192,11 +192,20 @@ async function pickDate(page: Page, slashDate: string) {
  * Gross Sales" legend. Items named like "El Bandido Yankee Repo" are
  * the rep-activation fingerprint.
  */
-async function scrapeTopItems(page: Page): Promise<{ name: string; gross: number }[]> {
+async function scrapeTopItems(
+  page: Page,
+  locationLabel: string,
+): Promise<{ name: string; gross: number }[]> {
   await page.goto("https://app.squareup.com/dashboard/sales/reports/item-sales", {
     waitUntil: "networkidle",
   });
   await page.waitForTimeout(2500);
+
+  // Re-apply the location filter — navigating to a different report
+  // page can reset location to "All locations" even when the date carries
+  // over. Without this, Manor's top items were coming back as Noir's.
+  await pickLocation(page, locationLabel).catch(() => {});
+  await page.waitForTimeout(1800);
 
   return await page.evaluate(() => {
     const out: { name: string; gross: number }[] = [];
@@ -390,7 +399,7 @@ async function main() {
     console.log(`[square] top buttons: ${JSON.stringify(filterState.all_top_buttons)}`);
 
     const data = await scrapeSalesSummary(page);
-    const topItems = await scrapeTopItems(page);
+    const topItems = await scrapeTopItems(page, LOCATION_LABEL[venue]);
     console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"} top_items=${topItems.length}`);
     for (const it of topItems.slice(0, 5)) console.log(`  • ${it.name}: $${it.gross.toFixed(2)}`);
 
