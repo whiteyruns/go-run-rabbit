@@ -162,8 +162,20 @@ async function pickDate(page: Page, slashDate: string) {
     const remaining = await page.locator('input[type="text"]').evaluateAll(
       (els, t) =>
         els
-          .map((el, idx) => ({ idx, val: (el as HTMLInputElement).value }))
-          .filter((x) => /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(x.val) && x.val !== t),
+          .map((el, idx) => {
+            const input = el as HTMLInputElement;
+            return {
+              idx,
+              val: input.value,
+              visible: input.offsetParent !== null,
+            };
+          })
+          .filter(
+            (x) =>
+              x.visible &&
+              /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(x.val) &&
+              x.val !== t,
+          ),
       target,
     );
     if (remaining.length === 0) break;
