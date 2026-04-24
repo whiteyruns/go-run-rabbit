@@ -186,59 +186,65 @@ async function pickDate(page: Page, slashDate: string) {
 }
 
 /**
- * Scrape the "Top 5 Items: Gross Sales" legend — Square renders it as
- * a list of rows with item name + dollar amount. This is the rep-
- * activation fingerprint: items named like "El Bandido Yankee Repo"
- * are the sku ops rings when a brand rep is pouring at Golden Hour.
+ * Top Items live on the Item Sales report page, not the Sales Summary
+ * page. Navigates to /dashboard/sales/reports/item-sales (date + location
+ * filters persist between report pages) and scrapes the "Top 5 Items:
+ * Gross Sales" legend. Items named like "El Bandido Yankee Repo" are
+ * the rep-activation fingerprint.
  */
 async function scrapeTopItems(page: Page): Promise<{ name: string; gross: number }[]> {
-  // Scroll the items chart into view (might be below the fold)
-  await page.getByText(/Top.{0,5}Items/i).first().scrollIntoViewIfNeeded({ timeout: 3000 }).catch(() => {});
-  await page.waitForTimeout(400);
+  await page.goto("https://app.squareup.com/dashboard/sales/reports/item-sales", {
+    waitUntil: "networkidle",
+  });
+  await page.waitForTimeout(2500);
+
   return await page.evaluate(() => {
     const out: { name: string; gross: number }[] = [];
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    let node = walker.nextNode();
     let headerEl: HTMLElement | null = null;
+    let node = walker.nextNode();
     while (node) {
       const text = (node.nodeValue || "").trim();
-      if (/^top\s*\d*\s*items?.*gross/i.test(text)) {
+      if (/^top\s*\d*\s*items?:?\s*gross/i.test(text)) {
         headerEl = node.parentElement;
         break;
       }
       node = walker.nextNode();
     }
     if (!headerEl) return [];
-    // Walk up to a container that includes siblings with the item rows.
+
+    // Walk up until we find a container that encloses both the header
+    // and the legend rows (name + money pairs).
     let container: HTMLElement | null = headerEl;
-    for (let d = 0; d < 6 && container; d++) {
-      const candidates = container.querySelectorAll("[class*=item], [class*=legend], [class*=row], li, tr");
-      if (candidates.length >= 3) break;
-      container = container.parentElement;
-    }
-    if (!container) return [];
-    // Collect text nodes in order; pair (name, money) sequences.
-    const texts: string[] = [];
-    const w2 = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-    let n2 = w2.nextNode();
-    while (n2) {
-      const t = (n2.nodeValue || "").trim();
-      if (t) texts.push(t);
-      n2 = w2.nextNode();
-    }
     const moneyRe = /^\$-?[0-9,]+(?:\.[0-9]{2})?$/;
-    for (let i = 0; i < texts.length - 1; i++) {
-      const t = texts[i];
-      const next = texts[i + 1];
-      // Heuristic: name is non-money, reasonable length; next is money.
-      if (!moneyRe.test(t) && t.length >= 2 && t.length <= 60 && moneyRe.test(next)) {
-        const gross = parseFloat(next.replace(/[$,]/g, ""));
-        if (Number.isFinite(gross)) {
-          out.push({ name: t, gross });
+    while (container) {
+      const texts: string[] = [];
+      const w = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+      let n = w.nextNode();
+      while (n) {
+        const t = (n.nodeValue || "").trim();
+        if (t) texts.push(t);
+        n = w.nextNode();
+      }
+      const pairs: { name: string; gross: number }[] = [];
+      for (let i = 0; i < texts.length - 1; i++) {
+        const name = texts[i];
+        const amount = texts[i + 1];
+        if (
+          !moneyRe.test(name) &&
+          name.length >= 2 &&
+          name.length <= 60 &&
+          !/top|gross|items?/i.test(name) &&
+          moneyRe.test(amount)
+        ) {
+          const gross = parseFloat(amount.replace(/[$,]/g, ""));
+          if (Number.isFinite(gross)) pairs.push({ name, gross });
         }
       }
+      if (pairs.length >= 2) return pairs.slice(0, 10);
+      container = container.parentElement;
     }
-    return out.slice(0, 10);
+    return out;
   });
 }
 
