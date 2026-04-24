@@ -175,6 +175,22 @@ const sendBriefing = (venue: "manor" | "noir", date: string) => sendEmail("brief
 // API route instead of importing reminder.ts directly — mirrors the
 // sendEmail() pattern above and keeps fs-using code out of the
 // instrumentation module graph (Edge runtime rejects fs/path specifiers).
+async function runXlsxUpdateEmail() {
+  const port = process.env.PORT ?? "3102";
+  const url = `http://localhost:${port}/api/oddyssey-update-email`;
+  const stamp = new Date().toISOString();
+  console.log(`[oddyssey-scheduler] ${stamp} fire: xlsx-update-email`);
+  try {
+    const res = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
+    const data = await res.json();
+    console.log(
+      `[oddyssey-scheduler] xlsx-update-email → ${data.status} ${data.subject ?? ""} → ${(data.recipients ?? []).join(", ")} ${data.resend_id ? `(${data.resend_id})` : data.message ?? ""}`,
+    );
+  } catch (err) {
+    console.log(`[oddyssey-scheduler] xlsx-update-email failed: ${String(err)}`);
+  }
+}
+
 async function runWeekendRecapReminder() {
   const port = process.env.PORT ?? "3102";
   const url = `http://localhost:${port}/api/cron/weekend-recap-reminder`;
@@ -341,6 +357,13 @@ export function startScheduler(): void {
     // reporting day) for both venues. Auto-fills Bar NET on the scrum
     // view + detaches the GM from manually entering Square totals.
     ["square-daily", "0 8 * * *", () => void runSquarePulls()],
+
+    // --- WEEKLY xlsx-UPDATE EMAIL ---
+    // Monday 7 AM PT — Brandon gets a paste-ready "update the xlsx with
+    // X and Y" email. Saves him the weekly Ticketure-Square-to-xlsx
+    // scavenger hunt. Fires before the 8 AM weekend-recap reminder so
+    // the numbers are already waiting when he logs in.
+    ["xlsx-update-email", "0 7 * * 1", () => void runXlsxUpdateEmail()],
   ];
 
   for (const [name, pattern, handler] of jobs) {
