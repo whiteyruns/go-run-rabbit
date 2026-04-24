@@ -100,19 +100,29 @@ async function pickLocation(page: Page, targetLabel: string) {
   await page.getByRole("button", { name: /locations/i }).first().click({ timeout: 5000 });
   await page.waitForTimeout(500);
 
-  // Force state: target checked, everything else unchecked. More
-  // reliable than toggling from unknown state between runs.
-  await page.evaluate((target) => {
-    const rows = Array.from(document.querySelectorAll("input[type=checkbox]"));
-    for (const cb of rows) {
-      const input = cb as HTMLInputElement;
-      const labelEl = input.closest("label") || input.parentElement;
-      const label = ((labelEl?.textContent) || "").trim();
-      const want = label.toLowerCase() === target.toLowerCase();
-      if (input.checked !== want) input.click();
-    }
-  }, targetLabel);
-  await page.waitForTimeout(400);
+  // Reset strategy: click the "All locations" master twice to force a
+  // known state (first click toggles state, second click ensures it
+  // ends up unchecked). Then check only the target. Uses Playwright's
+  // getByRole which routes clicks to the visible label wrapper so
+  // React's onChange fires (an input.click() via evaluate skips that).
+  const allCb = page.getByRole("checkbox", { name: /^all locations$/i });
+
+  // Ensure everything is checked (All = on) so the next click
+  // deterministically unchecks all four.
+  if (!(await allCb.isChecked().catch(() => false))) {
+    await allCb.click();
+    await page.waitForTimeout(200);
+  }
+  // Now toggle All off — unchecks all venues in one click.
+  await allCb.click();
+  await page.waitForTimeout(300);
+
+  // Select the target venue.
+  const target = page.getByRole("checkbox", { name: new RegExp(`^${targetLabel}$`, "i") });
+  await target.click();
+  await page.waitForTimeout(600);
+
+  // Close dropdown.
   await page.keyboard.press("Escape").catch(() => {});
   await page.waitForTimeout(400);
 }
