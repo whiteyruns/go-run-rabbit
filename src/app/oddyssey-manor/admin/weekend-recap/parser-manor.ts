@@ -96,6 +96,16 @@ export function parseManorWorkbook(buf: ArrayBuffer | Buffer, year = 2026): Mano
       }
       try {
         nights.push(...parseManorRevSheet(rows, sheetName, year));
+        // Rev sheets carry the authoritative running month totals in
+        // rows 2–7 (Ticket NET, Square NET, TOTAL NET). Read them here
+        // because Egan's P&L tabs are sometimes mislabeled (e.g., April
+        // P&L tab has "March Ticket Rev" as a copy-paste leftover).
+        if (monthIdx != null) {
+          const totals = parseManorRevSheetTotals(rows);
+          if (totals.actualRev != null) {
+            ytd[monthIdx].actualRev = totals.actualRev;
+          }
+        }
       } catch (err) {
         warnings.push(`Rev sheet "${sheetName}": ${(err as Error).message}`);
       }
@@ -112,7 +122,13 @@ export function parseManorWorkbook(buf: ArrayBuffer | Buffer, year = 2026): Mano
         }
         const r = parseManorPnlSheet(rows);
         if (r) {
-          ytd[monthIdx].actualRev = r.actualRev;
+          // P&L tab is the source of truth for NET (rev - overhead).
+          // Only overlay actualRev when the P&L tab has a non-zero
+          // value and Rev sheet didn't already populate it — because
+          // the P&L tab's rev rows sometimes have stale / wrong labels.
+          if (ytd[monthIdx].actualRev == null && r.actualRev != null && r.actualRev > 0) {
+            ytd[monthIdx].actualRev = r.actualRev;
+          }
           ytd[monthIdx].actualNet = r.actualNet;
         }
       } catch (err) {
@@ -180,6 +196,32 @@ function parseManorRevSheet(
   const dedup = new Map<string, VenueNight>();
   for (const n of out) dedup.set(n.date, n);
   return Array.from(dedup.values());
+}
+
+/**
+ * Rev sheets have running month totals in a header block at the top:
+ *   row 2: "Ticket NET" | <value>
+ *   row 3: "Square NET" | <value>
+ *   row 7: "TOTAL NET"  | <value>
+ * Read those because they're more reliable than the corresponding
+ * P&L-tab rows which Egan sometimes mislabels (e.g., April P&L
+ * contains rows labeled "March Ticket Rev" as copy-paste leftovers).
+ */
+function parseManorRevSheetTotals(rows: unknown[][]): { actualRev: number | null } {
+  const ticketNetRow = findRow(rows, 'Ticket NET', { col: 0 });
+  const squareNetRow = findRow(rows, 'Square NET', { col: 0 });
+  const totalNetRow = findRow(rows, 'TOTAL NET', { col: 0 });
+  const ticketNet = ticketNetRow != null ? num(rows[ticketNetRow]?.[1]) : null;
+  const squareNet = squareNetRow != null ? num(rows[squareNetRow]?.[1]) : null;
+  const totalNet = totalNetRow != null ? num(rows[totalNetRow]?.[1]) : null;
+  // Prefer TOTAL NET when it's non-trivial; otherwise sum Ticket + Square.
+  let actualRev: number | null = null;
+  if (totalNet != null && totalNet > 0) actualRev = totalNet;
+  else if (ticketNet != null || squareNet != null) {
+    const sum = (ticketNet ?? 0) + (squareNet ?? 0);
+    actualRev = sum > 0 ? sum : null;
+  }
+  return { actualRev };
 }
 
 // ─── P&L sheet ─────────────────────────────────────────────────────────────
