@@ -218,59 +218,56 @@ async function scrapeFullItems(
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await page.waitForTimeout(800);
 
-  return await page.evaluate(() => {
-    const moneyToNum = (s: string): number => {
-      const m = s.match(/-?\$?\s*([0-9,]+(?:\.[0-9]{1,2})?)/);
-      if (!m) return 0;
-      const n = parseFloat(m[1].replace(/,/g, ""));
-      return Number.isFinite(n) ? n : 0;
-    };
-    const intToNum = (s: string): number => {
-      const m = s.match(/-?\d+/);
-      if (!m) return 0;
-      const n = parseInt(m[0], 10);
-      return Number.isFinite(n) ? n : 0;
-    };
-    // Find the items table — header has Item / Items Sold / Gross Sales
+  // Plain JS evaluate body (no TS type annotations, no nested arrow
+  // helpers) — tsx's TypeScript lowering injects a `__name` helper that
+  // doesn't exist in the browser and breaks the evaluate.
+  const raw = await page.evaluate(() => {
+    const moneyRe = /-?\$?\s*([0-9,]+(?:\.[0-9]{1,2})?)/;
+    const intRe = /-?\d+/;
     const tables = Array.from(document.querySelectorAll("table"));
-    let target: HTMLTableElement | null = null;
+    let target = null;
     for (const t of tables) {
       const headers = Array.from(t.querySelectorAll("thead th, thead td"))
-        .map((c) => ((c as HTMLElement).textContent || "").trim().toLowerCase());
+        .map((c) => ((c.textContent) || "").trim().toLowerCase());
       const text = headers.join("|");
       if (text.includes("item") && text.includes("items sold") && text.includes("gross")) {
-        target = t as HTMLTableElement;
+        target = t;
         break;
       }
     }
     if (!target) return [];
     const headers = Array.from(target.querySelectorAll("thead th, thead td"))
-      .map((c) => ((c as HTMLElement).textContent || "").trim().toLowerCase());
-    const idxName = headers.findIndex((h) => h === "item");
-    const idxCategory = headers.findIndex((h) => h === "category");
-    const idxSold = headers.findIndex((h) => h === "items sold");
-    const idxGross = headers.findIndex((h) => h.includes("gross"));
-    const out: { name: string; category: string; units_sold: number; gross: number }[] = [];
+      .map((c) => ((c.textContent) || "").trim().toLowerCase());
+    let idxName = -1, idxCategory = -1, idxSold = -1, idxGross = -1;
+    for (let i = 0; i < headers.length; i++) {
+      if (headers[i] === "item") idxName = i;
+      else if (headers[i] === "category") idxCategory = i;
+      else if (headers[i] === "items sold") idxSold = i;
+      else if (headers[i].indexOf("gross") >= 0 && idxGross < 0) idxGross = i;
+    }
+    const out = [];
     const bodyRows = Array.from(target.querySelectorAll("tbody tr"));
     for (const r of bodyRows) {
       const cells = Array.from(r.querySelectorAll("th, td")).map((c) =>
-        ((c as HTMLElement).textContent || "").trim(),
+        ((c.textContent) || "").trim(),
       );
       if (cells.length < 4) continue;
-      const name = cells[idxName] ?? "";
-      // Square renders parent rows AND a "Regular" variant row per item.
-      // The variant row has the SKU in col 2 but blank category — skip
-      // those so we don't double-count.
+      const name = (idxName >= 0 ? cells[idxName] : "") || "";
       if (!name || /^regular$/i.test(name)) continue;
-      const category = idxCategory >= 0 ? cells[idxCategory] ?? "" : "";
-      const sold = idxSold >= 0 ? intToNum(cells[idxSold]) : 0;
-      const gross = idxGross >= 0 ? moneyToNum(cells[idxGross]) : 0;
+      const category = idxCategory >= 0 ? (cells[idxCategory] || "") : "";
+      const soldStr = idxSold >= 0 ? (cells[idxSold] || "") : "";
+      const grossStr = idxGross >= 0 ? (cells[idxGross] || "") : "";
+      const soldM = soldStr.match(intRe);
+      const grossM = grossStr.match(moneyRe);
+      const sold = soldM ? parseInt(soldM[0], 10) : 0;
+      const gross = grossM ? parseFloat(grossM[1].replace(/,/g, "")) : 0;
       if (sold === 0 && gross === 0) continue;
       out.push({ name, category, units_sold: sold, gross });
     }
     out.sort((a, b) => b.gross - a.gross);
     return out;
   });
+  return raw as { name: string; category: string; units_sold: number; gross: number }[];
 }
 
 async function scrapeSalesSummary(page: Page) {
