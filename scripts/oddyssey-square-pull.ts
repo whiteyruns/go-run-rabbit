@@ -501,6 +501,11 @@ async function main() {
       );
       await page.getByText(/Net Sales/i).first().waitFor({ timeout: 20000 }).catch(() => {});
       await page.waitForTimeout(1500);
+      // Re-apply location — navigating fresh to /sales-summary loads
+      // whatever location Square cached server-side, which can be a
+      // different venue from a prior pull.
+      await pickLocation(page, LOCATION_LABEL[venue]).catch(() => {});
+      await page.waitForTimeout(1200);
       const ok = await switchToOpenBarTimeframe(page);
       if (ok) {
         await page.waitForTimeout(2500);
@@ -509,7 +514,7 @@ async function main() {
         openBarWindow = { summary: obSummary, items: obItems };
         console.log(`[square] open-bar window (10pm-12am): net=$${obSummary.net_sales ?? "—"} items=${obItems.length}`);
       } else {
-        console.log(`[square] could not switch to "WM Open Hours" timeframe — skipping window scrape`);
+        console.log(`[square] could not switch to "WM Late Night" timeframe — skipping window scrape`);
       }
     } catch (err) {
       console.log(`[square] open-bar window scrape failed: ${String(err)}`);
