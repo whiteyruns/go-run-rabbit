@@ -1,26 +1,30 @@
 [
   {
-    "id": "short_ribs",
-    "label": "Short Ribs",
-    "aliases": ["short ribs", "short rib", "spare ribs", "ribs"],
-    "menu_groups": ["A", "B", "C"]
-  },
-  {
     "id": "charcuterie",
     "label": "Charcuterie",
     "aliases": ["charcuterie", "charcuterie board"],
-    "menu_groups": ["A"]
+    "menu_groups": ["A"],
+    "delivery_order": 1
   },
   {
     "id": "shrimp_ceviche",
     "label": "Shrimp Ceviche",
     "aliases": ["shrimp ceviche", "shrimp", "ceviche"],
-    "menu_groups": ["A", "B"]
+    "menu_groups": ["A", "B"],
+    "delivery_order": 2
+  },
+  {
+    "id": "short_ribs",
+    "label": "Short Ribs",
+    "aliases": ["short ribs", "short rib", "spare ribs", "ribs"],
+    "menu_groups": ["A", "B", "C"],
+    "delivery_order": 3
   },
   {
     "id": "ube_cheesecake",
     "label": "Ube Cheesecake",
     "aliases": ["ube cheesecake", "ube", "cheesecake"],
-    "menu_groups": ["A", "C"]
+    "menu_groups": ["A", "C"],
+    "delivery_order": 4
   }
 ]

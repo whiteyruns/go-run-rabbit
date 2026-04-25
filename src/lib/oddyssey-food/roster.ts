@@ -1,12 +1,28 @@
 import ticketTypesRaw from "@/data/oddyssey-food/ticket_types.json";
+import menuItemsRaw from "@/data/oddyssey-food/menu_items.json";
 import type { AssignmentsMap, GuestAssignment } from "./assignments";
 import { assignmentKey } from "./assignments";
-import type { DashboardState, FoodAllocation, OrderGroup, TicketType } from "./types";
+import type { DashboardState, FoodAllocation, MenuItem, OrderGroup, TicketType } from "./types";
 
 const TICKET_TYPES = ticketTypesRaw as TicketType[];
 const TICKET_BY_TYPE: Record<string, TicketType> = Object.fromEntries(
   TICKET_TYPES.map((t) => [t.package_type, t])
 );
+
+const MENU_ITEMS = menuItemsRaw as MenuItem[];
+const DELIVERY_ORDER_BY_ID: Record<string, number> = Object.fromEntries(
+  MENU_ITEMS.map((m) => [m.id, m.delivery_order ?? 99])
+);
+
+// Stable sort allocations by course/delivery order. Unknown items sink
+// to the end. Ties preserve original CSV order so we don't reshuffle
+// duplicates needlessly.
+function sortByDelivery(allocations: FoodAllocation[]): FoodAllocation[] {
+  return allocations
+    .map((a, i) => ({ a, i, ord: DELIVERY_ORDER_BY_ID[a.menu_item_id ?? ""] ?? 99 }))
+    .sort((x, y) => x.ord - y.ord || x.i - y.i)
+    .map((x) => x.a);
+}
 
 // One physical row on the roster sheet.
 export interface RosterRow {
@@ -98,9 +114,15 @@ function sliceByPerTicket(
  *   4. None — each allocation becomes its own one-item ticket.
  */
 function groupIntoTickets(
-  allocations: FoodAllocation[],
+  rawAllocations: FoodAllocation[],
   assignment: GuestAssignment,
 ): BuiltTicket[] {
+  // Sort by course delivery order (Charcuterie → Shrimp → Short Ribs →
+  // Ube) before any slicing, so each ticket's items come out in the
+  // order they'll be served. The per-allocation derived bucket path
+  // sorts within each bucket below.
+  const allocations = sortByDelivery(rawAllocations);
+
   // Priority 1: manual multi-type
   const manual = (assignment.package_types ?? []).filter((p) => p && p.count > 0);
   if (manual.length > 0) {
@@ -147,7 +169,9 @@ function groupIntoTickets(
     }
     const out: BuiltTicket[] = [];
     for (const key of order) {
-      const allocs = buckets.get(key)!;
+      // Re-sort each bucket so course order holds within a single
+      // ticket type even when allocations were interleaved in the CSV.
+      const allocs = sortByDelivery(buckets.get(key)!);
       const t = key === "__none__" ? undefined : key;
       out.push(...sliceByPerTicket(allocs, t));
     }

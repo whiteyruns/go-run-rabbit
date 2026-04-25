@@ -22,6 +22,9 @@ export interface MenuItem {
   label: string;
   aliases: string[]; // lowercased ticket_type_name variants that map to this item
   menu_groups: string[];
+  // Course order on the night — Charcuterie first, then Shrimp Ceviche,
+  // Short Ribs, Ube Cheesecake. Drives row order on the roster sheet.
+  delivery_order: number;
 }
 
 // Ticket package rule (mocked SharePoint).
