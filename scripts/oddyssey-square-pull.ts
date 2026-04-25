@@ -194,6 +194,8 @@ async function pickDate(page: Page, slashDate: string) {
   // Reset timeframe to "Reporting day (Default)" — storage state persists
   // the last-selected preset (e.g., WM Late Night from a prior run), and
   // without this reset the first scrape would inherit the wrong window.
+  // Clicking the preset auto-closes the picker, so we re-open before
+  // clicking Today.
   const defaultClicked = await page.evaluate(() => {
     const els = Array.from(document.querySelectorAll("button, li, div, span, a, p"));
     for (const el of els) {
@@ -206,7 +208,16 @@ async function pickDate(page: Page, slashDate: string) {
     return false;
   });
   console.log(`[square] reporting-day default reset: ${defaultClicked}`);
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(700);
+
+  // Re-open the picker — clicking the preset closed it.
+  for (const t of triggers) {
+    if (await t.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await t.click().catch(() => {});
+      break;
+    }
+  }
+  await page.waitForTimeout(600);
 
   const todayBtn = page.getByRole("button", { name: /^today$/i }).first();
   if (await todayBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
