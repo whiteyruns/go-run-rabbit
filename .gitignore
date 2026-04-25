@@ -34,3 +34,6 @@ data/forest-house/run-of-show/
 
 # Square auth state — session cookies, never commit
 data/.square-auth.json
+
+# Square scrape outputs (local only — deployed scraper writes its own)
+data/oddyssey-square/

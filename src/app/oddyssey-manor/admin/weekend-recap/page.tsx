@@ -878,6 +878,16 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
           if (allNight.length === 0) return null;
           const isTequila = (b: string) => /bandido|telsen/i.test(b);
           const obByBrand = new Map(openBar.map((d) => [d.brand, d]));
+          let totalAllNightCost = 0;
+          let totalWindowCost = 0;
+          let anyMissingCost = false;
+          allNight.forEach((d) => {
+            const cpb = costPerBottle(d.brand);
+            if (cpb == null) { anyMissingCost = true; return; }
+            totalAllNightCost += cpb * d.bottles;
+            const ob = obByBrand.get(d.brand);
+            if (ob) totalWindowCost += cpb * ob.bottles;
+          });
           return (
             <div className={styles.openBarItems}>
               <div className={styles.openBarItemsLbl}>Depletion check · Pour Log ↔ Square</div>
@@ -887,6 +897,9 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
                   : entry.champagneBottles.consumed;
                 const delta = (reported ?? 0) - d.bottles;
                 const ob = obByBrand.get(d.brand);
+                const cpb = costPerBottle(d.brand);
+                const allNightCost = cpb != null ? cpb * d.bottles : null;
+                const windowCost = cpb != null && ob ? cpb * ob.bottles : null;
                 return (
                   <div key={d.brand} style={{ paddingTop: 4, paddingBottom: 4 }}>
                     <div className={styles.openBarItemRow}>
@@ -906,6 +919,21 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
                         </span>
                       </span>
                     </div>
+                    {allNightCost != null && (
+                      <div className={styles.openBarItemRow} style={{ paddingLeft: 16, fontSize: 11 }}>
+                        <span className={styles.openBarMuted}>
+                          ↳ cost @ ${cpb!.toFixed(2)}/btl
+                        </span>
+                        <span style={{ color: 'var(--text)' }}>
+                          <strong>{formatMoney(allNightCost)}</strong>
+                          {windowCost != null && (
+                            <span className={styles.openBarMuted}>
+                              {' '}· window {formatMoney(windowCost)}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    )}
                     {ob && (
                       <div className={styles.openBarItemRow} style={{ paddingLeft: 16, fontSize: 11 }}>
                         <span className={styles.openBarMuted}>
@@ -921,6 +949,25 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
                   </div>
                 );
               })}
+              {totalAllNightCost > 0 && (
+                <div
+                  className={styles.openBarItemRow}
+                  style={{ paddingTop: 6, marginTop: 4, borderTop: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  <span><strong>Total product cost (Square)</strong></span>
+                  <span>
+                    <strong>{formatMoney(totalAllNightCost)}</strong>
+                    {totalWindowCost > 0 && (
+                      <span className={styles.openBarMuted}>
+                        {' '}· window {formatMoney(totalWindowCost)}
+                      </span>
+                    )}
+                    {anyMissingCost && (
+                      <span className={styles.openBarMuted}> · partial (cost missing for some brands)</span>
+                    )}
+                  </span>
+                </div>
+              )}
             </div>
           );
         })()}

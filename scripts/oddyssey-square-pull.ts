@@ -128,12 +128,13 @@ async function pickLocation(page: Page, targetLabel: string) {
 }
 
 /**
- * Switch the active reporting timeframe to "WM Open Hours" — Square's
- * pre-configured 10 PM → 12 AM window for the venue. Date must already
- * be set; this just narrows the time-of-day filter.
+ * Switch the active reporting timeframe to "WM Late Night" — Square's
+ * pre-configured 10:00 PM → 12:00 AM (PDT) window. This is the actual
+ * open-bar window. ("WM Open Hours" is misnamed at 10 AM – 12:15 AM,
+ * which is the venue's full operating hours, not the sponsor window.)
+ * Date must already be set; this just narrows the time-of-day filter.
  */
 async function switchToOpenBarTimeframe(page: Page): Promise<boolean> {
-  // Open the date picker (same trigger we use for date)
   const dateBtn = page
     .getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}/ })
     .first();
@@ -144,14 +145,11 @@ async function switchToOpenBarTimeframe(page: Page): Promise<boolean> {
   await dateBtn.click();
   await page.waitForTimeout(900);
 
-  // Locate any element whose visible text contains "WM Open Hours" and
-  // click it. Square's popover may render this as a list item, button,
-  // or just a div — we don't care which.
   const clicked = await page.evaluate(() => {
     const els = Array.from(document.querySelectorAll("button, li, div, span, a"));
     for (const el of els) {
       const t = ((el.textContent) || "").trim();
-      if (t === "WM Open Hours" && (el as HTMLElement).offsetParent !== null) {
+      if (t === "WM Late Night" && (el as HTMLElement).offsetParent !== null) {
         (el as HTMLElement).click();
         return true;
       }
@@ -159,7 +157,7 @@ async function switchToOpenBarTimeframe(page: Page): Promise<boolean> {
     return false;
   });
   if (!clicked) {
-    console.log("[square] open-bar: 'WM Open Hours' option not visible");
+    console.log("[square] open-bar: 'WM Late Night' option not visible");
     await page.keyboard.press("Escape").catch(() => {});
     return false;
   }
