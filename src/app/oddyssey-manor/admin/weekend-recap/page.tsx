@@ -873,34 +873,51 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
           </div>
         )}
         {(() => {
-          const depletions = computeSquareDepletions(noirNight?.squareTopItems);
-          if (depletions.length === 0) return null;
+          const allNight = computeSquareDepletions(noirNight?.squareTopItems);
+          const openBar = computeSquareDepletions(noirNight?.squareOpenBarWindow?.items);
+          if (allNight.length === 0) return null;
           const isTequila = (b: string) => /bandido|telsen/i.test(b);
+          const obByBrand = new Map(openBar.map((d) => [d.brand, d]));
           return (
             <div className={styles.openBarItems}>
-              <div className={styles.openBarItemsLbl}>Depletion check (Square ↔ Pour Log)</div>
-              {depletions.map((d) => {
+              <div className={styles.openBarItemsLbl}>Depletion check · Pour Log ↔ Square</div>
+              {allNight.map((d) => {
                 const reported = isTequila(d.brand)
                   ? entry.tequila.consumed
                   : entry.champagneBottles.consumed;
                 const delta = (reported ?? 0) - d.bottles;
+                const ob = obByBrand.get(d.brand);
                 return (
-                  <div key={d.brand} className={styles.openBarItemRow}>
-                    <span>
-                      <strong>{d.brand}</strong>
-                      <span className={styles.openBarMuted}>
-                        {' '}· {d.totalUnits} {d.unitLabel}{d.totalUnits === 1 ? '' : 's'} rung
+                  <div key={d.brand} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                    <div className={styles.openBarItemRow}>
+                      <span>
+                        <strong>{d.brand}</strong>
+                        <span className={styles.openBarMuted}>
+                          {' '}all night · {d.totalUnits} {d.unitLabel}{d.totalUnits === 1 ? '' : 's'}
+                        </span>
                       </span>
-                    </span>
-                    <span>
-                      <strong>{d.bottles.toFixed(1)} btl</strong>{' '}
-                      <span className={styles.openBarMuted}>
-                        (Pour Log: {(reported ?? 0).toFixed(1)} ·{' '}
-                        <span style={{ color: delta > 0 ? '#d4a574' : delta < 0 ? '#27ae60' : 'inherit' }}>
-                          {delta >= 0 ? '+' : ''}{delta.toFixed(1)}
-                        </span>)
+                      <span>
+                        <strong>{d.bottles.toFixed(1)} btl</strong>{' '}
+                        <span className={styles.openBarMuted}>
+                          (Pour Log {(reported ?? 0).toFixed(1)} ·{' '}
+                          <span style={{ color: delta > 0 ? '#d4a574' : delta < 0 ? '#27ae60' : 'inherit' }}>
+                            {delta >= 0 ? '+' : ''}{delta.toFixed(1)}
+                          </span>)
+                        </span>
                       </span>
-                    </span>
+                    </div>
+                    {ob && (
+                      <div className={styles.openBarItemRow} style={{ paddingLeft: 16, fontSize: 11 }}>
+                        <span className={styles.openBarMuted}>
+                          ↳ window 10pm–12am · {ob.totalUnits} {ob.unitLabel}{ob.totalUnits === 1 ? '' : 's'}
+                        </span>
+                        <span className={styles.openBarMuted}>
+                          {ob.bottles.toFixed(1)} btl
+                          {' · '}
+                          {((ob.totalUnits / Math.max(d.totalUnits, 1)) * 100).toFixed(0)}% in window
+                        </span>
+                      </div>
+                    )}
                   </div>
                 );
               })}

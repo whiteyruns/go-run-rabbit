@@ -65,7 +65,14 @@ export interface VenueNight {
   xlsxBarNet?: number | null;
   // Top 5 items from Square's Item Sales report for this night. Name
   // pattern like "…Yankee Repo" / "…Rep" flags a brand-rep activation.
-  squareTopItems?: { name: string; gross: number }[];
+  squareTopItems?: { name: string; gross: number; units_sold?: number }[];
+  // Open-bar window (10 PM-12 AM) slice — Square's "WM Open Hours"
+  // pre-set timeframe. Set when the second scrape pass succeeded.
+  squareOpenBarWindow?: {
+    net_sales: number | null;
+    gross_sales: number | null;
+    items: { name: string; gross: number; units_sold: number }[];
+  } | null;
 }
 
 /**
@@ -504,6 +511,39 @@ export async function loadLiveTopItems(
 }
 
 /**
+ * Read the 10pm-12am open-bar window slice from the Square scrape.
+ * Returns null when the second-pass scrape didn't run (older files
+ * or when "WM Open Hours" timeframe wasn't found in the picker).
+ */
+export async function loadLiveOpenBarWindow(
+  venue: Venue,
+  dateISO: string,
+): Promise<{
+  net_sales: number | null;
+  gross_sales: number | null;
+  items: { name: string; gross: number; units_sold: number }[];
+} | null> {
+  try {
+    const file = path.join(SQUARE_DIR, venue, `${dateISO}.json`);
+    const raw = await fs.readFile(file, 'utf8');
+    const parsed = JSON.parse(raw) as {
+      open_bar_window?: {
+        summary?: { net_sales?: number | null; gross_sales?: number | null };
+        items?: { name: string; gross: number; units_sold: number }[];
+      } | null;
+    };
+    if (!parsed.open_bar_window) return null;
+    return {
+      net_sales: parsed.open_bar_window.summary?.net_sales ?? null,
+      gross_sales: parsed.open_bar_window.summary?.gross_sales ?? null,
+      items: parsed.open_bar_window.items ?? [],
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Detect a brand-rep activation in the Top Items. Returns the matching
  * item row when ops has tagged a night with a rep-specific SKU (e.g.,
  * "El Bandido Yankee Repo"). Heuristic: name contains "rep" / "yankee"
@@ -629,11 +669,12 @@ async function synthesizeNightFromLive(
 export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
   const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
     if (!n) return null;
-    const [liveRev, liveCounts, liveBar, liveTopItems] = await Promise.all([
+    const [liveRev, liveCounts, liveBar, liveTopItems, liveOpenBar] = await Promise.all([
       loadLiveNetTicketRev(n.venue, n.date),
       loadLiveTicketCounts(n.venue, n.date),
       loadLiveBarNet(n.venue, n.date),
       loadLiveTopItems(n.venue, n.date),
+      loadLiveOpenBarWindow(n.venue, n.date),
     ]);
     const ticketsIssued = n.ticketsIssued ?? liveCounts.issued;
     const ticketsRedeemed = n.ticketsRedeemed ?? liveCounts.redeemed;
@@ -656,6 +697,7 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
       barNetSource,
       xlsxBarNet: n.barNet,
       squareTopItems: liveTopItems ?? undefined,
+      squareOpenBarWindow: liveOpenBar,
     };
     if (liveRev == null) {
       return { ...base, netTicketRevSource: 'xlsx' };
