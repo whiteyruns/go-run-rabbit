@@ -169,9 +169,11 @@ async function switchToOpenBarTimeframe(page: Page): Promise<boolean> {
 
 async function pickDate(page: Page, slashDate: string) {
   // New strategy — bypass the two-input range picker:
-  //   1. Open date picker, click "Today" preset → single-day range.
-  //   2. Close picker.
-  //   3. Click "Select previous date interval" N times to step backwards
+  //   1. Open date picker, click "Reporting day (Default)" to clear any
+  //      stale timeframe preset that storage state may carry between runs.
+  //   2. Click "Today" preset → single-day range at default reporting day.
+  //   3. Close picker.
+  //   4. Click "Select previous date interval" N times to step backwards
   //      to the target day. In Reporting-day mode each arrow = -1 day.
   const triggers = [
     page.getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}/ }).first(),
@@ -188,6 +190,23 @@ async function pickDate(page: Page, slashDate: string) {
   console.log(`[square] date picker opened: ${opened}`);
   if (!opened) return;
   await page.waitForTimeout(600);
+
+  // Reset timeframe to "Reporting day (Default)" — storage state persists
+  // the last-selected preset (e.g., WM Late Night from a prior run), and
+  // without this reset the first scrape would inherit the wrong window.
+  const defaultClicked = await page.evaluate(() => {
+    const els = Array.from(document.querySelectorAll("button, li, div, span, a, p"));
+    for (const el of els) {
+      const t = ((el.textContent) || "").trim();
+      if (t === "Reporting day (Default)" && (el as HTMLElement).offsetParent !== null) {
+        (el as HTMLElement).click();
+        return true;
+      }
+    }
+    return false;
+  });
+  console.log(`[square] reporting-day default reset: ${defaultClicked}`);
+  await page.waitForTimeout(500);
 
   const todayBtn = page.getByRole("button", { name: /^today$/i }).first();
   if (await todayBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
