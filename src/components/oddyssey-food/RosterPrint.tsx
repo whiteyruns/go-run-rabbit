@@ -157,7 +157,7 @@ const printStyles = `
   .rp-main tbody td {
     padding: 4px 8px; border: 1px solid #000;
     font-size: 11px; line-height: 1.35;
-    color: #000;
+    color: #000; font-weight: 600;
   }
   .rp-c-num { text-align: center; font-weight: 700; font-size: 12px; }
 
