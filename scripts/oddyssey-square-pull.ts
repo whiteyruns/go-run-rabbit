@@ -127,6 +127,36 @@ async function pickLocation(page: Page, targetLabel: string) {
   await page.waitForTimeout(400);
 }
 
+/**
+ * Switch the active reporting timeframe to "WM Open Hours" — Square's
+ * pre-configured 10 PM → 12 AM window for the venue. Date must already
+ * be set; this just narrows the time-of-day filter.
+ */
+async function switchToOpenBarTimeframe(page: Page): Promise<boolean> {
+  // Open the date picker (same trigger we use for date)
+  const dateBtn = page
+    .getByRole("button", { name: /^\d{1,2}\/\d{1,2}\/\d{4}/ })
+    .first();
+  if (!(await dateBtn.isVisible({ timeout: 3000 }).catch(() => false))) return false;
+  await dateBtn.click();
+  await page.waitForTimeout(700);
+
+  // Look for the "WM Open Hours" entry inside the popover. Square
+  // renders custom timeframes as buttons or list items.
+  const entry = page
+    .getByText(/^\s*WM Open Hours\s*$/)
+    .first();
+  if (!(await entry.isVisible({ timeout: 3000 }).catch(() => false))) {
+    await page.keyboard.press("Escape").catch(() => {});
+    return false;
+  }
+  await entry.click();
+  await page.waitForTimeout(800);
+  await page.keyboard.press("Escape").catch(() => {});
+  await page.waitForTimeout(800);
+  return true;
+}
+
 async function pickDate(page: Page, slashDate: string) {
   // New strategy — bypass the two-input range picker:
   //   1. Open date picker, click "Today" preset → single-day range.
@@ -418,6 +448,33 @@ async function main() {
     console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"} items=${items.length} (top5+rest)`);
     for (const it of topItems) console.log(`  • ${it.name}: $${it.gross.toFixed(2)}`);
 
+    // Second pass — switch reporting timeframe to "WM Open Hours"
+    // (Square preset = 10:00 PM – 12:00 AM PDT) and re-scrape so we
+    // can isolate the open-bar window's volume vs the full day.
+    let openBarWindow: {
+      summary: typeof data;
+      items: typeof items;
+    } | null = null;
+    try {
+      const ok = await switchToOpenBarTimeframe(page);
+      if (ok) {
+        await page.waitForTimeout(2000);
+        await page.goto(
+          "https://app.squareup.com/dashboard/sales/reports/sales-summary",
+          { waitUntil: "domcontentloaded" },
+        );
+        await page.waitForTimeout(2000);
+        const obSummary = await scrapeSalesSummary(page);
+        const obItems = await scrapeFullItems(page, LOCATION_LABEL[venue]);
+        openBarWindow = { summary: obSummary, items: obItems };
+        console.log(`[square] open-bar window (10pm-12am): net=$${obSummary.net_sales ?? "—"} items=${obItems.length}`);
+      } else {
+        console.log(`[square] could not switch to "WM Open Hours" timeframe — skipping window scrape`);
+      }
+    } catch (err) {
+      console.log(`[square] open-bar window scrape failed: ${String(err)}`);
+    }
+
     const outPath = path.join(outDir, `${date}.json`);
     await fs.writeFile(
       outPath,
@@ -429,6 +486,7 @@ async function main() {
           ...data,
           top_items: topItems,
           items,
+          open_bar_window: openBarWindow,
           filter_state_at_scrape: filterState,
           source: { url, reporting_day_label: data.reporting_day_label },
         },
