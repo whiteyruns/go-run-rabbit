@@ -14,6 +14,7 @@ import HighlightsEditor from './HighlightsEditor';
 import {
   buildWoWSeries,
   champagnePoursFromBottles,
+  computeSquareDepletions,
   detectRepItem,
   enrichWeekend,
   formatInt,
@@ -871,6 +872,41 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
             })}
           </div>
         )}
+        {(() => {
+          const depletions = computeSquareDepletions(noirNight?.squareTopItems);
+          if (depletions.length === 0) return null;
+          const isTequila = (b: string) => /bandido|telsen/i.test(b);
+          return (
+            <div className={styles.openBarItems}>
+              <div className={styles.openBarItemsLbl}>Depletion check (Square ↔ Pour Log)</div>
+              {depletions.map((d) => {
+                const reported = isTequila(d.brand)
+                  ? entry.tequila.consumed
+                  : entry.champagneBottles.consumed;
+                const delta = (reported ?? 0) - d.bottles;
+                return (
+                  <div key={d.brand} className={styles.openBarItemRow}>
+                    <span>
+                      <strong>{d.brand}</strong>
+                      <span className={styles.openBarMuted}>
+                        {' '}· {d.totalUnits} {d.unitLabel}{d.totalUnits === 1 ? '' : 's'} rung
+                      </span>
+                    </span>
+                    <span>
+                      <strong>{d.bottles.toFixed(1)} btl</strong>{' '}
+                      <span className={styles.openBarMuted}>
+                        (Pour Log: {(reported ?? 0).toFixed(1)} ·{' '}
+                        <span style={{ color: delta > 0 ? '#d4a574' : delta < 0 ? '#27ae60' : 'inherit' }}>
+                          {delta >= 0 ? '+' : ''}{delta.toFixed(1)}
+                        </span>)
+                      </span>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
         {entry.notes && <div className={styles.openBarNotes}>&ldquo;{entry.notes}&rdquo;</div>}
       </div>
     );

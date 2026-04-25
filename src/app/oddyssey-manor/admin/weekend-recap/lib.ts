@@ -479,18 +479,25 @@ export async function loadLiveBarNet(
   }
 }
 
-/** Read Top Items from the same Square scrape file. */
+/**
+ * Read items from the Square scrape file. Newer scrapes carry a full
+ * `items` array (with units_sold + category); older scrapes only have
+ * `top_items` (name + gross). Prefer the full list, fall back to top.
+ */
 export async function loadLiveTopItems(
   venue: Venue,
   dateISO: string,
-): Promise<{ name: string; gross: number }[] | null> {
+): Promise<{ name: string; gross: number; units_sold?: number }[] | null> {
   try {
     const file = path.join(SQUARE_DIR, venue, `${dateISO}.json`);
     const raw = await fs.readFile(file, 'utf8');
-    const parsed = JSON.parse(raw) as { top_items?: { name: string; gross: number }[] };
-    return Array.isArray(parsed.top_items) && parsed.top_items.length > 0
-      ? parsed.top_items
-      : null;
+    const parsed = JSON.parse(raw) as {
+      items?: { name: string; gross: number; units_sold: number; category?: string }[];
+      top_items?: { name: string; gross: number }[];
+    };
+    if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items;
+    if (Array.isArray(parsed.top_items) && parsed.top_items.length > 0) return parsed.top_items;
+    return null;
   } catch {
     return null;
   }
@@ -508,6 +515,73 @@ export function detectRepItem(
   if (!items) return null;
   const re = /\b(rep|repo|yankee|ambassador|on.premise|promo\s+rep)\b/i;
   return items.find((i) => re.test(i.name)) ?? null;
+}
+
+/**
+ * Square-derived bottle depletion. Math is now grounded in actual
+ * units_sold from the Item Sales table — no price-inference:
+ *   ounces  = units_sold × pour_size
+ *   bottles = ounces / 25.36   (750ml = 25.36 fl oz)
+ *
+ * Multiple SKUs per brand are summed (e.g., if ops adds an "El Bandido
+ * Day Pour" alongside "El Bandido Yankee Repo", both count toward
+ * Bandido's bottle total).
+ */
+const BRAND_PROFILES: {
+  key: string;
+  brand: string;
+  pattern: RegExp;
+  pourSizeOz: number;
+  unitLabel: string;
+}[] = [
+  { key: 'bandido', brand: 'El Bandido', pattern: /bandido/i,                  pourSizeOz: 1.5, unitLabel: 'cocktail' },
+  { key: 'telsen',  brand: 'Telsen',     pattern: /telson|telsen/i,             pourSizeOz: 1.5, unitLabel: 'cocktail' },
+  { key: 'ku',      brand: 'KU',         pattern: /devant.*ku|brut.*ku|^\s*ku\b/i, pourSizeOz: 2,   unitLabel: 'flute' },
+];
+
+const FL_OZ_PER_750ML = 25.36;
+
+export interface SquareDepletion {
+  brand: string;
+  skus: { name: string; units_sold: number; gross: number }[];
+  unitLabel: string;
+  pourSizeOz: number;
+  totalUnits: number;
+  totalGross: number;
+  bottles: number;
+}
+
+export function computeSquareDepletions(
+  items: { name: string; gross: number; units_sold?: number }[] | null | undefined,
+): SquareDepletion[] {
+  if (!items) return [];
+  const byBrand = new Map<string, SquareDepletion>();
+  for (const item of items) {
+    const profile = BRAND_PROFILES.find((p) => p.pattern.test(item.name));
+    if (!profile) continue;
+    const units = item.units_sold ?? 0;
+    if (units <= 0 && item.gross <= 0) continue;
+    let cur = byBrand.get(profile.key);
+    if (!cur) {
+      cur = {
+        brand: profile.brand,
+        skus: [],
+        unitLabel: profile.unitLabel,
+        pourSizeOz: profile.pourSizeOz,
+        totalUnits: 0,
+        totalGross: 0,
+        bottles: 0,
+      };
+      byBrand.set(profile.key, cur);
+    }
+    cur.skus.push({ name: item.name, units_sold: units, gross: item.gross });
+    cur.totalUnits += units;
+    cur.totalGross += item.gross;
+  }
+  Array.from(byBrand.values()).forEach((d) => {
+    d.bottles = (d.totalUnits * d.pourSizeOz) / FL_OZ_PER_750ML;
+  });
+  return Array.from(byBrand.values()).sort((a, b) => b.totalGross - a.totalGross);
 }
 
 /**

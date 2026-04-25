@@ -186,19 +186,18 @@ async function pickDate(page: Page, slashDate: string) {
 }
 
 /**
- * Top Items live on the Item Sales report page, not the Sales Summary
- * page. Navigates to /dashboard/sales/reports/item-sales (date + location
- * filters persist between report pages) and scrapes the "Top 5 Items:
- * Gross Sales" legend. Items named like "El Bandido Yankee Repo" are
- * the rep-activation fingerprint.
+ * Pull the FULL Item Sales table with per-item units_sold, gross, and
+ * category. Lives at /dashboard/sales/reports/item-sales (date +
+ * location filters persist between report pages). Also re-applies the
+ * location filter because navigating between report pages can reset it.
+ *
+ * Returns every row, sorted by gross desc. The top 5 by gross are still
+ * computable from this list; we're just storing more data.
  */
-async function scrapeTopItems(
+async function scrapeFullItems(
   page: Page,
   locationLabel: string,
-): Promise<{ name: string; gross: number }[]> {
-  // "networkidle" never resolves on this page (Square long-polls in
-  // the background). Use domcontentloaded + explicit wait for the
-  // "Top 5 Items" text.
+): Promise<{ name: string; category: string; units_sold: number; gross: number }[]> {
   await page.goto("https://app.squareup.com/dashboard/sales/reports/item-sales", {
     waitUntil: "domcontentloaded",
     timeout: 30000,
@@ -215,52 +214,61 @@ async function scrapeTopItems(
   await pickLocation(page, locationLabel).catch(() => {});
   await page.waitForTimeout(1800);
 
+  // Scroll to ensure all lazy table rows render
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForTimeout(800);
+
   return await page.evaluate(() => {
-    const out: { name: string; gross: number }[] = [];
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    let headerEl: HTMLElement | null = null;
-    let node = walker.nextNode();
-    while (node) {
-      const text = (node.nodeValue || "").trim();
-      if (/^top\s*\d*\s*items?:?\s*gross/i.test(text)) {
-        headerEl = node.parentElement;
+    const moneyToNum = (s: string): number => {
+      const m = s.match(/-?\$?\s*([0-9,]+(?:\.[0-9]{1,2})?)/);
+      if (!m) return 0;
+      const n = parseFloat(m[1].replace(/,/g, ""));
+      return Number.isFinite(n) ? n : 0;
+    };
+    const intToNum = (s: string): number => {
+      const m = s.match(/-?\d+/);
+      if (!m) return 0;
+      const n = parseInt(m[0], 10);
+      return Number.isFinite(n) ? n : 0;
+    };
+    // Find the items table — header has Item / Items Sold / Gross Sales
+    const tables = Array.from(document.querySelectorAll("table"));
+    let target: HTMLTableElement | null = null;
+    for (const t of tables) {
+      const headers = Array.from(t.querySelectorAll("thead th, thead td"))
+        .map((c) => ((c as HTMLElement).textContent || "").trim().toLowerCase());
+      const text = headers.join("|");
+      if (text.includes("item") && text.includes("items sold") && text.includes("gross")) {
+        target = t as HTMLTableElement;
         break;
       }
-      node = walker.nextNode();
     }
-    if (!headerEl) return [];
-
-    // Walk up until we find a container that encloses both the header
-    // and the legend rows (name + money pairs).
-    let container: HTMLElement | null = headerEl;
-    const moneyRe = /^\$-?[0-9,]+(?:\.[0-9]{2})?$/;
-    while (container) {
-      const texts: string[] = [];
-      const w = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-      let n = w.nextNode();
-      while (n) {
-        const t = (n.nodeValue || "").trim();
-        if (t) texts.push(t);
-        n = w.nextNode();
-      }
-      const pairs: { name: string; gross: number }[] = [];
-      for (let i = 0; i < texts.length - 1; i++) {
-        const name = texts[i];
-        const amount = texts[i + 1];
-        if (
-          !moneyRe.test(name) &&
-          name.length >= 2 &&
-          name.length <= 60 &&
-          !/top|gross|items?/i.test(name) &&
-          moneyRe.test(amount)
-        ) {
-          const gross = parseFloat(amount.replace(/[$,]/g, ""));
-          if (Number.isFinite(gross)) pairs.push({ name, gross });
-        }
-      }
-      if (pairs.length >= 2) return pairs.slice(0, 10);
-      container = container.parentElement;
+    if (!target) return [];
+    const headers = Array.from(target.querySelectorAll("thead th, thead td"))
+      .map((c) => ((c as HTMLElement).textContent || "").trim().toLowerCase());
+    const idxName = headers.findIndex((h) => h === "item");
+    const idxCategory = headers.findIndex((h) => h === "category");
+    const idxSold = headers.findIndex((h) => h === "items sold");
+    const idxGross = headers.findIndex((h) => h.includes("gross"));
+    const out: { name: string; category: string; units_sold: number; gross: number }[] = [];
+    const bodyRows = Array.from(target.querySelectorAll("tbody tr"));
+    for (const r of bodyRows) {
+      const cells = Array.from(r.querySelectorAll("th, td")).map((c) =>
+        ((c as HTMLElement).textContent || "").trim(),
+      );
+      if (cells.length < 4) continue;
+      const name = cells[idxName] ?? "";
+      // Square renders parent rows AND a "Regular" variant row per item.
+      // The variant row has the SKU in col 2 but blank category — skip
+      // those so we don't double-count.
+      if (!name || /^regular$/i.test(name)) continue;
+      const category = idxCategory >= 0 ? cells[idxCategory] ?? "" : "";
+      const sold = idxSold >= 0 ? intToNum(cells[idxSold]) : 0;
+      const gross = idxGross >= 0 ? moneyToNum(cells[idxGross]) : 0;
+      if (sold === 0 && gross === 0) continue;
+      out.push({ name, category, units_sold: sold, gross });
     }
+    out.sort((a, b) => b.gross - a.gross);
     return out;
   });
 }
@@ -407,9 +415,11 @@ async function main() {
     console.log(`[square] top buttons: ${JSON.stringify(filterState.all_top_buttons)}`);
 
     const data = await scrapeSalesSummary(page);
-    const topItems = await scrapeTopItems(page, LOCATION_LABEL[venue]);
-    console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"} top_items=${topItems.length}`);
-    for (const it of topItems.slice(0, 5)) console.log(`  • ${it.name}: $${it.gross.toFixed(2)}`);
+    const items = await scrapeFullItems(page, LOCATION_LABEL[venue]);
+    // Top 5 by gross is just the head of the sorted full list.
+    const topItems = items.slice(0, 5).map(({ name, gross }) => ({ name, gross }));
+    console.log(`[square] scraped: net=$${data.net_sales ?? "—"} gross=$${data.gross_sales ?? "—"} items=${items.length} (top5+rest)`);
+    for (const it of topItems) console.log(`  • ${it.name}: $${it.gross.toFixed(2)}`);
 
     const outPath = path.join(outDir, `${date}.json`);
     await fs.writeFile(
@@ -421,6 +431,7 @@ async function main() {
           pulled_at: new Date().toISOString(),
           ...data,
           top_items: topItems,
+          items,
           filter_state_at_scrape: filterState,
           source: { url, reporting_day_label: data.reporting_day_label },
         },
