@@ -1,5 +1,5 @@
 import ticketTypesRaw from "@/data/oddyssey-food/ticket_types.json";
-import type { AssignmentsMap } from "./assignments";
+import type { AssignmentsMap, GuestAssignment } from "./assignments";
 import { assignmentKey } from "./assignments";
 import type { DashboardState, FoodAllocation, OrderGroup, TicketType } from "./types";
 
@@ -60,28 +60,102 @@ function formatDateHeader(sessionDate: string): string {
   return `MANOR ${weekday} ${month} ${ordinal(d.getDate())}`;
 }
 
+// One ticket on the roster — its allocations and the package type those
+// allocations belong to (so the row builder can label TYPE per ticket
+// instead of per guest).
+interface BuiltTicket {
+  packageType: string | undefined;
+  allocations: FoodAllocation[];
+}
+
+function sliceByPerTicket(
+  allocations: FoodAllocation[],
+  packageType: string | undefined,
+): BuiltTicket[] {
+  const tt = packageType ? TICKET_BY_TYPE[packageType] : undefined;
+  const perTicket = tt?.included_items ?? 1;
+  if (perTicket <= 1) {
+    return allocations.map((a) => ({ packageType, allocations: [a] }));
+  }
+  const out: BuiltTicket[] = [];
+  for (let i = 0; i < allocations.length; i += perTicket) {
+    out.push({ packageType, allocations: allocations.slice(i, i + perTicket) });
+  }
+  return out;
+}
+
 /**
- * Group a guest's food allocations into tickets based on their assigned
- * package_type. Each ticket gets N items (1 for Explorer, 3 for Dinner, etc.).
- * If no package_type is set, every food item becomes its own "ticket" (#).
+ * Group a guest's food allocations into tickets. Resolution priority:
+ *   1. Manual `assignment.package_types` — explicit list of {type, count}.
+ *      Slice allocations sequentially: type X for first count×included
+ *      items, then type Y, etc. This handles the multi-experience case
+ *      (Amanda books 1 Dinner Guest + 5 Explorers).
+ *   2. Per-allocation `derived_package_type` (set during normalization
+ *      from the parent admission rows). Bucket allocations by their own
+ *      derived type, then slice each bucket by `included_items`.
+ *   3. Legacy whole-guest `assignment.package_type` — single type for
+ *      every allocation.
+ *   4. None — each allocation becomes its own one-item ticket.
  */
 function groupIntoTickets(
   allocations: FoodAllocation[],
-  packageType?: string
-): FoodAllocation[][] {
-  if (!packageType) {
-    return allocations.map((a) => [a]);
+  assignment: GuestAssignment,
+): BuiltTicket[] {
+  // Priority 1: manual multi-type
+  const manual = (assignment.package_types ?? []).filter((p) => p && p.count > 0);
+  if (manual.length > 0) {
+    const out: BuiltTicket[] = [];
+    let cursor = 0;
+    for (const p of manual) {
+      const tt = TICKET_BY_TYPE[p.type];
+      const perTicket = tt?.included_items ?? 1;
+      const totalItems = perTicket * p.count;
+      const slice = allocations.slice(cursor, cursor + totalItems);
+      cursor += totalItems;
+      // Generate `count` tickets of `perTicket` items each (last one may
+      // be short if the slice ran out — preserves visibility of the gap).
+      for (let i = 0; i < p.count; i++) {
+        const ticketAllocs = slice.slice(i * perTicket, (i + 1) * perTicket);
+        if (ticketAllocs.length === 0) break;
+        out.push({ packageType: p.type, allocations: ticketAllocs });
+      }
+    }
+    // Trailing allocations that didn't fit into the manual breakdown go
+    // into single-item tickets so they're still visible on the sheet.
+    if (cursor < allocations.length) {
+      for (const a of allocations.slice(cursor)) {
+        out.push({ packageType: undefined, allocations: [a] });
+      }
+    }
+    return out;
   }
-  const tt = TICKET_BY_TYPE[packageType];
-  const perTicket = tt?.included_items ?? 1;
-  if (perTicket <= 1) return allocations.map((a) => [a]);
 
-  // Split sequentially: first N items = ticket 1, next N = ticket 2, etc.
-  const tickets: FoodAllocation[][] = [];
-  for (let i = 0; i < allocations.length; i += perTicket) {
-    tickets.push(allocations.slice(i, i + perTicket));
+  // Priority 2: per-allocation derived
+  const hasDerived = allocations.some((a) => a.derived_package_type);
+  if (hasDerived) {
+    // Preserve the order in which derived types first appear so tickets
+    // come out in a predictable sequence.
+    const order: string[] = [];
+    const buckets = new Map<string, FoodAllocation[]>();
+    for (const a of allocations) {
+      const key = a.derived_package_type ?? "__none__";
+      if (!buckets.has(key)) {
+        buckets.set(key, []);
+        order.push(key);
+      }
+      buckets.get(key)!.push(a);
+    }
+    const out: BuiltTicket[] = [];
+    for (const key of order) {
+      const allocs = buckets.get(key)!;
+      const t = key === "__none__" ? undefined : key;
+      out.push(...sliceByPerTicket(allocs, t));
+    }
+    return out;
   }
-  return tickets;
+
+  // Priority 3 + 4: whole-guest type or none
+  return sliceByPerTicket(allocations, assignment.package_type);
 }
 
 function timeLabel(iso: string): string {
@@ -145,18 +219,20 @@ export function buildRoster(
       const g = groups[gi];
       const key = assignmentKey(g.buyer_email, g.session_iso);
       const a = assignments[key] ?? {};
-      const tt = a.package_type ? TICKET_BY_TYPE[a.package_type] : undefined;
 
       const customerNote = g.customer_note ?? "";
-      // VIP = Ultimate tier either from manual assignment or derived
+      // VIP = Ultimate tier from any source: manual whole-guest, manual
+      // multi-type list, or derived from CSV.
+      const manualTypes = (a.package_types ?? []).map((p) => p.type);
       const isVip =
         a.package_type === "ultimate" ||
+        manualTypes.includes("ultimate") ||
         (g.derived_package_types ?? []).includes("ultimate");
       // Walk-up = any allocation has ticket_state === "walkup"
       const isWalkup = g.allocations.some((al) => al.ticket_state === "walkup");
 
       // Sort within a guest: by raw ticket item order in CSV (stable already)
-      const tickets = groupIntoTickets(g.allocations, a.package_type);
+      const tickets = groupIntoTickets(g.allocations, a);
       const guestRowStart = rows.length;
 
       for (let ti = 0; ti < tickets.length; ti++) {
@@ -164,13 +240,18 @@ export function buildRoster(
         ticketSeq += 1;
         currentBanding = currentBanding === "a" ? "b" : "a";
 
-        for (let ii = 0; ii < ticket.length; ii++) {
-          const alloc = ticket[ii];
+        const ticketTT = ticket.packageType ? TICKET_BY_TYPE[ticket.packageType] : undefined;
+        const ticketTypeLabel =
+          ticketTT?.short_label ??
+          (ticket.packageType ? ticket.packageType.toUpperCase() : "—");
+
+        for (let ii = 0; ii < ticket.allocations.length; ii++) {
+          const alloc = ticket.allocations[ii];
           rows.push({
             location: a.location ?? "",
             ticket_number: ii === 0 ? ticketSeq : null,
-            type_label: tt?.short_label ?? (a.package_type ? a.package_type.toUpperCase() : "—"),
-            package_type: a.package_type ?? null,
+            type_label: ticketTypeLabel,
+            package_type: ticket.packageType ?? null,
             time_label: timeLabel(alloc.session_iso),
             name: alloc.buyer_name,
             food: alloc.menu_item_label,

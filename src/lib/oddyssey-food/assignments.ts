@@ -16,9 +16,19 @@ export const LOCATIONS: string[] = [
   "DINNER TABLE",
 ];
 
+export interface PackageAssignment {
+  type: string; // matches TicketType.package_type
+  count: number; // number of tickets of this type
+}
+
 export interface GuestAssignment {
   location?: string;
-  package_type?: string; // matches TicketType.package_type
+  // Legacy single type — still respected when package_types is empty.
+  // New code paths should prefer package_types.
+  package_type?: string;
+  // Multi-type override: e.g., [{type: "dinner_guest", count: 1}, {type: "explorer", count: 5}].
+  // Used when one buyer purchased multiple ticket types in one session.
+  package_types?: PackageAssignment[];
 }
 
 export type AssignmentsMap = Record<string, GuestAssignment>;

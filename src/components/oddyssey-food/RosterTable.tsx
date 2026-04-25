@@ -1,9 +1,16 @@
 "use client";
 
 import { getMenuCatalog } from "@/lib/oddyssey-food/normalizer";
-import { LOCATIONS, type AssignmentsMap, assignmentKey, updateAssignment } from "@/lib/oddyssey-food/assignments";
+import {
+  LOCATIONS,
+  type AssignmentsMap,
+  type PackageAssignment,
+  assignmentKey,
+  updateAssignment,
+} from "@/lib/oddyssey-food/assignments";
 import { getTicketTypes } from "@/lib/oddyssey-food/roster";
 import type { RosterSection } from "@/lib/oddyssey-food/roster";
+import type { TicketType } from "@/lib/oddyssey-food/types";
 
 interface Props {
   section: RosterSection;
@@ -33,8 +40,34 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
   }
 
   function updatePackage(buyerEmail: string, sessionIso: string, pkg: string) {
-    const next = updateAssignment(buyerEmail, sessionIso, { package_type: pkg || undefined });
+    // Clear any multi-type override when picking a single type — the
+    // single dropdown is the source of truth in that mode.
+    const next = updateAssignment(buyerEmail, sessionIso, {
+      package_type: pkg || undefined,
+      package_types: undefined,
+    });
     onAssignmentsChange(next);
+  }
+
+  function updatePackageTypes(
+    buyerEmail: string,
+    sessionIso: string,
+    types: PackageAssignment[] | undefined,
+  ) {
+    const next = updateAssignment(buyerEmail, sessionIso, {
+      package_types: types && types.length > 0 ? types : undefined,
+      // Clear legacy single field so there's only one source of truth.
+      package_type: undefined,
+    });
+    onAssignmentsChange(next);
+  }
+
+  // Count allocations per (buyer, session) so the editor can show a
+  // "X used / Y total" hint and validate the split.
+  const totalItemsByGuest = new Map<string, number>();
+  for (const r of section.rows) {
+    const k = assignmentKey(r.buyer_email, r.session_iso);
+    totalItemsByGuest.set(k, (totalItemsByGuest.get(k) ?? 0) + 1);
   }
 
   // Pre-compute which rows should be visible under the search filter.
@@ -125,16 +158,13 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
                 <td className="rc-num">{row.ticket_number ?? ""}</td>
                 <td className="rc-type">
                   {isFirst ? (
-                    <select
-                      value={a.package_type ?? ""}
-                      onChange={(e) => updatePackage(row.buyer_email, row.session_iso, e.target.value)}
-                      className="rr-select"
-                    >
-                      <option value="">—</option>
-                      {ticketTypes.map((t) => (
-                        <option key={t.package_type} value={t.package_type}>{t.short_label}</option>
-                      ))}
-                    </select>
+                    <PackageEditor
+                      assignment={a}
+                      ticketTypes={ticketTypes}
+                      totalItems={totalItemsByGuest.get(key) ?? 0}
+                      onSetSingle={(pkg) => updatePackage(row.buyer_email, row.session_iso, pkg)}
+                      onSetMulti={(list) => updatePackageTypes(row.buyer_email, row.session_iso, list)}
+                    />
                   ) : (
                     <span style={{ color: "var(--text-muted)" }}>{row.type_label}</span>
                   )}
@@ -170,6 +200,137 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
           )}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+// ─── Package editor (single dropdown ↔ multi-type split) ─────────────────
+
+interface PackageEditorProps {
+  assignment: { package_type?: string; package_types?: PackageAssignment[] };
+  ticketTypes: TicketType[];
+  totalItems: number;
+  onSetSingle: (packageType: string) => void;
+  onSetMulti: (list: PackageAssignment[] | undefined) => void;
+}
+
+function itemsRequired(list: PackageAssignment[], byType: Record<string, TicketType>): number {
+  return list.reduce((sum, p) => {
+    const tt = byType[p.type];
+    return sum + (tt?.included_items ?? 1) * Math.max(0, p.count);
+  }, 0);
+}
+
+function PackageEditor({
+  assignment,
+  ticketTypes,
+  totalItems,
+  onSetSingle,
+  onSetMulti,
+}: PackageEditorProps) {
+  const byType: Record<string, TicketType> = Object.fromEntries(
+    ticketTypes.map((t) => [t.package_type, t]),
+  );
+  const list = assignment.package_types ?? [];
+  const isMulti = list.length > 0;
+
+  if (!isMulti) {
+    // Single dropdown + a small "split" link for the multi-experience case.
+    return (
+      <div className="pe-wrap">
+        <select
+          value={assignment.package_type ?? ""}
+          onChange={(e) => onSetSingle(e.target.value)}
+          className="rr-select"
+        >
+          <option value="">—</option>
+          {ticketTypes.map((t) => (
+            <option key={t.package_type} value={t.package_type}>{t.short_label}</option>
+          ))}
+        </select>
+        <button
+          type="button"
+          className="pe-link"
+          onClick={() => {
+            // Seed the multi list from current single value (or first ticket
+            // type) so the editor opens with one row already populated.
+            const seedType = assignment.package_type ?? ticketTypes[0]?.package_type ?? "";
+            const seedTT = seedType ? byType[seedType] : undefined;
+            const per = seedTT?.included_items ?? 1;
+            const seedCount = per > 0 ? Math.max(1, Math.floor(totalItems / per)) : 1;
+            onSetMulti([{ type: seedType, count: seedCount }]);
+          }}
+        >
+          + split
+        </button>
+      </div>
+    );
+  }
+
+  const used = itemsRequired(list, byType);
+  const ok = used === totalItems;
+
+  function setRow(i: number, patch: Partial<PackageAssignment>) {
+    const next = list.map((p, idx) => (idx === i ? { ...p, ...patch } : p));
+    onSetMulti(next);
+  }
+  function removeRow(i: number) {
+    const next = list.filter((_, idx) => idx !== i);
+    onSetMulti(next.length > 0 ? next : undefined);
+  }
+  function addRow() {
+    const remaining = Math.max(0, totalItems - used);
+    // Pick a sensible default for the new row based on what fits.
+    const fit = ticketTypes.find((t) => t.included_items > 0 && t.included_items <= Math.max(1, remaining));
+    const seed = fit?.package_type ?? ticketTypes[0]?.package_type ?? "";
+    const per = byType[seed]?.included_items ?? 1;
+    const seedCount = per > 0 && remaining >= per ? Math.floor(remaining / per) : 1;
+    onSetMulti([...list, { type: seed, count: seedCount }]);
+  }
+  function collapseToSingle() {
+    // Drop multi mode entirely. Pick the first row's type as the new
+    // single value so we don't lose context.
+    const first = list[0];
+    onSetMulti(undefined);
+    if (first?.type) onSetSingle(first.type);
+  }
+
+  return (
+    <div className="pe-wrap pe-multi">
+      {list.map((p, i) => (
+        <div key={i} className="pe-row">
+          <select
+            value={p.type}
+            onChange={(e) => setRow(i, { type: e.target.value })}
+            className="rr-select pe-row-type"
+          >
+            <option value="">—</option>
+            {ticketTypes.map((t) => (
+              <option key={t.package_type} value={t.package_type}>{t.short_label}</option>
+            ))}
+          </select>
+          <input
+            type="number"
+            min={1}
+            value={p.count}
+            onChange={(e) => setRow(i, { count: Math.max(1, parseInt(e.target.value, 10) || 1) })}
+            className="pe-row-count"
+            aria-label="Tickets of this type"
+          />
+          <button type="button" className="pe-link pe-row-x" onClick={() => removeRow(i)} title="Remove">
+            ✕
+          </button>
+        </div>
+      ))}
+      <div className="pe-foot">
+        <button type="button" className="pe-link" onClick={addRow}>+ add type</button>
+        <span className={`pe-stat ${ok ? "pe-stat-ok" : "pe-stat-warn"}`}>
+          {used}/{totalItems} items
+        </span>
+        <button type="button" className="pe-link pe-link-muted" onClick={collapseToSingle}>
+          single
+        </button>
+      </div>
     </div>
   );
 }
@@ -252,6 +413,36 @@ const rosterStyles = `
 .rr-vip { box-shadow: inset 3px 0 0 #d4b85e; }
 .rr-has-note { box-shadow: inset 3px 0 0 #c0392b; }
 .rr-vip.rr-has-note { box-shadow: inset 3px 0 0 #c0392b, inset 6px 0 0 #d4b85e; }
+
+.pe-wrap { display: flex; flex-direction: column; gap: 4px; }
+.pe-multi { gap: 3px; }
+.pe-row { display: flex; gap: 4px; align-items: center; }
+.pe-row-type { flex: 1 1 auto; min-width: 0; }
+.pe-row-count {
+  width: 44px; padding: 4px 6px; font-size: 12px; font-family: var(--sans);
+  background: transparent; color: var(--text);
+  border: 1px solid var(--border-subtle); outline: none; text-align: center;
+}
+.pe-row-count:focus { border-color: var(--accent); }
+.pe-row-x {
+  background: transparent; border: none; color: var(--text-muted);
+  cursor: pointer; font-size: 11px; padding: 2px 6px;
+}
+.pe-row-x:hover { color: #c0392b; }
+.pe-foot {
+  display: flex; gap: 8px; align-items: center; justify-content: space-between;
+  font-size: 10px; letter-spacing: 0.4px;
+}
+.pe-link {
+  background: transparent; border: none; padding: 2px 0;
+  color: var(--text-muted); cursor: pointer; font-size: 10px;
+  letter-spacing: 0.4px; text-transform: uppercase;
+}
+.pe-link:hover { color: var(--accent); }
+.pe-link-muted { color: var(--text-muted); opacity: 0.6; }
+.pe-stat { font-family: var(--sans); }
+.pe-stat-ok { color: #4caf7a; }
+.pe-stat-warn { color: #d4b85e; }
 
 @media (max-width: 900px) {
   .roster-main { font-size: 11px; }
