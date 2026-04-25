@@ -118,13 +118,13 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
       <table className="roster-main">
         <thead>
           <tr>
-            <th style={{ width: "14%" }}>Location</th>
+            <th style={{ width: "13%" }}>Location</th>
             <th style={{ width: "4%" }}>#</th>
-            <th style={{ width: "10%" }}>Type</th>
-            <th style={{ width: "9%" }}>Time</th>
-            <th style={{ width: "20%" }}>Name</th>
-            <th style={{ width: "15%" }}>Food</th>
-            <th style={{ width: "28%" }}>Email</th>
+            <th style={{ width: "17%" }}>Type</th>
+            <th style={{ width: "8%" }}>Time</th>
+            <th style={{ width: "18%" }}>Name</th>
+            <th style={{ width: "14%" }}>Food</th>
+            <th style={{ width: "26%" }}>Email</th>
           </tr>
         </thead>
         <tbody>
@@ -323,9 +323,9 @@ function PackageEditor({
         </div>
       ))}
       <div className="pe-foot">
-        <button type="button" className="pe-link" onClick={addRow}>+ add type</button>
+        <button type="button" className="pe-link" onClick={addRow}>+ add</button>
         <span className={`pe-stat ${ok ? "pe-stat-ok" : "pe-stat-warn"}`}>
-          {used}/{totalItems} items
+          {used}/{totalItems}
         </span>
         <button type="button" className="pe-link pe-link-muted" onClick={collapseToSingle}>
           single
@@ -430,8 +430,8 @@ const rosterStyles = `
 }
 .pe-row-x:hover { color: #c0392b; }
 .pe-foot {
-  display: flex; gap: 8px; align-items: center; justify-content: space-between;
-  font-size: 10px; letter-spacing: 0.4px;
+  display: flex; gap: 6px; align-items: center; justify-content: space-between;
+  font-size: 10px; letter-spacing: 0.3px; flex-wrap: nowrap; min-width: 0;
 }
 .pe-link {
   background: transparent; border: none; padding: 2px 0;
