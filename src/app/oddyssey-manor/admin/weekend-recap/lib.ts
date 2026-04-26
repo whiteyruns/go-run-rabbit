@@ -77,6 +77,10 @@ export interface VenueNight {
   // Ticketure attendees CSV. Surfaces direct vs 3rd party vs comp by
   // package (GA / Explorer / Dinner / Ultimate) for the night.
   channelBreakdown?: ChannelBreakdown | null;
+  // Per-cost-key source. `xlsx` = parsed from the GM's weekly upload.
+  // `projected` = carried forward from the most recent filed weekend
+  // because the current weekend's xlsx hasn't been uploaded yet.
+  costSources?: Record<string, 'xlsx' | 'projected'>;
 }
 
 // ─── Channel × package breakdown ─────────────────────────────────────────
@@ -937,6 +941,7 @@ async function synthesizeNightFromLive(
   venue: Venue,
   weeknight: Weeknight,
   dateISO: string,
+  carryForward: Partial<Record<string, number>> = {},
 ): Promise<VenueNight | null> {
   const [netRev, counts, barNet, topItems, channel] = await Promise.all([
     loadLiveNetTicketRev(venue, dateISO),
@@ -947,6 +952,14 @@ async function synthesizeNightFromLive(
   ]);
   // Nothing to show for this date yet — no scrape on disk.
   if (netRev == null && counts.issued == null && barNet == null) return null;
+  const costs: Record<string, number | null> = {};
+  const costSources: Record<string, 'xlsx' | 'projected'> = {};
+  for (const [k, v] of Object.entries(carryForward)) {
+    if (v != null) {
+      costs[k] = v;
+      costSources[k] = 'projected';
+    }
+  }
   return {
     date: dateISO,
     venue,
@@ -955,12 +968,13 @@ async function synthesizeNightFromLive(
     ticketsRedeemed: counts.redeemed,
     netTicketRev: netRev,
     barNet,
-    costs: {},
+    costs,
     netTicketRevSource: 'live',
     ticketCountSource: 'live',
     barNetSource: barNet != null ? 'live' : 'xlsx',
     squareTopItems: topItems ?? undefined,
     channelBreakdown: channel,
+    costSources: Object.keys(costSources).length > 0 ? costSources : undefined,
   };
 }
 
@@ -973,6 +987,15 @@ async function synthesizeNightFromLive(
  * Cost lines + bar NET stay xlsx-only — Ticketure doesn't expose those.
  */
 export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
+  const anchor = recap.weekendOf;
+
+  // Pre-fetch the most recent Manor cost values to project onto nights
+  // that haven't been xlsx'd yet (cast + rigger are fixed contractor
+  // rates per Keith — carry forward until the GM uploads the actual
+  // weekend xlsx). Fetch once per weekend for both synthesized and
+  // existing nights with null cost lines.
+  const manorCarryForward = await loadCarryForwardCosts('manor', anchor);
+
   const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
     if (!n) return null;
     const [liveRev, liveCounts, liveBar, liveTopItems, liveOpenBar, liveChannel] = await Promise.all([
@@ -995,6 +1018,22 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
     const barNet = liveBar != null ? liveBar : n.barNet;
     const barNetSource: 'live' | 'xlsx' = liveBar != null ? 'live' : 'xlsx';
 
+    // Carry-forward Manor cast/rigger when the xlsx for this weekend
+    // hasn't loaded those values yet. Tag every filled-in key as
+    // 'projected' so the UI can show a hint.
+    const costs: Record<string, number | null> = { ...n.costs };
+    const costSources: Record<string, 'xlsx' | 'projected'> = { ...(n.costSources ?? {}) };
+    if (n.venue === 'manor') {
+      for (const [k, v] of Object.entries(manorCarryForward)) {
+        if (costs[k] == null && v != null) {
+          costs[k] = v;
+          costSources[k] = 'projected';
+        } else if (costs[k] != null && !costSources[k]) {
+          costSources[k] = 'xlsx';
+        }
+      }
+    }
+
     const base = {
       ...n,
       ticketsIssued,
@@ -1003,6 +1042,8 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
       barNet,
       barNetSource,
       xlsxBarNet: n.barNet,
+      costs,
+      costSources: Object.keys(costSources).length > 0 ? costSources : undefined,
       squareTopItems: liveTopItems ?? undefined,
       squareOpenBarWindow: liveOpenBar,
       channelBreakdown: liveChannel,
@@ -1018,7 +1059,6 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
     };
   };
 
-  const anchor = recap.weekendOf;
   // For every venue-night slot: if the xlsx carried a row, overlay the
   // live Ticketure net-ticket-rev; if it didn't, synthesize entirely
   // from Ticketure (reserved/redeemed/net_to_bank). Cost lines + bar
@@ -1032,7 +1072,12 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
   ) =>
     existing
       ? enrichNight(existing)
-      : synthesizeNightFromLive(venue, night, dateForNight(anchor, night));
+      : synthesizeNightFromLive(
+          venue,
+          night,
+          dateForNight(anchor, night),
+          venue === 'manor' ? manorCarryForward : {},
+        );
 
   const [manorThu, manorFri, manorSat, manorSun, noirFri, noirSat] = await Promise.all([
     slot(recap.manor.thu, 'manor', 'thu'),
@@ -1124,6 +1169,130 @@ export async function loadPourLogForWeekend(fridayISO: string): Promise<PourLogW
     read(dateForNight(fridayISO, 'sat')),
   ]);
   return { fri, sat };
+}
+
+// Per-brand historical delta between Pour Log (manager-reported) and
+// Square (POS-derived) bottle counts. Drives the "estimated depletion
+// check" shown when a night has Square data but no Pour Log filed.
+export interface BrandDeltaEstimate {
+  brand: string;          // canonical brand name (e.g., "Telsen")
+  avgDelta: number | null; // avg (PourLog − Square) bottles, null if no history
+  sampleCount: number;    // number of nights with both sources present
+  defaultShrinkagePct: number; // fallback markup when sampleCount === 0
+}
+
+// Default cushion when we have no historical data for a brand. 10% is
+// an educated middle ground — bottles tend to lose a little to spills,
+// staff comps, and end-of-night dump that aren't captured by POS.
+const DEFAULT_SHRINKAGE_PCT = 0.10;
+
+/**
+ * Walk back `lookbackWeeks` Fridays and collect every night where both
+ * a Pour Log and Square scrape exist for the given brand. Returns the
+ * mean (Pour Log − Square) delta and a sample count so the UI can show
+ * "based on N prior nights".
+ *
+ * Brand matching is loose — we map the Pour Log's `featuredTequila`
+ * and `champagne` strings against the same regex profiles the
+ * Square depletion uses (BRAND_PROFILES), so "Telson"/"Telsen" both
+ * match and "Devant Brut KU BTG"/"KU" do too.
+ */
+export async function loadBrandDeltaEstimate(
+  brand: string,
+  asOfFridayISO: string,
+  lookbackWeeks: number = 6,
+): Promise<BrandDeltaEstimate> {
+  const profile = BRAND_PROFILES.find((p) => p.brand.toLowerCase() === brand.toLowerCase());
+  const matchesBrand = (s: string | undefined | null): boolean =>
+    !!s && (profile?.pattern.test(s) ?? new RegExp(brand, 'i').test(s));
+
+  const samples: number[] = [];
+  // Step back week by week; for each weekend collect Fri+Sat samples.
+  // anchor is the Friday of `asOfFridayISO`. We start at the most
+  // recent prior weekend (one week back) so the current weekend's
+  // partial data doesn't pollute the average.
+  for (let w = 1; w <= lookbackWeeks; w++) {
+    const friday = subtractWeeks(asOfFridayISO, w);
+    for (const night of ['fri', 'sat'] as Weeknight[]) {
+      const date = dateForNight(friday, night);
+      let pourLog: PourLogEntryShape | null = null;
+      try {
+        const raw = await fs.readFile(path.join(POUR_LOG_DIR, `${date}.json`), 'utf-8');
+        pourLog = JSON.parse(raw) as PourLogEntryShape;
+      } catch {
+        continue;
+      }
+      // Match the Pour Log entry to this brand.
+      let pourLogBottles: number | null = null;
+      if (matchesBrand(pourLog.featuredTequila)) pourLogBottles = pourLog.tequila.consumed;
+      else if (matchesBrand(pourLog.champagne)) pourLogBottles = pourLog.champagneBottles.consumed;
+      if (pourLogBottles == null) continue;
+
+      // Pull the Square depletion for that night (Noir is the open-bar venue).
+      const items = await loadLiveTopItems('noir', date);
+      const deps = computeSquareDepletions(items);
+      const match = deps.find((d) => d.brand.toLowerCase() === brand.toLowerCase());
+      if (!match) continue;
+
+      samples.push(pourLogBottles - match.bottles);
+    }
+  }
+  if (samples.length === 0) {
+    return { brand, avgDelta: null, sampleCount: 0, defaultShrinkagePct: DEFAULT_SHRINKAGE_PCT };
+  }
+  const avgDelta = samples.reduce((s, v) => s + v, 0) / samples.length;
+  return { brand, avgDelta, sampleCount: samples.length, defaultShrinkagePct: DEFAULT_SHRINKAGE_PCT };
+}
+
+// Manor cost lines that are effectively contractor flat rates and stay
+// fixed week-to-week until a contract changes. Carried forward from the
+// most recent filed xlsx so upcoming weekends show projected costs even
+// before the GM's Monday upload.
+const MANOR_CARRY_FORWARD_KEYS = ['cast', 'rigger'] as const;
+
+/**
+ * Pull the most recent xlsx-filed values for the venue's carry-forward
+ * cost keys. Walks `listRecentWeekends` newest-first, skipping the
+ * caller's anchor week, and returns the first non-null value found per
+ * key. Used to project Manor cast + rigger onto upcoming weekends.
+ */
+export async function loadCarryForwardCosts(
+  venue: Venue,
+  asOfFridayISO: string,
+): Promise<Partial<Record<string, number>>> {
+  if (venue !== 'manor') return {}; // only Manor has fixed cast/rigger
+  const wanted = [...MANOR_CARRY_FORWARD_KEYS];
+  const recent = await listRecentWeekends(8);
+  const out: Partial<Record<string, number>> = {};
+  for (const fri of recent) {
+    if (fri >= asOfFridayISO) continue; // must be a strictly prior weekend
+    if (wanted.every((k) => out[k] != null)) break;
+    let weekend: WeekendRecap;
+    try {
+      weekend = await readWeekendJSON(fri);
+    } catch {
+      continue;
+    }
+    const nights: (VenueNight | null)[] = [
+      weekend.manor.thu, weekend.manor.fri, weekend.manor.sat, weekend.manor.sun,
+    ];
+    for (const n of nights) {
+      if (!n) continue;
+      for (const k of wanted) {
+        if (out[k] == null && n.costs[k] != null) {
+          out[k] = n.costs[k] as number;
+        }
+      }
+    }
+  }
+  return out;
+}
+
+function subtractWeeks(fridayISO: string, weeks: number): string {
+  const [y, m, d] = fridayISO.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() - 7 * weeks);
+  return dt.toISOString().slice(0, 10);
 }
 
 // Pour math helpers (duplicated from pour-log/lib.ts for module isolation)

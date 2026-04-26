@@ -23,12 +23,14 @@ import {
   formatWeekendLabel,
   isValidDate,
   listRecentWeekends,
+  loadBrandDeltaEstimate,
   loadPourLogForWeekend,
   mostRecentWeekend,
   PACKAGE_LABEL,
   readWeekendJSON,
   readYTDRollup,
   tequilaPoursFromBottles,
+  type BrandDeltaEstimate,
   type ChannelBreakdown,
   type PackageKey,
   type PourLogWeekend,
@@ -65,6 +67,16 @@ export default async function WeekendRecapPage({
     buildWoWSeries('noir', friday, 8),
   ]);
   const recap = await enrichWeekend(rawRecap);
+
+  // Pull a historical (Pour Log − Square) delta per brand so the
+  // Square-only Open Bar fallback can render an estimated depletion
+  // check for nights where the Pour Log wasn't filed.
+  const knownBrands = ['El Bandido', 'Telsen', 'KU'];
+  const brandEstimateEntries = await Promise.all(
+    knownBrands.map(async (b) => [b, await loadBrandDeltaEstimate(b, friday)] as const),
+  );
+  const brandEstimates: Record<string, BrandDeltaEstimate> =
+    Object.fromEntries(brandEstimateEntries);
 
   const prev = shiftFriday(friday, -7);
   const next = shiftFriday(friday, 7);
@@ -168,7 +180,7 @@ export default async function WeekendRecapPage({
           </div>
         )}
 
-        <OpenBarPanel pourLog={pourLog} recap={recap} />
+        <OpenBarPanel pourLog={pourLog} recap={recap} brandEstimates={brandEstimates} />
 
         <ChannelBreakdownPanel recap={recap} />
 
@@ -332,14 +344,17 @@ function NightColumn({
         <div className={styles.costGroupLbl}>
           {venue === 'manor' ? 'Per-night cost lines' : 'Per-night cost lines'}
         </div>
-        {costs.map(([key, label]) => (
-          <StatRow
-            key={key}
-            label={label}
-            value={formatMoney(night.costs[key] ?? null)}
-            tone={night.costs[key] != null && night.costs[key]! < 0 ? 'bad' : 'default'}
-          />
-        ))}
+        {costs.map(([key, label]) => {
+          const projected = night.costSources?.[key] === 'projected';
+          return (
+            <StatRow
+              key={key}
+              label={projected ? `${label} (projected)` : label}
+              value={formatMoney(night.costs[key] ?? null)}
+              tone={night.costs[key] != null && night.costs[key]! < 0 ? 'bad' : 'default'}
+            />
+          );
+        })}
         {venue === 'noir' && night.totalNet != null && (
           <StatRow
             label="Total Net"
@@ -780,7 +795,15 @@ function WoWSparkline({ wow, accent }: { wow: WoWPoint[]; accent: string }) {
 
 // ─── Open Bar panel ───────────────────────────────────────────────────────
 
-function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: WeekendRecap }) {
+function OpenBarPanel({
+  pourLog,
+  recap,
+  brandEstimates,
+}: {
+  pourLog: PourLogWeekend;
+  recap: WeekendRecap;
+  brandEstimates: Record<string, BrandDeltaEstimate>;
+}) {
   const hasFri = !!pourLog.fri;
   const hasSat = !!pourLog.sat;
   // A night counts as "shown" when either the Pour Log is filed OR
@@ -903,6 +926,127 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
             })}
           </div>
         )}
+        {(() => {
+          // Estimated depletion check — same shape as the Pour Log
+          // version but the "Pour Log" column is synthesized from the
+          // historical (Pour Log − Square) delta per brand. When we
+          // have no history, fall back to a 10% shrinkage cushion.
+          const obByBrand = new Map(openBar.map((d) => [d.brand, d]));
+          let totalEstPourLog = 0;
+          let totalSquare = 0;
+          let totalCostEst = 0;
+          let totalCostSquare = 0;
+          let anyMissingCost = false;
+          const rows = allNight.map((d) => {
+            const est = brandEstimates[d.brand];
+            const delta = est?.avgDelta ?? null;
+            const sampleCount = est?.sampleCount ?? 0;
+            // If we have a sample, est = Square + avgDelta. Else apply
+            // the default shrinkage percentage as a rough placeholder.
+            const estPourLog =
+              delta != null
+                ? Math.max(0, d.bottles + delta)
+                : d.bottles * (1 + (est?.defaultShrinkagePct ?? 0.10));
+            const cpb = costPerBottle(d.brand);
+            const obMatch = obByBrand.get(d.brand);
+            if (cpb != null) {
+              totalCostEst += cpb * estPourLog;
+              totalCostSquare += cpb * d.bottles;
+            } else {
+              anyMissingCost = true;
+            }
+            totalEstPourLog += estPourLog;
+            totalSquare += d.bottles;
+            return { d, estPourLog, delta, sampleCount, cpb, obMatch };
+          });
+          return (
+            <div className={styles.openBarItems}>
+              <div className={styles.openBarItemsLbl}>
+                Depletion check · Estimated{' '}
+                <span className={styles.openBarMuted}>
+                  (no Pour Log; Square + avg shrinkage from prior weekends)
+                </span>
+              </div>
+              {rows.map(({ d, estPourLog, delta, sampleCount, cpb, obMatch }) => (
+                <div key={d.brand} style={{ paddingTop: 4, paddingBottom: 4 }}>
+                  <div className={styles.openBarItemRow}>
+                    <span>
+                      <strong>{d.brand}</strong>
+                      <span className={styles.openBarMuted}>
+                        {' '}all night · {d.totalUnits} {d.unitLabel}{d.totalUnits === 1 ? '' : 's'}
+                      </span>
+                    </span>
+                    <span>
+                      <strong>{d.bottles.toFixed(1)} btl</strong>{' '}
+                      <span className={styles.openBarMuted}>
+                        (est Pour Log <strong style={{ color: 'var(--text)' }}>{estPourLog.toFixed(1)}</strong>{' '}
+                        ·{' '}
+                        {delta != null ? (
+                          <>
+                            avg <span style={{ color: '#d4a574' }}>{delta >= 0 ? '+' : ''}{delta.toFixed(1)}</span>{' '}
+                            from {sampleCount} {sampleCount === 1 ? 'night' : 'nights'}
+                          </>
+                        ) : (
+                          <>+10% default shrinkage</>
+                        )}
+                        )
+                      </span>
+                    </span>
+                  </div>
+                  {cpb != null && (
+                    <div className={styles.openBarItemRow} style={{ paddingLeft: 16, fontSize: 11 }}>
+                      <span className={styles.openBarMuted}>↳ cost @ ${cpb.toFixed(2)}/btl</span>
+                      <span style={{ color: 'var(--text)' }}>
+                        <strong>{formatMoney(cpb * d.bottles)}</strong>{' '}
+                        <span className={styles.openBarMuted}>
+                          · est {formatMoney(cpb * estPourLog)}
+                        </span>
+                      </span>
+                    </div>
+                  )}
+                  {obMatch && (
+                    <div className={styles.openBarItemRow} style={{ paddingLeft: 16, fontSize: 11 }}>
+                      <span className={styles.openBarMuted}>
+                        ↳ window 10pm–12am · {obMatch.totalUnits} {obMatch.unitLabel}{obMatch.totalUnits === 1 ? '' : 's'}
+                      </span>
+                      <span className={styles.openBarMuted}>
+                        {obMatch.bottles.toFixed(1)} btl
+                        {' · '}
+                        {((obMatch.totalUnits / Math.max(d.totalUnits, 1)) * 100).toFixed(0)}% in window
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {totalCostSquare > 0 && (
+                <div
+                  className={styles.openBarItemRow}
+                  style={{ paddingTop: 6, marginTop: 4, borderTop: '1px solid rgba(255,255,255,0.08)' }}
+                >
+                  <span><strong>Total product cost (Square / est)</strong></span>
+                  <span>
+                    <strong>{formatMoney(totalCostSquare)}</strong>
+                    <span className={styles.openBarMuted}>
+                      {' '}· est {formatMoney(totalCostEst)}
+                    </span>
+                    {anyMissingCost && (
+                      <span className={styles.openBarMuted}> · partial</span>
+                    )}
+                  </span>
+                </div>
+              )}
+              <div
+                className={styles.openBarItemRow}
+                style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2, fontStyle: 'italic' }}
+              >
+                <span>—</span>
+                <span>
+                  est total Pour Log {totalEstPourLog.toFixed(1)} btl vs Square {totalSquare.toFixed(1)} btl
+                </span>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     );
   };
@@ -1208,10 +1352,13 @@ function VenueChannelTable({
 }
 
 function ChannelBreakdownPanel({ recap }: { recap: WeekendRecap }) {
-  // Manor: Fri + Sat. Noir: Fri + Sat. Show side-by-side.
+  // Manor runs Thu–Sun (four nights); Noir runs Fri–Sat. Show all
+  // available nights per venue side-by-side.
   const manorNights = [
+    { label: 'Thu', breakdown: recap.manor.thu?.channelBreakdown },
     { label: 'Fri', breakdown: recap.manor.fri?.channelBreakdown },
     { label: 'Sat', breakdown: recap.manor.sat?.channelBreakdown },
+    { label: 'Sun', breakdown: recap.manor.sun?.channelBreakdown },
   ];
   const noirNights = [
     { label: 'Fri', breakdown: recap.noir.fri?.channelBreakdown },
