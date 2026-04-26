@@ -639,11 +639,17 @@ export async function loadLiveChannelBreakdown(
   try {
     entries = await fs.readdir(FOOD_PULLS_DIR);
   } catch {
-    return null;
+    // No CSV directory at all — try the session JSON fallback below.
+    return loadChannelBreakdownFromSessions(venue, dateISO);
   }
   const candidates = entries
     .filter((n) => n.startsWith(`attendees-${dateISO}-`) && n.endsWith('.csv'));
-  if (candidates.length === 0) return null;
+  if (candidates.length === 0) {
+    // Manor's food-pull cron writes attendees CSVs; Noir doesn't get
+    // one because the cron is Manor-only. Fall back to the session
+    // Summary Report JSON which the Noir scraper already archives.
+    return loadChannelBreakdownFromSessions(venue, dateISO);
+  }
 
   // Stat each + sort newest-first so we don't need a sort by name.
   const stats = await Promise.all(
@@ -676,7 +682,7 @@ export async function loadLiveChannelBreakdown(
       break;
     }
   }
-  if (!csv) return null;
+  if (!csv) return loadChannelBreakdownFromSessions(venue, dateISO);
 
   // Hand-rolled split of the two columns we care about so we don't need
   // to plumb the full csv-parser through (it lives client-side bundle).
@@ -736,6 +742,86 @@ export async function loadLiveChannelBreakdown(
     .map((k) => buckets.get(k))
     .filter((r): r is ChannelBreakdownRow => Boolean(r));
   if (rows.length === 0) return null;
+  return { rows, total_tickets: total };
+}
+
+/**
+ * Fallback channel breakdown derived from the session Summary Report JSON
+ * (already on disk for both venues from the session scraper). Used when
+ * no attendees CSV exists for the (venue, date) — primarily Noir, since
+ * the food-pull cron runs only against Manor.
+ *
+ * Counts come from `ticket_groups[].reserved` summed across sessions.
+ * The classification re-uses the same channel/package logic as the
+ * CSV path, with the group name as both the channel hint and the
+ * package signal (Noir's session JSON has no per-row ticket_type_name).
+ */
+async function loadChannelBreakdownFromSessions(
+  venue: Venue,
+  dateISO: string,
+): Promise<ChannelBreakdown | null> {
+  let parsed: {
+    sessions?: {
+      data?: {
+        ticket_groups?: { ticket_group_name?: string; reserved?: number | null }[];
+      };
+    }[];
+  };
+  try {
+    const file = path.join(SESSION_SUMMARY_DIR[venue], `${dateISO}.json`);
+    parsed = JSON.parse(await fs.readFile(file, 'utf8'));
+  } catch {
+    return null;
+  }
+  const buckets = new Map<ChannelKey, ChannelBreakdownRow>();
+  const labels: Record<ChannelKey, string> = {
+    direct: 'Direct',
+    third_party: 'Third Party',
+    comp: 'Comp',
+  };
+  function ensureRow(ch: ChannelKey, label: string): ChannelBreakdownRow {
+    let row = buckets.get(ch);
+    if (!row) {
+      row = {
+        channel: ch,
+        channel_label: label,
+        packages: {
+          general_admission: 0,
+          explorer: 0,
+          dinner_guest: 0,
+          ultimate: 0,
+          unknown: 0,
+        },
+        total: 0,
+      };
+      buckets.set(ch, row);
+    }
+    return row;
+  }
+  let total = 0;
+  for (const s of parsed.sessions ?? []) {
+    for (const tg of s.data?.ticket_groups ?? []) {
+      const name = tg.ticket_group_name ?? '';
+      const reserved = tg.reserved ?? 0;
+      if (!name || reserved <= 0) continue;
+      const ch = classifyChannel(name);
+      if (!ch) continue;
+      // Session JSON has no ticket_type_name — pass the group name in
+      // both slots so classifyPackage falls through to the group-based
+      // branch (e.g., "GA" → general_admission, "The Explorer" → explorer).
+      const pkg = classifyPackage(name, name);
+      const label = ch === 'third_party' && name ? name : labels[ch];
+      const row = ensureRow(ch, label);
+      row.packages[pkg] = (row.packages[pkg] ?? 0) + reserved;
+      row.total += reserved;
+      total += reserved;
+    }
+  }
+  if (total === 0) return null;
+  const order: ChannelKey[] = ['direct', 'third_party', 'comp'];
+  const rows = order
+    .map((k) => buckets.get(k))
+    .filter((r): r is ChannelBreakdownRow => Boolean(r));
   return { rows, total_tickets: total };
 }
 

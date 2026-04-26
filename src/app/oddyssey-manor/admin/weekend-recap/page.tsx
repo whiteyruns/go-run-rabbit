@@ -783,7 +783,13 @@ function WoWSparkline({ wow, accent }: { wow: WoWPoint[]; accent: string }) {
 function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: WeekendRecap }) {
   const hasFri = !!pourLog.fri;
   const hasSat = !!pourLog.sat;
-  if (!hasFri && !hasSat) {
+  // A night counts as "shown" when either the Pour Log is filed OR
+  // Square's depletion data has at least one open-bar brand we recognize.
+  const friSquareDeps = computeSquareDepletions(recap.noir.fri?.squareTopItems);
+  const satSquareDeps = computeSquareDepletions(recap.noir.sat?.squareTopItems);
+  const friSquareOnly = !hasFri && friSquareDeps.length > 0;
+  const satSquareOnly = !hasSat && satSquareDeps.length > 0;
+  if (!hasFri && !hasSat && !friSquareOnly && !satSquareOnly) {
     return (
       <div className={styles.openBar}>
         <div className={styles.openBarHeader}>
@@ -796,8 +802,114 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
       </div>
     );
   }
+  // Square-only fallback: same look as the Pour Log line but every
+  // bottle/cost number is sourced from Square depletion data, with no
+  // Pour Log delta row. Surfaces a "Pour Log not filed" eyebrow so it's
+  // clear the manager hasn't recorded the night yet.
+  const squareOnlyLine = (nightLabel: string, noirNight: VenueNight | null) => {
+    const allNight = computeSquareDepletions(noirNight?.squareTopItems);
+    const openBar = computeSquareDepletions(noirNight?.squareOpenBarWindow?.items);
+    if (allNight.length === 0) {
+      return (
+        <div className={styles.openBarNight}>
+          <div className={styles.openBarNightLbl}>{nightLabel}</div>
+          <div className={styles.openBarNightEmpty}>Not filed</div>
+        </div>
+      );
+    }
+    const isTequila = (b: string) => /bandido|telsen/i.test(b);
+    const obByBrand = new Map(openBar.map((d) => [d.brand, d]));
+    let totalCost = 0;
+    let totalWindowCost = 0;
+    let totalRetailDrinks = 0;
+    let anyMissingCost = false;
+    allNight.forEach((d) => {
+      const cpb = costPerBottle(d.brand);
+      if (cpb == null) { anyMissingCost = true; return; }
+      totalCost += cpb * d.bottles;
+      const ob = obByBrand.get(d.brand);
+      if (ob) totalWindowCost += cpb * ob.bottles;
+      totalRetailDrinks += d.totalUnits;
+    });
+    const totalRetail = totalRetailDrinks * COCKTAIL_RETAIL_PRICE;
+    const mult = totalCost > 0 ? totalRetail / totalCost : null;
+    const red = noirNight?.ticketsRedeemed;
+    const tequilaUnits = allNight
+      .filter((d) => isTequila(d.brand))
+      .reduce((s, d) => s + d.totalUnits, 0);
+    const ppg = red && red > 0 && tequilaUnits > 0 ? tequilaUnits / red : null;
+    return (
+      <div className={styles.openBarNight}>
+        <div className={styles.openBarNightLbl}>
+          {nightLabel} <span className={styles.openBarMuted}>· Pour Log not filed — Square only</span>
+        </div>
+        {allNight.map((d) => (
+          <div key={d.brand} className={styles.openBarRow}>
+            <span className={styles.openBarK}>{isTequila(d.brand) ? 'Tequila' : 'Champagne'}</span>
+            <span>
+              <strong>{d.brand}</strong> · {d.bottles.toFixed(1)} btl ({d.totalUnits} {d.unitLabel}{d.totalUnits === 1 ? '' : 's'})
+            </span>
+          </div>
+        ))}
+        <div className={styles.openBarRow}>
+          <span className={styles.openBarK}>Pours / Guest</span>
+          <span>
+            {ppg != null ? <strong>{ppg.toFixed(1)}×</strong> : <em>—</em>}{' '}
+            {red != null && <span className={styles.openBarMuted}>({tequilaUnits} tequila / {red} guests)</span>}
+          </span>
+        </div>
+        <div className={styles.openBarRow}>
+          <span className={styles.openBarK}>Product Cost</span>
+          <span>
+            <strong>{formatMoney(totalCost)}</strong>
+            {totalWindowCost > 0 && (
+              <span className={styles.openBarMuted}> · window {formatMoney(totalWindowCost)}</span>
+            )}
+            {anyMissingCost && (
+              <span className={styles.openBarMuted}> · partial</span>
+            )}
+          </span>
+        </div>
+        <div className={styles.openBarRow}>
+          <span className={styles.openBarK}>Retail Value</span>
+          <span>
+            <strong>{formatMoney(totalRetail)}</strong>{' '}
+            <span className={styles.openBarMuted}>({totalRetailDrinks} drinks × ${COCKTAIL_RETAIL_PRICE})</span>
+          </span>
+        </div>
+        <div className={styles.openBarRow}>
+          <span className={styles.openBarK}>Multiplier</span>
+          <span style={{ color: mult && mult >= 3 ? 'var(--up)' : 'var(--text)' }}>
+            {mult != null ? <strong>{mult.toFixed(1)}×</strong> : <em>—</em>}{' '}
+            <span className={styles.openBarMuted}>retail / cost</span>
+          </span>
+        </div>
+        {noirNight?.squareTopItems && noirNight.squareTopItems.length > 0 && (
+          <div className={styles.openBarItems}>
+            <div className={styles.openBarItemsLbl}>Top items (Square)</div>
+            {noirNight.squareTopItems.slice(0, 5).map((item) => {
+              const isRep = /\b(rep|repo|yankee|ambassador)\b/i.test(item.name);
+              return (
+                <div key={item.name} className={styles.openBarItemRow}>
+                  <span>
+                    {isRep && <span style={{ color: '#d4a574', marginRight: 4 }}>🤝</span>}
+                    {item.name}
+                  </span>
+                  <span style={{ color: isRep ? '#d4a574' : 'var(--text)' }}>
+                    {formatMoney(item.gross)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
   const line = (entry: PourLogWeekend['fri'], nightLabel: string, noirNight: VenueNight | null) => {
     if (!entry) {
+      const sqDeps = computeSquareDepletions(noirNight?.squareTopItems);
+      if (sqDeps.length > 0) return squareOnlyLine(nightLabel, noirNight);
       return (
         <div className={styles.openBarNight}>
           <div className={styles.openBarNightLbl}>{nightLabel}</div>
