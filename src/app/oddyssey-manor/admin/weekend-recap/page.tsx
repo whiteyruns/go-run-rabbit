@@ -14,6 +14,7 @@ import HighlightsEditor from './HighlightsEditor';
 import {
   buildWoWSeries,
   champagnePoursFromBottles,
+  CHANNEL_PACKAGE_KEYS,
   computeSquareDepletions,
   detectRepItem,
   enrichWeekend,
@@ -24,9 +25,12 @@ import {
   listRecentWeekends,
   loadPourLogForWeekend,
   mostRecentWeekend,
+  PACKAGE_LABEL,
   readWeekendJSON,
   readYTDRollup,
   tequilaPoursFromBottles,
+  type ChannelBreakdown,
+  type PackageKey,
   type PourLogWeekend,
   type VenueNight,
   type WoWPoint,
@@ -165,6 +169,8 @@ export default async function WeekendRecapPage({
         )}
 
         <OpenBarPanel pourLog={pourLog} recap={recap} />
+
+        <ChannelBreakdownPanel recap={recap} />
 
         <YTDStrip manor={manorYTD} noir={noirYTD} />
         <YTDChart manor={manorYTD} noir={noirYTD} />
@@ -984,6 +990,136 @@ function OpenBarPanel({ pourLog, recap }: { pourLog: PourLogWeekend; recap: Week
       <div className={styles.openBarGrid}>
         {line(pourLog.fri, 'Friday', recap.noir.fri)}
         {line(pourLog.sat, 'Saturday', recap.noir.sat)}
+      </div>
+    </div>
+  );
+}
+
+// ─── Channel × Package panel ──────────────────────────────────────────────
+
+interface ChannelTableRow {
+  label: string;                       // e.g., "Friday · Direct"
+  packages: Record<PackageKey, number>;
+  total: number;
+  isTotal?: boolean;                   // bottom weekend-total row
+  isSeparator?: boolean;               // visual separator between nights
+}
+
+function emptyPackageCounts(): Record<PackageKey, number> {
+  return { general_admission: 0, explorer: 0, dinner_guest: 0, ultimate: 0, unknown: 0 };
+}
+
+function buildChannelRows(
+  nights: { label: string; breakdown: ChannelBreakdown | null | undefined }[],
+): ChannelTableRow[] {
+  const rows: ChannelTableRow[] = [];
+  const grand = emptyPackageCounts();
+  let grandTotal = 0;
+
+  nights.forEach((n, idx) => {
+    if (!n.breakdown || n.breakdown.total_tickets === 0) return;
+    if (idx > 0 && rows.length > 0) rows.push({ label: '', packages: emptyPackageCounts(), total: 0, isSeparator: true });
+    for (const r of n.breakdown.rows) {
+      rows.push({
+        label: `${n.label} · ${r.channel_label}`,
+        packages: r.packages,
+        total: r.total,
+      });
+      for (const k of Object.keys(r.packages) as PackageKey[]) {
+        grand[k] += r.packages[k];
+      }
+      grandTotal += r.total;
+    }
+  });
+
+  if (rows.length > 0) {
+    rows.push({ label: '', packages: emptyPackageCounts(), total: 0, isSeparator: true });
+    rows.push({ label: 'Weekend total', packages: grand, total: grandTotal, isTotal: true });
+  }
+  return rows;
+}
+
+function VenueChannelTable({
+  venueLabel,
+  nights,
+}: {
+  venueLabel: string;
+  nights: { label: string; breakdown: ChannelBreakdown | null | undefined }[];
+}) {
+  const rows = buildChannelRows(nights);
+  if (rows.length === 0) {
+    return (
+      <div className={styles.channelVenue}>
+        <div className={styles.channelVenueTitle}>{venueLabel}</div>
+        <div className={styles.channelEmpty}>No attendee CSV pulled for this weekend yet.</div>
+      </div>
+    );
+  }
+  return (
+    <div className={styles.channelVenue}>
+      <div className={styles.channelVenueTitle}>{venueLabel}</div>
+      <table className={styles.channelTable}>
+        <thead>
+          <tr>
+            <th className={styles.channelLabelCol}>Night · Channel</th>
+            {CHANNEL_PACKAGE_KEYS.map((k) => (
+              <th key={k}>{PACKAGE_LABEL[k]}</th>
+            ))}
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => {
+            if (r.isSeparator) {
+              return (
+                <tr key={`sep-${i}`} className={styles.channelSep}>
+                  <td colSpan={CHANNEL_PACKAGE_KEYS.length + 2} />
+                </tr>
+              );
+            }
+            return (
+              <tr key={`${r.label}-${i}`} className={r.isTotal ? styles.channelTotalRow : ''}>
+                <td className={styles.channelLabelCol}>{r.label}</td>
+                {CHANNEL_PACKAGE_KEYS.map((k) => (
+                  <td key={k} className={styles.channelNum}>
+                    {r.packages[k] > 0 ? r.packages[k] : <span style={{ color: 'var(--text-muted)' }}>—</span>}
+                  </td>
+                ))}
+                <td className={styles.channelNum}><strong>{r.total}</strong></td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function ChannelBreakdownPanel({ recap }: { recap: WeekendRecap }) {
+  // Manor: Fri + Sat. Noir: Fri + Sat. Show side-by-side.
+  const manorNights = [
+    { label: 'Fri', breakdown: recap.manor.fri?.channelBreakdown },
+    { label: 'Sat', breakdown: recap.manor.sat?.channelBreakdown },
+  ];
+  const noirNights = [
+    { label: 'Fri', breakdown: recap.noir.fri?.channelBreakdown },
+    { label: 'Sat', breakdown: recap.noir.sat?.channelBreakdown },
+  ];
+  const anyData =
+    manorNights.some((n) => n.breakdown && n.breakdown.total_tickets > 0) ||
+    noirNights.some((n) => n.breakdown && n.breakdown.total_tickets > 0);
+  if (!anyData) return null;
+  return (
+    <div className={styles.channelPanel}>
+      <div className={styles.channelHeader}>
+        <div className={styles.channelEyebrow}>Channel × Package</div>
+        <div className={styles.channelMeta}>
+          Per-night ticket counts by channel and package, with weekend totals
+        </div>
+      </div>
+      <div className={styles.channelGrid}>
+        <VenueChannelTable venueLabel="Manor" nights={manorNights} />
+        <VenueChannelTable venueLabel="Noir" nights={noirNights} />
       </div>
     </div>
   );

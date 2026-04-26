@@ -73,6 +73,49 @@ export interface VenueNight {
     gross_sales: number | null;
     items: { name: string; gross: number; units_sold: number }[];
   } | null;
+  // Per-channel × package-type ticket breakdown derived from the
+  // Ticketure attendees CSV. Surfaces direct vs 3rd party vs comp by
+  // package (GA / Explorer / Dinner / Ultimate) for the night.
+  channelBreakdown?: ChannelBreakdown | null;
+}
+
+// ─── Channel × package breakdown ─────────────────────────────────────────
+
+// Stable package keys we report on. Match TicketType.package_type IDs.
+export type PackageKey =
+  | 'general_admission'
+  | 'explorer'
+  | 'dinner_guest'
+  | 'ultimate'
+  | 'unknown';
+
+export const CHANNEL_PACKAGE_KEYS: PackageKey[] = [
+  'general_admission',
+  'explorer',
+  'dinner_guest',
+  'ultimate',
+];
+
+export const PACKAGE_LABEL: Record<PackageKey, string> = {
+  general_admission: 'GA',
+  explorer: 'Explorer',
+  dinner_guest: 'Dinner',
+  ultimate: 'Ultimate',
+  unknown: 'Other',
+};
+
+export type ChannelKey = 'direct' | 'third_party' | 'comp';
+
+export interface ChannelBreakdownRow {
+  channel: ChannelKey;
+  channel_label: string;
+  packages: Record<PackageKey, number>;
+  total: number;
+}
+
+export interface ChannelBreakdown {
+  rows: ChannelBreakdownRow[];
+  total_tickets: number;
 }
 
 /**
@@ -543,6 +586,181 @@ export async function loadLiveOpenBarWindow(
   }
 }
 
+// Resolve the package_type a CSV row represents. For direct sales the
+// ticket_group_name is authoritative ("The Explorer", "The Dinner Guest",
+// etc.). For 3rd-party rows the group name is a channel label, so the
+// package shows up as a suffix on ticket_type_name (Adult (21+) [Package
+// A] = Ultimate, Adult (21+) [Package B/C] = Dinner, Adult (21+) +
+// food name = Explorer, plain "Adult (21+)" = GA-equivalent).
+function classifyPackage(groupName: string, typeName: string): PackageKey {
+  const g = (groupName || '').toLowerCase();
+  if (g.startsWith('the ultimate') || g.includes('ultimate party')) return 'ultimate';
+  if (g.startsWith('the dinner') || g.includes('dinner guest')) return 'dinner_guest';
+  if (g.startsWith('the explorer') || g === 'explorer') return 'explorer';
+  if (g === 'general admission' || g === 'guest list') return 'general_admission';
+  // 3rd party / unknown groups — infer from ticket_type_name suffix.
+  const t = (typeName || '').toLowerCase();
+  if (/\[package a\]|\bultimate\b/.test(t)) return 'ultimate';
+  if (/\[package b\]|\[package c\]|dinner/.test(t)) return 'dinner_guest';
+  if (/charcuterie|short rib|shrimp|ceviche|ube|cheesecake/.test(t)) return 'explorer';
+  if (/^adult/.test(t) || /general/.test(t)) return 'general_admission';
+  return 'unknown';
+}
+
+function classifyChannel(groupName: string): ChannelKey | null {
+  const g = (groupName || '').toLowerCase();
+  if (g === 'inclusions') return null; // food spec rows, not tickets
+  if (/third\s*-?\s*party|commission|goldstar|groupon|ticketmaster/.test(g)) return 'third_party';
+  if (/guest\s*list|comp\b/.test(g)) return 'comp';
+  return 'direct';
+}
+
+const FOOD_PULLS_DIR = path.resolve(process.cwd(), 'data', 'oddyssey-food', 'pulls');
+
+const VENUE_EVENT_NAME: Record<Venue, RegExp> = {
+  manor: /oddyssey\s+manor/i,
+  noir: /oddyssey\s+noir/i,
+};
+
+/**
+ * Read the most recent attendees CSV pull for (venue, dateISO) and
+ * return a Channel × Package ticket count breakdown. Returns null when
+ * no CSV is available for that show date.
+ *
+ * The cron pulls attendees-YYYY-MM-DD-<timestamp>.csv every 30 min on
+ * show day. We pick the latest by mtime + verify the file's
+ * `event_name` matches the requested venue.
+ */
+export async function loadLiveChannelBreakdown(
+  venue: Venue,
+  dateISO: string,
+): Promise<ChannelBreakdown | null> {
+  let entries: string[];
+  try {
+    entries = await fs.readdir(FOOD_PULLS_DIR);
+  } catch {
+    return null;
+  }
+  const candidates = entries
+    .filter((n) => n.startsWith(`attendees-${dateISO}-`) && n.endsWith('.csv'));
+  if (candidates.length === 0) return null;
+
+  // Stat each + sort newest-first so we don't need a sort by name.
+  const stats = await Promise.all(
+    candidates.map(async (name) => {
+      const full = path.join(FOOD_PULLS_DIR, name);
+      try {
+        const s = await fs.stat(full);
+        return { full, mtime: s.mtimeMs };
+      } catch {
+        return { full, mtime: 0 };
+      }
+    }),
+  );
+  stats.sort((a, b) => b.mtime - a.mtime);
+
+  // Walk the sorted list and pick the first one whose event_name matches
+  // the requested venue. Single-event CSV per pull, so first-match wins.
+  let csv: string | null = null;
+  for (const s of stats) {
+    let text: string;
+    try {
+      text = await fs.readFile(s.full, 'utf8');
+    } catch {
+      continue;
+    }
+    const firstDataLine = text.split(/\r?\n/, 2)[1] ?? '';
+    if (!firstDataLine) continue;
+    if (VENUE_EVENT_NAME[venue].test(firstDataLine)) {
+      csv = text;
+      break;
+    }
+  }
+  if (!csv) return null;
+
+  // Hand-rolled split of the two columns we care about so we don't need
+  // to plumb the full csv-parser through (it lives client-side bundle).
+  const lines = csv.replace(/\r\n/g, '\n').split('\n').filter((l) => l.length > 0);
+  const headers = splitCsvLine(lines[0]);
+  const groupIdx = headers.indexOf('ticket_group_name');
+  const typeIdx = headers.indexOf('ticket_type_name');
+  if (groupIdx < 0 || typeIdx < 0) return null;
+
+  const buckets = new Map<ChannelKey, ChannelBreakdownRow>();
+  const labels: Record<ChannelKey, string> = {
+    direct: 'Direct',
+    third_party: 'Third Party',
+    comp: 'Comp',
+  };
+  function ensureRow(ch: ChannelKey, label: string): ChannelBreakdownRow {
+    let row = buckets.get(ch);
+    if (!row) {
+      row = {
+        channel: ch,
+        channel_label: label,
+        packages: {
+          general_admission: 0,
+          explorer: 0,
+          dinner_guest: 0,
+          ultimate: 0,
+          unknown: 0,
+        },
+        total: 0,
+      };
+      buckets.set(ch, row);
+    }
+    return row;
+  }
+
+  let total = 0;
+  for (let i = 1; i < lines.length; i++) {
+    const cells = splitCsvLine(lines[i]);
+    if (cells.length === 0) continue;
+    const groupName = cells[groupIdx] ?? '';
+    const typeName = cells[typeIdx] ?? '';
+    const ch = classifyChannel(groupName);
+    if (!ch) continue;
+    const pkg = classifyPackage(groupName, typeName);
+    // Use the actual group name as the channel label for 3rd-party so
+    // we can show e.g. "Third Party Sales - 20% Commission" verbatim.
+    const label = ch === 'third_party' && groupName ? groupName : labels[ch];
+    const row = ensureRow(ch, label);
+    row.packages[pkg] = (row.packages[pkg] ?? 0) + 1;
+    row.total += 1;
+    total += 1;
+  }
+
+  // Stable order: Direct → Third Party → Comp.
+  const order: ChannelKey[] = ['direct', 'third_party', 'comp'];
+  const rows = order
+    .map((k) => buckets.get(k))
+    .filter((r): r is ChannelBreakdownRow => Boolean(r));
+  if (rows.length === 0) return null;
+  return { rows, total_tickets: total };
+}
+
+// Minimal RFC 4180 line splitter — only used by the loader, kept private.
+function splitCsvLine(line: string): string[] {
+  const out: string[] = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"') {
+        if (line[i + 1] === '"') { cur += '"'; i++; }
+        else inQuotes = false;
+      } else cur += ch;
+    } else {
+      if (ch === ',') { out.push(cur); cur = ''; }
+      else if (ch === '"') inQuotes = true;
+      else cur += ch;
+    }
+  }
+  out.push(cur);
+  return out;
+}
+
 /**
  * Detect a brand-rep activation in the Top Items. Returns the matching
  * item row when ops has tagged a night with a rep-specific SKU (e.g.,
@@ -634,11 +852,12 @@ async function synthesizeNightFromLive(
   weeknight: Weeknight,
   dateISO: string,
 ): Promise<VenueNight | null> {
-  const [netRev, counts, barNet, topItems] = await Promise.all([
+  const [netRev, counts, barNet, topItems, channel] = await Promise.all([
     loadLiveNetTicketRev(venue, dateISO),
     loadLiveTicketCounts(venue, dateISO),
     loadLiveBarNet(venue, dateISO),
     loadLiveTopItems(venue, dateISO),
+    loadLiveChannelBreakdown(venue, dateISO),
   ]);
   // Nothing to show for this date yet — no scrape on disk.
   if (netRev == null && counts.issued == null && barNet == null) return null;
@@ -655,6 +874,7 @@ async function synthesizeNightFromLive(
     ticketCountSource: 'live',
     barNetSource: barNet != null ? 'live' : 'xlsx',
     squareTopItems: topItems ?? undefined,
+    channelBreakdown: channel,
   };
 }
 
@@ -669,12 +889,13 @@ async function synthesizeNightFromLive(
 export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> {
   const enrichNight = async (n: VenueNight | null): Promise<VenueNight | null> => {
     if (!n) return null;
-    const [liveRev, liveCounts, liveBar, liveTopItems, liveOpenBar] = await Promise.all([
+    const [liveRev, liveCounts, liveBar, liveTopItems, liveOpenBar, liveChannel] = await Promise.all([
       loadLiveNetTicketRev(n.venue, n.date),
       loadLiveTicketCounts(n.venue, n.date),
       loadLiveBarNet(n.venue, n.date),
       loadLiveTopItems(n.venue, n.date),
       loadLiveOpenBarWindow(n.venue, n.date),
+      loadLiveChannelBreakdown(n.venue, n.date),
     ]);
     const ticketsIssued = n.ticketsIssued ?? liveCounts.issued;
     const ticketsRedeemed = n.ticketsRedeemed ?? liveCounts.redeemed;
@@ -698,6 +919,7 @@ export async function enrichWeekend(recap: WeekendRecap): Promise<WeekendRecap> 
       xlsxBarNet: n.barNet,
       squareTopItems: liveTopItems ?? undefined,
       squareOpenBarWindow: liveOpenBar,
+      channelBreakdown: liveChannel,
     };
     if (liveRev == null) {
       return { ...base, netTicketRevSource: 'xlsx' };
