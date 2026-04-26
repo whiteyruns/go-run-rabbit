@@ -95,6 +95,12 @@ function HubContent() {
               <p>Capture bottle counts for the featured tequila (Bandido / Telsen) and champagne (KU). Feeds the sponsor recap.</p>
               <span className="hub-card-link">Open Tool &rarr;</span>
             </Link>
+            <Link href="/oddyssey-manor/admin/weekend-recap" className="hub-card">
+              <div className="hub-card-tag" style={{ color: "#7fc3ff", borderColor: "#7fc3ff" }}>Admin Tool</div>
+              <h3>Weekend Recap</h3>
+              <p>Monday-scrum snapshot: Fri/Sat per venue with ticket revenue, bar net, open-bar depletion, channel × package mix, and YTD trajectory.</p>
+              <span className="hub-card-link">Open Tool &rarr;</span>
+            </Link>
           </div>
         </div>
 
