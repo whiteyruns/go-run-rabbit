@@ -18,10 +18,12 @@ export default function RunOfShow({
   data,
   slug,
   registeredCrew = [],
+  publicView = false,
 }: {
   data: RunOfShowData;
   slug?: string;
   registeredCrew?: CrewRecord[];
+  publicView?: boolean;
 }) {
   const coreLeads = getCoreLeadsForEvent(slug);
   const registered = registeredCrew.filter(
@@ -290,7 +292,7 @@ export default function RunOfShow({
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
           {coreLeads.map((m) => (
-            <TeamCard key={m.email} member={m} />
+            <TeamCard key={m.email} member={m} publicView={publicView} />
           ))}
         </div>
       </Section>
@@ -305,7 +307,11 @@ export default function RunOfShow({
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-8">
             {registered.map((c) => (
-              <RegisteredCrewCard key={c.id} member={c} />
+              <RegisteredCrewCard
+                key={c.id}
+                member={c}
+                publicView={publicView}
+              />
             ))}
           </div>
         )}
@@ -356,7 +362,13 @@ function SpecRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function TeamCard({ member }: { member: TeamMember }) {
+function TeamCard({
+  member,
+  publicView,
+}: {
+  member: TeamMember;
+  publicView: boolean;
+}) {
   return (
     <div>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
@@ -370,20 +382,22 @@ function TeamCard({ member }: { member: TeamMember }) {
       <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-fh-muted mt-0.5">
         {member.role}
       </p>
-      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-        <a
-          href={`tel:${member.phone.replace(/[^+0-9]/g, "")}`}
-          className="tabular-nums text-fh-text-secondary hover:text-fh-accent transition-colors"
-        >
-          m. {member.phone}
-        </a>
-        <a
-          href={`mailto:${member.email}`}
-          className="text-fh-text-secondary hover:text-fh-accent transition-colors break-all"
-        >
-          e. {member.email}
-        </a>
-      </div>
+      {!publicView && (
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+          <a
+            href={`tel:${member.phone.replace(/[^+0-9]/g, "")}`}
+            className="tabular-nums text-fh-text-secondary hover:text-fh-accent transition-colors"
+          >
+            m. {member.phone}
+          </a>
+          <a
+            href={`mailto:${member.email}`}
+            className="text-fh-text-secondary hover:text-fh-accent transition-colors break-all"
+          >
+            e. {member.email}
+          </a>
+        </div>
+      )}
       <p className="mt-3 text-sm leading-relaxed text-fh-text-secondary">
         {member.responsibilities}
       </p>
@@ -391,7 +405,13 @@ function TeamCard({ member }: { member: TeamMember }) {
   );
 }
 
-function RegisteredCrewCard({ member }: { member: CrewRecord }) {
+function RegisteredCrewCard({
+  member,
+  publicView,
+}: {
+  member: CrewRecord;
+  publicView: boolean;
+}) {
   const roleLine = member.backupRole
     ? `${ROLE_LABELS[member.preferredRole]} · Backup ${ROLE_LABELS[member.backupRole]}`
     : ROLE_LABELS[member.preferredRole];
@@ -408,20 +428,22 @@ function RegisteredCrewCard({ member }: { member: CrewRecord }) {
       <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-fh-muted mt-0.5">
         {roleLine}
       </p>
-      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
-        <a
-          href={`tel:${member.phone.replace(/[^+0-9]/g, "")}`}
-          className="tabular-nums text-fh-text-secondary hover:text-fh-accent transition-colors"
-        >
-          m. {member.phone}
-        </a>
-        <a
-          href={`mailto:${member.email}`}
-          className="text-fh-text-secondary hover:text-fh-accent transition-colors break-all"
-        >
-          e. {member.email}
-        </a>
-      </div>
+      {!publicView && (
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+          <a
+            href={`tel:${member.phone.replace(/[^+0-9]/g, "")}`}
+            className="tabular-nums text-fh-text-secondary hover:text-fh-accent transition-colors"
+          >
+            m. {member.phone}
+          </a>
+          <a
+            href={`mailto:${member.email}`}
+            className="text-fh-text-secondary hover:text-fh-accent transition-colors break-all"
+          >
+            e. {member.email}
+          </a>
+        </div>
+      )}
       {member.skills.length > 0 && (
         <p className="mt-2 text-xs text-fh-text-secondary">
           Skills: {member.skills.map((s) => SKILL_LABELS[s]).join(", ")}

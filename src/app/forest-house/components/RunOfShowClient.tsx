@@ -30,6 +30,18 @@ export default function RunOfShowClient({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sendOpen, setSendOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  async function copyPublicLink() {
+    const url = `${window.location.origin}/forest-house/run-of-show/${slug}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      window.prompt("Copy this link:", url);
+    }
+  }
 
   const allRecipients = useMemo<Recipient[]>(() => {
     const coreLeads = getCoreLeadsForEvent(slug).map<Recipient>((m) => ({
@@ -128,6 +140,13 @@ export default function RunOfShowClient({
     return (
       <>
         <div className="mx-auto max-w-5xl px-6 sm:px-12 pt-8 flex flex-wrap justify-end gap-2">
+          <button
+            type="button"
+            onClick={copyPublicLink}
+            className="px-5 py-2.5 border border-fh-border/70 text-[11px] font-bold uppercase tracking-[0.3em] hover:border-fh-accent hover:text-fh-accent transition-colors"
+          >
+            {copied ? "Copied" : "Copy Share Link"}
+          </button>
           <button
             type="button"
             onClick={() => openWhatsAppReminder(slug, initial)}
