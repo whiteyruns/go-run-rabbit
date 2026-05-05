@@ -162,6 +162,20 @@ export const EDC_PARADE_SEED: RunOfShowData = {
   ],
   heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
   addOns: [...DEFAULT_ADD_ONS],
+  vehicleSpecs: [
+    { label: "Vehicle", value: "Prodigal Swan (prodigalswan.com)" },
+    { label: "Chassis", value: "1996 Taylor-Dunn B248 cargo mover" },
+    { label: "Drive", value: "Electric · Dual 500Ah packs" },
+    { label: "Height", value: "12 ft" },
+    { label: "Width", value: "6 ft" },
+    { label: "Length", value: "16 ft" },
+    { label: "Weight", value: "10,000 lbs · 4,000 lb load capacity" },
+    { label: "Lighting", value: "200m programmable LED" },
+    {
+      label: "Fire Effects",
+      value: "Propane crown · 6–8 ft plume · certified op only",
+    },
+  ],
   lastUpdated: "April 22, 2026",
 };
 

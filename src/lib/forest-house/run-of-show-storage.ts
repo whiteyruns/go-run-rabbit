@@ -43,6 +43,7 @@ const INHERITABLE_OPTIONAL_KEYS = [
   "talent",
   "addOns",
   "power",
+  "vehicleSpecs",
 ] as const;
 
 export async function readRunOfShow(slug: string): Promise<RunOfShowData> {

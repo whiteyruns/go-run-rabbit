@@ -27,6 +27,12 @@ export const PowerConfigSchema = z.object({
 });
 export type PowerConfig = z.infer<typeof PowerConfigSchema>;
 
+export const VehicleSpecRowSchema = z.object({
+  label: z.string().min(1).max(40),
+  value: z.string().min(1).max(120),
+});
+export type VehicleSpecRow = z.infer<typeof VehicleSpecRowSchema>;
+
 export const RunOfShowDataSchema = z.object({
   eventName: z.string().min(1).max(80),
   eventSubtitle: z.string().max(160).optional(),
@@ -43,6 +49,10 @@ export const RunOfShowDataSchema = z.object({
   // guide is rendered. If set, the custom summary/details replace it
   // entirely — the CamLock swatches are hidden.
   power: PowerConfigSchema.optional(),
+  // Per-event vehicle override. If unset, the default ForestHouse spec
+  // sheet renders. If set, replaces the entire vehicle block — used when
+  // running a different art car (e.g. Prodigal Swan for EDC Parade).
+  vehicleSpecs: z.array(VehicleSpecRowSchema).max(12).optional(),
   lastUpdated: z.string().max(80),
 });
 export type RunOfShowData = z.infer<typeof RunOfShowDataSchema>;

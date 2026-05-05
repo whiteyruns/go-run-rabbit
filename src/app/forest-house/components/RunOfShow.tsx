@@ -157,18 +157,38 @@ export default function RunOfShow({
         <div>
           <SectionHeading>Vehicle Specifications</SectionHeading>
           <dl className="mt-5 grid grid-cols-2 gap-x-8 gap-y-3 text-sm">
-            <SpecRow label="Chassis" value={VEHICLE_SPECS.chassis} />
-            <SpecRow label="Engine" value={VEHICLE_SPECS.engine} />
-            <SpecRow label="Height" value={VEHICLE_SPECS.height} />
-            <SpecRow label="Width" value={VEHICLE_SPECS.width} />
-            <SpecRow label="Length" value={VEHICLE_SPECS.length} />
-            <SpecRow label="Weight" value={VEHICLE_SPECS.weight} />
-            <div className="col-span-2">
-              <SpecRow
-                label="Stabilizers"
-                value={VEHICLE_SPECS.stabilizers}
-              />
-            </div>
+            {data.vehicleSpecs ? (
+              data.vehicleSpecs.map((row, i) => {
+                const last = i === data.vehicleSpecs!.length - 1;
+                const odd = data.vehicleSpecs!.length % 2 === 1;
+                const wide = row.value.length > 32;
+                const node = <SpecRow label={row.label} value={row.value} />;
+                return wide || (last && odd) ? (
+                  <div key={`${row.label}-${i}`} className="col-span-2">
+                    {node}
+                  </div>
+                ) : (
+                  <div key={`${row.label}-${i}`} className="contents">
+                    {node}
+                  </div>
+                );
+              })
+            ) : (
+              <>
+                <SpecRow label="Chassis" value={VEHICLE_SPECS.chassis} />
+                <SpecRow label="Engine" value={VEHICLE_SPECS.engine} />
+                <SpecRow label="Height" value={VEHICLE_SPECS.height} />
+                <SpecRow label="Width" value={VEHICLE_SPECS.width} />
+                <SpecRow label="Length" value={VEHICLE_SPECS.length} />
+                <SpecRow label="Weight" value={VEHICLE_SPECS.weight} />
+                <div className="col-span-2">
+                  <SpecRow
+                    label="Stabilizers"
+                    value={VEHICLE_SPECS.stabilizers}
+                  />
+                </div>
+              </>
+            )}
           </dl>
 
           <SectionHeading className="mt-12">Power Requirements</SectionHeading>
