@@ -318,7 +318,6 @@ export const JUNE_BLOCK_PARTY_SEED: RunOfShowData = {
 };
 
 export const RUN_OF_SHOW_SEEDS = {
-  "cinco-de-mayo": CINCO_SEED,
   "edc-parade": EDC_PARADE_SEED,
   "edc-festival": EDC_FESTIVAL_SEED,
   "june-block-party": JUNE_BLOCK_PARTY_SEED,
@@ -336,7 +335,6 @@ export const EVENT_CREW_PREDICATES: Record<
   EventSlug,
   (c: CrewRecord) => boolean
 > = {
-  "cinco-de-mayo": (c) => c.cincoDeMayo,
   "edc-parade": (c) => c.edcParade,
   "edc-festival": (c) => c.edcFestival,
   "june-block-party": (c) => c.juneBlockParty,
