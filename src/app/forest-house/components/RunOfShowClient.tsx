@@ -91,10 +91,11 @@ export default function RunOfShowClient({
       .filter((s) => s.length > 0);
     const payload: RunOfShowData = {
       ...draft,
-      talent:
-        trimmedTalent && trimmedTalent.length > 0 ? trimmedTalent : undefined,
-      addOns:
-        trimmedAddOns && trimmedAddOns.length > 0 ? trimmedAddOns : undefined,
+      // When the user has the array present (even if empty after trimming),
+      // preserve it as []. The storage layer treats absent keys as
+      // "inherit from seed" — sending [] is how we record an explicit clear.
+      talent: trimmedTalent,
+      addOns: trimmedAddOns,
       power:
         draft.power && draft.power.summary.trim().length > 0
           ? {
