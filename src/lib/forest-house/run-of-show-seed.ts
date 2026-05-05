@@ -176,6 +176,18 @@ export const EDC_PARADE_SEED: RunOfShowData = {
       value: "Propane crown · 6–8 ft plume · certified op only",
     },
   ],
+  header: {
+    logo: "/prodigal-swan/logo.png",
+    alt: "Prodigal Swan",
+    logoWidth: 135,
+    logoHeight: 180,
+    eyebrow: "Prodigal Swan",
+    link: "https://prodigalswan.com",
+    linkLabel: "prodigalswan.com",
+  },
+  hideAudio: true,
+  hideLasers: true,
+  hidePower: true,
   lastUpdated: "April 22, 2026",
 };
 

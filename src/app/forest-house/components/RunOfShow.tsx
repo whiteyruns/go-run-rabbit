@@ -1,6 +1,7 @@
 import Image from "next/image";
 import {
   AUDIO_GEAR,
+  DEFAULT_HEADER,
   LASER_GEAR,
   POWER_REQUIREMENTS,
   VEHICLE_SPECS,
@@ -29,30 +30,35 @@ export default function RunOfShow({
   const registered = registeredCrew.filter(
     (c) => !isCoreForEvent(c.email, slug),
   );
+  const header = data.header ?? DEFAULT_HEADER;
+  const showAudio = !data.hideAudio;
+  const showLasers = !data.hideLasers;
+  const showAudioLightingSection = showAudio || showLasers;
+  const showPower = !data.hidePower;
   return (
     <div className="mx-auto max-w-5xl px-6 sm:px-12 pb-20">
       {/* Hero */}
       <header className="pt-10 sm:pt-14 pb-10 sm:pb-14 border-b border-fh-border">
         <div className="flex items-start gap-5 mb-8">
           <Image
-            src="/forest-house/logo.png"
-            alt="ForestHouse"
-            width={120}
-            height={95}
+            src={header.logo}
+            alt={header.alt}
+            width={header.logoWidth}
+            height={header.logoHeight}
             className="h-14 sm:h-16 w-auto opacity-95"
             priority
           />
           <div className="flex-1 flex flex-col items-end text-right">
             <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.4em] text-fh-muted">
-              ForestHouse Art Car
+              {header.eyebrow}
             </span>
             <a
-              href="https://www.foresthou.se"
+              href={header.link}
               target="_blank"
               rel="noreferrer"
               className="mt-1 text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.3em] text-fh-muted hover:text-fh-accent transition-colors"
             >
-              foresthou.se
+              {header.linkLabel}
             </a>
           </div>
         </div>
@@ -191,73 +197,91 @@ export default function RunOfShow({
             )}
           </dl>
 
-          <SectionHeading className="mt-12">Power Requirements</SectionHeading>
-          {data.power ? (
+          {showPower && (
             <>
-              <p className="mt-4 text-sm text-fh-text">
-                {data.power.summary}
-              </p>
-              {data.power.details && data.power.details.length > 0 && (
-                <ul className="mt-3 space-y-1 text-sm text-fh-text-secondary">
-                  {data.power.details.map((d) => (
-                    <li key={d}>• {d}</li>
-                  ))}
-                </ul>
+              <SectionHeading className="mt-12">
+                Power Requirements
+              </SectionHeading>
+              {data.power ? (
+                <>
+                  <p className="mt-4 text-sm text-fh-text">
+                    {data.power.summary}
+                  </p>
+                  {data.power.details && data.power.details.length > 0 && (
+                    <ul className="mt-3 space-y-1 text-sm text-fh-text-secondary">
+                      {data.power.details.map((d) => (
+                        <li key={d}>• {d}</li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ) : (
+                <>
+                  <p className="mt-4 text-sm text-fh-text-secondary">
+                    Shore Power — {POWER_REQUIREMENTS.shorePower}
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    {POWER_REQUIREMENTS.camLock.map((c) => (
+                      <li
+                        key={c.color}
+                        className="flex items-center gap-3 text-sm tabular-nums"
+                      >
+                        <span
+                          className="inline-block h-4 w-6 border border-fh-border/60"
+                          style={{ backgroundColor: c.swatch }}
+                          aria-hidden
+                        />
+                        <span className="font-semibold w-16">{c.color}</span>
+                        <span className="text-fh-text-secondary">
+                          {c.label}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
-            </>
-          ) : (
-            <>
-              <p className="mt-4 text-sm text-fh-text-secondary">
-                Shore Power — {POWER_REQUIREMENTS.shorePower}
-              </p>
-              <ul className="mt-4 space-y-2">
-                {POWER_REQUIREMENTS.camLock.map((c) => (
-                  <li
-                    key={c.color}
-                    className="flex items-center gap-3 text-sm tabular-nums"
-                  >
-                    <span
-                      className="inline-block h-4 w-6 border border-fh-border/60"
-                      style={{ backgroundColor: c.swatch }}
-                      aria-hidden
-                    />
-                    <span className="font-semibold w-16">{c.color}</span>
-                    <span className="text-fh-text-secondary">{c.label}</span>
-                  </li>
-                ))}
-              </ul>
             </>
           )}
         </div>
 
         <div>
-          <SectionHeading>Audio & Lighting</SectionHeading>
-          <div className="mt-5">
-            <h4 className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
-              Audio
-            </h4>
-            <ul className="space-y-1 text-sm">
-              {AUDIO_GEAR.map((g) => (
-                <li key={g} className="text-fh-text-secondary">
-                  • {g}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="mt-6">
-            <h4 className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
-              Lasers
-            </h4>
-            <ul className="space-y-1 text-sm">
-              {LASER_GEAR.map((g) => (
-                <li key={g} className="text-fh-text-secondary">
-                  • {g}
-                </li>
-              ))}
-            </ul>
-          </div>
+          {showAudioLightingSection && (
+            <>
+              <SectionHeading>Audio & Lighting</SectionHeading>
+              {showAudio && (
+                <div className="mt-5">
+                  <h4 className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
+                    Audio
+                  </h4>
+                  <ul className="space-y-1 text-sm">
+                    {AUDIO_GEAR.map((g) => (
+                      <li key={g} className="text-fh-text-secondary">
+                        • {g}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {showLasers && (
+                <div className="mt-6">
+                  <h4 className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
+                    Lasers
+                  </h4>
+                  <ul className="space-y-1 text-sm">
+                    {LASER_GEAR.map((g) => (
+                      <li key={g} className="text-fh-text-secondary">
+                        • {g}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </>
+          )}
 
-          <SectionHeading className="mt-12">
+          <SectionHeading
+            className={showAudioLightingSection ? "mt-12" : ""}
+          >
             Heavy Equipment Required
           </SectionHeading>
           <ul className="mt-5 space-y-1 text-sm">

@@ -33,6 +33,27 @@ export const VehicleSpecRowSchema = z.object({
 });
 export type VehicleSpecRow = z.infer<typeof VehicleSpecRowSchema>;
 
+export const HeaderConfigSchema = z.object({
+  logo: z.string().min(1).max(200),
+  alt: z.string().min(1).max(80),
+  logoWidth: z.number().int().positive().max(2000),
+  logoHeight: z.number().int().positive().max(2000),
+  eyebrow: z.string().min(1).max(60),
+  link: z.string().url(),
+  linkLabel: z.string().min(1).max(40),
+});
+export type HeaderConfig = z.infer<typeof HeaderConfigSchema>;
+
+export const DEFAULT_HEADER: HeaderConfig = {
+  logo: "/forest-house/logo.png",
+  alt: "ForestHouse",
+  logoWidth: 120,
+  logoHeight: 95,
+  eyebrow: "ForestHouse Art Car",
+  link: "https://www.foresthou.se",
+  linkLabel: "foresthou.se",
+};
+
 export const RunOfShowDataSchema = z.object({
   eventName: z.string().min(1).max(80),
   eventSubtitle: z.string().max(160).optional(),
@@ -53,6 +74,15 @@ export const RunOfShowDataSchema = z.object({
   // sheet renders. If set, replaces the entire vehicle block — used when
   // running a different art car (e.g. Prodigal Swan for EDC Parade).
   vehicleSpecs: z.array(VehicleSpecRowSchema).max(12).optional(),
+  // Per-event header override (logo, eyebrow, brand link). Defaults to
+  // ForestHouse when unset.
+  header: HeaderConfigSchema.optional(),
+  // Per-event section visibility. The audio/laser/power blocks are
+  // ForestHouse-specific; events using a different vehicle (Prodigal
+  // Swan) hide them since the gear list doesn't apply.
+  hideAudio: z.boolean().optional(),
+  hideLasers: z.boolean().optional(),
+  hidePower: z.boolean().optional(),
   lastUpdated: z.string().max(80),
 });
 export type RunOfShowData = z.infer<typeof RunOfShowDataSchema>;
