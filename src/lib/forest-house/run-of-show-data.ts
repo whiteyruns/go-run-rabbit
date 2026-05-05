@@ -114,6 +114,17 @@ export const EVENT_CORE_EMAILS: Record<string, ReadonlySet<string>> = {
   "june-block-party": new Set(["shaun@cornerbar.com"]),
 };
 
+// Event-specific opt-outs — emails listed here are removed from the
+// Core Leads roster for that event, even if they're in CORE_TEAM_EMAILS.
+// Used when a default core lead isn't on a particular show (e.g. Auralux
+// doesn't roll on the EDC Parade since it's a Prodigal Swan event).
+export const EVENT_CORE_EXCLUDE_EMAILS: Record<string, ReadonlySet<string>> = {
+  "edc-parade": new Set([
+    "michael@auraluxsystems.com",
+    "charlie@auraluxsystems.com",
+  ]),
+};
+
 // ── Team ──────────────────────────────────────────────────────────────
 export const FOREST_HOUSE_TEAM: TeamMember[] = [
   {
@@ -221,15 +232,19 @@ export const FOREST_HOUSE_TEAM: TeamMember[] = [
 
 export function getCoreLeadsForEvent(slug?: string): TeamMember[] {
   const eventEmails = slug ? EVENT_CORE_EMAILS[slug] : undefined;
+  const excluded = slug ? EVENT_CORE_EXCLUDE_EMAILS[slug] : undefined;
   return FOREST_HOUSE_TEAM.filter(
     (m) =>
-      CORE_TEAM_EMAILS.has(m.email) ||
-      (eventEmails?.has(m.email) ?? false),
+      !excluded?.has(m.email) &&
+      (CORE_TEAM_EMAILS.has(m.email) ||
+        (eventEmails?.has(m.email) ?? false)),
   );
 }
 
 export function isCoreForEvent(email: string, slug?: string): boolean {
   const lower = email.toLowerCase();
+  const excluded = slug ? EVENT_CORE_EXCLUDE_EMAILS[slug] : undefined;
+  if (excluded?.has(lower)) return false;
   if (CORE_TEAM_EMAILS.has(lower)) return true;
   const eventEmails = slug ? EVENT_CORE_EMAILS[slug] : undefined;
   return eventEmails?.has(lower) ?? false;
