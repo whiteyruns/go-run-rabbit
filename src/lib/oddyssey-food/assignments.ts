@@ -29,6 +29,11 @@ export interface GuestAssignment {
   // Multi-type override: e.g., [{type: "dinner_guest", count: 1}, {type: "explorer", count: 5}].
   // Used when one buyer purchased multiple ticket types in one session.
   package_types?: PackageAssignment[];
+  // Per-ticket food-item display order override. Keyed by the ticket's
+  // index within this guest's tickets list (0-based, stringified for
+  // JSON), value = ordered scan_codes from that ticket's allocations.
+  // Roster + print honor this; default is course delivery order.
+  itemOrder?: Record<string, string[]>;
 }
 
 export type AssignmentsMap = Record<string, GuestAssignment>;

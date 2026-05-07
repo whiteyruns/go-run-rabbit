@@ -62,6 +62,34 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
     onAssignmentsChange(next);
   }
 
+  // Reorder food items WITHIN a single ticket via drag-and-drop. The
+  // resulting scan_code list goes into assignment.itemOrder keyed by
+  // the ticket's index inside the guest, which the roster builder
+  // re-applies after slicing tickets.
+  function reorderTicketItems(
+    buyerEmail: string,
+    sessionIso: string,
+    ticketIndex: number,
+    sourceScanCode: string,
+    targetScanCode: string,
+    currentScanCodes: string[],
+  ) {
+    if (sourceScanCode === targetScanCode) return;
+    const k = assignmentKey(buyerEmail, sessionIso);
+    const cur = assignments[k] ?? {};
+    // Start from whatever order the row currently displays — applies
+    // any saved override on top of the default delivery sort already.
+    const base = currentScanCodes.slice();
+    const fromIdx = base.indexOf(sourceScanCode);
+    if (fromIdx < 0) return;
+    const [picked] = base.splice(fromIdx, 1);
+    const toIdx = base.indexOf(targetScanCode);
+    base.splice(toIdx >= 0 ? toIdx : base.length, 0, picked);
+    const itemOrder = { ...(cur.itemOrder ?? {}), [String(ticketIndex)]: base };
+    const next = updateAssignment(buyerEmail, sessionIso, { itemOrder });
+    onAssignmentsChange(next);
+  }
+
   // Count allocations per (buyer, session) so the editor can show a
   // "X used / Y total" hint and validate the split.
   const totalItemsByGuest = new Map<string, number>();
@@ -186,7 +214,59 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
                     </div>
                   ) : ""}
                 </td>
-                <td className="rc-food">{row.food}</td>
+                <td
+                  className="rc-food rc-food-drag"
+                  draggable={row.ticket_scan_codes.length > 1}
+                  onDragStart={(e) => {
+                    if (row.ticket_scan_codes.length <= 1) return;
+                    const payload = JSON.stringify({
+                      buyerEmail: row.buyer_email,
+                      sessionIso: row.session_iso,
+                      ticketIndex: row.ticket_index_in_guest,
+                      scanCode: row.scan_code,
+                    });
+                    e.dataTransfer.setData("application/x-roster-item", payload);
+                    e.dataTransfer.effectAllowed = "move";
+                  }}
+                  onDragOver={(e) => {
+                    if (row.ticket_scan_codes.length <= 1) return;
+                    // Only highlight as a drop target if the drag came from
+                    // the same guest + ticket. Cross-ticket drops are a
+                    // different feature (option #2) and intentionally not
+                    // supported here.
+                    const types = e.dataTransfer.types;
+                    if (Array.from(types).includes("application/x-roster-item")) {
+                      e.preventDefault();
+                      e.dataTransfer.dropEffect = "move";
+                    }
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const raw = e.dataTransfer.getData("application/x-roster-item");
+                    if (!raw) return;
+                    let payload: { buyerEmail: string; sessionIso: string; ticketIndex: number; scanCode: string };
+                    try { payload = JSON.parse(raw); } catch { return; }
+                    if (
+                      payload.buyerEmail !== row.buyer_email ||
+                      payload.sessionIso !== row.session_iso ||
+                      payload.ticketIndex !== row.ticket_index_in_guest
+                    ) return;
+                    reorderTicketItems(
+                      row.buyer_email,
+                      row.session_iso,
+                      row.ticket_index_in_guest,
+                      payload.scanCode,
+                      row.scan_code,
+                      row.ticket_scan_codes,
+                    );
+                  }}
+                  title={row.ticket_scan_codes.length > 1 ? "Drag to reorder within ticket" : undefined}
+                >
+                  {row.ticket_scan_codes.length > 1 && (
+                    <span className="rc-drag-handle" aria-hidden="true">⋮⋮</span>
+                  )}
+                  {row.food}
+                </td>
                 <td className="rc-email">{isFirst ? row.email : ""}</td>
               </tr>
             );
@@ -390,6 +470,14 @@ const rosterStyles = `
 .rc-num { font-family: var(--serif); font-size: 16px; color: var(--accent); text-align: center; }
 .rc-time, .rc-name, .rc-food, .rc-email { letter-spacing: 0.3px; }
 .rc-food { font-weight: 500; }
+.rc-food-drag[draggable="true"] { cursor: grab; }
+.rc-food-drag[draggable="true"]:active { cursor: grabbing; }
+.rc-food-drag[draggable="true"]:hover { background: rgba(255,255,255,0.04); }
+.rc-food-drag.rc-food-drop-over { box-shadow: inset 0 -2px 0 var(--accent); }
+.rc-drag-handle {
+  display: inline-block; margin-right: 8px; color: var(--text-muted);
+  font-family: var(--mono); font-size: 12px; letter-spacing: -2px; user-select: none;
+}
 .rc-email { color: var(--text-muted); font-size: 12px; }
 
 .rc-name-wrap { display: flex; flex-direction: column; gap: 4px; }

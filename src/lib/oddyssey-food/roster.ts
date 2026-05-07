@@ -50,6 +50,13 @@ export interface RosterRow {
   // Identity (for editing)
   buyer_email: string;
   session_iso: string;
+  // Ticket index within this guest (0-based). Lets the drag-and-drop
+  // editor key its persisted item-order override.
+  ticket_index_in_guest: number;
+  // Ordered scan_codes of every allocation in this row's ticket — used
+  // by the drop handler to compute the new order without re-scanning
+  // the section.
+  ticket_scan_codes: string[];
   scan_code: string;
 }
 
@@ -113,6 +120,31 @@ function sliceByPerTicket(
  *      every allocation.
  *   4. None — each allocation becomes its own one-item ticket.
  */
+// Apply a saved per-ticket scan_code order. Items listed in `order` come
+// out in that order; any allocation whose scan_code isn't in the list
+// (e.g., if the ticket changed shape after the override was saved) gets
+// appended in its original (delivery) order so nothing disappears.
+function applyItemOrder(
+  allocs: FoodAllocation[],
+  order: string[] | undefined,
+): FoodAllocation[] {
+  if (!order || order.length === 0) return allocs;
+  const byScan = new Map(allocs.map((a) => [a.scan_code, a]));
+  const seen = new Set<string>();
+  const out: FoodAllocation[] = [];
+  for (const sc of order) {
+    const a = byScan.get(sc);
+    if (a && !seen.has(sc)) {
+      out.push(a);
+      seen.add(sc);
+    }
+  }
+  for (const a of allocs) {
+    if (!seen.has(a.scan_code)) out.push(a);
+  }
+  return out;
+}
+
 function groupIntoTickets(
   rawAllocations: FoodAllocation[],
   assignment: GuestAssignment,
@@ -123,10 +155,11 @@ function groupIntoTickets(
   // sorts within each bucket below.
   const allocations = sortByDelivery(rawAllocations);
 
+  let tickets: BuiltTicket[];
   // Priority 1: manual multi-type
   const manual = (assignment.package_types ?? []).filter((p) => p && p.count > 0);
   if (manual.length > 0) {
-    const out: BuiltTicket[] = [];
+    tickets = [];
     let cursor = 0;
     for (const p of manual) {
       const tt = TICKET_BY_TYPE[p.type];
@@ -139,24 +172,18 @@ function groupIntoTickets(
       for (let i = 0; i < p.count; i++) {
         const ticketAllocs = slice.slice(i * perTicket, (i + 1) * perTicket);
         if (ticketAllocs.length === 0) break;
-        out.push({ packageType: p.type, allocations: ticketAllocs });
+        tickets.push({ packageType: p.type, allocations: ticketAllocs });
       }
     }
     // Trailing allocations that didn't fit into the manual breakdown go
     // into single-item tickets so they're still visible on the sheet.
     if (cursor < allocations.length) {
       for (const a of allocations.slice(cursor)) {
-        out.push({ packageType: undefined, allocations: [a] });
+        tickets.push({ packageType: undefined, allocations: [a] });
       }
     }
-    return out;
-  }
-
-  // Priority 2: per-allocation derived
-  const hasDerived = allocations.some((a) => a.derived_package_type);
-  if (hasDerived) {
-    // Preserve the order in which derived types first appear so tickets
-    // come out in a predictable sequence.
+  } else if (allocations.some((a) => a.derived_package_type)) {
+    // Priority 2: per-allocation derived
     const order: string[] = [];
     const buckets = new Map<string, FoodAllocation[]>();
     for (const a of allocations) {
@@ -167,19 +194,32 @@ function groupIntoTickets(
       }
       buckets.get(key)!.push(a);
     }
-    const out: BuiltTicket[] = [];
+    tickets = [];
     for (const key of order) {
       // Re-sort each bucket so course order holds within a single
       // ticket type even when allocations were interleaved in the CSV.
       const allocs = sortByDelivery(buckets.get(key)!);
       const t = key === "__none__" ? undefined : key;
-      out.push(...sliceByPerTicket(allocs, t));
+      tickets.push(...sliceByPerTicket(allocs, t));
     }
-    return out;
+  } else {
+    // Priority 3 + 4: whole-guest type or none
+    tickets = sliceByPerTicket(allocations, assignment.package_type);
   }
 
-  // Priority 3 + 4: whole-guest type or none
-  return sliceByPerTicket(allocations, assignment.package_type);
+  // Apply per-ticket item-order overrides last so a saved drag-and-drop
+  // arrangement survives across renders. Keyed by 0-based ticket index
+  // within this guest's tickets list.
+  const overrides = assignment.itemOrder;
+  if (overrides) {
+    for (let i = 0; i < tickets.length; i++) {
+      const o = overrides[String(i)];
+      if (o && o.length > 0) {
+        tickets[i] = { ...tickets[i], allocations: applyItemOrder(tickets[i].allocations, o) };
+      }
+    }
+  }
+  return tickets;
 }
 
 function timeLabel(iso: string): string {
@@ -269,6 +309,7 @@ export function buildRoster(
           ticketTT?.short_label ??
           (ticket.packageType ? ticket.packageType.toUpperCase() : "—");
 
+        const ticketScanCodes = ticket.allocations.map((al) => al.scan_code);
         for (let ii = 0; ii < ticket.allocations.length; ii++) {
           const alloc = ticket.allocations[ii];
           rows.push({
@@ -290,6 +331,8 @@ export function buildRoster(
             buyer_email: g.buyer_email,
             session_iso: g.session_iso,
             scan_code: alloc.scan_code,
+            ticket_index_in_guest: ti,
+            ticket_scan_codes: ticketScanCodes,
           });
         }
       }
