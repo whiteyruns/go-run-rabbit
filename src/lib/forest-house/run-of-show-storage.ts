@@ -48,6 +48,7 @@ const INHERITABLE_OPTIONAL_KEYS = [
   "hideAudio",
   "hideLasers",
   "hidePower",
+  "siteBriefing",
 ] as const;
 
 export async function readRunOfShow(slug: string): Promise<RunOfShowData> {

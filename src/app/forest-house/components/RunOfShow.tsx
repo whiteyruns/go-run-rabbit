@@ -115,6 +115,91 @@ export default function RunOfShow({
         )}
       </Section>
 
+      {/* Site Briefing — site map, location pins, safety, operator forms */}
+      {data.siteBriefing && (
+        <Section label="Site Briefing">
+          {data.siteBriefing.map && (
+            <figure className="mb-8">
+              <Image
+                src={data.siteBriefing.map.src}
+                alt={data.siteBriefing.map.alt}
+                width={data.siteBriefing.map.width}
+                height={data.siteBriefing.map.height}
+                className="w-full h-auto border border-fh-border/60"
+              />
+              {data.siteBriefing.map.caption && (
+                <figcaption className="mt-2 text-[11px] uppercase tracking-[0.25em] text-fh-muted">
+                  {data.siteBriefing.map.caption}
+                </figcaption>
+              )}
+            </figure>
+          )}
+          {data.siteBriefing.locations &&
+            data.siteBriefing.locations.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+                {data.siteBriefing.locations.map((loc) => (
+                  <a
+                    key={loc.url}
+                    href={loc.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block border border-fh-border/70 px-5 py-4 hover:border-fh-accent transition-colors"
+                  >
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.3em] text-fh-muted mb-1">
+                      Open in maps →
+                    </div>
+                    <div className="text-base font-bold">{loc.label}</div>
+                    {loc.note && (
+                      <div className="text-xs text-fh-text-secondary mt-1">
+                        {loc.note}
+                      </div>
+                    )}
+                  </a>
+                ))}
+              </div>
+            )}
+          {data.siteBriefing.safetyNotes &&
+            data.siteBriefing.safetyNotes.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-3">
+                  Safety Requirements
+                </h3>
+                <ul className="space-y-2 text-sm">
+                  {data.siteBriefing.safetyNotes.map((n) => (
+                    <li
+                      key={n}
+                      className="text-fh-text-secondary flex gap-3"
+                    >
+                      <span className="text-fh-accent mt-0.5">→</span>
+                      <span>{n}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          {data.siteBriefing.equipmentForm && (
+            <div className="border border-fh-accent/40 bg-fh-accent/5 px-5 py-5">
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.35em] text-fh-muted mb-2">
+                Heavy Equipment Operation
+              </h3>
+              {data.siteBriefing.equipmentForm.description && (
+                <p className="text-sm text-fh-text-secondary mb-3">
+                  {data.siteBriefing.equipmentForm.description}
+                </p>
+              )}
+              <a
+                href={data.siteBriefing.equipmentForm.url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-fh-accent hover:underline"
+              >
+                {data.siteBriefing.equipmentForm.label} →
+              </a>
+            </div>
+          )}
+        </Section>
+      )}
+
       {/* Schedule */}
       <Section label="Schedule">
         <div className="overflow-x-auto">

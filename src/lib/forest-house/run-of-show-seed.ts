@@ -258,7 +258,37 @@ export const EDC_FESTIVAL_SEED: RunOfShowData = {
   ],
   heavyEquipment: [...DEFAULT_HEAVY_EQUIPMENT],
   addOns: [...DEFAULT_ADD_ONS],
-  lastUpdated: "April 21, 2026",
+  siteBriefing: {
+    map: {
+      src: "/forest-house/edc-festival-site-map.png",
+      alt: "EDC Festival site map — Las Vegas Motor Speedway with key art ops locations",
+      width: 960,
+      height: 540,
+      caption: "LVMS · Art Ops site map",
+    },
+    locations: [
+      {
+        label: "Staff Check-in",
+        url: "https://maps.app.goo.gl/thRy5mxWUKnr4AFR6",
+      },
+      {
+        label: "Main Art Ops Boneyard",
+        url: "https://maps.app.goo.gl/zcoXoAF5BGgHYSYU8",
+      },
+    ],
+    safetyNotes: [
+      "HiVis / Safety Gear is a requirement at every show.",
+      "All regulation Personal Protective Equipment (PPE) is required to be worn on-site at all times — please help set the example.",
+      "Hard hats MUST be worn at all times when working around stages, heavy materials, and overhead work.",
+    ],
+    equipmentForm: {
+      label: "Submit HEQ Operator Agreement Form",
+      description:
+        "Required for anyone who will be operating heavy equipment on site. Submit before load-in if you haven't already.",
+      url: "https://airtable.com/appPIU8nfrAAzIjDb/pagspXgNLuSAwUweX/form",
+    },
+  },
+  lastUpdated: "May 7, 2026",
 };
 
 export const JUNE_BLOCK_PARTY_SEED: RunOfShowData = {

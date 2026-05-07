@@ -33,6 +33,37 @@ export const VehicleSpecRowSchema = z.object({
 });
 export type VehicleSpecRow = z.infer<typeof VehicleSpecRowSchema>;
 
+export const SiteBriefingSchema = z.object({
+  map: z
+    .object({
+      src: z.string().min(1).max(200),
+      alt: z.string().min(1).max(120),
+      width: z.number().int().positive().max(4000),
+      height: z.number().int().positive().max(4000),
+      caption: z.string().max(200).optional(),
+    })
+    .optional(),
+  locations: z
+    .array(
+      z.object({
+        label: z.string().min(1).max(60),
+        url: z.string().url(),
+        note: z.string().max(120).optional(),
+      }),
+    )
+    .max(8)
+    .optional(),
+  safetyNotes: z.array(z.string().min(1).max(280)).max(12).optional(),
+  equipmentForm: z
+    .object({
+      label: z.string().min(1).max(80),
+      description: z.string().max(280).optional(),
+      url: z.string().url(),
+    })
+    .optional(),
+});
+export type SiteBriefing = z.infer<typeof SiteBriefingSchema>;
+
 export const HeaderConfigSchema = z.object({
   logo: z.string().min(1).max(200),
   alt: z.string().min(1).max(80),
@@ -83,6 +114,10 @@ export const RunOfShowDataSchema = z.object({
   hideAudio: z.boolean().optional(),
   hideLasers: z.boolean().optional(),
   hidePower: z.boolean().optional(),
+  // Per-event site briefing — site map, key location pins, safety
+  // requirements, and operator-form links. Renders just below Event
+  // Details when set.
+  siteBriefing: SiteBriefingSchema.optional(),
   lastUpdated: z.string().max(80),
 });
 export type RunOfShowData = z.infer<typeof RunOfShowDataSchema>;
