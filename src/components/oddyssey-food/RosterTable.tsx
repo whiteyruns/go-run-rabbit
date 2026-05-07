@@ -214,69 +214,70 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
                     </div>
                   ) : ""}
                 </td>
-                <td
-                  className="rc-food rc-food-drag"
-                  draggable={row.ticket_scan_codes.length > 1}
-                  onDragStart={(e) => {
-                    if (row.ticket_scan_codes.length <= 1) return;
-                    const payload = JSON.stringify({
-                      buyerEmail: row.buyer_email,
-                      sessionIso: row.session_iso,
-                      ticketIndex: row.ticket_index_in_guest,
-                      scanCode: row.scan_code,
-                    });
-                    // Firefox requires text/plain to be set or drags
-                    // never initiate; both MIME types carry the same
-                    // payload so drop reads either.
-                    e.dataTransfer.setData("text/plain", payload);
-                    e.dataTransfer.setData("application/x-roster-item", payload);
-                    e.dataTransfer.effectAllowed = "move";
-                    (e.currentTarget as HTMLElement).classList.add("rc-food-dragging");
-                  }}
-                  onDragEnd={(e) => {
-                    (e.currentTarget as HTMLElement).classList.remove("rc-food-dragging");
-                  }}
-                  onDragOver={(e) => {
-                    if (row.ticket_scan_codes.length <= 1) return;
-                    // Always allow drop while we're hovering over a food
-                    // cell — we validate same-ticket on drop. preventDefault
-                    // is required for onDrop to fire.
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = "move";
-                    (e.currentTarget as HTMLElement).classList.add("rc-food-drop-over");
-                  }}
-                  onDragLeave={(e) => {
-                    (e.currentTarget as HTMLElement).classList.remove("rc-food-drop-over");
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    (e.currentTarget as HTMLElement).classList.remove("rc-food-drop-over");
-                    const raw =
-                      e.dataTransfer.getData("application/x-roster-item") ||
-                      e.dataTransfer.getData("text/plain");
-                    if (!raw) return;
-                    let payload: { buyerEmail: string; sessionIso: string; ticketIndex: number; scanCode: string };
-                    try { payload = JSON.parse(raw); } catch { return; }
-                    if (
-                      payload.buyerEmail !== row.buyer_email ||
-                      payload.sessionIso !== row.session_iso ||
-                      payload.ticketIndex !== row.ticket_index_in_guest
-                    ) return;
-                    reorderTicketItems(
-                      row.buyer_email,
-                      row.session_iso,
-                      row.ticket_index_in_guest,
-                      payload.scanCode,
-                      row.scan_code,
-                      row.ticket_scan_codes,
-                    );
-                  }}
-                  title={row.ticket_scan_codes.length > 1 ? "Drag to reorder within ticket" : undefined}
-                >
-                  {row.ticket_scan_codes.length > 1 && (
-                    <span className="rc-drag-handle" aria-hidden="true">⋮⋮</span>
+                <td className="rc-food">
+                  {row.ticket_scan_codes.length > 1 ? (
+                    <div
+                      className="rc-food-dnd"
+                      draggable
+                      onDragStart={(e) => {
+                        const payload = JSON.stringify({
+                          buyerEmail: row.buyer_email,
+                          sessionIso: row.session_iso,
+                          ticketIndex: row.ticket_index_in_guest,
+                          scanCode: row.scan_code,
+                        });
+                        e.dataTransfer.setData("text/plain", payload);
+                        e.dataTransfer.setData("application/x-roster-item", payload);
+                        e.dataTransfer.effectAllowed = "move";
+                        (e.currentTarget as HTMLElement).classList.add("rc-food-dragging");
+                      }}
+                      onDragEnd={(e) => {
+                        (e.currentTarget as HTMLElement).classList.remove("rc-food-dragging");
+                      }}
+                      onDragEnter={(e) => {
+                        e.preventDefault();
+                        (e.currentTarget as HTMLElement).classList.add("rc-food-drop-over");
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = "move";
+                      }}
+                      onDragLeave={(e) => {
+                        (e.currentTarget as HTMLElement).classList.remove("rc-food-drop-over");
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        (e.currentTarget as HTMLElement).classList.remove("rc-food-drop-over");
+                        const raw =
+                          e.dataTransfer.getData("application/x-roster-item") ||
+                          e.dataTransfer.getData("text/plain");
+                        if (!raw) return;
+                        let payload: { buyerEmail: string; sessionIso: string; ticketIndex: number; scanCode: string };
+                        try { payload = JSON.parse(raw); } catch { return; }
+                        if (
+                          payload.buyerEmail !== row.buyer_email ||
+                          payload.sessionIso !== row.session_iso ||
+                          payload.ticketIndex !== row.ticket_index_in_guest ||
+                          payload.scanCode === row.scan_code
+                        ) return;
+                        reorderTicketItems(
+                          row.buyer_email,
+                          row.session_iso,
+                          row.ticket_index_in_guest,
+                          payload.scanCode,
+                          row.scan_code,
+                          row.ticket_scan_codes,
+                        );
+                      }}
+                      title="Drag to reorder within ticket"
+                    >
+                      <span className="rc-drag-handle" aria-hidden="true">⋮⋮</span>
+                      <span className="rc-food-label">{row.food}</span>
+                    </div>
+                  ) : (
+                    <span>{row.food}</span>
                   )}
-                  <span className="rc-food-label">{row.food}</span>
                 </td>
                 <td className="rc-email">{isFirst ? row.email : ""}</td>
               </tr>
@@ -481,21 +482,25 @@ const rosterStyles = `
 .rc-num { font-family: var(--serif); font-size: 16px; color: var(--accent); text-align: center; }
 .rc-time, .rc-name, .rc-food, .rc-email { letter-spacing: 0.3px; }
 .rc-food { font-weight: 500; }
-.rc-food-drag[draggable="true"] {
+.rc-food-dnd {
+  display: flex; align-items: center; gap: 8px;
   cursor: grab; user-select: none; -webkit-user-select: none;
+  padding: 2px 4px; border-radius: 3px;
+  border: 1px solid transparent;
+  transition: background 80ms, border-color 80ms;
 }
-.rc-food-drag[draggable="true"]:active { cursor: grabbing; }
-.rc-food-drag[draggable="true"]:hover { background: rgba(255,255,255,0.04); }
-.rc-food-drag.rc-food-drop-over {
-  background: rgba(76, 175, 122, 0.10) !important;
-  box-shadow: inset 0 -3px 0 var(--accent);
+.rc-food-dnd:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.10); }
+.rc-food-dnd:active { cursor: grabbing; }
+.rc-food-dnd.rc-food-drop-over {
+  background: rgba(76, 175, 122, 0.18) !important;
+  border-color: var(--accent);
 }
-.rc-food-drag.rc-food-dragging { opacity: 0.4; }
-.rc-food-label { user-select: none; -webkit-user-select: none; pointer-events: none; }
+.rc-food-dnd.rc-food-dragging { opacity: 0.4; }
+.rc-food-label { pointer-events: none; }
 .rc-drag-handle {
-  display: inline-block; margin-right: 8px; color: var(--text-muted);
+  display: inline-block; color: var(--text-muted);
   font-family: var(--mono); font-size: 12px; letter-spacing: -2px;
-  user-select: none; pointer-events: none;
+  pointer-events: none; flex-shrink: 0;
 }
 .rc-email { color: var(--text-muted); font-size: 12px; }
 
