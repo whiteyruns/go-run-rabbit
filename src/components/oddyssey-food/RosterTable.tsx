@@ -225,24 +225,35 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
                       ticketIndex: row.ticket_index_in_guest,
                       scanCode: row.scan_code,
                     });
+                    // Firefox requires text/plain to be set or drags
+                    // never initiate; both MIME types carry the same
+                    // payload so drop reads either.
+                    e.dataTransfer.setData("text/plain", payload);
                     e.dataTransfer.setData("application/x-roster-item", payload);
                     e.dataTransfer.effectAllowed = "move";
+                    (e.currentTarget as HTMLElement).classList.add("rc-food-dragging");
+                  }}
+                  onDragEnd={(e) => {
+                    (e.currentTarget as HTMLElement).classList.remove("rc-food-dragging");
                   }}
                   onDragOver={(e) => {
                     if (row.ticket_scan_codes.length <= 1) return;
-                    // Only highlight as a drop target if the drag came from
-                    // the same guest + ticket. Cross-ticket drops are a
-                    // different feature (option #2) and intentionally not
-                    // supported here.
-                    const types = e.dataTransfer.types;
-                    if (Array.from(types).includes("application/x-roster-item")) {
-                      e.preventDefault();
-                      e.dataTransfer.dropEffect = "move";
-                    }
+                    // Always allow drop while we're hovering over a food
+                    // cell — we validate same-ticket on drop. preventDefault
+                    // is required for onDrop to fire.
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = "move";
+                    (e.currentTarget as HTMLElement).classList.add("rc-food-drop-over");
+                  }}
+                  onDragLeave={(e) => {
+                    (e.currentTarget as HTMLElement).classList.remove("rc-food-drop-over");
                   }}
                   onDrop={(e) => {
                     e.preventDefault();
-                    const raw = e.dataTransfer.getData("application/x-roster-item");
+                    (e.currentTarget as HTMLElement).classList.remove("rc-food-drop-over");
+                    const raw =
+                      e.dataTransfer.getData("application/x-roster-item") ||
+                      e.dataTransfer.getData("text/plain");
                     if (!raw) return;
                     let payload: { buyerEmail: string; sessionIso: string; ticketIndex: number; scanCode: string };
                     try { payload = JSON.parse(raw); } catch { return; }
@@ -265,7 +276,7 @@ export function RosterTable({ section, assignments, onAssignmentsChange, searchT
                   {row.ticket_scan_codes.length > 1 && (
                     <span className="rc-drag-handle" aria-hidden="true">⋮⋮</span>
                   )}
-                  {row.food}
+                  <span className="rc-food-label">{row.food}</span>
                 </td>
                 <td className="rc-email">{isFirst ? row.email : ""}</td>
               </tr>
@@ -470,13 +481,21 @@ const rosterStyles = `
 .rc-num { font-family: var(--serif); font-size: 16px; color: var(--accent); text-align: center; }
 .rc-time, .rc-name, .rc-food, .rc-email { letter-spacing: 0.3px; }
 .rc-food { font-weight: 500; }
-.rc-food-drag[draggable="true"] { cursor: grab; }
+.rc-food-drag[draggable="true"] {
+  cursor: grab; user-select: none; -webkit-user-select: none;
+}
 .rc-food-drag[draggable="true"]:active { cursor: grabbing; }
 .rc-food-drag[draggable="true"]:hover { background: rgba(255,255,255,0.04); }
-.rc-food-drag.rc-food-drop-over { box-shadow: inset 0 -2px 0 var(--accent); }
+.rc-food-drag.rc-food-drop-over {
+  background: rgba(76, 175, 122, 0.10) !important;
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+.rc-food-drag.rc-food-dragging { opacity: 0.4; }
+.rc-food-label { user-select: none; -webkit-user-select: none; pointer-events: none; }
 .rc-drag-handle {
   display: inline-block; margin-right: 8px; color: var(--text-muted);
-  font-family: var(--mono); font-size: 12px; letter-spacing: -2px; user-select: none;
+  font-family: var(--mono); font-size: 12px; letter-spacing: -2px;
+  user-select: none; pointer-events: none;
 }
 .rc-email { color: var(--text-muted); font-size: 12px; }
 
