@@ -275,7 +275,7 @@ function Editor({
           onChange={(next) =>
             setDraft((s) => ({
               ...s,
-              talent: next.length > 0 ? next : undefined,
+              talent: next,
             }))
           }
           placeholder="e.g. Dillon Francis"
@@ -455,7 +455,7 @@ function Editor({
           onChange={(next) =>
             setDraft((s) => ({
               ...s,
-              addOns: next.length > 0 ? next : undefined,
+              addOns: next,
             }))
           }
           placeholder="e.g. Large confetti cannon · $400 + $200 per shot"
