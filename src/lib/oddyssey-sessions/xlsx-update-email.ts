@@ -78,13 +78,17 @@ function buildNightRow(venue: Venue, dateISO: string): NightRow | null {
   const square = loadSquare(venue, dateISO);
   if (!session && !square) return null;
   const totals = session ? sumSessionReport(session) : null;
+  // Manor only — Noir has no inclusions so deflated == raw. Use the
+  // admission-deflated counts for both venues so the paste-ready email
+  // reports actual butts-in-seats / comp admissions, not Ticketure's
+  // line-item-inflated counts.
   return {
     date: dateISO,
     venue,
-    ticketsIssued: totals?.reserved ?? null,
-    ticketsRedeemed: totals?.redeemed ?? null,
+    ticketsIssued: totals?.reserved_admissions ?? totals?.reserved ?? null,
+    ticketsRedeemed: totals?.redeemed_admissions ?? totals?.redeemed ?? null,
     ticketsPaid: totals?.tickets_paid ?? null,
-    ticketsFree: totals?.tickets_free ?? null,
+    ticketsFree: totals?.tickets_free_admissions ?? totals?.tickets_free ?? null,
     netTicketRev: totals?.net_to_bank ?? null,
     barNet: square?.net_sales ?? null,
   };

@@ -186,9 +186,9 @@ export default function SummaryPage() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
             <HeadlineStat label="Paid" value={String(report.totals.tickets_paid)} sub="actually paid" />
-            <HeadlineStat label="Free (Comps)" value={String(report.totals.tickets_free)} sub="$0 tickets" />
+            <HeadlineStat label="Free (Comps)" value={String(report.totals.tickets_free_admissions)} sub="comp admissions · excludes food vouchers" />
             <HeadlineStat label="Orders" value={String(report.totals.total_orders)} sub="distinct purchases" />
-            <HeadlineStat label="Redeemed" value={`${report.totals.redeemed} · ${report.totals.reserved > 0 ? Math.round(report.totals.redeemed / report.totals.reserved * 100) : 0}%`} sub="scanned at door" />
+            <HeadlineStat label="Redeemed" value={`${report.totals.redeemed_admissions} · ${report.totals.reserved_admissions > 0 ? Math.round(report.totals.redeemed_admissions / report.totals.reserved_admissions * 100) : 0}%`} sub="scanned at door" />
           </div>
           <div style={{
             marginBottom: 40, padding: "10px 14px", background: "rgba(201,168,76,0.06)",

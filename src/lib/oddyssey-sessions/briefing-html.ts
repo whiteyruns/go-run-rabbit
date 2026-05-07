@@ -27,7 +27,10 @@ export function renderBriefingHtml(input: BriefingEmailInput): string {
   const reserved = input.totals?.reserved ?? input.fallback_tickets ?? 0;
   const gross = input.totals?.gross_revenue ?? input.fallback_revenue ?? 0;
   const paid = input.totals?.tickets_paid ?? null;
-  const free = input.totals?.tickets_free ?? null;
+  // Prefer the admissions-only comp count (Ticketure inflates raw
+  // tickets_free with food-inclusion line items). Fall back to the raw
+  // count when the source JSON predates per-group capture.
+  const free = input.totals?.tickets_free_admissions ?? input.totals?.tickets_free ?? null;
   const cap = input.totals?.capacity ?? 0;
   const inclusionGap = reserved - admissions;
   // Capacity % should also be based on admissions, not Ticketure line items

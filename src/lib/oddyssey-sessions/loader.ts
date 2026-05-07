@@ -65,6 +65,19 @@ export interface SessionReportTotals {
   tickets_paid: number;
   tickets_held: number;
   tickets_refunded: number;
+  // ─── Admissions-only counts (deflated) ────────────────────────────────
+  // Ticketure counts each food inclusion (Charcuterie, Shrimp, Short Ribs,
+  // Ube Cheesecake) as its own "ticket" in the Session Summary Report.
+  // For a Dinner Guest who paid once, Ticketure reports 1 paid + 3 free
+  // (the 3 inclusion rows). For COMP reporting we want admissions, not
+  // line items — these fields strip the Inclusions group.
+  //
+  // When the source JSON predates per-group capture (no ticket_groups
+  // array), these mirror the raw fields above so callers fail open.
+  inclusion_rows: number;
+  reserved_admissions: number;
+  redeemed_admissions: number;
+  tickets_free_admissions: number;
 }
 
 function venueDir(venue: "manor" | "noir"): string {
@@ -87,11 +100,16 @@ export function loadSessionReport(
   }
 }
 
+// Match a ticket_group_name like "Inclusions" / "inclusion".
+const INCLUSION_GROUP_RE = /^inclusions?$/i;
+
 export function sumSessionReport(r: DateSessionReport): SessionReportTotals {
   const totals: SessionReportTotals = {
     reserved: 0, capacity: 0, capacity_percent: 0, redeemed: 0,
     gross_revenue: 0, net_to_bank: 0, revenue_sold: 0, revenue_refunded: 0,
     total_orders: 0, tickets_free: 0, tickets_paid: 0, tickets_held: 0, tickets_refunded: 0,
+    inclusion_rows: 0, reserved_admissions: 0, redeemed_admissions: 0,
+    tickets_free_admissions: 0,
   };
   for (const s of r.sessions) {
     const d = s.data;
@@ -107,6 +125,24 @@ export function sumSessionReport(r: DateSessionReport): SessionReportTotals {
     totals.tickets_paid += d.tickets_paid ?? 0;
     totals.tickets_held += d.tickets_held ?? 0;
     totals.tickets_refunded += d.tickets_refunded ?? 0;
+
+    // Per-session inclusion-row counts. We use `reserved` (which is the
+    // line-item count Ticketure assigns to the group) since each
+    // inclusion row maps 1:1 to a food voucher. The group's own
+    // tickets_free / tickets_paid fields are typically null in the
+    // scraper output, so we don't trust them here.
+    const inclGroup = (d.ticket_groups ?? []).find((g) =>
+      INCLUSION_GROUP_RE.test((g.ticket_group_name ?? "").trim()),
+    );
+    const inclReserved = inclGroup?.reserved ?? 0;
+    const inclRedeemed = inclGroup?.redeemed ?? 0;
+    totals.inclusion_rows += inclReserved;
+    totals.reserved_admissions += (d.reserved ?? 0) - inclReserved;
+    totals.redeemed_admissions += (d.redeemed ?? 0) - inclRedeemed;
+    // Inclusions are always $0, so every inclusion row counts as a
+    // "free ticket" at the session level. Subtract them to recover
+    // real comp admissions.
+    totals.tickets_free_admissions += Math.max(0, (d.tickets_free ?? 0) - inclReserved);
   }
   totals.capacity_percent = totals.capacity > 0 ? totals.reserved / totals.capacity : 0;
   return totals;

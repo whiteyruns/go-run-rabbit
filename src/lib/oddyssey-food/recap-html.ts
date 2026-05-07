@@ -37,7 +37,7 @@ export function renderRecapHtml(r: RecapData): string {
       </tr>
       <tr>
         ${statCell("Paid", String(r.report.totals.tickets_paid), "#27ae60")}
-        ${statCell("Free (Comps)", String(r.report.totals.tickets_free), "#9a958d")}
+        ${statCell("Free (Comps)", String(r.report.totals.tickets_free_admissions), "#9a958d")}
         ${statCell("Net to Bank", formatCurrency(r.report.totals.net_to_bank))}
         ${statCell("Orders", String(r.report.totals.total_orders))}
       </tr>

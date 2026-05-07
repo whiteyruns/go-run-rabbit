@@ -44,17 +44,23 @@ export function buildBriefing(input: BriefingInput): string[] {
 
   // Headline — tickets + revenue
   if (input.totals) {
-    const { reserved, tickets_paid, tickets_free, gross_revenue, net_to_bank, capacity_percent, total_orders } = input.totals;
+    const { reserved, tickets_paid, tickets_free, tickets_free_admissions, gross_revenue, net_to_bank, capacity_percent, total_orders, inclusion_rows } = input.totals;
     // Prefer admission count (excludes food inclusions) for Manor;
     // for Noir admissions ≈ reserved since there are no inclusions.
     const headline = input.admissions ?? reserved;
-    const compPct = headline > 0 ? Math.round((tickets_free / reserved) * 100) : 0;
+    // Use deflated comp count when available (admissions only). Falls
+    // back to raw tickets_free for older summary JSONs without a
+    // ticket_groups array.
+    const comps = tickets_free_admissions ?? tickets_free;
+    const compPct = headline > 0 ? Math.round((comps / headline) * 100) : 0;
     const inclusionNote =
-      input.admissions != null && reserved > input.admissions
-        ? ` (Ticketure counts ${reserved} line items incl. ${reserved - input.admissions} food vouchers)`
-        : "";
+      inclusion_rows > 0
+        ? ` (Ticketure counts ${reserved} line items incl. ${inclusion_rows} food vouchers)`
+        : input.admissions != null && reserved > input.admissions
+          ? ` (Ticketure counts ${reserved} line items incl. ${reserved - input.admissions} food vouchers)`
+          : "";
     bullets.push(
-      `${venueName} tonight: ${headline} admissions (${tickets_paid} paid, ${tickets_free} comps${compPct > 0 ? ` · ${compPct}%` : ""}) across ${total_orders} orders${inclusionNote}`
+      `${venueName} tonight: ${headline} admissions (${tickets_paid} paid, ${comps} comps${compPct > 0 ? ` · ${compPct}%` : ""}) across ${total_orders} orders${inclusionNote}`
     );
     bullets.push(
       `Gross ${formatCurrency(gross_revenue)} · Net to Bank ${formatCurrency(net_to_bank)} · running ${(capacity_percent * 100).toFixed(0)}% of capacity`
