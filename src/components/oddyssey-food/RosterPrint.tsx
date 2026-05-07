@@ -98,7 +98,11 @@ export function RosterPrint({ sections, snapshotAt }: Props) {
 
             <footer className="rp-foot">
               <span>Oddyssey Manor · Food Inclusions · Internal Use</span>
-              {snapshotAt && <span>Snapshot: {new Date(snapshotAt).toLocaleString("en-US")}</span>}
+              {snapshotAt && (
+                <span suppressHydrationWarning>
+                  Snapshot: {new Date(snapshotAt).toLocaleString("en-US", { timeZone: "America/Los_Angeles" })}
+                </span>
+              )}
             </footer>
           </section>
         );
