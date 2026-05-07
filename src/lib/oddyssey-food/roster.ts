@@ -149,15 +149,21 @@ function groupIntoTickets(
   rawAllocations: FoodAllocation[],
   assignment: GuestAssignment,
 ): BuiltTicket[] {
-  // Sort by course delivery order (Charcuterie → Shrimp → Short Ribs →
-  // Ube) before any slicing, so each ticket's items come out in the
-  // order they'll be served. The per-allocation derived bucket path
-  // sorts within each bucket below.
-  const allocations = sortByDelivery(rawAllocations);
+  // CRITICAL: do NOT pre-sort across all allocations — that breaks
+  // ticket pairings for guests with multiple tickets of the same type
+  // (e.g., 3 Dinners produce [Char,Char,Char], [Shrimp,Shrimp,Shrimp]
+  // when sliced after a global sort). Keep CSV order until we've
+  // grouped into tickets, then sort within each ticket below.
 
   let tickets: BuiltTicket[];
-  // Priority 1: manual multi-type
+  // Priority 1: explicit manual override
   const manual = (assignment.package_types ?? []).filter((p) => p && p.count > 0);
+  // Priority 2 (preferred when available): bucket by parent_scan_code,
+  // which Ticketure's full attendees CSV populates per inclusion.
+  // Each parent_scan_code = one admission ticket, so each bucket is
+  // exactly one ticket's items.
+  const hasParents = !manual.length && rawAllocations.some((a) => a.parent_scan_code);
+
   if (manual.length > 0) {
     tickets = [];
     let cursor = 0;
@@ -165,47 +171,66 @@ function groupIntoTickets(
       const tt = TICKET_BY_TYPE[p.type];
       const perTicket = tt?.included_items ?? 1;
       const totalItems = perTicket * p.count;
-      const slice = allocations.slice(cursor, cursor + totalItems);
+      const slice = rawAllocations.slice(cursor, cursor + totalItems);
       cursor += totalItems;
-      // Generate `count` tickets of `perTicket` items each (last one may
-      // be short if the slice ran out — preserves visibility of the gap).
       for (let i = 0; i < p.count; i++) {
         const ticketAllocs = slice.slice(i * perTicket, (i + 1) * perTicket);
         if (ticketAllocs.length === 0) break;
         tickets.push({ packageType: p.type, allocations: ticketAllocs });
       }
     }
-    // Trailing allocations that didn't fit into the manual breakdown go
-    // into single-item tickets so they're still visible on the sheet.
-    if (cursor < allocations.length) {
-      for (const a of allocations.slice(cursor)) {
+    if (cursor < rawAllocations.length) {
+      for (const a of rawAllocations.slice(cursor)) {
         tickets.push({ packageType: undefined, allocations: [a] });
       }
     }
-  } else if (allocations.some((a) => a.derived_package_type)) {
-    // Priority 2: per-allocation derived
+  } else if (hasParents) {
+    // Group by parent_scan_code in first-seen order (preserves a
+    // predictable ticket sequence). Items without a parent_scan_code
+    // fall to the end as their own one-item tickets.
+    const parentOrder: string[] = [];
+    const buckets = new Map<string, FoodAllocation[]>();
+    const orphans: FoodAllocation[] = [];
+    for (const a of rawAllocations) {
+      const p = a.parent_scan_code;
+      if (!p) { orphans.push(a); continue; }
+      if (!buckets.has(p)) { buckets.set(p, []); parentOrder.push(p); }
+      buckets.get(p)!.push(a);
+    }
+    tickets = [];
+    for (const p of parentOrder) {
+      const allocs = buckets.get(p)!;
+      const pkgType = allocs[0]?.derived_package_type;
+      tickets.push({ packageType: pkgType, allocations: allocs });
+    }
+    for (const o of orphans) {
+      tickets.push({ packageType: o.derived_package_type, allocations: [o] });
+    }
+  } else if (rawAllocations.some((a) => a.derived_package_type)) {
+    // Fallback: bucket by derived type and slice by included_items.
+    // Used when derived_package_type is set but parent_scan_code isn't
+    // (rare — older CSV exports).
     const order: string[] = [];
     const buckets = new Map<string, FoodAllocation[]>();
-    for (const a of allocations) {
+    for (const a of rawAllocations) {
       const key = a.derived_package_type ?? "__none__";
-      if (!buckets.has(key)) {
-        buckets.set(key, []);
-        order.push(key);
-      }
+      if (!buckets.has(key)) { buckets.set(key, []); order.push(key); }
       buckets.get(key)!.push(a);
     }
     tickets = [];
     for (const key of order) {
-      // Re-sort each bucket so course order holds within a single
-      // ticket type even when allocations were interleaved in the CSV.
-      const allocs = sortByDelivery(buckets.get(key)!);
       const t = key === "__none__" ? undefined : key;
-      tickets.push(...sliceByPerTicket(allocs, t));
+      tickets.push(...sliceByPerTicket(buckets.get(key)!, t));
     }
   } else {
-    // Priority 3 + 4: whole-guest type or none
-    tickets = sliceByPerTicket(allocations, assignment.package_type);
+    // Priority 4: whole-guest single type or none — slice CSV order.
+    tickets = sliceByPerTicket(rawAllocations, assignment.package_type);
   }
+
+  // Sort items WITHIN each ticket by course delivery order (Charcuterie
+  // → Shrimp → Short Ribs → Ube). Done after slicing so ticket pairings
+  // are preserved.
+  tickets = tickets.map((t) => ({ ...t, allocations: sortByDelivery(t.allocations) }));
 
   // Apply per-ticket item-order overrides last so a saved drag-and-drop
   // arrangement survives across renders. Keyed by 0-based ticket index
