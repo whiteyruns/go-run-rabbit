@@ -13,6 +13,7 @@ import {
 import type { NoirWeekOverWeek, NoirReportOverlay } from "@/lib/oddyssey-noir/history";
 import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/channel-mix";
 import { ChannelMixPanel } from "@/components/oddyssey-sessions/ChannelMix";
+import { CompareDatePicker, Delta } from "@/components/oddyssey-sessions/CompareControls";
 
 export default function NoirSummaryPage() {
   const [summary, setSummary] = useState<NoirSummary | null>(null);
@@ -26,6 +27,10 @@ export default function NoirSummaryPage() {
   const [recapStatus, setRecapStatus] = useState<string | null>(null);
   const [pulling, setPulling] = useState(false);
   const [pullStatus, setPullStatus] = useState<string | null>(null);
+  // Compare-to-date state. When set, kicks off a second fetch against
+  // the same /wow endpoint so every stat tile can show a delta chip.
+  const [compareDate, setCompareDate] = useState("");
+  const [compareReport, setCompareReport] = useState<NoirReportOverlay | null>(null);
 
   function loadForDate(d?: string) {
     setLoading(true);
@@ -52,6 +57,21 @@ export default function NoirSummaryPage() {
 
   useEffect(() => { loadForDate(); /* eslint-disable-line react-hooks/exhaustive-deps */ }, []);
   useEffect(() => { if (date) loadForDate(date); /* eslint-disable-line react-hooks/exhaustive-deps */ }, [date]);
+
+  // Fetch the comparison date's summary + report whenever it changes.
+  // Mirrors `loadForDate` but writes to compareSummary / compareReport.
+  useEffect(() => {
+    if (!compareDate) { setCompareReport(null); return; }
+    let cancelled = false;
+    fetch(`/api/oddyssey-noir/wow?date=${compareDate}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (cancelled || data.status !== "ok") return;
+        setCompareReport(data.report ?? null);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [compareDate]);
 
   async function pullNow() {
     setPulling(true);
@@ -146,6 +166,14 @@ export default function NoirSummaryPage() {
             </select>
           </div>
         )}
+        {summary.available_dates.length > 1 && (
+          <CompareDatePicker
+            primary={summary.date}
+            value={compareDate}
+            onChange={setCompareDate}
+            availableDates={summary.available_dates}
+          />
+        )}
       </div>
 
       {/* Headline — prefer report actuals when available */}
@@ -158,18 +186,27 @@ export default function NoirSummaryPage() {
           }}>
             ✓ Showing actuals from Ticketure Summary Report · pulled {report.pulled_at ? new Date(report.pulled_at).toLocaleString("en-US") : ""}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
-            <HeadlineStat label="Tickets Sold" value={String(report.totals.reserved)} sub={`of ${report.totals.capacity} capacity`} />
-            <HeadlineStat label="Gross Revenue" value={formatNoirCurrency(report.totals.gross_revenue)} sub={`Net ${formatNoirCurrency(report.totals.net_to_bank)} to bank`} />
-            <HeadlineStat label="Capacity" value={`${(report.totals.capacity_percent * 100).toFixed(1)}%`} sub={capacityLabel(report.totals.capacity_percent)} />
-            <HeadlineStat label="Redeemed" value={`${report.totals.redeemed} · ${report.totals.reserved > 0 ? Math.round(report.totals.redeemed / report.totals.reserved * 100) : 0}%`} sub={`${report.totals.total_orders} orders`} />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
-            <HeadlineStat label="Paid" value={String(report.totals.tickets_paid)} sub="actually paid" />
-            <HeadlineStat label="Free (Comps)" value={String(report.totals.tickets_free)} sub="$0 tickets" />
-            <HeadlineStat label="Held" value={String(report.totals.tickets_held)} sub="not yet sold" />
-            <HeadlineStat label="Refunded" value={formatNoirCurrency(report.totals.revenue_refunded)} sub={`${report.totals.tickets_refunded} tix`} />
-          </div>
+          {(() => {
+            const ct = report.totals;
+            const pt = compareReport?.available ? compareReport.totals : null;
+            const cmpLbl = compareDate || undefined;
+            return (
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
+                  <HeadlineStat label="Tickets Sold" value={String(ct.reserved)} sub={`of ${ct.capacity} capacity`} compare={{ current: ct.reserved, prior: pt?.reserved ?? null, format: "int", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Gross Revenue" value={formatNoirCurrency(ct.gross_revenue)} sub={`Net ${formatNoirCurrency(ct.net_to_bank)} to bank`} compare={{ current: ct.gross_revenue, prior: pt?.gross_revenue ?? null, format: "money", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Capacity" value={`${(ct.capacity_percent * 100).toFixed(1)}%`} sub={capacityLabel(ct.capacity_percent)} compare={{ current: ct.capacity_percent * 100, prior: pt ? pt.capacity_percent * 100 : null, format: "percent", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Redeemed" value={`${ct.redeemed} · ${ct.reserved > 0 ? Math.round(ct.redeemed / ct.reserved * 100) : 0}%`} sub={`${ct.total_orders} orders`} compare={{ current: ct.redeemed, prior: pt?.redeemed ?? null, format: "int", priorLabel: cmpLbl }} />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
+                  <HeadlineStat label="Paid" value={String(ct.tickets_paid)} sub="actually paid" compare={{ current: ct.tickets_paid, prior: pt?.tickets_paid ?? null, format: "int", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Free (Comps)" value={String(ct.tickets_free)} sub="$0 tickets" compare={{ current: ct.tickets_free, prior: pt?.tickets_free ?? null, format: "int", priorLabel: cmpLbl, upIsGood: false }} />
+                  <HeadlineStat label="Held" value={String(ct.tickets_held)} sub="not yet sold" compare={{ current: ct.tickets_held, prior: pt?.tickets_held ?? null, format: "int", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Refunded" value={formatNoirCurrency(ct.revenue_refunded)} sub={`${ct.tickets_refunded} tix`} compare={{ current: ct.revenue_refunded, prior: pt?.revenue_refunded ?? null, format: "money", priorLabel: cmpLbl, upIsGood: false }} />
+                </div>
+              </>
+            );
+          })()}
         </>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 40 }}>
@@ -275,12 +312,34 @@ function capacityLabel(pct: number): string {
   return "Light";
 }
 
-function HeadlineStat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function HeadlineStat({
+  label, value, sub, compare,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  compare?: {
+    current: number | null;
+    prior: number | null;
+    format?: "int" | "money" | "percent" | "raw";
+    priorLabel?: string;
+    upIsGood?: boolean;
+  };
+}) {
   return (
     <div style={{ background: "var(--bg-elevated)", padding: "28px 24px" }}>
       <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, marginBottom: 12 }}>{label}</div>
       <div style={{ fontFamily: "var(--serif)", fontSize: 44, fontWeight: 300, lineHeight: 1, color: "var(--text)", marginBottom: 6 }}>{value}</div>
       {sub && <div style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: 0.5 }}>{sub}</div>}
+      {compare && (
+        <Delta
+          current={compare.current}
+          prior={compare.prior}
+          format={compare.format}
+          priorLabel={compare.priorLabel}
+          upIsGood={compare.upIsGood}
+        />
+      )}
     </div>
   );
 }

@@ -2,6 +2,7 @@
 
 import { GMBriefingPanel } from "@/components/oddyssey-sessions/GMBriefingPanel";
 import { ChannelMixPanel } from "@/components/oddyssey-sessions/ChannelMix";
+import { CompareDatePicker, Delta } from "@/components/oddyssey-sessions/CompareControls";
 import { loadStateWithWalkups } from "@/lib/oddyssey-food/build-state";
 import type { ManorReportOverlay, WeekOverWeek } from "@/lib/oddyssey-food/history";
 import {
@@ -19,10 +20,12 @@ import { useEffect, useMemo, useState } from "react";
 export default function SummaryPage() {
   const [state, setState] = useState<DashboardState | null>(null);
   const [date, setDate] = useState<string>("");
+  const [compareDate, setCompareDate] = useState<string>("");
   const [sendingRecap, setSendingRecap] = useState(false);
   const [recapResult, setRecapResult] = useState<string | null>(null);
   const [wow, setWow] = useState<WeekOverWeek | null>(null);
   const [report, setReport] = useState<ManorReportOverlay | null>(null);
+  const [compareReport, setCompareReport] = useState<ManorReportOverlay | null>(null);
   const [bullets, setBullets] = useState<string[]>([]);
   const [pulling, setPulling] = useState(false);
   const [pullResult, setPullResult] = useState<string | null>(null);
@@ -34,6 +37,14 @@ export default function SummaryPage() {
   const summary = useMemo(
     () => (state ? buildSummary(state, date || undefined) : null),
     [state, date]
+  );
+
+  // Build a second NightSummary for the comparison date when one is
+  // picked. Same data shape as `summary` — every stat tile can read
+  // from either to compute a delta.
+  const compareSummary = useMemo(
+    () => (state && compareDate ? buildSummary(state, compareDate) : null),
+    [state, compareDate],
   );
 
   useEffect(() => {
@@ -59,6 +70,21 @@ export default function SummaryPage() {
       .catch(() => {});
     return () => { cancelled = true; };
   }, [summary?.date]);
+
+  // Fetch the comparison date's report overlay so each stat tile can
+  // read prior totals. We re-use the same /wow endpoint since it returns
+  // a `report` field with totals — `wow` itself is ignored here.
+  useEffect(() => {
+    if (!compareDate) { setCompareReport(null); return; }
+    let cancelled = false;
+    fetch(`/api/oddyssey-food/wow?date=${compareDate}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled && d.status === "ok") setCompareReport(d.report ?? null);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [compareDate]);
 
   if (!state) {
     return (
@@ -166,6 +192,14 @@ export default function SummaryPage() {
             </select>
           </div>
         )}
+        {summary.available_dates.length > 1 && (
+          <CompareDatePicker
+            primary={summary.date}
+            value={compareDate}
+            onChange={setCompareDate}
+            availableDates={summary.available_dates}
+          />
+        )}
       </div>
 
       {/* Headline stats — prefer Ticketure actuals when the session report is on disk */}
@@ -178,18 +212,31 @@ export default function SummaryPage() {
           }}>
             ✓ Actuals from Ticketure Summary Report · pulled {report.pulled_at ? new Date(report.pulled_at).toLocaleString("en-US") : ""}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
-            <HeadlineStat label="Admissions" value={String(summary.tickets_sold)} sub={`butts in seats · Ticketure count: ${report.totals.reserved}`} />
-            <HeadlineStat label="Gross Revenue" value={formatCurrency(report.totals.gross_revenue)} sub={`Net ${formatCurrency(report.totals.net_to_bank)} to bank`} />
-            <HeadlineStat label="Capacity" value={`${((summary.tickets_sold / summary.capacity_total) * 100).toFixed(1)}%`} sub={capacityLabel(summary.tickets_sold / summary.capacity_total)} />
-            <HeadlineStat label="Food to Prep" value={String(summary.food_items)} sub={`${summary.food.by_item.length} menu item${summary.food.by_item.length === 1 ? "" : "s"}`} />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
-            <HeadlineStat label="Paid" value={String(report.totals.tickets_paid)} sub="actually paid" />
-            <HeadlineStat label="Free (Comps)" value={String(report.totals.tickets_free_admissions)} sub="comp admissions · excludes food vouchers" />
-            <HeadlineStat label="Orders" value={String(report.totals.total_orders)} sub="distinct purchases" />
-            <HeadlineStat label="Redeemed" value={`${report.totals.redeemed_admissions} · ${report.totals.reserved_admissions > 0 ? Math.round(report.totals.redeemed_admissions / report.totals.reserved_admissions * 100) : 0}%`} sub="scanned at door" />
-          </div>
+          {(() => {
+            const ct = report.totals; // current totals
+            const pt = compareReport?.available ? compareReport.totals : null;
+            const cs = summary;
+            const ps = compareSummary;
+            const cap = (s: NightSummary | null) =>
+              s && s.capacity_total > 0 ? (s.tickets_sold / s.capacity_total) * 100 : null;
+            const cmpLbl = compareDate || undefined;
+            return (
+              <>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
+                  <HeadlineStat label="Admissions" value={String(cs.tickets_sold)} sub={`butts in seats · Ticketure count: ${ct.reserved}`} compare={{ current: cs.tickets_sold, prior: ps?.tickets_sold ?? null, format: "int", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Gross Revenue" value={formatCurrency(ct.gross_revenue)} sub={`Net ${formatCurrency(ct.net_to_bank)} to bank`} compare={{ current: ct.gross_revenue, prior: pt?.gross_revenue ?? null, format: "money", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Capacity" value={`${((cs.tickets_sold / cs.capacity_total) * 100).toFixed(1)}%`} sub={capacityLabel(cs.tickets_sold / cs.capacity_total)} compare={{ current: cap(cs), prior: cap(ps), format: "percent", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Food to Prep" value={String(cs.food_items)} sub={`${cs.food.by_item.length} menu item${cs.food.by_item.length === 1 ? "" : "s"}`} compare={{ current: cs.food_items, prior: ps?.food_items ?? null, format: "int", priorLabel: cmpLbl }} />
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 1, background: "var(--border-subtle)", marginBottom: 16 }}>
+                  <HeadlineStat label="Paid" value={String(ct.tickets_paid)} sub="actually paid" compare={{ current: ct.tickets_paid, prior: pt?.tickets_paid ?? null, format: "int", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Free (Comps)" value={String(ct.tickets_free_admissions)} sub="comp admissions · excludes food vouchers" compare={{ current: ct.tickets_free_admissions, prior: pt?.tickets_free_admissions ?? null, format: "int", priorLabel: cmpLbl, upIsGood: false }} />
+                  <HeadlineStat label="Orders" value={String(ct.total_orders)} sub="distinct purchases" compare={{ current: ct.total_orders, prior: pt?.total_orders ?? null, format: "int", priorLabel: cmpLbl }} />
+                  <HeadlineStat label="Redeemed" value={`${ct.redeemed_admissions} · ${ct.reserved_admissions > 0 ? Math.round(ct.redeemed_admissions / ct.reserved_admissions * 100) : 0}%`} sub="scanned at door" compare={{ current: ct.redeemed_admissions, prior: pt?.redeemed_admissions ?? null, format: "int", priorLabel: cmpLbl }} />
+                </div>
+              </>
+            );
+          })()}
           <div style={{
             marginBottom: 40, padding: "10px 14px", background: "rgba(201,168,76,0.06)",
             borderLeft: "3px solid var(--accent)", fontSize: 11, color: "var(--text-muted)",
@@ -346,7 +393,22 @@ function DeltaCard({
   );
 }
 
-function HeadlineStat({ label, value, sub }: { label: string; value: string; sub?: string }) {
+function HeadlineStat({
+  label, value, sub, compare,
+}: {
+  label: string;
+  value: string;
+  sub?: string;
+  // When both `current` and `prior` are set, renders a small delta chip
+  // below the value. `priorLabel` shows the date being compared against.
+  compare?: {
+    current: number | null;
+    prior: number | null;
+    format?: "int" | "money" | "percent" | "raw";
+    priorLabel?: string;
+    upIsGood?: boolean;
+  };
+}) {
   return (
     <div style={{ background: "var(--bg-elevated)", padding: "28px 24px" }}>
       <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--accent)", fontWeight: 500, marginBottom: 12 }}>
@@ -356,6 +418,15 @@ function HeadlineStat({ label, value, sub }: { label: string; value: string; sub
         {value}
       </div>
       {sub && <div style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: 0.5 }}>{sub}</div>}
+      {compare && (
+        <Delta
+          current={compare.current}
+          prior={compare.prior}
+          format={compare.format}
+          priorLabel={compare.priorLabel}
+          upIsGood={compare.upIsGood}
+        />
+      )}
     </div>
   );
 }
