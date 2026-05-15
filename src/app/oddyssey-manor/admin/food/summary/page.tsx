@@ -33,6 +33,10 @@ export default function SummaryPage() {
   const [bullets, setBullets] = useState<string[]>([]);
   const [pulling, setPulling] = useState(false);
   const [pullResult, setPullResult] = useState<string | null>(null);
+  // Compare-email send state. `sendingCompare` blocks double-click,
+  // `compareSendResult` is a short-lived status string.
+  const [sendingCompare, setSendingCompare] = useState(false);
+  const [compareSendResult, setCompareSendResult] = useState<string | null>(null);
 
   useEffect(() => {
     setState(loadStateWithWalkups());
@@ -163,6 +167,31 @@ export default function SummaryPage() {
     }
   }
 
+  async function sendCompareEmail() {
+    if (!summary || sendingCompare) return;
+    setSendingCompare(true);
+    setCompareSendResult(null);
+    try {
+      const body: { date: string; compareDate?: string } = { date: summary.date };
+      if (compareDate) body.compareDate = compareDate;
+      const res = await fetch("/api/oddyssey-sessions/compare-email", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      setCompareSendResult(
+        data.status === "ok"
+          ? `✓ Sent to ${(data.recipients ?? []).join(", ")}`
+          : `× ${data.message ?? "send failed"}`,
+      );
+    } catch (e) {
+      setCompareSendResult(`× ${String(e)}`);
+    } finally {
+      setSendingCompare(false);
+      setTimeout(() => setCompareSendResult(null), 8000);
+    }
+  }
+
   return (
     <div>
       {/* Header with date picker */}
@@ -185,6 +214,15 @@ export default function SummaryPage() {
             }}>
               {pulling ? "Pulling (≈30s)…" : "Pull Now"}
             </button>
+            <button onClick={() => window.print()} style={pageActionBtn}>Print</button>
+            <button onClick={sendCompareEmail} disabled={sendingCompare} style={{ ...pageActionBtn, opacity: sendingCompare ? 0.5 : 1 }}>
+              {sendingCompare ? "Sending…" : "Send snapshot"}
+            </button>
+            {compareSendResult && (
+              <span style={{ fontSize: 11, color: compareSendResult.startsWith("✓") ? "#27ae60" : "#c0392b", letterSpacing: 0.3 }}>
+                {compareSendResult}
+              </span>
+            )}
             {pullResult && (
               <span style={{ fontSize: 11, color: pullResult.startsWith("✓") ? "#27ae60" : "#c0392b", letterSpacing: 0.3 }}>
                 {pullResult}
@@ -659,5 +697,11 @@ const btnOutline: React.CSSProperties = {
   display: "inline-block", padding: "12px 24px", background: "transparent", color: "var(--text-secondary)",
   fontSize: 10, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer",
   border: "1px solid var(--border)", textDecoration: "none",
+};
+
+const pageActionBtn: React.CSSProperties = {
+  padding: "8px 16px", background: "transparent", color: "var(--text)",
+  border: "1px solid var(--border)", fontSize: 10, letterSpacing: 1.5,
+  textTransform: "uppercase", fontFamily: "var(--sans)", cursor: "pointer",
 };
 

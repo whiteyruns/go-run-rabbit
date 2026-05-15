@@ -98,6 +98,10 @@ export function ControlRoomSnapshot() {
   const [noirPrimary, setNoirPrimary] = useState<NoirWowReport | null>(null);
   const [manorCompare, setManorCompare] = useState<FoodWowReport | null>(null);
   const [noirCompare, setNoirCompare] = useState<NoirWowReport | null>(null);
+  // Send flow state. `sending` blocks double-clicks; `sendResult` is a
+  // one-shot status string ("✓ sent to ..." / "× error").
+  const [sending, setSending] = useState(false);
+  const [sendResult, setSendResult] = useState<string | null>(null);
 
   // Load both dates lists on mount, default to the most recent date
   // either venue has a report for.
@@ -160,6 +164,33 @@ export function ControlRoomSnapshot() {
 
   if (availableDates.length === 0) return null;
 
+  async function sendEmail(opts: { test?: boolean } = {}) {
+    if (!date || sending) return;
+    setSending(true);
+    setSendResult(null);
+    try {
+      const body: { date: string; compareDate?: string; test?: boolean } = { date };
+      if (compareDate) body.compareDate = compareDate;
+      if (opts.test) body.test = true;
+      const res = await fetch("/api/oddyssey-sessions/compare-email", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        setSendResult(`✓ Sent to ${(data.recipients ?? []).join(", ")}`);
+      } else {
+        setSendResult(`× ${data.message ?? "send failed"}`);
+      }
+    } catch (e) {
+      setSendResult(`× ${String(e)}`);
+    } finally {
+      setSending(false);
+      setTimeout(() => setSendResult(null), 8000);
+    }
+  }
+
   return (
     <section
       style={{
@@ -168,6 +199,7 @@ export function ControlRoomSnapshot() {
         padding: "24px 28px 28px",
         marginBottom: 32,
       }}
+      className="control-room-snapshot"
     >
       <div
         style={{
@@ -241,9 +273,83 @@ export function ControlRoomSnapshot() {
           priorLabel={compareDate || undefined}
         />
       </div>
+
+      <div
+        className="snapshot-actions"
+        style={{
+          marginTop: 18,
+          display: "flex",
+          gap: 10,
+          alignItems: "center",
+          flexWrap: "wrap",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => window.print()}
+          style={actionBtnStyle}
+        >
+          Print
+        </button>
+        <button
+          type="button"
+          onClick={() => sendEmail()}
+          disabled={sending}
+          style={{ ...actionBtnStyle, opacity: sending ? 0.5 : 1 }}
+        >
+          {sending ? "Sending…" : "Send via email"}
+        </button>
+        <a
+          href={`/api/oddyssey-sessions/compare-email?date=${date}${compareDate ? `&compareDate=${compareDate}` : ""}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ ...actionBtnStyle, textDecoration: "none", display: "inline-block" }}
+        >
+          Preview email
+        </a>
+        {sendResult && (
+          <span
+            style={{
+              fontSize: 11,
+              letterSpacing: 0.4,
+              color: sendResult.startsWith("✓") ? "#27ae60" : "#c0392b",
+            }}
+          >
+            {sendResult}
+          </span>
+        )}
+      </div>
+
+      <style>{`
+        @media print {
+          @page { margin: 0.4in; }
+          body { background: #fff !important; color: #000 !important; }
+          /* Hide everything except the snapshot */
+          body * { visibility: hidden; }
+          .control-room-snapshot, .control-room-snapshot * { visibility: visible; }
+          .control-room-snapshot { position: absolute; left: 0; top: 0; width: 100%;
+            background: #fff !important; color: #000 !important;
+            border: 1px solid #000 !important; padding: 16px !important; margin: 0 !important; }
+          .control-room-snapshot * { background: #fff !important; color: #000 !important;
+            border-color: #555 !important; box-shadow: none !important; }
+          .snapshot-actions { display: none !important; }
+        }
+      `}</style>
     </section>
   );
 }
+
+const actionBtnStyle: React.CSSProperties = {
+  background: "transparent",
+  border: "1px solid rgba(255,255,255,0.18)",
+  color: "#e8e4dd",
+  padding: "7px 14px",
+  fontSize: 10,
+  letterSpacing: 1.5,
+  textTransform: "uppercase",
+  fontFamily: "'Helvetica Neue',Arial,sans-serif",
+  cursor: "pointer",
+};
 
 function VenueColumn({
   title,
