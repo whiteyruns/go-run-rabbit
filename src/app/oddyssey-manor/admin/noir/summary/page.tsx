@@ -31,6 +31,9 @@ export default function NoirSummaryPage() {
   // the same /wow endpoint so every stat tile can show a delta chip.
   const [compareDate, setCompareDate] = useState("");
   const [compareReport, setCompareReport] = useState<NoirReportOverlay | null>(null);
+  // All Noir session-report dates on disk — feeds the compare picker
+  // so it can show historical dates not currently in browser state.
+  const [historicalDates, setHistoricalDates] = useState<string[]>([]);
 
   function loadForDate(d?: string) {
     setLoading(true);
@@ -57,6 +60,18 @@ export default function NoirSummaryPage() {
 
   useEffect(() => { loadForDate(); /* eslint-disable-line react-hooks/exhaustive-deps */ }, []);
   useEffect(() => { if (date) loadForDate(date); /* eslint-disable-line react-hooks/exhaustive-deps */ }, [date]);
+
+  // Pull the full list of historical Noir session-report dates so the
+  // compare picker can show dates beyond whatever single CSV is loaded
+  // in the page's state.
+  useEffect(() => {
+    fetch("/api/oddyssey-noir/dates")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.status === "ok" && Array.isArray(d.dates)) setHistoricalDates(d.dates);
+      })
+      .catch(() => {});
+  }, []);
 
   // Fetch the comparison date's summary + report whenever it changes.
   // Mirrors `loadForDate` but writes to compareSummary / compareReport.
@@ -166,12 +181,14 @@ export default function NoirSummaryPage() {
             </select>
           </div>
         )}
-        {summary.available_dates.length > 1 && (
+        {(historicalDates.length > 0 || summary.available_dates.length > 1) && (
           <CompareDatePicker
             primary={summary.date}
             value={compareDate}
             onChange={setCompareDate}
-            availableDates={summary.available_dates}
+            availableDates={Array.from(
+              new Set([...summary.available_dates, ...historicalDates]),
+            ).sort()}
           />
         )}
       </div>

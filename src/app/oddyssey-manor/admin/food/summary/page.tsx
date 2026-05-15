@@ -21,6 +21,10 @@ export default function SummaryPage() {
   const [state, setState] = useState<DashboardState | null>(null);
   const [date, setDate] = useState<string>("");
   const [compareDate, setCompareDate] = useState<string>("");
+  // All dates with a session report on disk — used by the compare
+  // picker so Brandon can pull historical comparisons that aren't
+  // currently loaded in the browser's CSV state.
+  const [historicalDates, setHistoricalDates] = useState<string[]>([]);
   const [sendingRecap, setSendingRecap] = useState(false);
   const [recapResult, setRecapResult] = useState<string | null>(null);
   const [wow, setWow] = useState<WeekOverWeek | null>(null);
@@ -32,6 +36,12 @@ export default function SummaryPage() {
 
   useEffect(() => {
     setState(loadStateWithWalkups());
+    fetch("/api/oddyssey-food/dates")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.status === "ok" && Array.isArray(d.dates)) setHistoricalDates(d.dates);
+      })
+      .catch(() => {});
   }, []);
 
   const summary = useMemo(
@@ -192,12 +202,17 @@ export default function SummaryPage() {
             </select>
           </div>
         )}
-        {summary.available_dates.length > 1 && (
+        {(historicalDates.length > 0 || summary.available_dates.length > 1) && (
           <CompareDatePicker
             primary={summary.date}
             value={compareDate}
             onChange={setCompareDate}
-            availableDates={summary.available_dates}
+            // Union of the local CSV dates and the on-disk session
+            // report dates — covers both freshly-uploaded CSVs and
+            // every historical pull that's been archived.
+            availableDates={Array.from(
+              new Set([...summary.available_dates, ...historicalDates]),
+            ).sort()}
           />
         )}
       </div>

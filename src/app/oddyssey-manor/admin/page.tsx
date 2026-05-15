@@ -8,6 +8,7 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ControlRoomSnapshot } from '@/components/oddyssey-sessions/ControlRoomSnapshot';
 
 export const metadata: Metadata = {
   title: 'Admin · Oddyssey',
@@ -154,6 +155,8 @@ export default function AdminHome() {
             Most land here from a ← Admin link on their own sub-page.
           </p>
         </header>
+
+        <ControlRoomSnapshot />
 
         <div
           style={{
