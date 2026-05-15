@@ -13,7 +13,7 @@ import {
 import type { NoirWeekOverWeek, NoirReportOverlay } from "@/lib/oddyssey-noir/history";
 import { computeChannelMix, type TicketGroupReport } from "@/lib/oddyssey-sessions/channel-mix";
 import { ChannelMixPanel } from "@/components/oddyssey-sessions/ChannelMix";
-import { CompareDatePicker, Delta } from "@/components/oddyssey-sessions/CompareControls";
+import { CompareDatePicker, DatePicker, Delta } from "@/components/oddyssey-sessions/CompareControls";
 
 export default function NoirSummaryPage() {
   const [summary, setSummary] = useState<NoirSummary | null>(null);
@@ -173,24 +173,26 @@ export default function NoirSummaryPage() {
             )}
           </div>
         </div>
-        {summary.available_dates.length > 1 && (
-          <div>
-            <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: "var(--text-muted)", marginBottom: 6 }}>Date</div>
-            <select value={date} onChange={(e) => setDate(e.target.value)} style={selectStyle}>
-              {summary.available_dates.map((d) => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
-        )}
-        {(historicalDates.length > 0 || summary.available_dates.length > 1) && (
-          <CompareDatePicker
-            primary={summary.date}
-            value={compareDate}
-            onChange={setCompareDate}
-            availableDates={Array.from(
-              new Set([...summary.available_dates, ...historicalDates]),
-            ).sort()}
-          />
-        )}
+        {(historicalDates.length > 0 || summary.available_dates.length > 1) && (() => {
+          const allDates = Array.from(
+            new Set([...summary.available_dates, ...historicalDates]),
+          ).sort();
+          return (
+            <>
+              <DatePicker
+                value={date || summary.date}
+                onChange={setDate}
+                availableDates={allDates}
+              />
+              <CompareDatePicker
+                primary={summary.date}
+                value={compareDate}
+                onChange={setCompareDate}
+                availableDates={allDates}
+              />
+            </>
+          );
+        })()}
       </div>
 
       {/* Headline — prefer report actuals when available */}
@@ -605,8 +607,4 @@ const btnOutline: React.CSSProperties = {
   display: "inline-block", padding: "12px 24px", background: "transparent", color: "var(--text-secondary)",
   fontSize: 10, letterSpacing: 2, textTransform: "uppercase", cursor: "pointer",
   border: "1px solid var(--border)", textDecoration: "none",
-};
-const selectStyle: React.CSSProperties = {
-  background: "var(--bg-elevated)", color: "var(--text)", border: "1px solid var(--border-subtle)",
-  padding: "8px 12px", fontSize: 13, letterSpacing: 0.3, outline: "none", fontFamily: "var(--sans)",
 };

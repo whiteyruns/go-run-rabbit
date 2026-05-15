@@ -7,7 +7,7 @@
 // one-stop "how did this date compare?" view.
 
 import { useEffect, useMemo, useState } from "react";
-import { CompareDatePicker, Delta } from "./CompareControls";
+import { CompareDatePicker, DatePicker, Delta } from "./CompareControls";
 
 interface FoodWowReport {
   available?: boolean;
@@ -204,28 +204,11 @@ export function ControlRoomSnapshot() {
           </div>
         </div>
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-end" }}>
-          <div>
-            <div
-              style={{
-                fontSize: 9,
-                letterSpacing: 3,
-                textTransform: "uppercase",
-                color: "#9a958d",
-                marginBottom: 6,
-              }}
-            >
-              Date
-            </div>
-            <select
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              style={selectStyle}
-            >
-              {availableDates.map((d) => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
-          </div>
+          <DatePicker
+            value={date}
+            onChange={setDate}
+            availableDates={availableDates}
+          />
           <CompareDatePicker
             primary={date}
             value={compareDate}
@@ -404,13 +387,3 @@ function Cell({
   );
 }
 
-const selectStyle: React.CSSProperties = {
-  background: "#1a1a1a",
-  color: "#e8e4dd",
-  border: "1px solid rgba(255,255,255,0.12)",
-  padding: "6px 10px",
-  fontSize: 12,
-  fontFamily: "'Helvetica Neue', Arial, sans-serif",
-  outline: "none",
-  cursor: "pointer",
-};

@@ -1,13 +1,89 @@
 "use client";
 
-// Compare-date picker + delta chip used by Manor Food and Noir summary
-// pages so Brandon can pull historical comparisons (Sat vs Sat, etc).
+// Date controls + delta chip used by Manor Food and Noir summary pages
+// (and the control room) so Brandon can pull historical comparisons
+// (Sat vs Sat, etc).
 //
-// Both controls are presentational. Pages own the compare date state
-// and the data fetch — these just render the picker UI and the small
+// All controls are presentational. Pages own the date state and the
+// data fetch — these just render the picker UI and the small
 // "+12.4% vs Apr 25" delta strip below each headline value.
 
 import { useMemo } from "react";
+
+// Shared <input type="date"> styling so primary + compare match.
+const dateInputStyle: React.CSSProperties = {
+  background: "var(--bg-elevated)",
+  color: "var(--text)",
+  border: "1px solid var(--border)",
+  padding: "6px 10px",
+  fontSize: 12,
+  fontFamily: "var(--sans)",
+  outline: "none",
+  cursor: "pointer",
+  colorScheme: "dark",
+};
+
+const presetButtonStyle: React.CSSProperties = {
+  background: "transparent",
+  border: "1px solid var(--border-subtle)",
+  color: "var(--text-muted)",
+  padding: "5px 9px",
+  fontSize: 10,
+  letterSpacing: 0.4,
+  textTransform: "uppercase",
+  cursor: "pointer",
+};
+
+// ─── Primary date picker ──────────────────────────────────────────────────
+
+export interface DatePickerProps {
+  value: string;
+  onChange: (date: string) => void;
+  // Sorted ascending list of dates we have data for. Used to derive
+  // min/max on the native input and to render a "no data" hint when
+  // the picked date is outside the set.
+  availableDates: string[];
+  label?: string;
+}
+
+export function DatePicker({
+  value,
+  onChange,
+  availableDates,
+  label = "Date",
+}: DatePickerProps) {
+  const min = availableDates[0];
+  const max = availableDates[availableDates.length - 1];
+  const inSet = !value || availableDates.includes(value);
+  return (
+    <div>
+      <div
+        style={{
+          fontSize: 9,
+          letterSpacing: 3,
+          textTransform: "uppercase",
+          color: "var(--text-muted)",
+          marginBottom: 6,
+        }}
+      >
+        {label}
+      </div>
+      <input
+        type="date"
+        value={value}
+        min={min}
+        max={max}
+        onChange={(e) => onChange(e.target.value)}
+        style={dateInputStyle}
+      />
+      {!inSet && value && (
+        <div style={{ fontSize: 10, color: "#d4a574", marginTop: 4 }}>
+          No data for {value}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export interface CompareDatePickerProps {
   // The "primary" selected date — used to derive the "Same day last week"
@@ -30,23 +106,30 @@ export function CompareDatePicker({
   availableDates,
   label = "Compare to",
 }: CompareDatePickerProps) {
-  // Quick preset: same day prior week. Only show as a button when that
-  // exact date is in the available list.
-  const sameDayLastWeek = useMemo(() => {
-    if (!primary) return null;
+  // Quick presets: same weekday N days back. Each only renders as a
+  // button when the resulting date actually has data on disk, so we
+  // don't dangle a useless button.
+  const presets = useMemo(() => {
+    if (!primary) return [] as { label: string; date: string }[];
     const [y, m, d] = primary.split("-").map(Number);
-    const dt = new Date(Date.UTC(y, m - 1, d));
-    dt.setUTCDate(dt.getUTCDate() - 7);
-    return dt.toISOString().slice(0, 10);
-  }, [primary]);
+    const out: { label: string; date: string }[] = [];
+    for (const [lbl, days] of [
+      ["−1w", 7],
+      ["−2w", 14],
+      ["−4w", 28],
+    ] as const) {
+      const dt = new Date(Date.UTC(y, m - 1, d));
+      dt.setUTCDate(dt.getUTCDate() - days);
+      out.push({ label: lbl, date: dt.toISOString().slice(0, 10) });
+    }
+    return out.filter((p) => availableDates.includes(p.date));
+  }, [primary, availableDates]);
 
-  const presetAvailable =
-    sameDayLastWeek != null && availableDates.includes(sameDayLastWeek);
-
-  const options = useMemo(
-    () => availableDates.filter((d) => d !== primary && d < primary),
-    [availableDates, primary],
-  );
+  // Bound the native date input to the historical range. Compare must
+  // be strictly before primary — apples to apples = past.
+  const min = availableDates[0];
+  const max = primary;
+  const inSet = !value || availableDates.includes(value);
 
   return (
     <div>
@@ -61,67 +144,47 @@ export function CompareDatePicker({
       >
         {label}
       </div>
-      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-        <select
+      <div style={{ display: "flex", gap: 6, alignItems: "center", flexWrap: "wrap" }}>
+        <input
+          type="date"
           value={value}
+          min={min}
+          max={max}
           onChange={(e) => onChange(e.target.value)}
-          style={{
-            background: "var(--bg-elevated)",
-            color: "var(--text)",
-            border: "1px solid var(--border)",
-            padding: "6px 10px",
-            fontSize: 12,
-            fontFamily: "var(--sans)",
-            outline: "none",
-            cursor: "pointer",
-          }}
-        >
-          <option value="">— none —</option>
-          {options.map((d) => (
-            <option key={d} value={d}>
-              {d}
-            </option>
-          ))}
-        </select>
-        {presetAvailable && value !== sameDayLastWeek && (
+          style={dateInputStyle}
+        />
+        {presets.map((p) => (
           <button
+            key={p.label}
             type="button"
-            onClick={() => onChange(sameDayLastWeek!)}
-            title="Same weekday last week"
+            onClick={() => onChange(p.date)}
+            title={`Same weekday — ${p.date}`}
             style={{
-              background: "transparent",
-              border: "1px solid var(--border-subtle)",
-              color: "var(--text-muted)",
-              padding: "5px 9px",
-              fontSize: 10,
-              letterSpacing: 0.4,
-              textTransform: "uppercase",
-              cursor: "pointer",
+              ...presetButtonStyle,
+              ...(value === p.date
+                ? { borderColor: "var(--accent)", color: "var(--accent)" }
+                : null),
             }}
           >
-            −7d
+            {p.label}
           </button>
-        )}
+        ))}
         {value && (
           <button
             type="button"
             onClick={() => onChange("")}
             title="Clear comparison"
-            style={{
-              background: "transparent",
-              border: "1px solid var(--border-subtle)",
-              color: "var(--text-muted)",
-              padding: "5px 9px",
-              fontSize: 10,
-              letterSpacing: 0.4,
-              textTransform: "uppercase",
-              cursor: "pointer",
-            }}
+            style={presetButtonStyle}
           >
             ✕
           </button>
         )}
       </div>
+      {!inSet && value && (
+        <div style={{ fontSize: 10, color: "#d4a574", marginTop: 4 }}>
+          No data for {value}
+        </div>
+      )}
     </div>
   );
 }
