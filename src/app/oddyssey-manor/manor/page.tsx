@@ -104,7 +104,7 @@ function ManorContent() {
           <p className="m-hero-sub">An immersive birthday party · Rotating performance · Secrets in equal measure</p>
           <div className="m-hero-actions">
             <a className="m-btn-primary" onClick={() => scrollToId("m-tickets")}>Get Tickets</a>
-            <a className="m-btn-outline" onClick={() => scrollToId("m-experience")}>Explore the Manor</a>
+            <a className="m-btn-outline" onClick={() => scrollToId("m-rooms")}>Explore the Manor</a>
           </div>
         </div>
         <div className="m-hero-scroll">
@@ -423,7 +423,7 @@ const TICKET_TIERS: { name: string; price: number; featured?: boolean; features:
 ];
 
 const COCKTAILS = [
-  { name: "The Siren's Song", character: "The Sirens", desc: "A bittersweet call to the deep — mezcal, passionfruit, and smoked sea salt." },
+  { name: "The Sirens Song", character: "The Sirens", desc: "A bittersweet call to the deep — mezcal, passionfruit, and smoked sea salt." },
   { name: "Felix's Nightcap", character: "Felix", desc: "Our host's preferred toast — aged rum, walnut bitters, and a vanilla pear finish." },
   { name: "Penelope's Love Letter", character: "Penelope", desc: "An elegant pour — gin, elderflower, rose, and a whisper of champagne." },
   { name: "Welcome Tea", character: "The House", desc: "The first drink of the evening — a warm herbal infusion served with theatrical flourish." },
