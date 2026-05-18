@@ -83,7 +83,7 @@ function NoirContent() {
 
       {/* ═══ NAV ═══ */}
       <nav className={`n-nav ${navScrolled ? "scrolled" : ""}`}>
-        <Link href="/oddyssey-manor" className="n-nav-logo">
+        <Link href="/oddyssey" className="n-nav-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
         </Link>

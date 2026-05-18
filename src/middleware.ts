@@ -5,7 +5,7 @@ const secret = new TextEncoder().encode(
   process.env.JWT_SECRET || "fallback-dev-secret"
 );
 
-const PUBLIC_PATHS = ["/", "/login", "/pitch", "/basin-and-range", "/apache-springs", "/canyon-expedition", "/oddyssey-manor", "/corner-bar-management", "/efd-outbound-overview", "/doberman-outreach", "/feed-the-block", "/forest-house", "/tsp-trk", "/recap/ftb", "/recap/ftb-editorial", "/api/auth/login", "/api/webhooks"];
+const PUBLIC_PATHS = ["/", "/login", "/pitch", "/basin-and-range", "/apache-springs", "/canyon-expedition", "/oddyssey", "/oddyssey-manor", "/corner-bar-management", "/efd-outbound-overview", "/doberman-outreach", "/feed-the-block", "/forest-house", "/tsp-trk", "/recap/ftb", "/recap/ftb-editorial", "/api/auth/login", "/api/webhooks"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

@@ -79,7 +79,7 @@ function ManorContent() {
 
       {/* ═══ NAV ═══ */}
       <nav className={`m-nav ${navScrolled ? "scrolled" : ""}`}>
-        <Link href="/oddyssey-manor" className="m-nav-logo">
+        <Link href="/oddyssey" className="m-nav-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
         </Link>

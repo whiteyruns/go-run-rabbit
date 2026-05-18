@@ -78,7 +78,7 @@ function PrivateContent() {
 
       {/* ═══ NAV ═══ */}
       <nav className={`p-nav ${navScrolled ? "scrolled" : ""}`}>
-        <Link href="/oddyssey-manor" className="p-nav-logo">
+        <Link href="/oddyssey" className="p-nav-logo">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
         </Link>
