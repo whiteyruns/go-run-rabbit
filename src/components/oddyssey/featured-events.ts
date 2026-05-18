@@ -26,10 +26,24 @@ export interface FeaturedEvent {
   ticketsHref?: string;  // external link; "#" if not yet on sale
 }
 
-// Las Vegas Pride at Oddyssey Noir — three confirmed Liquid Gold
+// Las Vegas Pride at Oddyssey Noir — four confirmed Liquid Gold
 // Friday takeovers in June 2026. Posters + verbatim taglines pulled
 // from the official flyers (oddyssey.noir IG, May 2026 drop).
 export const FEATURED_EVENTS: FeaturedEvent[] = [
+  {
+    slug: "pride-jun-05",
+    date: "Fri Jun 5",
+    dateISO: "2026-06-05",
+    venue: "Noir",
+    eyebrow: "Las Vegas Pride · Liquid Gold",
+    title: "Werq the Night",
+    tagline: "Own the spotlight. Celebrate with Pride at Liquid Gold.",
+    blurb:
+      "Pride Month kickoff. Pink, gold, and full Liquid Gold programming all night. The opening salvo on four Pride Fridays at Oddyssey Noir.",
+    accent: "#f06292",
+    poster: "/oddyssey/pride-jun05.jpg",
+    ticketsHref: "#",
+  },
   {
     slug: "pride-jun-12",
     date: "Fri Jun 12",
