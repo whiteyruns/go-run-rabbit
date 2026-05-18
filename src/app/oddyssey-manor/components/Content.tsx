@@ -108,7 +108,7 @@ export default function OddysseyContent() {
                   <div className="od-golden-flow-item">
                     <span className="od-golden-flow-time">12 AM</span>
                     <span className="od-golden-flow-dot" />
-                    <span className="od-golden-flow-text">Liquid Gold (Fri) / Art in Motion (Sat)</span>
+                    <span className="od-golden-flow-text">Liquid Gold (Fri) &middot; Oddyssey Noir (Sat)</span>
                   </div>
                   <div className="od-golden-flow-line" />
                   <div className="od-golden-flow-item">
@@ -133,9 +133,9 @@ export default function OddysseyContent() {
             </div>
             <div className="od-event-cards">
               {[
-                { date: "Fri Apr 18", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "Berri" },
-                { date: "Sat Apr 19", name: "Art in\nMotion", genre: "Multi-genre · Immersive", night: "saturday", dj: "Hector Romero" },
-                { date: "Fri Apr 25", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "DJ Brynn Taylor" },
+                { date: "Fri May 22", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "DJ Brynn Taylor" },
+                { date: "Sat May 23", name: "Oddyssey\nNoir", genre: "House · Electronic", night: "saturday", dj: "Tony Touch" },
+                { date: "Fri May 29", name: "Liquid\nGold", genre: "House · Electronic", night: "friday", dj: "Soni Withaneye" },
               ].map((evt, i) => (
                 <div key={i} className={`od-event-card od-event-card-${evt.night}`} onClick={() => showPage("detail")}>
                   <div className="od-event-date">{evt.date}</div>
@@ -294,38 +294,42 @@ export default function OddysseyContent() {
               <button key={f} className={`od-filter-btn ${i === 0 ? "active" : ""}`}>{f}</button>
             ))}
             <div className="od-filter-divider" />
-            {["April", "May", "June"].map((m) => (
+            {["May", "June", "July"].map((m) => (
               <button key={m} className="od-filter-btn">{m}</button>
             ))}
           </div>
 
           <div className="od-calendar-list">
-            <CalendarMonth title="April 2026" />
-            {[
-              { date: "Fri Apr 18", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "Berri" },
-              { date: "Sat Apr 19", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "Hector Romero" },
-              { date: "Fri Apr 25", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "DJ Brynn Taylor" },
-              { date: "Sat Apr 26", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "John Julius Knight" },
-            ].map((e, i) => (
-              <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
-            ))}
-
             <CalendarMonth title="May 2026" />
             {[
-              { date: "Fri May 02", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat May 03", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
-              { date: "Fri May 09", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat May 10", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
+              { date: "Fri May 22", name: "Liquid Gold", genre: "House · Electronic", dj: "DJ Brynn Taylor" },
+              { date: "Sat May 23", name: "Oddyssey Noir", genre: "House · Electronic", dj: "Tony Touch" },
+              { date: "Fri May 29", name: "Liquid Gold", genre: "House · Electronic", dj: "Soni Withaneye" },
+              { date: "Sat May 30", name: "Oddyssey Noir", genre: "House · Electronic", dj: "John Julius Knight" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
 
             <CalendarMonth title="June 2026" />
             {[
-              { date: "Fri Jun 06", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jun 07", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
-              { date: "Fri Jun 13", name: "Golden Hour + Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jun 14", name: "Golden Hour + Art in Motion", genre: "Multi-genre · Immersive", dj: "TBA" },
+              { date: "Fri Jun 05", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jun 06", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
+              { date: "Fri Jun 12", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jun 13", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
+              { date: "Fri Jun 19", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jun 20", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
+              { date: "Fri Jun 26", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jun 27", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
+            ].map((e, i) => (
+              <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
+            ))}
+
+            <CalendarMonth title="July 2026" />
+            {[
+              { date: "Fri Jul 03", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jul 04", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
+              { date: "Fri Jul 10", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
+              { date: "Sat Jul 11", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
             ].map((e, i) => (
               <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
             ))}
@@ -345,7 +349,7 @@ export default function OddysseyContent() {
             <div className="od-detail-hero-bg" />
             <div className="od-hero-texture" />
             <div className="od-detail-hero-content">
-              <div className="od-detail-date">Friday, April 17, 2026</div>
+              <div className="od-detail-date">Friday, May 22, 2026</div>
               <h1>Liquid<br />Gold</h1>
               <p className="od-detail-sub">Where style, sound, and self-expression collide</p>
               <div className="od-detail-artist">Featuring: Berri</div>

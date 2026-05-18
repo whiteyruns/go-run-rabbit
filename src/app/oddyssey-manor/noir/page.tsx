@@ -115,8 +115,8 @@ function NoirContent() {
       <section className="n-section-pad n-programming" id="n-programming">
         <div className="n-section-head">
           <div className="n-label" style={{ textAlign: "center" }}>Weekly Programming</div>
-          <h2 className="n-heading-2" style={{ textAlign: "center" }}>Two Nights,<br />One Environment</h2>
-          <p className="n-section-sub">Recurring weekly formats — predictable cadence, distinct sound, same immersive world.</p>
+          <h2 className="n-heading-2" style={{ textAlign: "center" }}>Two Nights,<br />One World</h2>
+          <p className="n-section-sub">Liquid Gold Fridays and Oddyssey Noir Saturdays — distinct sounds, same immersive environment.</p>
         </div>
         <div className="n-night-grid">
           <div className="n-night-card n-night-friday">
@@ -134,14 +134,15 @@ function NoirContent() {
           </div>
           <div className="n-night-card n-night-saturday">
             <div className="n-night-day">Saturdays</div>
-            <h3>Art in Motion</h3>
-            <p className="n-night-tagline">A carnivál noir — multi-genre, immersive, performance-driven</p>
+            <h3>Oddyssey Noir</h3>
+            <p className="n-night-tagline">The headliner night — bigger room, bigger names</p>
             <div className="n-night-meta">
-              <span>Multi-genre</span><span>·</span><span>Immersive</span><span>·</span><span>Performance</span>
+              <span>House</span><span>·</span><span>Electronic</span><span>·</span><span>Performance</span>
             </div>
             <p className="n-night-desc">
-              Circus acts, roaming performers, shifting rooms, and rotating curators.
-              Saturday is Oddyssey at full voltage — harder to predict, impossible to replicate.
+              Saturday is Oddyssey at full voltage — roaming performers, peak
+              programming, rotating headline talent. Friday&apos;s sister night,
+              dialed up.
             </p>
             <div className="n-night-tag">Golden Hour · Open Bar 10 PM — 12 AM</div>
           </div>
@@ -160,7 +161,7 @@ function NoirContent() {
           {([
             { id: "all", label: "All Nights" },
             { id: "friday", label: "Fridays — Liquid Gold" },
-            { id: "saturday", label: "Saturdays — Art in Motion" },
+            { id: "saturday", label: "Saturdays — Oddyssey Noir" },
           ] as const).map((f) => (
             <button
               key={f.id}
@@ -177,7 +178,7 @@ function NoirContent() {
             <div key={i} className={`n-event-row n-event-${evt.night}`}>
               <div className="n-event-date">{evt.date}</div>
               <div className="n-event-body">
-                <div className="n-event-night">{evt.night === "friday" ? "Liquid Gold" : "Art in Motion"}</div>
+                <div className="n-event-night">{evt.night === "friday" ? "Liquid Gold" : "Oddyssey Noir"}</div>
                 <h4>{evt.dj}</h4>
                 <span className="n-event-genre">{evt.genre}</span>
               </div>
@@ -371,14 +372,16 @@ function NoirContent() {
 type NightType = "friday" | "saturday";
 
 const EVENTS: { date: string; night: NightType; dj: string; genre: string }[] = [
-  { date: "Fri Apr 18", night: "friday", dj: "Berri", genre: "House · Electronic" },
-  { date: "Sat Apr 19", night: "saturday", dj: "Hector Romero", genre: "Multi-genre · Immersive" },
-  { date: "Fri Apr 25", night: "friday", dj: "DJ Brynn Taylor", genre: "House · Electronic" },
-  { date: "Sat Apr 26", night: "saturday", dj: "John Julius Knight", genre: "Multi-genre · Immersive" },
-  { date: "Fri May 02", night: "friday", dj: "TBA", genre: "House · Electronic" },
-  { date: "Sat May 03", night: "saturday", dj: "TBA", genre: "Multi-genre · Immersive" },
-  { date: "Fri May 09", night: "friday", dj: "TBA", genre: "House · Electronic" },
-  { date: "Sat May 10", night: "saturday", dj: "TBA", genre: "Multi-genre · Immersive" },
+  { date: "Fri May 22", night: "friday", dj: "DJ Brynn Taylor", genre: "House · Electronic" },
+  { date: "Sat May 23", night: "saturday", dj: "Tony Touch", genre: "House · Electronic" },
+  { date: "Fri May 29", night: "friday", dj: "Soni Withaneye", genre: "House · Electronic" },
+  { date: "Sat May 30", night: "saturday", dj: "John Julius Knight", genre: "House · Electronic" },
+  { date: "Fri Jun 05", night: "friday", dj: "TBA", genre: "House · Electronic" },
+  { date: "Sat Jun 06", night: "saturday", dj: "TBA", genre: "House · Electronic" },
+  { date: "Fri Jun 12", night: "friday", dj: "TBA", genre: "House · Electronic" },
+  { date: "Sat Jun 13", night: "saturday", dj: "TBA", genre: "House · Electronic" },
+  { date: "Fri Jun 19", night: "friday", dj: "TBA", genre: "House · Electronic" },
+  { date: "Sat Jun 20", night: "saturday", dj: "TBA", genre: "House · Electronic" },
 ];
 
 const TIERS = [
