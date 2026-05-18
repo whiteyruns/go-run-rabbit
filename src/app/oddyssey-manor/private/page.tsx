@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 
 const ACCESS_CODE = "oddyssey2026";
 
@@ -58,17 +59,7 @@ export default function PrivatePage() {
 }
 
 function PrivateContent() {
-  const [navScrolled, setNavScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setNavScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
-
   const scrollToId = useCallback((id: string) => {
-    setMobileOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
@@ -76,32 +67,12 @@ function PrivateContent() {
     <>
       <style>{privateStyles}</style>
 
-      {/* ═══ NAV ═══ */}
-      <nav className={`p-nav ${navScrolled ? "scrolled" : ""}`}>
-        <Link href="/oddyssey" className="p-nav-logo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
-        </Link>
-        <ul className="p-nav-links">
-          <li><Link href="/oddyssey-manor/manor">Manor</Link></li>
-          <li><Link href="/oddyssey-manor/noir">Noir</Link></li>
-          <li><a className="active">Private Events</a></li>
-          <li><a onClick={() => scrollToId("p-inquiry")}>Inquiry</a></li>
-          <li><a className="p-nav-cta" onClick={() => scrollToId("p-inquiry")}>Plan Your Event</a></li>
-        </ul>
-        <div className={`p-hamburger ${mobileOpen ? "open" : ""}`} onClick={() => setMobileOpen(!mobileOpen)}>
-          <span /><span /><span />
-        </div>
-      </nav>
-
-      {mobileOpen && (
-        <div className="p-mobile-nav">
-          <Link href="/oddyssey-manor/manor" onClick={() => setMobileOpen(false)}>Manor</Link>
-          <Link href="/oddyssey-manor/noir" onClick={() => setMobileOpen(false)}>Noir</Link>
-          <a onClick={() => setMobileOpen(false)}>Private Events</a>
-          <a onClick={() => scrollToId("p-inquiry")} style={{ color: "var(--accent)" }}>Plan Your Event</a>
-        </div>
-      )}
+      <OddysseyTopNav
+        active="private"
+        pageItems={[{ label: "Inquiry", scrollTo: "p-inquiry" }]}
+        ctaLabel="Plan Your Event"
+        ctaAction={() => scrollToId("p-inquiry")}
+      />
 
       {/* ═══ FLOATING PAGE NAV ═══ */}
       <div className="page-pill-nav">

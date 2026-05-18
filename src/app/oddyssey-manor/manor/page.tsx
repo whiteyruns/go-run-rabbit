@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 
 const ACCESS_CODE = "oddyssey2026";
 
@@ -58,18 +59,9 @@ export default function ManorPage() {
 }
 
 function ManorContent() {
-  const [navScrolled, setNavScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  useEffect(() => {
-    const handler = () => setNavScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
-  }, []);
-
   const scrollToId = useCallback((id: string) => {
-    setMobileOpen(false);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
@@ -77,35 +69,14 @@ function ManorContent() {
     <>
       <style>{manorStyles}</style>
 
-      {/* ═══ NAV ═══ */}
-      <nav className={`m-nav ${navScrolled ? "scrolled" : ""}`}>
-        <Link href="/oddyssey" className="m-nav-logo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
-        </Link>
-        <ul className="m-nav-links">
-          <li><a className="active">Manor</a></li>
-          <li><Link href="/oddyssey-manor/noir">Noir</Link></li>
-          <li><Link href="/oddyssey-manor/private">Private Events</Link></li>
-          <li><a onClick={() => scrollToId("m-gallery")}>Gallery</a></li>
-          <li><a onClick={() => scrollToId("m-faq")}>FAQ</a></li>
-          <li><a className="m-nav-cta" onClick={() => scrollToId("m-tickets")}>Get Tickets</a></li>
-        </ul>
-        <div className={`m-hamburger ${mobileOpen ? "open" : ""}`} onClick={() => setMobileOpen(!mobileOpen)}>
-          <span /><span /><span />
-        </div>
-      </nav>
-
-      {mobileOpen && (
-        <div className="m-mobile-nav">
-          <a onClick={() => setMobileOpen(false)}>Manor</a>
-          <Link href="/oddyssey-manor/noir" onClick={() => setMobileOpen(false)}>Noir</Link>
-          <Link href="/oddyssey-manor/private" onClick={() => setMobileOpen(false)}>Private Events</Link>
-          <a onClick={() => scrollToId("m-gallery")}>Gallery</a>
-          <a onClick={() => scrollToId("m-faq")}>FAQ</a>
-          <a onClick={() => scrollToId("m-tickets")} style={{ color: "var(--accent)" }}>Get Tickets</a>
-        </div>
-      )}
+      <OddysseyTopNav
+        active="manor"
+        pageItems={[
+          { label: "Gallery", scrollTo: "m-gallery" },
+          { label: "FAQ", scrollTo: "m-faq" },
+        ]}
+        ctaAction={() => scrollToId("m-tickets")}
+      />
 
       {/* ═══ FLOATING PAGE NAV ═══ */}
       <div className="page-pill-nav">
