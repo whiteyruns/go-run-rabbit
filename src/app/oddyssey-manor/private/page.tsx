@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
+import { FollowBand } from "@/components/oddyssey/FollowBand";
 
 const ACCESS_CODE = "oddyssey2026";
 
@@ -228,6 +229,14 @@ function PrivateContent() {
         </div>
       </section>
 
+      <FollowBand
+        instagram="oddysseylv"
+        instagramSecondary="oddyssey.manor"
+        tiktok="oddysseylv"
+        accent="#c9a84c"
+        blurb="Buyouts, brand activations, and one-night takeovers — first on Instagram."
+      />
+
       {/* ═══ FOOTER ═══ */}
       <footer className="p-footer">
         <div className="p-footer-top">
@@ -245,9 +254,9 @@ function PrivateContent() {
             </div>
             <div className="p-footer-col">
               <h6>Connect</h6>
-              <a>events@oddysseylv.com</a>
-              <a>702-846-7900</a>
-              <a>Instagram</a>
+              <a href="mailto:events@oddysseylv.com">events@oddysseylv.com</a>
+              <a href="tel:+17028467900">702-846-7900</a>
+              <a href="https://www.instagram.com/oddysseylv/" target="_blank" rel="noopener noreferrer">Instagram</a>
             </div>
             <div className="p-footer-col">
               <h6>Legal</h6>

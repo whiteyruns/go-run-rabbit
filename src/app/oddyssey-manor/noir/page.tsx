@@ -1008,28 +1008,6 @@ const noirStyles = `
 @media (max-width: 900px) { .n-venue-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .n-venue-grid { grid-template-columns: 1fr; } }
 
-/* ═══ CAPTURE ═══ */
-.n-capture { background: var(--bg-elevated); border-top: 1px solid var(--border-subtle); text-align: center; }
-.n-capture-sub { font-size: 13px; color: var(--text-muted); letter-spacing: 1.5px; margin: 12px 0 40px; }
-.n-capture-form { display: flex; justify-content: center; gap: 0; max-width: 520px; margin: 0 auto; }
-.n-capture-form input {
-  flex: 1; background: var(--bg); border: 1px solid var(--border-subtle); border-right: none;
-  padding: 16px 24px; font-family: var(--sans); font-size: 13px; font-weight: 300;
-  color: var(--text); outline: none; transition: border-color 0.3s;
-}
-.n-capture-form input::placeholder { color: var(--text-muted); }
-.n-capture-form input:focus { border-color: var(--accent); }
-.n-capture-form button {
-  background: var(--accent); color: var(--bg); font-size: 10px; font-weight: 500;
-  letter-spacing: 3px; text-transform: uppercase; padding: 16px 32px;
-  border: 1px solid var(--accent); cursor: pointer; transition: background 0.3s; white-space: nowrap;
-}
-.n-capture-form button:hover { background: var(--accent-hover); }
-@media (max-width: 500px) {
-  .n-capture-form { flex-direction: column; }
-  .n-capture-form input { border-right: 1px solid var(--border-subtle); border-bottom: none; }
-}
-
 /* ═══ FOOTER ═══ */
 .n-footer {
   padding: 80px clamp(20px,6vw,120px) 40px; border-top: 1px solid var(--border-subtle);
