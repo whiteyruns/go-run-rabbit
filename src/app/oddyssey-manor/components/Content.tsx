@@ -125,15 +125,15 @@ export default function OddysseyContent() {
                   </div>
                   <div className="od-golden-time">
                     <span className="od-golden-time-label">Friday</span>
-                    <span className="od-golden-time-value">El Bandido Reposado &bull; KU Champagne</span>
+                    <span className="od-golden-time-value">El Bandido Yankee Reposado &bull; KU Champagne</span>
                   </div>
                   <div className="od-golden-time">
                     <span className="od-golden-time-label">Saturday</span>
-                    <span className="od-golden-time-value">Telson &bull; KU Champagne &bull; $10 Caviar Bumps</span>
+                    <span className="od-golden-time-value">Telson Blanco &bull; KU Champagne</span>
                   </div>
                   <div className="od-golden-time">
-                    <span className="od-golden-time-label">Entry</span>
-                    <span className="od-golden-time-value">Doors at 10 PM</span>
+                    <span className="od-golden-time-label">Add-ons</span>
+                    <span className="od-golden-time-value">Caviar Bumps &middot; Premium pours by request</span>
                   </div>
                 </div>
                 <div className="od-golden-flow">
@@ -201,9 +201,10 @@ export default function OddysseyContent() {
                   between theatre and nightlife.
                 </p>
                 <p className="od-about-text" style={{ marginBottom: 8 }}>
-                  By day, <strong>Oddyssey Manor</strong> offers immersive performances and decadent
-                  food &amp; beverage. By night, the space transforms into <strong>Oddyssey Noir</strong> &mdash;
-                  a carniv&aacute;l noir warehouse rave of DJs, circus acts, and underground intrigue.
+                  In the evening, <strong>Oddyssey Manor</strong> opens for immersive cocktail
+                  theatre &mdash; four ticket tiers, rotating performance, plated bites. Friday and
+                  Saturday after close, the space transforms into <strong>Oddyssey Noir</strong> &mdash;
+                  a sensual, living-room maze centered by a pulsing dance floor.
                 </p>
                 <p className="od-about-tagline">Every guest becomes part of the myth.</p>
                 <ul className="od-about-features">
