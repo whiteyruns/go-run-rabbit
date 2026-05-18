@@ -79,13 +79,6 @@ function ManorContent() {
         ctaAction={() => scrollToId("m-tickets")}
       />
 
-      {/* ═══ FLOATING PAGE NAV ═══ */}
-      <div className="page-pill-nav">
-        <a className="active">Manor</a>
-        <Link href="/oddyssey-manor/noir">Noir</Link>
-        <Link href="/oddyssey-manor/private">Private Events</Link>
-      </div>
-
       {/* ═══ HERO ═══ */}
       <section className="m-hero">
         <video
@@ -188,6 +181,25 @@ function ManorContent() {
         </p>
       </section>
 
+      {/* ═══ FLOOR PLAN ═══ */}
+      {/* Floor plan moved BEFORE How to Play so visitors see the
+          venue layout first and the guiding tips land in context. */}
+      <section className="m-section-pad m-floorplan" id="m-rooms">
+        <div className="m-section-head">
+          <div className="m-label" style={{ textAlign: "center" }}>Inside the Manor</div>
+          <h2 className="m-heading-2" style={{ textAlign: "center" }}>The Grand Oddyssey<br />Manor Theatre</h2>
+          <p className="m-section-sub">Ten rooms, multiple bars, one labyrinth. Wander freely — every space rewards the curious.</p>
+        </div>
+        <div className="m-floorplan-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/oddyssey/manor-floor-plan.png"
+            alt="Floor plan of Oddyssey Manor — Foyer, Main Street, Garden, Bath Tub, Dressing Room Bar, Felix's Apartment, Athena's Boudoir, Chapel, Main Stage, Full Bar"
+            className="m-floorplan-img"
+          />
+        </div>
+      </section>
+
       {/* ═══ HOW TO PLAY ═══ */}
       <section className="m-section-pad m-play">
         <div className="m-section-head">
@@ -203,23 +215,6 @@ function ManorContent() {
               <p>{p.desc}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* ═══ FLOOR PLAN ═══ */}
-      <section className="m-section-pad m-floorplan" id="m-rooms">
-        <div className="m-section-head">
-          <div className="m-label" style={{ textAlign: "center" }}>Inside the Manor</div>
-          <h2 className="m-heading-2" style={{ textAlign: "center" }}>The Grand Oddyssey<br />Manor Theatre</h2>
-          <p className="m-section-sub">Ten rooms, multiple bars, one labyrinth. Wander freely — every space rewards the curious.</p>
-        </div>
-        <div className="m-floorplan-wrap">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/oddyssey/manor-floor-plan.png"
-            alt="Floor plan of Oddyssey Manor — Foyer, Main Street, Garden, Bath Tub, Dressing Room Bar, Felix's Apartment, Athena's Boudoir, Chapel, Main Stage, Full Bar"
-            className="m-floorplan-img"
-          />
         </div>
       </section>
 

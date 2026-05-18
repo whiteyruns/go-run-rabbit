@@ -74,13 +74,6 @@ function PrivateContent() {
         ctaAction={() => scrollToId("p-inquiry")}
       />
 
-      {/* ═══ FLOATING PAGE NAV ═══ */}
-      <div className="page-pill-nav">
-        <Link href="/oddyssey-manor/manor">Manor</Link>
-        <Link href="/oddyssey-manor/noir">Noir</Link>
-        <a className="active">Private Events</a>
-      </div>
-
       {/* ═══ HERO ═══ */}
       <section className="p-hero">
         <div className="p-hero-bg" />

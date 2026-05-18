@@ -221,13 +221,19 @@ export default function OddysseyContent() {
             </div>
           </section>
 
-          {/* Video */}
+          {/* Video — the live Manor hero video, looped + muted as a
+              cinematic break between About and Social Proof. Teases
+              what the user sees on the Manor flagship hero. */}
           <section className="od-video-section">
-            <div className="od-video-bg" />
-            <div className="od-video-play">
-              <div className="od-play-ring"><div className="od-play-triangle" /></div>
-              <span className="od-play-label">Watch the experience</span>
-            </div>
+            <video
+              className="od-video-el"
+              autoPlay muted loop playsInline preload="auto"
+              poster="/oddyssey/gal14.webp"
+              aria-hidden="true"
+            >
+              <source src="/oddyssey/oddy-manor-2026.webm" type="video/webm" />
+            </video>
+            <div className="od-video-scrim" />
           </section>
 
           {/* Social Proof */}
@@ -246,17 +252,26 @@ export default function OddysseyContent() {
             </div>
           </section>
 
-          {/* Info */}
+          {/* Info — both venue schedules surfaced so the home reads
+              correctly. Manor runs Thu–Sun (dinner show); Noir runs
+              Fri–Sat late. */}
           <section className="od-section-pad od-info">
             <div className="od-label" style={{ textAlign: "center" }}>Plan Your Visit</div>
             <div className="od-info-grid">
               <div className="od-info-item">
                 <h4>Location</h4>
-                <p>3202 W Desert Inn Rd<br />Las Vegas, NV 89102<br /><span style={{ fontSize: 14, color: "var(--text-muted)" }}>Inside AREA15</span></p>
+                <p>
+                  3202 W Desert Inn Rd<br />
+                  Las Vegas, NV 89102<br />
+                  <span style={{ fontSize: 14, color: "var(--text-muted)" }}>Inside AREA15</span>
+                </p>
               </div>
               <div className="od-info-item">
                 <h4>Hours</h4>
-                <p>Friday &amp; Saturday<br />10 PM &mdash; Late</p>
+                <p>
+                  <strong style={{ color: "var(--text)" }}>Manor</strong> &middot; Thu–Sun &middot; 6:30 PM<br />
+                  <strong style={{ color: "var(--text)" }}>Noir</strong> &middot; Fri–Sat &middot; 10 PM–Late
+                </p>
               </div>
               <div className="od-info-item">
                 <h4>Requirements</h4>
@@ -1030,26 +1045,17 @@ const styles = `
 }
 
 /* ═══ VIDEO ═══ */
-.od-video-section { position: relative; height: 70vh; min-height: 400px; overflow: hidden; cursor: pointer; }
-.od-video-bg {
-  position: absolute; inset: 0;
+.od-video-section { position: relative; height: 70vh; min-height: 400px; overflow: hidden; }
+.od-video-el {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; pointer-events: none;
+}
+.od-video-scrim {
+  position: absolute; inset: 0; pointer-events: none;
   background:
-    radial-gradient(ellipse at 50% 60%, rgba(201,168,76,0.05) 0%, transparent 50%),
-    linear-gradient(180deg, var(--bg) 0%, rgba(6,6,6,0.5) 30%, rgba(6,6,6,0.5) 70%, var(--bg) 100%),
-    url('/oddyssey/gal14.webp') center/cover no-repeat;
-  filter: saturate(0.6) brightness(0.4);
+    radial-gradient(ellipse at 50% 60%, rgba(201,168,76,0.04) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg) 0%, rgba(6,6,6,0.30) 18%, rgba(6,6,6,0.30) 82%, var(--bg) 100%);
 }
-.od-video-play {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  display: flex; flex-direction: column; align-items: center; gap: 24px;
-}
-.od-play-ring {
-  width: 80px; height: 80px; border: 1px solid var(--accent); border-radius: 50% !important;
-  display: flex; align-items: center; justify-content: center; transition: all 0.5s;
-}
-.od-video-section:hover .od-play-ring { transform: scale(1.1); box-shadow: 0 0 40px rgba(201,168,76,0.15); }
-.od-play-triangle { width: 0; height: 0; border-left: 16px solid var(--accent); border-top: 10px solid transparent; border-bottom: 10px solid transparent; margin-left: 4px; }
-.od-play-label { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-muted); }
 
 /* ═══ EXPERIENCE ═══ */
 .od-experience { background: var(--bg); border-top: 1px solid var(--border-subtle); }

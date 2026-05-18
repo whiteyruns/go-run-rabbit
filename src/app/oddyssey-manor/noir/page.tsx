@@ -83,13 +83,6 @@ function NoirContent() {
         ctaAction={() => scrollToId("n-events")}
       />
 
-      {/* ═══ FLOATING PAGE NAV ═══ */}
-      <div className="page-pill-nav">
-        <Link href="/oddyssey-manor/manor">Manor</Link>
-        <a className="active">Noir</a>
-        <Link href="/oddyssey-manor/private">Private Events</Link>
-      </div>
-
       {/* ═══ HERO ═══ */}
       <section className="n-hero">
         <div className="n-hero-bg" />
