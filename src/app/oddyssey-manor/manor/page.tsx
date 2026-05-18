@@ -157,11 +157,17 @@ function ManorContent() {
         <div className="m-menu-grid">
           {COCKTAILS.map((c) => (
             <div key={c.name} className="m-menu-item">
-              <div className="m-menu-item-head">
-                <h4>{c.name}</h4>
-                <span className="m-menu-item-owner">{c.character}</span>
+              <div className="m-menu-item-photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.image} alt={c.name} loading="lazy" />
               </div>
-              <p className="m-menu-item-desc">{c.desc}</p>
+              <div className="m-menu-item-body">
+                <div className="m-menu-item-head">
+                  <h4>{c.name}</h4>
+                  <span className="m-menu-item-owner">{c.character}</span>
+                </div>
+                <p className="m-menu-item-desc">{c.desc}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -170,6 +176,10 @@ function ManorContent() {
         <div className="m-food-grid">
           {FOOD.map((f) => (
             <div key={f.name} className="m-food-item">
+              <div className="m-food-item-photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={f.image} alt={f.name} loading="lazy" />
+              </div>
               <h4>{f.name}</h4>
               <p>{f.desc}</p>
             </div>
@@ -422,22 +432,28 @@ const TICKET_TIERS: { name: string; price: number; featured?: boolean; features:
   },
 ];
 
+// Order + image mapping mirrors oddysseylv.com/manor (cocktail1.png is
+// The Sirens Song, cocktail2 is Felix's Nightcap, etc.). Trimmed to
+// the 7 cocktails the live site has actually shot. Three Sip Chalice
+// is on the live site as an illustration in a separate context, not
+// in the cocktail grid — so it's intentionally omitted here.
 const COCKTAILS = [
-  { name: "The Sirens Song", character: "The Sirens", desc: "A bittersweet call to the deep — mezcal, passionfruit, and smoked sea salt." },
-  { name: "Felix's Nightcap", character: "Felix", desc: "Our host's preferred toast — aged rum, walnut bitters, and a vanilla pear finish." },
-  { name: "Penelope's Love Letter", character: "Penelope", desc: "An elegant pour — gin, elderflower, rose, and a whisper of champagne." },
-  { name: "Welcome Tea", character: "The House", desc: "The first drink of the evening — a warm herbal infusion served with theatrical flourish." },
-  { name: "Henry's Nightgown", character: "Henry", desc: "Rye, spiced honey, amaro, and orange peel — worn loosely, never buttoned." },
-  { name: "Cici's Remedy", character: "Cici", desc: "Cures what ails you — tequila, ginger, lime, and a crushed-berry finish." },
-  { name: "Athena's Disguise", character: "Athena", desc: "Never what it first appears — clear spirit, herbal bitters, and a slow-shifting color." },
-  { name: "Three Sip Chalice", character: "The Manor", desc: "A shared pour, meant to be passed. Composition changes with the evening." },
+  { name: "The Sirens Song", character: "The Sirens", image: "/oddyssey/cocktail1.png", desc: "A bittersweet call to the deep — mezcal, passionfruit, and smoked sea salt." },
+  { name: "Felix's Nightcap", character: "Felix", image: "/oddyssey/cocktail2.png", desc: "Our host's preferred toast — aged rum, walnut bitters, and a vanilla pear finish." },
+  { name: "Penelope's Love Letter", character: "Penelope", image: "/oddyssey/cocktail3.png", desc: "An elegant pour — gin, elderflower, rose, and a whisper of champagne." },
+  { name: "Welcome Tea", character: "The House", image: "/oddyssey/cocktail4.png", desc: "The first drink of the evening — a warm herbal infusion served with theatrical flourish." },
+  { name: "Henry's Nightgown", character: "Henry", image: "/oddyssey/cocktail5.png", desc: "Rye, spiced honey, amaro, and orange peel — worn loosely, never buttoned." },
+  { name: "Cici's Remedy", character: "Cici", image: "/oddyssey/cocktail6.png", desc: "Cures what ails you — tequila, ginger, lime, and a crushed-berry finish." },
+  { name: "Athena's Disguise", character: "Athena", image: "/oddyssey/cocktail7.png", desc: "Never what it first appears — clear spirit, herbal bitters, and a slow-shifting color." },
 ];
 
+// food1/2/6 are the three Manor bites the live site has shot
+// (Charcuterie / Spare Ribs / Ube Cheesecake). Shrimp Ceviche
+// dropped — no shoot exists.
 const FOOD = [
-  { name: "Charcuterie", desc: "Cured meats, aged cheese, and house accompaniments." },
-  { name: "Spare Ribs", desc: "Slow-braised, glazed, and served warm." },
-  { name: "Shrimp Ceviche", desc: "Citrus-cured, tossed with chili and herbs." },
-  { name: "Ube Cheesecake", desc: "A bite of something sweet — purple, smooth, and unexpected." },
+  { name: "Charcuterie", image: "/oddyssey/food1.png", desc: "Cured meats, aged cheese, and house accompaniments." },
+  { name: "Spare Ribs", image: "/oddyssey/food2.png", desc: "Slow-braised, glazed, and served warm." },
+  { name: "Ube Cheesecake", image: "/oddyssey/food6.png", desc: "A bite of something sweet — purple, smooth, and unexpected." },
 ];
 
 // Mirrors the live oddysseylv.com/manor "Engagement Guide" — five
@@ -774,8 +790,22 @@ const manorStyles = `
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
   background: var(--border-subtle); max-width: 1100px; margin: 0 auto;
 }
-.m-menu-item { background: var(--bg-elevated); padding: 28px 32px; transition: background 0.4s; }
+.m-menu-item {
+  background: var(--bg-elevated); padding: 24px;
+  display: grid; grid-template-columns: 120px 1fr; gap: 22px;
+  align-items: start; transition: background 0.4s;
+}
 .m-menu-item:hover { background: var(--bg-card); }
+.m-menu-item-photo {
+  width: 120px; aspect-ratio: 3 / 4; overflow: hidden; background: #060606;
+}
+.m-menu-item-photo img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.m-menu-item:hover .m-menu-item-photo img { transform: scale(1.05); }
+.m-menu-item-body { min-width: 0; padding-top: 4px; }
 .m-menu-item-head {
   display: flex; justify-content: space-between; align-items: baseline; gap: 16px;
   margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-subtle);
@@ -792,26 +822,42 @@ const manorStyles = `
   font-size: 13px; font-weight: 300; line-height: 1.6; color: var(--text-secondary);
   letter-spacing: 0.3px;
 }
-@media (max-width: 768px) { .m-menu-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) {
+  .m-menu-grid { grid-template-columns: 1fr; }
+  .m-menu-item { grid-template-columns: 96px 1fr; gap: 16px; padding: 18px; }
+  .m-menu-item-photo { width: 96px; }
+}
 
 /* ═══ FOOD ═══ */
 .m-food { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
 .m-food-grid {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
   background: var(--border-subtle); max-width: 1100px; margin: 0 auto;
 }
-.m-food-item { background: var(--bg); padding: 32px 24px; text-align: center; transition: background 0.4s; }
+.m-food-item {
+  background: var(--bg); padding: 0 0 28px; text-align: center;
+  transition: background 0.4s; overflow: hidden;
+}
 .m-food-item:hover { background: var(--bg-elevated); }
+.m-food-item-photo {
+  width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #060606;
+  margin-bottom: 22px;
+}
+.m-food-item-photo img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.m-food-item:hover .m-food-item-photo img { transform: scale(1.05); }
 .m-food-item h4 {
   font-family: var(--serif); font-size: 20px; font-weight: 400; letter-spacing: 1.5px;
-  color: var(--accent); margin: 0 0 12px;
+  color: var(--accent); margin: 0 0 10px;
 }
 .m-food-item p {
   font-size: 12px; font-weight: 300; line-height: 1.6; color: var(--text-secondary);
-  letter-spacing: 0.3px;
+  letter-spacing: 0.3px; padding: 0 22px;
 }
-@media (max-width: 768px) { .m-food-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 480px) { .m-food-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .m-food-grid { grid-template-columns: 1fr; } }
 
 /* ═══ HOW TO PLAY ═══ */
 .m-play { background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
