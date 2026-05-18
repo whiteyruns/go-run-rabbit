@@ -250,14 +250,30 @@ function NoirContent() {
                 <h4>{cat.category}</h4>
                 {cat.items.map((item) => (
                   <div key={item.name} className="n-menu-item">
-                    <span>{item.name}</span>
+                    <span className="n-menu-item-name">
+                      {item.name}
+                      {item.size && (
+                        <span className="n-menu-item-size"> · {item.size}</span>
+                      )}
+                    </span>
                     <span>{item.price}</span>
                   </div>
                 ))}
               </div>
             ))}
           </div>
-          <p className="n-menu-note">Placeholder pricing for wireframe purposes. All bottles include mixers, ice, and service.</p>
+          <div className="n-menu-extras">
+            <div className="n-menu-extras-label">Bottle service extras &middot; bucket of 6</div>
+            <ul>
+              {BOTTLE_EXTRAS.map((e) => (
+                <li key={e.name}>
+                  <span>{e.name}</span>
+                  <span>{e.price}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <p className="n-menu-note">All bottles include mixers, ice, and service &middot; 5% venue fee + applicable tax</p>
         </div>
       </section>
 
@@ -470,39 +486,66 @@ const TABLES = [
   },
 ];
 
+// Live bottle menu from the Oddyssey Manor + Noir trifold (Apr 2026).
+// Sizes called out only when they differ from 1L since the trifold's
+// default bottle pour is 1L; the 750ml premium tequilas + every
+// champagne SKU note their size explicitly.
 const BOTTLE_MENU = [
   {
-    category: "Vodka",
+    category: "Tequila & Mezcal",
     items: [
-      { name: "Grey Goose", price: "$450" },
-      { name: "Belvedere", price: "$425" },
-      { name: "Tito's", price: "$375" },
+      { name: "Patron Silver", price: "$350", size: "1L" },
+      { name: "Patron El Alto", price: "$600", size: "750ml" },
+      { name: "Don Julio 1942", price: "$600", size: "750ml" },
+      { name: "Clase Azul Reposado", price: "$600", size: "750ml" },
+      { name: "Casamigos Blanco", price: "$350", size: "1L" },
+      { name: "Casamigos Reposado", price: "$350", size: "1L" },
+      { name: "Casamigos Añejo", price: "$350", size: "1L" },
+      { name: "Casamigos Mezcal", price: "$350", size: "1L" },
+      { name: "Telson Blanco", price: "$300", size: "750ml" },
+      { name: "El Bandido Yankee Reposado", price: "$300", size: "750ml" },
     ],
   },
   {
-    category: "Tequila",
+    category: "Vodka, Gin & Rum",
     items: [
-      { name: "El Bandido Reposado", price: "$400" },
-      { name: "Casamigos Blanco", price: "$450" },
-      { name: "Don Julio 1942", price: "$650" },
+      { name: "Grey Goose", price: "$350", size: "1L" },
+      { name: "Tito's", price: "$350", size: "1L" },
+      { name: "Ketel One", price: "$300", size: "1L" },
+      { name: "Bombay Sapphire", price: "$350", size: "1L" },
+      { name: "The Botanist", price: "$350", size: "1L" },
+      { name: "Glacier 45", price: "$250", size: "1L" },
+      { name: "Bacardi Superior", price: "$250", size: "1L" },
+      { name: "Mount Gay Rum", price: "$300", size: "1L" },
     ],
   },
   {
-    category: "Whiskey",
+    category: "Whiskey & Cognac",
     items: [
-      { name: "Jameson", price: "$375" },
-      { name: "Hennessy VS", price: "$450" },
-      { name: "Johnnie Walker Black", price: "$425" },
+      { name: "Jack Daniel's", price: "$300", size: "1L" },
+      { name: "Jameson", price: "$300", size: "1L" },
+      { name: "Angel's Envy", price: "$350", size: "1L" },
+      { name: "Hennessy VS", price: "$350", size: "1L" },
+      { name: "Rémy Martin VSOP", price: "$500", size: "1L" },
     ],
   },
   {
-    category: "Champagne",
+    category: "Champagne & Sparkling",
     items: [
-      { name: "Moët Impérial", price: "$400" },
-      { name: "Veuve Clicquot", price: "$450" },
-      { name: "Dom Pérignon", price: "$750" },
+      { name: "Veuve Clicquot Yellow Label", price: "$450", size: "750ml" },
+      { name: "Dom Pérignon Brut", price: "$650", size: "750ml" },
+      { name: "Beau Joie Brut", price: "$400", size: "750ml" },
+      { name: "KU Brut California Sparkling", price: "$75", size: "750ml" },
     ],
   },
+];
+
+// Bottle service extras — buckets of 6 for the table.
+const BOTTLE_EXTRAS = [
+  { name: "Beer Bucket (6)", price: "$60" },
+  { name: "Red Bull (6 cans)", price: "$48" },
+  { name: "Branded Water (6)", price: "$48" },
+  { name: "Fever Tree Mixers (6)", price: "$24" },
 ];
 
 // ════════════════════════════════════════════════════════════════
@@ -900,10 +943,36 @@ const noirStyles = `
   text-transform: uppercase;
 }
 .n-menu-item {
-  display: flex; justify-content: space-between; font-size: 12px;
+  display: flex; justify-content: space-between; font-size: 12px; gap: 12px;
   color: var(--text-secondary); padding: 8px 0; border-bottom: 1px solid var(--border-subtle);
 }
 .n-menu-item:last-child { border-bottom: none; }
+.n-menu-item-name { display: inline; }
+.n-menu-item-size {
+  font-size: 10px; letter-spacing: 1px; color: var(--text-muted);
+  text-transform: uppercase;
+}
+.n-menu-extras {
+  margin-top: 36px; padding: 20px 24px;
+  background: rgba(232,228,221,0.03);
+  border: 1px solid rgba(180,110,200,0.18);
+}
+.n-menu-extras-label {
+  font-family: var(--mono, monospace); font-size: 10px;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 12px;
+}
+.n-menu-extras ul {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+.n-menu-extras li {
+  display: flex; justify-content: space-between; gap: 10px;
+  font-size: 12px; color: var(--text-secondary);
+  padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle);
+}
+@media (max-width: 768px) { .n-menu-extras ul { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 480px) { .n-menu-extras ul { grid-template-columns: 1fr; } }
 .n-menu-note {
   font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 20px;
   font-style: italic; letter-spacing: 0.5px;
