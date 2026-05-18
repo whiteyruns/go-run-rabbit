@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
 
 type PageName = "home" | "calendar" | "detail" | "private";
 
@@ -239,7 +240,7 @@ export default function OddysseyContent() {
                   <div className="od-exp-tags">
                     <span>Guided Journey</span><span>Cocktail Theatre</span><span>Ideal for Groups</span>
                   </div>
-                  <a className="od-btn-outline">Explore Manor</a>
+                  <Link href="/oddyssey-manor/manor" className="od-btn-outline">Explore Manor</Link>
                 </div>
               </div>
               <div className="od-experience-card">
@@ -253,7 +254,7 @@ export default function OddysseyContent() {
                   <div className="od-exp-tags">
                     <span>Dance Focused</span><span>Electronic Music</span><span>Exploration</span>
                   </div>
-                  <a className="od-btn-primary" onClick={() => showPage("calendar")}>View Events</a>
+                  <Link href="/oddyssey-manor/noir" className="od-btn-primary">Explore Noir</Link>
                 </div>
               </div>
             </div>
