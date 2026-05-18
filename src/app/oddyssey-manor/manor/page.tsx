@@ -221,19 +221,72 @@ function ManorContent() {
         </div>
       </section>
 
-      {/* ═══ CAST ═══ */}
-      <section className="m-section-pad m-cast">
+      {/* ═══ ROOMS / FLOOR PLAN ═══ */}
+      <section className="m-section-pad m-rooms" id="m-rooms">
         <div className="m-section-head">
-          <div className="m-label" style={{ textAlign: "center" }}>Meet the</div>
-          <h2 className="m-heading-2" style={{ textAlign: "center" }}>Residents &amp;<br />Performers</h2>
+          <div className="m-label" style={{ textAlign: "center" }}>Inside the Manor</div>
+          <h2 className="m-heading-2" style={{ textAlign: "center" }}>Ten Rooms,<br />One Evening</h2>
+          <p className="m-section-sub">The Manor is a labyrinth of bars, performances, and discovery. Each space holds its own pour, its own character, its own story.</p>
+        </div>
+        <div className="m-rooms-grid">
+          {ROOMS.map((r) => (
+            <div key={r.name} className={`m-room-card m-room-${r.icon}`}>
+              <div className="m-room-icon" aria-hidden="true">
+                {r.icon === "bar" && (
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
+                    <path d="M5 4 L19 4 L14.5 11.5 L9.5 11.5 Z" />
+                    <line x1="12" y1="11.5" x2="12" y2="19" />
+                    <line x1="8" y1="20" x2="16" y2="20" />
+                  </svg>
+                )}
+                {r.icon === "stage" && (
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
+                    <path d="M3 10 Q12 4 21 10 L21 18 L3 18 Z" />
+                    <line x1="3" y1="14" x2="21" y2="14" />
+                  </svg>
+                )}
+                {r.icon === "door" && (
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
+                    <rect x="6" y="3" width="12" height="18" />
+                    <circle cx="15" cy="12" r="0.6" fill="currentColor" />
+                  </svg>
+                )}
+                {r.icon === "room" && (
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
+                    <rect x="3" y="3" width="18" height="18" />
+                    <line x1="3" y1="11" x2="21" y2="11" />
+                    <line x1="12" y1="3" x2="12" y2="21" />
+                  </svg>
+                )}
+              </div>
+              <h3 className="m-room-name" dangerouslySetInnerHTML={{ __html: r.name }} />
+              <p className="m-room-note" dangerouslySetInnerHTML={{ __html: r.note }} />
+            </div>
+          ))}
+        </div>
+        <p className="m-ticket-note" style={{ marginTop: 32 }}>
+          Wander freely &middot; No fixed path &middot; Every room rewards the curious
+        </p>
+      </section>
+
+      {/* ═══ THE PLAYERS ═══ */}
+      <section className="m-section-pad m-players">
+        <div className="m-section-head">
+          <div className="m-label" style={{ textAlign: "center" }}>Meet</div>
+          <h2 className="m-heading-2" style={{ textAlign: "center" }}>The Players</h2>
           <p className="m-section-sub">The Manor is populated by characters who&rsquo;ll become part of your night.</p>
         </div>
-        <div className="m-cast-grid">
-          {CAST.map((c) => (
-            <div key={c.name} className="m-cast-card">
-              <div className="m-cast-role">{c.role}</div>
-              <h3 className="m-cast-name">{c.name}</h3>
-              <p className="m-cast-desc">{c.desc}</p>
+        <div className="m-players-grid">
+          {PLAYERS.map((p) => (
+            <div key={p.label} className="m-player-card">
+              <div className="m-player-label">{p.label}</div>
+              <div className="m-player-card-inner">
+                <div className="m-player-names">{p.names}</div>
+                <p
+                  className="m-player-desc"
+                  dangerouslySetInnerHTML={{ __html: p.desc }}
+                />
+              </div>
             </div>
           ))}
         </div>
@@ -395,54 +448,51 @@ function ManorContent() {
 
 const TICKET_TIERS = [
   {
+    name: "The Taster",
+    price: 49,
+    features: [
+      "Entry at reserved time, linger as long as desired",
+      "Five (5) 1oz specialty craft cocktail/mocktail tastings",
+      "Friday/Saturday access to Oddyssey Noir",
+      "Additional beverages available for purchase",
+      "Small-bite offerings available for purchase",
+    ],
+  },
+  {
     name: "The Voyeur",
     price: 79,
     features: [
-      "Evening entry",
-      "5 cocktail tastings",
-      "2 signature cocktails",
-      "Full theatrical programming",
-      "Noir access after close",
+      "Entry at reserved time, linger as long as desired",
+      "Five (5) 1oz specialty cocktail/mocktail tastings",
+      "Two (2) crafted cocktails/mocktails",
+      "Friday/Saturday access to Oddyssey Noir",
+      "Additional beverages available for purchase",
+      "Small-bite offerings available for purchase",
     ],
   },
   {
     name: "The Explorer",
-    price: 99,
+    price: 149,
+    featured: true,
     features: [
-      "Evening entry",
-      "5 cocktail tastings",
-      "2 signature cocktails",
-      "1 chef-curated bite",
-      "Full theatrical programming",
-      "Noir access after close",
+      "Entry at reserved time, linger as long as desired",
+      "Five (5) 1oz specialty cocktail/mocktail tastings",
+      "Two (2) crafted cocktails/mocktails",
+      "Choice of one (1) small-bite offering",
+      "Friday/Saturday access to Oddyssey Noir",
+      "Additional beverages available for purchase",
     ],
   },
   {
     name: "The Dinner Guest",
     price: 149,
-    featured: true,
     features: [
-      "Evening entry",
-      "5 cocktail tastings",
-      "2 signature cocktails",
-      "3 chef-curated bites",
-      "Priority character interactions",
-      "Full theatrical programming",
-      "Noir access after close",
-    ],
-  },
-  {
-    name: "The Ultimate Party Guest",
-    price: 239,
-    features: [
-      "Evening entry",
-      "5 cocktail tastings",
-      "4 signature cocktails",
-      "4 chef-curated bites",
-      "Take-home gift",
-      "Priority character interactions",
-      "Full theatrical programming",
-      "Noir access after close",
+      "Entry at reserved time, linger as long as desired",
+      "Five (5) 1oz specialty cocktail/mocktail tastings",
+      "Two (2) crafted cocktails/mocktails",
+      "Choice of three (3) small-bite offerings",
+      "Friday/Saturday access to Oddyssey Noir",
+      "Additional beverages available for purchase",
     ],
   },
 ];
@@ -473,14 +523,46 @@ const PLAY_GUIDE = [
   { title: "Play along", desc: "The story bends toward guests who lean in." },
 ];
 
-const CAST = [
-  { role: "Your Host", name: "Felix", desc: "Charming, wry, impossibly well-dressed. It&rsquo;s his party — you&rsquo;ll hear him toast before the night is through." },
-  { role: "Your Hostess", name: "Penelope", desc: "Watchful, warm, the Manor&rsquo;s quiet center. Whatever happens tonight, she saw it coming." },
-  { role: "Resident", name: "Athena", desc: "A strategist in cocktail form. Never drinks what she orders. Rarely says what she means." },
-  { role: "Resident", name: "Cici", desc: "Loud laugh, sharp eye, a hand on your shoulder at exactly the right moment." },
-  { role: "Resident", name: "Henry", desc: "The man at the end of the bar. The one everyone seems to know." },
-  { role: "Performers", name: "The Sirens", desc: "Rotating vocalists who appear, perform, and vanish into the crowd. Listen for them." },
-  { role: "Special Guests", name: "Rotating Visitors", desc: "The Manor keeps surprising company. No two nights bring the same strangers." },
+// "The Players" — 4 tarot-style cards mirroring the live oddysseylv.com
+// /manor page structure. Each card represents a tier of the cast
+// (Hosts / Residents / Performers / Special Guests).
+const PLAYERS = [
+  {
+    label: "Hosts",
+    names: "Felix & Penelope",
+    desc: "The husband-and-wife proprietors of Oddyssey Manor. Gracious to all performers, true keepers of its legacy. This reopening is their grand return, equal parts celebration, séance, and love letter to the theatre&rsquo;s past.",
+  },
+  {
+    label: "The Residents",
+    names: "Athena, Felix, Cici, and Henry",
+    desc: "Within the Manor&rsquo;s walls live Athena, Felix&rsquo;s poised and capable right hand; Cici, the spirited heartbeat of the house whose warmth and mischief keep theatre alive (and rumors swirling about her and Athena); and Henry, the absent jester and leer whose laughter still echoes through the rafters.",
+  },
+  {
+    label: "The Performers",
+    names: "The Sirens",
+    desc: "A troupe of alluring performers, all sharing the name Sirena. Each embodies a different side of seduction and spectacle. Their performances appear without warning — follow the sound and let them lead you deeper.",
+  },
+  {
+    label: "Special Guests",
+    names: "Mysterious Visitors",
+    desc: "Mysterious visitors drift through the Manor&rsquo;s doors, bringing new stories, strange talents, and moments of magic.",
+  },
+];
+
+// Manor floor plan — labeled rooms in the order they appear on the
+// live site's map graphic. Icon hint drives the small glyph rendered
+// in the wireframe card.
+const ROOMS = [
+  { name: "Foyer", icon: "door" as const, note: "Enter / exit. Welcome tea on arrival." },
+  { name: "Main Street", icon: "bar" as const, note: "The Manor&rsquo;s spine — the first bar you&rsquo;ll see." },
+  { name: "Garden", icon: "room" as const, note: "Open-air feeling room. Performances pass through." },
+  { name: "Bath Tub", icon: "bar" as const, note: "An intimate room with its own pour." },
+  { name: "Dressing Room Bar", icon: "bar" as const, note: "Vanity mirrors, soft light, full bar." },
+  { name: "Felix&rsquo;s Apartment", icon: "bar" as const, note: "The host&rsquo;s private rooms — and a private bar." },
+  { name: "Athena&rsquo;s Boudoir", icon: "bar" as const, note: "Curated, sultry, never quite what it appears." },
+  { name: "Chapel", icon: "bar" as const, note: "Stained glass, candlelight, hushed corners." },
+  { name: "Main Stage", icon: "stage" as const, note: "Where the Sirens perform. Pay attention." },
+  { name: "Full Bar", icon: "bar" as const, note: "The biggest pour in the Manor." },
 ];
 
 const FLOW = [
@@ -883,27 +965,87 @@ const manorStyles = `
 @media (max-width: 700px) { .m-play-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .m-play-grid { grid-template-columns: 1fr; } }
 
-/* ═══ CAST ═══ */
-.m-cast { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
-.m-cast-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+/* ═══ ROOMS / FLOOR PLAN ═══ */
+.m-rooms { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
+.m-rooms-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
   background: var(--border-subtle); max-width: 1200px; margin: 0 auto;
 }
-.m-cast-card { background: var(--bg); padding: 36px 32px; transition: background 0.4s; }
-.m-cast-card:hover { background: var(--bg-elevated); }
-.m-cast-role {
+.m-room-card {
+  background: var(--bg); padding: 28px 22px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: background 0.4s;
+  position: relative;
+}
+.m-room-card:hover { background: var(--bg-elevated); }
+.m-room-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+}
+.m-room-card:hover::before { transform: scaleX(1); }
+.m-room-icon { color: var(--accent); height: 22px; }
+.m-room-name {
+  font-family: var(--serif); font-size: 18px; font-weight: 400;
+  letter-spacing: 1.5px; text-transform: uppercase; margin: 0; line-height: 1.2;
+}
+.m-room-note {
+  font-size: 12px; line-height: 1.55; color: var(--text-secondary);
+  font-weight: 300; margin: 0;
+}
+.m-room-stage .m-room-icon { color: var(--accent); }
+.m-room-door .m-room-icon { color: var(--text-secondary); }
+@media (max-width: 1000px) { .m-rooms-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 700px)  { .m-rooms-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 460px)  { .m-rooms-grid { grid-template-columns: 1fr; } }
+
+/* ═══ THE PLAYERS ═══ */
+.m-players { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
+.m-players-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  max-width: 1200px; margin: 0 auto;
+}
+.m-player-card {
+  display: flex; flex-direction: column;
+}
+.m-player-label {
+  align-self: flex-start;
   font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-  color: var(--accent); font-weight: 500; margin-bottom: 14px;
+  color: var(--accent); font-weight: 500;
+  padding: 6px 14px;
+  border: 1px solid rgba(201,168,76,0.5);
+  border-bottom: none;
+  background: rgba(232,228,221,0.02);
 }
-.m-cast-name {
-  font-family: var(--serif); font-size: 30px; font-weight: 300;
-  letter-spacing: 2px; text-transform: uppercase; margin: 0 0 16px; line-height: 1.1;
+.m-player-card-inner {
+  flex: 1;
+  background: rgba(232,228,221,0.04);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 28px 22px;
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative;
 }
-.m-cast-desc {
-  font-size: 13px; font-weight: 300; line-height: 1.7; color: var(--text-secondary);
+.m-player-card-inner::before,
+.m-player-card-inner::after {
+  content: ''; position: absolute;
+  width: 18px; height: 18px;
+  border: 1px solid rgba(201,168,76,0.35);
+  pointer-events: none;
 }
-@media (max-width: 900px) { .m-cast-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 600px) { .m-cast-grid { grid-template-columns: 1fr; } }
+.m-player-card-inner::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+.m-player-card-inner::after  { bottom: 8px; right: 8px; border-left:  none; border-top:    none; }
+.m-player-names {
+  font-family: var(--serif); font-size: 16px; font-weight: 500;
+  letter-spacing: 1.5px; text-transform: uppercase; line-height: 1.3;
+  color: var(--text); padding-top: 12px; text-align: center;
+  border-top: 1px solid rgba(201,168,76,0.15);
+}
+.m-player-desc {
+  font-size: 12.5px; font-weight: 300; line-height: 1.7;
+  color: var(--text-secondary); margin: 0;
+}
+@media (max-width: 1000px) { .m-players-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px)  { .m-players-grid { grid-template-columns: 1fr; } }
 
 /* ═══ FLOW ═══ */
 .m-flow { background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
