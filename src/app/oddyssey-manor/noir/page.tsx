@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
+import { FeaturedEventRail } from "@/components/oddyssey/FeaturedEventRail";
 
 const ACCESS_CODE = "oddyssey2026";
 
@@ -142,6 +143,15 @@ function NoirContent() {
           </div>
         </div>
       </section>
+
+      {/* Featured Events rail — Pride / themed takeovers surface
+          directly above the weekly calendar so visitors don't have
+          to scroll a generic Sat/Sun grid to find the big night. */}
+      <FeaturedEventRail
+        pageAccent="#b46ec8"
+        eyebrow="Featured"
+        heading="Don't Miss"
+      />
 
       {/* ═══ EVENTS CALENDAR ═══ */}
       <section className="n-section-pad n-events" id="n-events">

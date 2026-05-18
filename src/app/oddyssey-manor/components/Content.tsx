@@ -4,6 +4,8 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
+import { FeaturedEventRail } from "@/components/oddyssey/FeaturedEventRail";
+import { ContestBand } from "@/components/oddyssey/ContestBand";
 
 type PageName = "home" | "calendar" | "detail" | "private";
 
@@ -111,6 +113,15 @@ export default function OddysseyContent() {
             </div>
           </section>
 
+          {/* Featured Events — special / themed nights surface above
+              Golden Hour so a Pride takeover or Halloween night
+              doesn't get buried under regular programming. */}
+          <FeaturedEventRail
+            pageAccent="#c9a84c"
+            heading="Don't Miss"
+            eyebrow="Featured Events"
+          />
+
           {/* Golden Hour */}
           <section className="od-golden-hour">
             <div className="od-golden-inner">
@@ -186,6 +197,11 @@ export default function OddysseyContent() {
               ))}
             </div>
           </section>
+
+          {/* Contest band — sits between the events scroll and the
+              About narrative. Functions as the social-growth lever:
+              follow → tag → RSVP to enter the monthly drawing. */}
+          <ContestBand />
 
           {/* About */}
           <section className="od-section-pad od-about" id="od-about">
@@ -681,6 +697,7 @@ function Footer() {
         instagramSecondary="oddyssey.manor"
         tiktok="oddysseylv"
         accent="#c9a84c"
+        blurb="DJ lineups, weekly drops, behind-the-scenes — first on social. Followers + taggers enter the monthly drawing for a free Manor + Noir night."
       />
       <footer className="od-footer">
         <div className="od-footer-logo">
