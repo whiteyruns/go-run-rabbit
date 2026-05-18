@@ -372,53 +372,57 @@ function ManorContent() {
 // CONTENT DATA
 // ════════════════════════════════════════════════════════════════
 
-const TICKET_TIERS = [
+// Live ticket tiers from oddysseylv.com/manor (May 2026 update).
+// Explorer dropped from $149 → $99 and is no longer flagged as
+// "featured" on the live cards. Noir-access bullet now carries the
+// "after-dark party of a sensual, living-room maze" descriptor.
+// `featured?: boolean` stays optional in the type so we can re-add a
+// "Most Popular" tag later without retyping the array.
+const TICKET_TIERS: { name: string; price: number; featured?: boolean; features: string[] }[] = [
   {
     name: "The Taster",
     price: 49,
     features: [
-      "Entry at reserved time, linger as long as desired",
-      "Five (5) 1oz specialty craft cocktail/mocktail tastings",
-      "Friday/Saturday access to Oddyssey Noir",
-      "Additional beverages available for purchase",
-      "Small-bite offerings available for purchase",
+      "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
+      "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings.",
+      "Friday/Saturday access to Oddyssey NOIR (the after-dark party of a sensual, living-room maze centered by a pulsing dance floor).",
+      "Additional beverages available for purchase.",
+      "Small-bite offerings available for purchase.",
     ],
   },
   {
     name: "The Voyeur",
     price: 79,
     features: [
-      "Entry at reserved time, linger as long as desired",
-      "Five (5) 1oz specialty cocktail/mocktail tastings",
-      "Two (2) crafted cocktails/mocktails",
-      "Friday/Saturday access to Oddyssey Noir",
-      "Additional beverages available for purchase",
-      "Small-bite offerings available for purchase",
+      "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
+      "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings & Two (2) Crafted Cocktails/Mocktails.",
+      "Friday/Saturday access to Oddyssey NOIR (the after-dark party of a sensual, living-room maze centered by a pulsing dance floor).",
+      "Additional beverages available for purchase.",
+      "Small-bite offerings available for purchase.",
     ],
   },
   {
     name: "The Explorer",
-    price: 149,
-    featured: true,
+    price: 99,
     features: [
-      "Entry at reserved time, linger as long as desired",
-      "Five (5) 1oz specialty cocktail/mocktail tastings",
-      "Two (2) crafted cocktails/mocktails",
-      "Choice of one (1) small-bite offering",
-      "Friday/Saturday access to Oddyssey Noir",
-      "Additional beverages available for purchase",
+      "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
+      "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings & Two (2) Crafted Cocktails/Mocktails.",
+      "Your choice of One (1) small-bite offering.",
+      "Friday/Saturday access to Oddyssey NOIR (the after-dark party of a sensual, living-room maze centered by a pulsing dance floor).",
+      "Additional beverages available for purchase.",
+      "Small-bite offerings available for purchase.",
     ],
   },
   {
     name: "The Dinner Guest",
     price: 149,
     features: [
-      "Entry at reserved time, linger as long as desired",
-      "Five (5) 1oz specialty cocktail/mocktail tastings",
-      "Two (2) crafted cocktails/mocktails",
-      "Choice of three (3) small-bite offerings",
-      "Friday/Saturday access to Oddyssey Noir",
-      "Additional beverages available for purchase",
+      "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
+      "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings & Two (2) Crafted Cocktails/Mocktails.",
+      "Your choice of Three (3) small-bite offerings.",
+      "Friday/Saturday access to Oddyssey NOIR (the after-dark party of a sensual, living-room maze centered by a pulsing dance floor).",
+      "Additional beverages available for purchase.",
+      "Additional small-bite offerings available for purchase.",
     ],
   },
 ];
