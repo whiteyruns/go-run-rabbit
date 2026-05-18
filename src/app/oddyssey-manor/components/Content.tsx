@@ -43,8 +43,9 @@ export default function OddysseyContent() {
           <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
         </div>
         <ul className="od-nav-links">
+          <li><Link href="/oddyssey-manor/manor">Manor</Link></li>
+          <li><Link href="/oddyssey-manor/noir">Noir</Link></li>
           <li><a onClick={() => showPage("calendar")}>Events</a></li>
-          <li><a onClick={() => scrollToId("od-experience")}>Manor Experience</a></li>
           <li><a onClick={() => showPage("private")}>Private Events</a></li>
           <li><a onClick={() => scrollToId("od-about")}>About</a></li>
           <li><a className="od-nav-cta" onClick={() => showPage("calendar")}>Get Tickets</a></li>
@@ -60,12 +61,13 @@ export default function OddysseyContent() {
       {/* MOBILE NAV */}
       {mobileOpen && (
         <div className="od-mobile-nav">
-          <a onClick={() => showPage("home")}>Home</a>
-          <a onClick={() => showPage("calendar")}>Events</a>
-          <a>Manor Experience</a>
-          <a onClick={() => showPage("private")}>Private Events</a>
-          <a onClick={() => scrollToId("od-about")}>About</a>
-          <a onClick={() => showPage("calendar")} style={{ color: "var(--accent)" }}>Get Tickets</a>
+          <a onClick={() => { showPage("home"); setMobileOpen(false); }}>Home</a>
+          <Link href="/oddyssey-manor/manor" onClick={() => setMobileOpen(false)}>Manor</Link>
+          <Link href="/oddyssey-manor/noir" onClick={() => setMobileOpen(false)}>Noir</Link>
+          <a onClick={() => { showPage("calendar"); setMobileOpen(false); }}>Events</a>
+          <a onClick={() => { showPage("private"); setMobileOpen(false); }}>Private Events</a>
+          <a onClick={() => { scrollToId("od-about"); setMobileOpen(false); }}>About</a>
+          <a onClick={() => { showPage("calendar"); setMobileOpen(false); }} style={{ color: "var(--accent)" }}>Get Tickets</a>
         </div>
       )}
 
