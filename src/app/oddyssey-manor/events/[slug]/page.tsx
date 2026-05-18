@@ -103,13 +103,25 @@ export default function EventDetailPage() {
               <span>10 PM &mdash; Late</span>
             </div>
             <div className="ed-hero-actions">
-              <a
-                href={event.ticketsHref ?? "#"}
-                className="ed-btn-primary"
-                style={{ background: event.accent }}
-              >
-                Reserve Tickets
-              </a>
+              {event.ticketsHref && event.ticketsHref !== "#" ? (
+                <a
+                  href={event.ticketsHref}
+                  className="ed-btn-primary"
+                  style={{ background: event.accent }}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Reserve Tickets
+                </a>
+              ) : (
+                <span
+                  className="ed-btn-primary ed-btn-disabled"
+                  style={{ background: event.accent }}
+                  aria-disabled="true"
+                >
+                  Tickets Drop Soon
+                </span>
+              )}
               <Link href="/oddyssey-manor/noir" className="ed-btn-outline">
                 All Noir Events
               </Link>
@@ -142,20 +154,39 @@ export default function EventDetailPage() {
         </div>
       </section>
 
-      {/* Lineup placeholder */}
+      {/* Plan your night — practical info someone landing from a
+          social share actually needs before deciding to show up.
+          Generic Noir defaults; can promote to per-event data
+          (doorTime, dressCode, etc.) if a future flyer warrants it. */}
       <section className="ed-section ed-section-alt">
         <div className="ed-section-inner">
-          <div className="ed-label" style={{ color: event.accent }}>Lineup</div>
-          <h2 className="ed-section-title">Talent &amp; Performers</h2>
-          <div className="ed-lineup-grid">
-            {["Headline DJ", "Support", "Performers", "Hosts"].map((slot) => (
-              <div key={slot} className="ed-lineup-card">
-                <div className="ed-lineup-slot" style={{ color: event.accent }}>{slot}</div>
-                <div className="ed-lineup-name">TBA</div>
-              </div>
-            ))}
+          <div className="ed-label" style={{ color: event.accent }}>Plan Your Night</div>
+          <h2 className="ed-section-title">Before You Come</h2>
+          <div className="ed-info-grid">
+            <div className="ed-info-card">
+              <div className="ed-info-label" style={{ color: event.accent }}>Doors</div>
+              <div className="ed-info-value">10 PM</div>
+              <div className="ed-info-sub">{event.date}</div>
+            </div>
+            <div className="ed-info-card">
+              <div className="ed-info-label" style={{ color: event.accent }}>Dress</div>
+              <div className="ed-info-value">To Be Seen</div>
+              <div className="ed-info-sub">No athletic wear</div>
+            </div>
+            <div className="ed-info-card">
+              <div className="ed-info-label" style={{ color: event.accent }}>Age</div>
+              <div className="ed-info-value">21+ Only</div>
+              <div className="ed-info-sub">Valid ID required</div>
+            </div>
+            <div className="ed-info-card">
+              <div className="ed-info-label" style={{ color: event.accent }}>Find Us</div>
+              <div className="ed-info-value">AREA15</div>
+              <div className="ed-info-sub">3215 S Rancho Dr</div>
+            </div>
           </div>
-          <p className="ed-note">Lineup announcements first on Instagram &mdash; follow @oddyssey.noir.</p>
+          <p className="ed-note">
+            Free AREA15 lot + overflow parking next door. Night-of lineup drops first on Instagram &mdash; follow @oddyssey.noir.
+          </p>
         </div>
       </section>
 
@@ -254,6 +285,11 @@ const eventDetailStyles = `
   transition: filter 0.3s, transform 0.3s;
 }
 .ed-btn-primary:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.ed-btn-disabled {
+  display: inline-block; opacity: 0.7; cursor: default;
+  filter: saturate(0.85);
+}
+.ed-btn-disabled:hover { transform: none; filter: saturate(0.85); }
 .ed-btn-outline {
   padding: 14px 28px;
   background: transparent; border: 1px solid rgba(232,228,221,0.3);
@@ -285,22 +321,26 @@ const eventDetailStyles = `
   font-size: 15px; line-height: 1.8; color: #c9c4bd;
   text-align: center; max-width: 680px; margin: 0 auto 18px;
 }
-.ed-lineup-grid {
+.ed-info-grid {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.08);
 }
-.ed-lineup-card {
-  background: #060606; padding: 28px 22px; text-align: center;
+.ed-info-card {
+  background: #060606; padding: 28px 20px; text-align: center;
+  display: flex; flex-direction: column; gap: 8px;
 }
-.ed-lineup-slot {
+.ed-info-label {
   font-family: 'Inter', sans-serif; font-size: 9px;
   font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase;
-  margin-bottom: 10px;
 }
-.ed-lineup-name {
+.ed-info-value {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 22px; font-weight: 400; letter-spacing: 1px;
-  color: #e8e4dd;
+  font-size: 26px; font-weight: 300; letter-spacing: 0.04em;
+  color: #e8e4dd; line-height: 1.1;
+}
+.ed-info-sub {
+  font-size: 11px; color: #9a958d;
+  letter-spacing: 0.18em; text-transform: uppercase;
 }
 .ed-note {
   text-align: center; margin-top: 24px;
@@ -333,6 +373,6 @@ const eventDetailStyles = `
 .ed-foot-link:hover { color: #c9a84c; }
 
 @media (max-width: 700px) {
-  .ed-lineup-grid { grid-template-columns: 1fr 1fr; }
+  .ed-info-grid { grid-template-columns: 1fr 1fr; }
 }
 `;
