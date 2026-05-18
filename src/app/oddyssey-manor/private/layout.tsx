@@ -11,9 +11,9 @@ export const metadata: Metadata = {
     description: "Buyouts and takeovers at AREA15. Manor immersive dinners, Noir late-night.",
     type: "website",
     siteName: "Oddyssey",
-    images: [{ url: "/oddyssey/manor.webp", alt: "Private Events at Oddyssey" }],
+    images: [{ url: "/oddyssey/og-private.png", width: 1200, height: 630, alt: "Private Events at Oddyssey" }],
   },
-  twitter: { card: "summary_large_image", images: ["/oddyssey/manor.webp"] },
+  twitter: { card: "summary_large_image", images: ["/oddyssey/og-private.png"] },
 };
 
 export default function PrivateLayout({ children }: { children: React.ReactNode }) {

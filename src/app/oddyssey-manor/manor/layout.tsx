@@ -14,9 +14,9 @@ export const metadata: Metadata = {
     description: "An immersive theatrical dining show inside AREA15. Five rooms. One night. Many secrets.",
     type: "website",
     siteName: "Oddyssey",
-    images: [{ url: "/oddyssey/manor.webp", alt: "Oddyssey Manor" }],
+    images: [{ url: "/oddyssey/og-manor.png", width: 1200, height: 630, alt: "Oddyssey Manor" }],
   },
-  twitter: { card: "summary_large_image", images: ["/oddyssey/manor.webp"] },
+  twitter: { card: "summary_large_image", images: ["/oddyssey/og-manor.png"] },
 };
 
 export default function ManorLayout({ children }: { children: React.ReactNode }) {

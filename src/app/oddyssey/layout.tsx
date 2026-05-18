@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     description: "Two destinations. One Oddyssey. Inside AREA15, Las Vegas.",
     type: "website",
     siteName: "Oddyssey",
-    images: [{ url: "/oddyssey/manor.webp", alt: "Oddyssey at AREA15" }],
+    images: [{ url: "/oddyssey/og-brand.png", width: 1200, height: 630, alt: "Oddyssey at AREA15" }],
   },
-  twitter: { card: "summary_large_image", images: ["/oddyssey/manor.webp"] },
+  twitter: { card: "summary_large_image", images: ["/oddyssey/og-brand.png"] },
 };
 
 // Mirrors /oddyssey-manor/layout.tsx so the wireframe Content gets the

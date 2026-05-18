@@ -11,9 +11,9 @@ export const metadata: Metadata = {
     description: "Fri Liquid Gold + Sat Oddyssey Noir. Doors at 10 PM. AREA15, Las Vegas.",
     type: "website",
     siteName: "Oddyssey",
-    images: [{ url: "/oddyssey/noir.webp", alt: "Oddyssey Noir" }],
+    images: [{ url: "/oddyssey/og-noir.png", width: 1200, height: 630, alt: "Oddyssey Noir" }],
   },
-  twitter: { card: "summary_large_image", images: ["/oddyssey/noir.webp"] },
+  twitter: { card: "summary_large_image", images: ["/oddyssey/og-noir.png"] },
 };
 
 export default function NoirLayout({ children }: { children: React.ReactNode }) {
