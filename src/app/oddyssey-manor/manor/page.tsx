@@ -118,7 +118,7 @@ function ManorContent() {
         <div className="m-section-head">
           <div className="m-label" style={{ textAlign: "center" }}>Reserve Your Evening</div>
           <h2 className="m-heading-2" style={{ textAlign: "center" }}>Choose Your<br />Experience</h2>
-          <p className="m-section-sub">Every tier includes entry, theatrical programming, and access to Oddyssey Noir after close.</p>
+          <p className="m-section-sub">Every tier includes entry, theatrical programming, and Friday/Saturday access to Oddyssey Noir after close.</p>
         </div>
 
         <div className="m-ticket-grid">
@@ -269,7 +269,7 @@ function ManorContent() {
           </div>
           <div className="m-venue-item">
             <h4>Hours</h4>
-            <p>Thursday — Sunday<br />Evening programming<br /><span>Doors 7 PM</span></p>
+            <p>Thursday &mdash; Sunday<br />Sessions 6:30 PM &ndash; 8:30 PM<br /><span>~80 minutes per cycle</span></p>
           </div>
           <div className="m-venue-item">
             <h4>Dress Code</h4>
@@ -440,12 +440,14 @@ const FOOD = [
   { name: "Ube Cheesecake", desc: "A bite of something sweet — purple, smooth, and unexpected." },
 ];
 
+// Mirrors the live oddysseylv.com/manor "Engagement Guide" — five
+// tips, title case, in the same order as the live page.
 const PLAY_GUIDE = [
-  { title: "Wander freely", desc: "No set path. Every room holds something." },
-  { title: "Engage the characters", desc: "Ask questions. Accept invitations. They&rsquo;re expecting you." },
-  { title: "Visit every bar", desc: "Each has its own personality — and its own drink." },
-  { title: "Follow the energy", desc: "When something shifts, move toward it." },
-  { title: "Play along", desc: "The story bends toward guests who lean in." },
+  { title: "Wander Freely", desc: "No set path. Every room holds something." },
+  { title: "Engage the Characters", desc: "Ask questions. Accept invitations. They&rsquo;re expecting you." },
+  { title: "Visit All the Bars", desc: "Each has its own personality &mdash; and its own drink." },
+  { title: "Follow the Energy", desc: "When something shifts, move toward it." },
+  { title: "Play Along", desc: "The story bends toward guests who lean in." },
 ];
 
 // "The Players" — 4 tarot-style cards mirroring the live oddysseylv.com
@@ -502,7 +504,7 @@ const FAQ = [
   },
   {
     q: "What&rsquo;s included with Noir access?",
-    a: "Every Manor ticket tier includes entry to Oddyssey Noir after the Manor program closes — a late-night electronic music environment with two dance floors and rotating DJs.",
+    a: "Every Manor ticket tier on Friday and Saturday includes entry to Oddyssey Noir — the after-dark party of a sensual, living-room maze centered by a pulsing dance floor. Doors at 10 PM, runs late.",
   },
   {
     q: "Can I host a private event at the Manor?",
