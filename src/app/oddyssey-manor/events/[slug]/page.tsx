@@ -78,44 +78,53 @@ export default function EventDetailPage() {
       <OddysseyTopNav active={event.venue === "Manor" ? "manor" : "noir"} />
       <style>{eventDetailStyles}</style>
 
-      {/* Hero with accent stripe + poster */}
+      {/* Hero — side-by-side layout so the portrait flyer keeps its
+          composition (date / tagline burned into the artwork stays
+          visible) instead of being cover-cropped behind the copy. */}
       <section className="ed-hero">
         <div
-          className="ed-hero-bg"
-          style={
-            event.poster
-              ? {
-                  backgroundImage:
-                    `linear-gradient(180deg, rgba(6,6,6,0.6) 0%, rgba(6,6,6,0.78) 50%, rgba(6,6,6,0.96) 100%), url('${event.poster}')`,
-                }
-              : undefined
-          }
+          className="ed-hero-glow"
+          style={{
+            background: `radial-gradient(ellipse at 30% 50%, ${event.accent}24 0%, transparent 60%)`,
+          }}
         />
-        <div className="ed-hero-content">
-          <div className="ed-hero-eyebrow" style={{ color: event.accent }}>
-            {event.eyebrow}
+        <div className="ed-hero-grid">
+          <div className="ed-hero-text">
+            <div className="ed-hero-eyebrow" style={{ color: event.accent }}>
+              {event.eyebrow}
+            </div>
+            <h1 className="ed-hero-title">{event.title}</h1>
+            <div className="ed-hero-tagline">{event.tagline}</div>
+            <div className="ed-hero-meta">
+              <span>{event.date}</span>
+              <span className="ed-sep">·</span>
+              <span>Oddyssey {event.venue}</span>
+              <span className="ed-sep">·</span>
+              <span>10 PM &mdash; Late</span>
+            </div>
+            <div className="ed-hero-actions">
+              <a
+                href={event.ticketsHref ?? "#"}
+                className="ed-btn-primary"
+                style={{ background: event.accent }}
+              >
+                Reserve Tickets
+              </a>
+              <Link href="/oddyssey-manor/noir" className="ed-btn-outline">
+                All Noir Events
+              </Link>
+            </div>
           </div>
-          <h1 className="ed-hero-title">{event.title}</h1>
-          <div className="ed-hero-tagline">{event.tagline}</div>
-          <div className="ed-hero-meta">
-            <span>{event.date}</span>
-            <span className="ed-sep">·</span>
-            <span>Oddyssey {event.venue}</span>
-            <span className="ed-sep">·</span>
-            <span>10 PM &mdash; Late</span>
-          </div>
-          <div className="ed-hero-actions">
-            <a
-              href={event.ticketsHref ?? "#"}
-              className="ed-btn-primary"
-              style={{ background: event.accent }}
-            >
-              Reserve Tickets
-            </a>
-            <Link href="/oddyssey-manor/noir" className="ed-btn-outline">
-              All Noir Events
-            </Link>
-          </div>
+          {event.poster && (
+            <div className="ed-hero-poster">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={event.poster} alt={`${event.title} flyer`} />
+              <div
+                className="ed-hero-poster-border"
+                style={{ borderColor: `${event.accent}55` }}
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -182,15 +191,35 @@ export default function EventDetailPage() {
 
 const eventDetailStyles = `
 .ed-hero {
-  position: relative; min-height: 70vh; padding: 120px clamp(20px, 6vw, 80px) 80px;
-  display: flex; align-items: flex-end; overflow: hidden;
+  position: relative; padding: 140px clamp(20px, 6vw, 80px) 100px;
+  overflow: hidden;
 }
-.ed-hero-bg {
-  position: absolute; inset: 0; z-index: 0;
-  background: linear-gradient(180deg, #060606 0%, rgba(6,6,6,0.85) 50%, #060606 100%);
-  background-size: cover; background-position: center;
+.ed-hero-glow {
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;
 }
-.ed-hero-content { position: relative; z-index: 1; max-width: 760px; }
+.ed-hero-grid {
+  position: relative; z-index: 1;
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(32px, 6vw, 72px); align-items: center;
+}
+.ed-hero-text { min-width: 0; }
+.ed-hero-poster {
+  position: relative;
+  max-width: 460px; margin-left: auto; width: 100%;
+}
+.ed-hero-poster img {
+  display: block; width: 100%; height: auto;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+}
+.ed-hero-poster-border {
+  position: absolute; inset: -8px; border: 1px solid;
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  .ed-hero-grid { grid-template-columns: 1fr; }
+  .ed-hero-poster { max-width: 360px; margin: 0 auto; }
+}
 .ed-hero-eyebrow {
   font-family: 'Inter', sans-serif; font-size: 10px;
   font-weight: 500; letter-spacing: 0.32em; text-transform: uppercase;

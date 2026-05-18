@@ -26,19 +26,50 @@ export interface FeaturedEvent {
   ticketsHref?: string;  // external link; "#" if not yet on sale
 }
 
+// Las Vegas Pride at Oddyssey Noir — three confirmed Liquid Gold
+// Friday takeovers in June 2026. Posters + verbatim taglines pulled
+// from the official flyers (oddyssey.noir IG, May 2026 drop).
 export const FEATURED_EVENTS: FeaturedEvent[] = [
   {
-    slug: "pride-2026",
-    date: "Sat Jun 27",
-    dateISO: "2026-06-27",
+    slug: "pride-jun-12",
+    date: "Fri Jun 12",
+    dateISO: "2026-06-12",
     venue: "Noir",
-    eyebrow: "Special · One Night Only",
-    title: "Pride at Oddyssey",
-    tagline: "All love. All night.",
+    eyebrow: "Las Vegas Pride · Liquid Gold",
+    title: "Tempt the Night",
+    tagline: "Indulge your desires. Enter the dark with Pride.",
     blurb:
-      "Pride Month closes loud. A one-night takeover of the after-dark maze — DJs, performers, and the full Liquid Gold programming dialed up.",
+      "Pride Month kicks off at Liquid Gold. Gold fangs, rainbow drip, after-dark maze energy. Doors at 10 PM, Pride x Oddyssey through close.",
+    accent: "#d4a574",
+    poster: "/oddyssey/pride-jun12.jpg",
+    ticketsHref: "#",
+  },
+  {
+    slug: "pride-jun-19",
+    date: "Fri Jun 19",
+    dateISO: "2026-06-19",
+    venue: "Noir",
+    eyebrow: "Las Vegas Pride · Liquid Gold",
+    title: "Feel Your Power",
+    tagline: "Live the legacy. Celebrate with Pride at Liquid Gold.",
+    blurb:
+      "Mid-Pride Friday. Rainbow gold, full Liquid Gold programming, and a room that pulls you in. The legacy continues — louder.",
+    accent: "#c9a84c",
+    poster: "/oddyssey/pride-jun19.jpg",
+    ticketsHref: "#",
+  },
+  {
+    slug: "pride-jun-26",
+    date: "Fri Jun 26",
+    dateISO: "2026-06-26",
+    venue: "Noir",
+    eyebrow: "Las Vegas Pride · Liquid Gold",
+    title: "Velvet Vibes",
+    tagline: "Electric chemistry. Celebrate with Pride at Liquid Gold.",
+    blurb:
+      "Pride Month finale. Velvet and electric all night — the room dialed up one last time before July. Hosted by Las Vegas Pride x AREA15.",
     accent: "#e91e63",
-    poster: "/oddyssey/oddyssey-noir-event.webp",
+    poster: "/oddyssey/pride-jun26.jpg",
     ticketsHref: "#",
   },
 ];

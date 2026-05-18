@@ -62,18 +62,13 @@ function FeaturedEventCard({ event }: { event: FeaturedEvent }) {
   const accent = event.accent;
   return (
     <Link href={`/oddyssey-manor/events/${event.slug}`} className="fer-card">
-      <div
-        className="fer-card-bg"
-        style={
-          event.poster
-            ? {
-                backgroundImage:
-                  `linear-gradient(110deg, rgba(6,6,6,0.95) 0%, rgba(6,6,6,0.7) 50%, rgba(6,6,6,0.4) 100%), url('${event.poster}')`,
-              }
-            : undefined
-        }
-      />
       <div className="fer-card-stripe" style={{ background: accent }} />
+      {event.poster && (
+        <div className="fer-card-poster">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={event.poster} alt={`${event.title} flyer`} />
+        </div>
+      )}
       <div className="fer-card-body">
         <div className="fer-card-eyebrow" style={{ color: accent }}>
           {event.eyebrow}
@@ -119,12 +114,11 @@ const railStyles = `
 }
 .fer-card {
   position: relative; display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 180px 1fr auto;
   align-items: stretch;
   background: #0a0a0a;
   border: 1px solid rgba(255,255,255,0.08);
   text-decoration: none; color: inherit;
-  min-height: 220px;
   overflow: hidden;
   transition: transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.4s;
 }
@@ -132,14 +126,17 @@ const railStyles = `
   transform: translateY(-2px);
   border-color: rgba(232,228,221,0.18);
 }
-.fer-card-bg {
-  position: absolute; inset: 0; z-index: 0;
-  background:
-    linear-gradient(110deg, rgba(6,6,6,0.95) 0%, rgba(6,6,6,0.7) 50%, rgba(6,6,6,0.4) 100%);
-  background-size: cover; background-position: center;
-}
 .fer-card-stripe {
   position: absolute; top: 0; left: 0; bottom: 0; width: 3px; z-index: 2;
+}
+.fer-card-poster {
+  position: relative;
+  background: #060606;
+  border-right: 1px solid rgba(255,255,255,0.06);
+}
+.fer-card-poster img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: center 35%;
 }
 .fer-card-body {
   position: relative; z-index: 1;
@@ -184,6 +181,8 @@ const railStyles = `
 
 @media (max-width: 720px) {
   .fer-card { grid-template-columns: 1fr; }
+  .fer-card-poster { height: 160px; }
+  .fer-card-poster img { object-position: center 30%; }
   .fer-card-body { padding: 28px 24px; }
   .fer-card-cta { padding: 14px 24px; justify-content: center; }
 }
