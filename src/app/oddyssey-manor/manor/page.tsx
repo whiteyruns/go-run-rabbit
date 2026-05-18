@@ -88,7 +88,19 @@ function ManorContent() {
 
       {/* ═══ HERO ═══ */}
       <section className="m-hero">
-        <div className="m-hero-bg" />
+        <video
+          className="m-hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/oddyssey/gal17.webp"
+          aria-hidden="true"
+        >
+          <source src="/oddyssey/oddy-manor-2026.webm" type="video/webm" />
+        </video>
+        <div className="m-hero-scrim" />
         <div className="m-hero-texture" />
         <div className="m-hero-ambient" />
         <div className="m-hero-content">
@@ -105,32 +117,6 @@ function ManorContent() {
         <div className="m-hero-scroll">
           <span>Enter</span>
           <div className="m-scroll-line" />
-        </div>
-      </section>
-
-      {/* ═══ NARRATIVE INTRO ═══ */}
-      <section className="m-section-pad m-narrative" id="m-experience">
-        <div className="m-narrative-grid">
-          <div className="m-narrative-text">
-            <div className="m-label">The Experience</div>
-            <h2 className="m-heading-2">You&rsquo;re Invited<br />to the Party</h2>
-            <p className="m-narrative-lead">
-              Oddyssey Manor is a surreal cocktail theatre wrapped inside a birthday
-              celebration. Your hosts &mdash; Felix and Penelope &mdash; welcome you into
-              their world of rotating performance, discovery, and carefully crafted drinks.
-            </p>
-            <p className="m-narrative-body">
-              The night unfolds in <strong>80-minute cycles</strong>. Wander freely between
-              themed rooms and bars. Speak with the residents. Follow the energy. Nothing
-              repeats the same way twice &mdash; so no two evenings are alike.
-            </p>
-            <p className="m-narrative-tagline">Every guest is part of the myth.</p>
-          </div>
-          <div className="m-narrative-visual">
-            <div className="m-narrative-visual-inner" />
-            <div className="m-narrative-visual-border" />
-            <span className="m-narrative-visual-text">Felix &amp; Penelope</span>
-          </div>
         </div>
       </section>
 
@@ -221,52 +207,21 @@ function ManorContent() {
         </div>
       </section>
 
-      {/* ═══ ROOMS / FLOOR PLAN ═══ */}
-      <section className="m-section-pad m-rooms" id="m-rooms">
+      {/* ═══ FLOOR PLAN ═══ */}
+      <section className="m-section-pad m-floorplan" id="m-rooms">
         <div className="m-section-head">
           <div className="m-label" style={{ textAlign: "center" }}>Inside the Manor</div>
-          <h2 className="m-heading-2" style={{ textAlign: "center" }}>Ten Rooms,<br />One Evening</h2>
-          <p className="m-section-sub">The Manor is a labyrinth of bars, performances, and discovery. Each space holds its own pour, its own character, its own story.</p>
+          <h2 className="m-heading-2" style={{ textAlign: "center" }}>The Grand Oddyssey<br />Manor Theatre</h2>
+          <p className="m-section-sub">Ten rooms, multiple bars, one labyrinth. Wander freely — every space rewards the curious.</p>
         </div>
-        <div className="m-rooms-grid">
-          {ROOMS.map((r) => (
-            <div key={r.name} className={`m-room-card m-room-${r.icon}`}>
-              <div className="m-room-icon" aria-hidden="true">
-                {r.icon === "bar" && (
-                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
-                    <path d="M5 4 L19 4 L14.5 11.5 L9.5 11.5 Z" />
-                    <line x1="12" y1="11.5" x2="12" y2="19" />
-                    <line x1="8" y1="20" x2="16" y2="20" />
-                  </svg>
-                )}
-                {r.icon === "stage" && (
-                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
-                    <path d="M3 10 Q12 4 21 10 L21 18 L3 18 Z" />
-                    <line x1="3" y1="14" x2="21" y2="14" />
-                  </svg>
-                )}
-                {r.icon === "door" && (
-                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
-                    <rect x="6" y="3" width="12" height="18" />
-                    <circle cx="15" cy="12" r="0.6" fill="currentColor" />
-                  </svg>
-                )}
-                {r.icon === "room" && (
-                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.2">
-                    <rect x="3" y="3" width="18" height="18" />
-                    <line x1="3" y1="11" x2="21" y2="11" />
-                    <line x1="12" y1="3" x2="12" y2="21" />
-                  </svg>
-                )}
-              </div>
-              <h3 className="m-room-name" dangerouslySetInnerHTML={{ __html: r.name }} />
-              <p className="m-room-note" dangerouslySetInnerHTML={{ __html: r.note }} />
-            </div>
-          ))}
+        <div className="m-floorplan-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/oddyssey/manor-floor-plan.png"
+            alt="Floor plan of Oddyssey Manor — Foyer, Main Street, Garden, Bath Tub, Dressing Room Bar, Felix's Apartment, Athena's Boudoir, Chapel, Main Stage, Full Bar"
+            className="m-floorplan-img"
+          />
         </div>
-        <p className="m-ticket-note" style={{ marginTop: 32 }}>
-          Wander freely &middot; No fixed path &middot; Every room rewards the curious
-        </p>
       </section>
 
       {/* ═══ THE PLAYERS ═══ */}
@@ -286,27 +241,6 @@ function ManorContent() {
                   className="m-player-desc"
                   dangerouslySetInnerHTML={{ __html: p.desc }}
                 />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ═══ EXPERIENCE FLOW ═══ */}
-      <section className="m-section-pad m-flow">
-        <div className="m-section-head">
-          <div className="m-label" style={{ textAlign: "center" }}>Your Night</div>
-          <h2 className="m-heading-2" style={{ textAlign: "center" }}>The 80-Minute<br />Cycle</h2>
-          <p className="m-section-sub">Programming rotates in repeating cycles &mdash; arrive when you like, stay as long as you want.</p>
-        </div>
-        <div className="m-flow-timeline">
-          {FLOW.map((step, i) => (
-            <div key={i} className="m-flow-step">
-              <div className="m-flow-time">{step.time}</div>
-              <div className="m-flow-dot" />
-              <div className="m-flow-body">
-                <h5>{step.title}</h5>
-                <p>{step.desc}</p>
               </div>
             </div>
           ))}
@@ -549,30 +483,6 @@ const PLAYERS = [
   },
 ];
 
-// Manor floor plan — labeled rooms in the order they appear on the
-// live site's map graphic. Icon hint drives the small glyph rendered
-// in the wireframe card.
-const ROOMS = [
-  { name: "Foyer", icon: "door" as const, note: "Enter / exit. Welcome tea on arrival." },
-  { name: "Main Street", icon: "bar" as const, note: "The Manor&rsquo;s spine — the first bar you&rsquo;ll see." },
-  { name: "Garden", icon: "room" as const, note: "Open-air feeling room. Performances pass through." },
-  { name: "Bath Tub", icon: "bar" as const, note: "An intimate room with its own pour." },
-  { name: "Dressing Room Bar", icon: "bar" as const, note: "Vanity mirrors, soft light, full bar." },
-  { name: "Felix&rsquo;s Apartment", icon: "bar" as const, note: "The host&rsquo;s private rooms — and a private bar." },
-  { name: "Athena&rsquo;s Boudoir", icon: "bar" as const, note: "Curated, sultry, never quite what it appears." },
-  { name: "Chapel", icon: "bar" as const, note: "Stained glass, candlelight, hushed corners." },
-  { name: "Main Stage", icon: "stage" as const, note: "Where the Sirens perform. Pay attention." },
-  { name: "Full Bar", icon: "bar" as const, note: "The biggest pour in the Manor." },
-];
-
-const FLOW = [
-  { time: "Doors", title: "Arrival", desc: "Welcome tea at the entry. Take in the space. Meet your first character." },
-  { time: "0:00", title: "The Toast", desc: "Felix &amp; Penelope open the evening. The story begins." },
-  { time: "0:20", title: "Wander", desc: "Discover the themed rooms. Pour a drink. Follow the music." },
-  { time: "0:40", title: "The Sirens", desc: "First performance cycle — roaming, immersive, not to be missed." },
-  { time: "1:00", title: "Discovery", desc: "Characters break into intimate scenes. Find the one that pulls you in." },
-  { time: "1:20", title: "Finale", desc: "The cycle closes. If you stay, it begins again — differently." },
-];
 
 const FAQ = [
   {
@@ -743,13 +653,17 @@ const manorStyles = `
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: clamp(40px,8vw,120px); overflow: hidden;
 }
-.m-hero-bg {
-  position: absolute; inset: 0; z-index: 1;
+.m-hero-video {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  pointer-events: none;
+}
+.m-hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
     radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.08) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(13,8,18,0.8) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(6,6,6,0.25) 0%, rgba(6,6,6,0.45) 50%, rgba(6,6,6,0.88) 100%),
-    url('/oddyssey/gal17.webp') center 30%/cover no-repeat;
+    radial-gradient(ellipse at 80% 20%, rgba(13,8,18,0.6) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(6,6,6,0.30) 0%, rgba(6,6,6,0.55) 50%, rgba(6,6,6,0.92) 100%);
 }
 .m-hero-texture {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -965,39 +879,26 @@ const manorStyles = `
 @media (max-width: 700px) { .m-play-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 480px) { .m-play-grid { grid-template-columns: 1fr; } }
 
-/* ═══ ROOMS / FLOOR PLAN ═══ */
-.m-rooms { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
-.m-rooms-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
-  background: var(--border-subtle); max-width: 1200px; margin: 0 auto;
-}
-.m-room-card {
-  background: var(--bg); padding: 28px 22px;
-  display: flex; flex-direction: column; gap: 10px;
-  transition: background 0.4s;
+/* ═══ FLOOR PLAN ═══ */
+.m-floorplan { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
+.m-floorplan-wrap {
+  max-width: 1100px; margin: 0 auto;
+  padding: 32px clamp(8px, 3vw, 32px);
+  background: rgba(232,228,221,0.03);
+  border: 1px solid rgba(201,168,76,0.18);
   position: relative;
 }
-.m-room-card:hover { background: var(--bg-elevated); }
-.m-room-card::before {
-  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
-  background: var(--accent); transform: scaleX(0); transform-origin: left;
-  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+.m-floorplan-wrap::before,
+.m-floorplan-wrap::after {
+  content: ''; position: absolute; width: 22px; height: 22px;
+  border: 1px solid rgba(201,168,76,0.4); pointer-events: none;
 }
-.m-room-card:hover::before { transform: scaleX(1); }
-.m-room-icon { color: var(--accent); height: 22px; }
-.m-room-name {
-  font-family: var(--serif); font-size: 18px; font-weight: 400;
-  letter-spacing: 1.5px; text-transform: uppercase; margin: 0; line-height: 1.2;
+.m-floorplan-wrap::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.m-floorplan-wrap::after  { bottom: 10px; right: 10px; border-left:  none; border-top:    none; }
+.m-floorplan-img {
+  display: block; width: 100%; height: auto;
+  filter: brightness(1.05) contrast(1.05);
 }
-.m-room-note {
-  font-size: 12px; line-height: 1.55; color: var(--text-secondary);
-  font-weight: 300; margin: 0;
-}
-.m-room-stage .m-room-icon { color: var(--accent); }
-.m-room-door .m-room-icon { color: var(--text-secondary); }
-@media (max-width: 1000px) { .m-rooms-grid { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 700px)  { .m-rooms-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 460px)  { .m-rooms-grid { grid-template-columns: 1fr; } }
 
 /* ═══ THE PLAYERS ═══ */
 .m-players { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
