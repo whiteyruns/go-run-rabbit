@@ -17,15 +17,17 @@ const cormorant = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Oddyssey Manor — Website Optimization Wireframes",
+  title: { absolute: "Oddyssey — Immersive Nightlife at AREA15 Las Vegas" },
   description:
-    "Website optimization wireframes and recommendations for Oddyssey Manor & Noir at AREA15, Las Vegas.",
+    "Oddyssey at AREA15 Las Vegas. Manor delivers an immersive dining show; Noir takes over for late-night nightlife.",
   openGraph: {
-    title: "Oddyssey Manor — Website Optimization Wireframes",
-    description:
-      "Immersive nightlife website redesign concept for Oddyssey at AREA15.",
+    title: "Oddyssey — Immersive Nightlife at AREA15 Las Vegas",
+    description: "Two destinations. One Oddyssey. Inside AREA15, Las Vegas.",
     type: "website",
+    siteName: "Oddyssey",
+    images: [{ url: "/oddyssey/manor.webp", alt: "Oddyssey at AREA15" }],
   },
+  twitter: { card: "summary_large_image", images: ["/oddyssey/manor.webp"] },
 };
 
 export default function OddysseyLayout({
