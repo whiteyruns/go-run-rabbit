@@ -101,7 +101,7 @@ function ManorContent() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/oddyssey/manor-logo.png" alt="Oddyssey Manor" className="m-hero-logo" />
           <h1>Surreal<br />Cocktail Theatre</h1>
-          <p className="m-hero-sub">An immersive birthday party · Rotating performance · Secrets in equal measure</p>
+          <p className="m-hero-sub">An immersive theatrical dining show · Rotating performance · Secrets in equal measure</p>
           <div className="m-hero-actions">
             <a className="m-btn-primary" onClick={() => scrollToId("m-tickets")}>Get Tickets</a>
             <a className="m-btn-outline" onClick={() => scrollToId("m-rooms")}>Explore the Manor</a>
@@ -125,6 +125,17 @@ function ManorContent() {
           {TICKET_TIERS.map((tier) => (
             <div key={tier.name} className={`m-ticket-card ${tier.featured ? "featured" : ""}`}>
               {tier.featured && <div className="m-ticket-tag">Most Popular</div>}
+              {tier.image ? (
+                <div className="m-ticket-photo">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={tier.image} alt={`${tier.name} — Oddyssey Manor`} loading="lazy" />
+                </div>
+              ) : (
+                <div className="m-ticket-photo m-ticket-photo-mark">
+                  <div className="m-ticket-mark-label">Entry Tier</div>
+                  <div className="m-ticket-mark-title">{tier.name}</div>
+                </div>
+              )}
               <div className="m-ticket-name">{tier.name}</div>
               <div className="m-ticket-price">
                 <span className="m-ticket-currency">$</span>{tier.price}
@@ -133,9 +144,11 @@ function ManorContent() {
               <ul className="m-ticket-features">
                 {tier.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
-              <a className={tier.featured ? "m-btn-primary" : "m-btn-outline"} style={{ width: "100%", textAlign: "center" }}>
-                Book {tier.name.split(" ").slice(-1)[0]}
-              </a>
+              <div className="m-ticket-cta-wrap">
+                <a className={tier.featured ? "m-btn-primary" : "m-btn-outline"} style={{ width: "100%", textAlign: "center" }}>
+                  Book {tier.name.split(" ").slice(-1)[0]}
+                </a>
+              </div>
             </div>
           ))}
         </div>
@@ -383,10 +396,15 @@ function ManorContent() {
 // "after-dark party of a sensual, living-room maze" descriptor.
 // `featured?: boolean` stays optional in the type so we can re-add a
 // "Most Popular" tag later without retyping the array.
-const TICKET_TIERS: { name: string; price: number; featured?: boolean; features: string[] }[] = [
+// `image` mirrors the live oddysseylv.com/manor ticket cards. Taster
+// is intentionally photo-less on the live site (it's the entry tier;
+// the absence of a hero signals the lower price point). Voyeur/
+// Explorer/Dinner Guest each get their flagship shoot.
+const TICKET_TIERS: { name: string; price: number; image: string | null; featured?: boolean; features: string[] }[] = [
   {
     name: "The Taster",
     price: 49,
+    image: null,
     features: [
       "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
       "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings.",
@@ -398,6 +416,7 @@ const TICKET_TIERS: { name: string; price: number; featured?: boolean; features:
   {
     name: "The Voyeur",
     price: 79,
+    image: "/oddyssey/voyeur-img2.jpg",
     features: [
       "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
       "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings & Two (2) Crafted Cocktails/Mocktails.",
@@ -409,6 +428,7 @@ const TICKET_TIERS: { name: string; price: number; featured?: boolean; features:
   {
     name: "The Explorer",
     price: 99,
+    image: "/oddyssey/explorer-img.jpg",
     features: [
       "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
       "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings & Two (2) Crafted Cocktails/Mocktails.",
@@ -421,6 +441,7 @@ const TICKET_TIERS: { name: string; price: number; featured?: boolean; features:
   {
     name: "The Dinner Guest",
     price: 149,
+    image: "/oddyssey/dinner-guest.jpg",
     features: [
       "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
       "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings & Two (2) Crafted Cocktails/Mocktails.",
@@ -730,33 +751,67 @@ const manorStyles = `
   background: var(--border-subtle); max-width: 1400px; margin: 0 auto;
 }
 .m-ticket-card {
-  background: var(--bg); padding: clamp(28px,3vw,40px);
+  background: var(--bg); padding: 0;
   display: flex; flex-direction: column; position: relative; transition: background 0.4s;
+  overflow: hidden;
 }
 .m-ticket-card:hover { background: var(--bg-elevated); }
 .m-ticket-card.featured { background: var(--bg-card); }
 .m-ticket-card.featured::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent);
+  z-index: 2;
 }
 .m-ticket-tag {
   position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
   font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500;
   background: var(--accent); color: var(--bg); padding: 6px 14px;
+  z-index: 3;
+}
+.m-ticket-photo {
+  width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #060606;
+  position: relative;
+}
+.m-ticket-photo img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+}
+.m-ticket-card:hover .m-ticket-photo img { transform: scale(1.04); }
+.m-ticket-photo-mark {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background:
+    radial-gradient(ellipse at center, rgba(201,168,76,0.10) 0%, transparent 70%),
+    linear-gradient(180deg, #0a0a0a 0%, #060606 100%);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.m-ticket-mark-label {
+  font-family: var(--sans, sans-serif); font-size: 9px;
+  letter-spacing: 0.32em; text-transform: uppercase;
+  color: var(--accent); font-weight: 500;
+}
+.m-ticket-mark-title {
+  font-family: var(--serif); font-size: clamp(28px, 3.4vw, 40px); font-weight: 300;
+  letter-spacing: 0.08em; text-transform: uppercase; color: #e8e4dd;
 }
 .m-ticket-name {
   font-family: var(--serif); font-size: 22px; font-weight: 400; letter-spacing: 2px;
-  text-transform: uppercase; margin-bottom: 12px; line-height: 1.2;
+  text-transform: uppercase; margin: clamp(24px,2.5vw,32px) clamp(24px,3vw,36px) 12px;
+  line-height: 1.2;
 }
 .m-ticket-price {
   font-family: var(--serif); font-size: 52px; font-weight: 300; color: var(--accent);
-  line-height: 1; margin-bottom: 4px; display: flex; align-items: flex-start; gap: 4px;
+  line-height: 1; margin: 0 clamp(24px,3vw,36px) 4px; display: flex; align-items: flex-start; gap: 4px;
 }
 .m-ticket-currency { font-size: 22px; margin-top: 8px; opacity: 0.7; }
 .m-ticket-noir {
   font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent);
-  padding: 8px 0; margin-bottom: 20px; border-bottom: 1px solid var(--border);
+  padding: 8px 0; margin: 0 clamp(24px,3vw,36px) 20px;
+  border-bottom: 1px solid var(--border);
 }
-.m-ticket-features { list-style: none; margin: 0 0 28px; padding: 0; flex: 1; }
+.m-ticket-features {
+  list-style: none; margin: 0 clamp(24px,3vw,36px) 28px; padding: 0; flex: 1;
+}
 .m-ticket-features li {
   font-size: 13px; color: var(--text-secondary); padding: 9px 0;
   border-bottom: 1px solid var(--border-subtle); letter-spacing: 0.3px; line-height: 1.4;
@@ -767,6 +822,7 @@ const manorStyles = `
   width: 5px; height: 5px; border: 1px solid var(--accent); transform: rotate(45deg);
 }
 .m-ticket-features li:last-child { border-bottom: none; }
+.m-ticket-cta-wrap { padding: 0 clamp(24px,3vw,36px) clamp(28px,3vw,36px); }
 .m-ticket-note {
   text-align: center; margin-top: 40px; font-size: 11px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--text-muted);

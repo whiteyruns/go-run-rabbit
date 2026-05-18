@@ -181,7 +181,7 @@ export default function EventDetailPage() {
             <div className="ed-info-card">
               <div className="ed-info-label" style={{ color: event.accent }}>Find Us</div>
               <div className="ed-info-value">AREA15</div>
-              <div className="ed-info-sub">3215 S Rancho Dr</div>
+              <div className="ed-info-sub">3202 W Desert Inn Rd</div>
             </div>
           </div>
           <p className="ed-note">
