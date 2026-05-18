@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
+import { FollowBand } from "@/components/oddyssey/FollowBand";
 
 type PageName = "home" | "calendar" | "detail" | "private";
 
@@ -657,19 +658,35 @@ export default function OddysseyContent() {
 
 function Footer() {
   return (
-    <footer className="od-footer">
-      <div className="od-footer-logo">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" style={{ height: 24, width: "auto", opacity: 0.5 }} />
-      </div>
-      <ul className="od-footer-links">
-        <li><a>Instagram</a></li>
-        <li><a>TikTok</a></li>
-        <li><a>Privacy</a></li>
-        <li><a>Terms</a></li>
-      </ul>
-      <div className="od-footer-legal">&copy; 2026 Oddyssey. Part of AREA15 Las Vegas. All rights reserved.</div>
-    </footer>
+    <>
+      <FollowBand
+        instagram="oddysseylv"
+        instagramSecondary="oddyssey.manor"
+        tiktok="oddysseylv"
+        accent="#c9a84c"
+      />
+      <footer className="od-footer">
+        <div className="od-footer-logo">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" style={{ height: 24, width: "auto", opacity: 0.5 }} />
+        </div>
+        <ul className="od-footer-links">
+          <li>
+            <a href="https://www.instagram.com/oddysseylv/" target="_blank" rel="noopener noreferrer">
+              Instagram
+            </a>
+          </li>
+          <li>
+            <a href="https://www.tiktok.com/@oddysseylv" target="_blank" rel="noopener noreferrer">
+              TikTok
+            </a>
+          </li>
+          <li><a>Privacy</a></li>
+          <li><a>Terms</a></li>
+        </ul>
+        <div className="od-footer-legal">&copy; 2026 Oddyssey. Part of AREA15 Las Vegas. All rights reserved.</div>
+      </footer>
+    </>
   );
 }
 

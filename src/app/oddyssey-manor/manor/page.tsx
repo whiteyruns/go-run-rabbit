@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
+import { FollowBand } from "@/components/oddyssey/FollowBand";
 
 const ACCESS_CODE = "oddyssey2026";
 
@@ -338,6 +339,14 @@ function ManorContent() {
         </form>
       </section>
 
+      <FollowBand
+        instagram="oddyssey.manor"
+        instagramSecondary="oddysseylv"
+        tiktok="oddysseylv"
+        accent="#c9a84c"
+        blurb="The Manor cast, weekly bookings, behind-the-curtain — first on Instagram."
+      />
+
       {/* ═══ FOOTER ═══ */}
       <footer className="m-footer">
         <div className="m-footer-top">
@@ -361,8 +370,8 @@ function ManorContent() {
             </div>
             <div className="m-footer-col">
               <h6>Connect</h6>
-              <a>Instagram</a>
-              <a>TikTok</a>
+              <a href="https://www.instagram.com/oddyssey.manor/" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href="https://www.tiktok.com/@oddysseylv" target="_blank" rel="noopener noreferrer">TikTok</a>
               <a>Contact</a>
             </div>
           </div>

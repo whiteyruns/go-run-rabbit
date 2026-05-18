@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
+import { FollowBand } from "@/components/oddyssey/FollowBand";
 
 const ACCESS_CODE = "oddyssey2026";
 
@@ -323,6 +324,14 @@ function NoirContent() {
         </form>
       </section>
 
+      <FollowBand
+        instagram="oddyssey.noir"
+        instagramSecondary="oddysseylv"
+        tiktok="oddysseylv"
+        accent="#b46ec8"
+        blurb="DJ drops, weekly flyers, room reels — first on Instagram."
+      />
+
       {/* ═══ FOOTER ═══ */}
       <footer className="n-footer">
         <div className="n-footer-top">
@@ -346,8 +355,8 @@ function NoirContent() {
             </div>
             <div className="n-footer-col">
               <h6>Connect</h6>
-              <a>Instagram</a>
-              <a>TikTok</a>
+              <a href="https://www.instagram.com/oddyssey.noir/" target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href="https://www.tiktok.com/@oddysseylv" target="_blank" rel="noopener noreferrer">TikTok</a>
               <a>Contact</a>
             </div>
           </div>
