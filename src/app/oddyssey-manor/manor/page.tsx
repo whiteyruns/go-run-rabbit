@@ -152,13 +152,15 @@ function ManorContent() {
         </p>
       </section>
 
-      {/* ═══ COCKTAILS ═══ */}
-      <section className="m-section-pad m-cocktails">
+      {/* ═══ CRAFT MENU (Cocktails + Bites merged per live site) ═══ */}
+      <section className="m-section-pad m-craftmenu">
         <div className="m-section-head">
-          <div className="m-label" style={{ textAlign: "center" }}>The Bar Program</div>
-          <h2 className="m-heading-2" style={{ textAlign: "center" }}>Signature<br />Cocktails</h2>
-          <p className="m-section-sub">Crafted to character. Each drink belongs to a resident &mdash; part of the story you step into.</p>
+          <div className="m-label" style={{ textAlign: "center" }}>The Bar &amp; Kitchen</div>
+          <h2 className="m-heading-2" style={{ textAlign: "center" }}>Craft Menu</h2>
+          <p className="m-section-sub">Cocktails crafted to character &mdash; each drink belongs to a resident &mdash; alongside chef-curated bites that appear throughout the evening.</p>
         </div>
+
+        <div className="m-craft-subhead">Cocktails</div>
         <div className="m-menu-grid">
           {COCKTAILS.map((c) => (
             <div key={c.name} className="m-menu-item">
@@ -170,15 +172,8 @@ function ManorContent() {
             </div>
           ))}
         </div>
-      </section>
 
-      {/* ═══ FOOD ═══ */}
-      <section className="m-section-pad m-food">
-        <div className="m-section-head">
-          <div className="m-label" style={{ textAlign: "center" }}>Small Plates</div>
-          <h2 className="m-heading-2" style={{ textAlign: "center" }}>The Bites</h2>
-          <p className="m-section-sub">Chef-curated plates that appear throughout the evening. Included with Explorer, Dinner Guest, and Ultimate tiers.</p>
-        </div>
+        <div className="m-craft-subhead">Bites</div>
         <div className="m-food-grid">
           {FOOD.map((f) => (
             <div key={f.name} className="m-food-item">
@@ -187,6 +182,10 @@ function ManorContent() {
             </div>
           ))}
         </div>
+
+        <p className="m-ticket-note" style={{ marginTop: 32 }}>
+          Cocktail tastings included with every ticket &middot; Bites included with Explorer &amp; Dinner Guest tiers
+        </p>
       </section>
 
       {/* ═══ HOW TO PLAY ═══ */}
@@ -315,16 +314,9 @@ function ManorContent() {
         </div>
       </section>
 
-      {/* ═══ EMAIL CAPTURE ═══ */}
-      <section className="m-section-pad m-capture">
-        <div className="m-label">Stay Connected</div>
-        <h2 className="m-heading-2">Join the Guest List</h2>
-        <p className="m-capture-sub">Early ticket access &middot; Special nights &middot; Exclusive announcements</p>
-        <form className="m-capture-form" onSubmit={(e) => e.preventDefault()}>
-          <input type="email" placeholder="Enter your email" />
-          <button type="submit">Subscribe</button>
-        </form>
-      </section>
+      {/* Email capture moved off the flagship — visitor's closing CTA
+          is the FollowBand below + footer. Keeps the bottom of the
+          page from triple-stacking "stay connected" asks. */}
 
       <FollowBand
         instagram="oddyssey.manor"
@@ -808,11 +800,18 @@ const manorStyles = `
 @media (max-width: 1100px) { .m-ticket-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .m-ticket-grid { grid-template-columns: 1fr; } }
 
-/* ═══ COCKTAILS ═══ */
-.m-cocktails {
+/* ═══ CRAFT MENU (cocktails + bites merged) ═══ */
+.m-craftmenu, .m-cocktails {
   background: var(--bg-elevated); border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
 }
+.m-craft-subhead {
+  max-width: 1100px; margin: 36px auto 18px;
+  font-family: var(--mono, monospace); font-size: 10px;
+  letter-spacing: 4px; text-transform: uppercase;
+  color: var(--accent); text-align: center;
+}
+.m-craft-subhead:first-of-type { margin-top: 0; }
 .m-menu-grid {
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
   background: var(--border-subtle); max-width: 1100px; margin: 0 auto;

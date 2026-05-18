@@ -74,6 +74,43 @@ export default function OddysseyContent() {
             </div>
           </section>
 
+          {/* Experience — Manor + Noir, surfaced directly under hero
+              so visitors choose their night in the first scroll. */}
+          <section className="od-section-pad od-experience" id="od-experience">
+            <div className="od-label" style={{ textAlign: "center" }}>Choose Your Path</div>
+            <h2 className="od-heading-2" style={{ textAlign: "center" }}>Two Experiences,<br />One Destination</h2>
+            <div className="od-experience-grid">
+              <div className="od-experience-card">
+                <div className="od-exp-bg od-exp-bg-manor" />
+                <div className="od-exp-content">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/oddyssey/manor.webp" alt="Manor" className="od-exp-logo" />
+                  <div className="od-label">Theatre</div>
+                  <h3>Oddyssey Manor</h3>
+                  <p>Immersive cocktail theatre. A guided journey through velvet-draped rooms, interactive characters, circus performance, and craft cocktails.</p>
+                  <div className="od-exp-tags">
+                    <span>Guided Journey</span><span>Cocktail Theatre</span><span>Ideal for Groups</span>
+                  </div>
+                  <Link href="/oddyssey-manor/manor" className="od-btn-outline">Explore Manor</Link>
+                </div>
+              </div>
+              <div className="od-experience-card">
+                <div className="od-exp-bg od-exp-bg-noir" />
+                <div className="od-exp-content">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/oddyssey/noir.webp" alt="Noir" className="od-exp-logo" />
+                  <div className="od-label">Nightclub</div>
+                  <h3>Oddyssey Noir</h3>
+                  <p>Late-night electronic music environment. Two dance floors, dystopian art, roaming performers, and curated underground sound.</p>
+                  <div className="od-exp-tags">
+                    <span>Dance Focused</span><span>Electronic Music</span><span>Exploration</span>
+                  </div>
+                  <Link href="/oddyssey-manor/noir" className="od-btn-primary">Explore Noir</Link>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Golden Hour */}
           <section className="od-golden-hour">
             <div className="od-golden-inner">
@@ -190,42 +227,6 @@ export default function OddysseyContent() {
             <div className="od-video-play">
               <div className="od-play-ring"><div className="od-play-triangle" /></div>
               <span className="od-play-label">Watch the experience</span>
-            </div>
-          </section>
-
-          {/* Experience */}
-          <section className="od-section-pad od-experience" id="od-experience">
-            <div className="od-label" style={{ textAlign: "center" }}>Choose Your Path</div>
-            <h2 className="od-heading-2" style={{ textAlign: "center" }}>Two Experiences,<br />One Destination</h2>
-            <div className="od-experience-grid">
-              <div className="od-experience-card">
-                <div className="od-exp-bg od-exp-bg-manor" />
-                <div className="od-exp-content">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/oddyssey/manor.webp" alt="Manor" className="od-exp-logo" />
-                  <div className="od-label">Theatre</div>
-                  <h3>Oddyssey Manor</h3>
-                  <p>Immersive cocktail theatre. A guided journey through velvet-draped rooms, interactive characters, circus performance, and craft cocktails.</p>
-                  <div className="od-exp-tags">
-                    <span>Guided Journey</span><span>Cocktail Theatre</span><span>Ideal for Groups</span>
-                  </div>
-                  <Link href="/oddyssey-manor/manor" className="od-btn-outline">Explore Manor</Link>
-                </div>
-              </div>
-              <div className="od-experience-card">
-                <div className="od-exp-bg od-exp-bg-noir" />
-                <div className="od-exp-content">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/oddyssey/noir.webp" alt="Noir" className="od-exp-logo" />
-                  <div className="od-label">Nightclub</div>
-                  <h3>Oddyssey Noir</h3>
-                  <p>Late-night electronic music environment. Two dance floors, dystopian art, roaming performers, and curated underground sound.</p>
-                  <div className="od-exp-tags">
-                    <span>Dance Focused</span><span>Electronic Music</span><span>Exploration</span>
-                  </div>
-                  <Link href="/oddyssey-manor/noir" className="od-btn-primary">Explore Noir</Link>
-                </div>
-              </div>
             </div>
           </section>
 

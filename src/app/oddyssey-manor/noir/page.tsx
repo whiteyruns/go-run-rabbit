@@ -329,16 +329,9 @@ function NoirContent() {
         </div>
       </section>
 
-      {/* ═══ EMAIL CAPTURE ═══ */}
-      <section className="n-section-pad n-capture">
-        <div className="n-label">Stay Connected</div>
-        <h2 className="n-heading-2">Join the Guest List</h2>
-        <p className="n-capture-sub">Early ticket access · Special nights · Exclusive announcements</p>
-        <form className="n-capture-form" onSubmit={(e) => e.preventDefault()}>
-          <input type="email" placeholder="Enter your email" />
-          <button type="submit">Subscribe</button>
-        </form>
-      </section>
+      {/* Email capture moved off the flagship — visitor's closing CTA
+          is the FollowBand below + footer. Keeps the bottom of the
+          page from triple-stacking "stay connected" asks. */}
 
       <FollowBand
         instagram="oddyssey.noir"
