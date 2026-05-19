@@ -12,6 +12,7 @@
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
@@ -129,8 +130,18 @@ export default function EventDetailPage() {
           </div>
           {event.poster && (
             <div className="ed-hero-poster">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={event.poster} alt={`${event.title} flyer`} />
+              {/* All current Pride flyers are 575x715. If a future event
+                  ships a different aspect, store dimensions on the event
+                  itself rather than hardcoding here. */}
+              <Image
+                src={event.poster}
+                alt={`${event.title} flyer`}
+                width={575}
+                height={715}
+                sizes="(max-width: 900px) 80vw, 460px"
+                style={{ width: "100%", height: "auto", display: "block" }}
+                priority
+              />
               <div
                 className="ed-hero-poster-border"
                 style={{ borderColor: `${event.accent}55` }}

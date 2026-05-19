@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 
@@ -35,8 +36,7 @@ export default function ManorPage() {
         style={{ background: "#060606", color: "#e8e4dd", fontFamily: "var(--sans)" }}>
         <div className="w-full max-w-md text-center" style={{ animation: "odFadeIn 1s ease-out" }}>
           <style>{`@keyframes odFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="mx-auto mb-6" style={{ height: 48, width: "auto" }} />
+          <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} className="mx-auto mb-6" style={{ height: 48, width: "auto" }} priority />
           <p className="uppercase text-xs mb-2" style={{ color: "#c9a84c", fontWeight: 500, letterSpacing: "4px" }}>Manor — Handoff Build</p>
           <p className="uppercase text-xs mb-12" style={{ color: "#5a5650", letterSpacing: "2px" }}>Developer Reference</p>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -98,8 +98,7 @@ function ManorContent() {
         <div className="m-hero-ambient" />
         <div className="m-hero-content">
           <div className="m-hero-eyebrow">Every Thursday — Sunday Evening</div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/manor-logo.png" alt="Oddyssey Manor" className="m-hero-logo" />
+          <Image src="/oddyssey/manor-logo.png" alt="Oddyssey Manor" width={912} height={233} className="m-hero-logo" priority />
           <h1>Surreal<br />Cocktail Theatre</h1>
           <p className="m-hero-sub">An immersive theatrical dining show · Rotating performance · Secrets in equal measure</p>
           <div className="m-hero-actions">
@@ -127,8 +126,13 @@ function ManorContent() {
               {tier.featured && <div className="m-ticket-tag">Most Popular</div>}
               {tier.image ? (
                 <div className="m-ticket-photo">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={tier.image} alt={`${tier.name} — Oddyssey Manor`} loading="lazy" />
+                  <Image
+                    src={tier.image}
+                    alt={`${tier.name} — Oddyssey Manor`}
+                    fill
+                    sizes="(max-width: 1100px) 50vw, 25vw"
+                    style={{ objectFit: "cover" }}
+                  />
                 </div>
               ) : (
                 <div className="m-ticket-photo m-ticket-photo-mark">
@@ -171,8 +175,13 @@ function ManorContent() {
           {COCKTAILS.map((c) => (
             <div key={c.name} className="m-menu-item">
               <div className="m-menu-item-photo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image} alt={c.name} loading="lazy" />
+                <Image
+                  src={c.image}
+                  alt={c.name}
+                  fill
+                  sizes="120px"
+                  style={{ objectFit: "cover" }}
+                />
               </div>
               <div className="m-menu-item-body">
                 <div className="m-menu-item-head">
@@ -190,8 +199,13 @@ function ManorContent() {
           {FOOD.map((f) => (
             <div key={f.name} className="m-food-item">
               <div className="m-food-item-photo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={f.image} alt={f.name} loading="lazy" style={{ objectPosition: f.objectPosition }} />
+                <Image
+                  src={f.image}
+                  alt={f.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{ objectFit: "cover", objectPosition: f.objectPosition }}
+                />
               </div>
               <h4>{f.name}</h4>
               <p>{f.desc}</p>
@@ -351,8 +365,7 @@ function ManorContent() {
       <footer className="m-footer">
         <div className="m-footer-top">
           <div className="m-footer-brand">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
+            <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} />
             <p>A surreal cocktail theatre at AREA15 Las Vegas.</p>
           </div>
           <div className="m-footer-cols">
@@ -859,6 +872,7 @@ const manorStyles = `
 .m-menu-item:hover { background: var(--bg-card); }
 .m-menu-item-photo {
   width: 120px; aspect-ratio: 3 / 4; overflow: hidden; background: #060606;
+  position: relative;
 }
 .m-menu-item-photo img {
   display: block; width: 100%; height: 100%;
@@ -902,7 +916,7 @@ const manorStyles = `
 .m-food-item:hover { background: var(--bg-elevated); }
 .m-food-item-photo {
   width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #060606;
-  margin-bottom: 22px;
+  margin-bottom: 22px; position: relative;
 }
 .m-food-item-photo img {
   display: block; width: 100%; height: 100%;

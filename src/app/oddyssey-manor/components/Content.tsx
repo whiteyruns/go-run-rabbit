@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 import { FeaturedEventRail } from "@/components/oddyssey/FeaturedEventRail";
@@ -97,8 +98,7 @@ export default function OddysseyContent() {
               <div className="od-experience-card">
                 <div className="od-exp-bg od-exp-bg-manor" />
                 <div className="od-exp-content">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/oddyssey/manor.webp" alt="Manor" className="od-exp-logo" />
+                  <Image src="/oddyssey/manor.webp" alt="Manor" width={404} height={505} className="od-exp-logo" />
                   <div className="od-label">Theatre</div>
                   <h3>Oddyssey Manor</h3>
                   <p>Immersive cocktail theatre. A guided journey through velvet-draped rooms, interactive characters, circus performance, and craft cocktails.</p>
@@ -111,8 +111,7 @@ export default function OddysseyContent() {
               <div className="od-experience-card">
                 <div className="od-exp-bg od-exp-bg-noir" />
                 <div className="od-exp-content">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/oddyssey/noir.webp" alt="Noir" className="od-exp-logo" />
+                  <Image src="/oddyssey/noir.webp" alt="Noir" width={404} height={505} className="od-exp-logo" />
                   <div className="od-label">Nightclub</div>
                   <h3>Oddyssey Noir</h3>
                   <p>Late-night electronic music environment. Two dance floors, dystopian art, roaming performers, and curated underground sound.</p>
@@ -713,8 +712,7 @@ function Footer() {
       />
       <footer className="od-footer">
         <div className="od-footer-logo">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" style={{ height: 24, width: "auto", opacity: 0.5 }} />
+          <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} style={{ height: 24, width: "auto", opacity: 0.5 }} />
         </div>
         <ul className="od-footer-links">
           <li>

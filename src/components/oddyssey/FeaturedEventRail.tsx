@@ -17,6 +17,7 @@
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import { upcomingFeaturedEvents, type FeaturedEvent } from "./featured-events";
 
 export interface FeaturedEventRailProps {
@@ -65,8 +66,13 @@ function FeaturedEventCard({ event }: { event: FeaturedEvent }) {
       <div className="fer-card-stripe" style={{ background: accent }} />
       {event.poster && (
         <div className="fer-card-poster">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={event.poster} alt={`${event.title} flyer`} />
+          <Image
+            src={event.poster}
+            alt={`${event.title} flyer`}
+            fill
+            sizes="180px"
+            style={{ objectFit: "cover", objectPosition: "center 35%" }}
+          />
         </div>
       )}
       <div className="fer-card-body">

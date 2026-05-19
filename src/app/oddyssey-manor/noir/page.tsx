@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 import { FeaturedEventRail } from "@/components/oddyssey/FeaturedEventRail";
@@ -36,8 +37,7 @@ export default function NoirPage() {
         style={{ background: "#060606", color: "#e8e4dd", fontFamily: "var(--sans)" }}>
         <div className="w-full max-w-md text-center" style={{ animation: "odFadeIn 1s ease-out" }}>
           <style>{`@keyframes odFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="mx-auto mb-6" style={{ height: 48, width: "auto" }} />
+          <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} className="mx-auto mb-6" style={{ height: 48, width: "auto" }} priority />
           <p className="uppercase text-xs mb-2" style={{ color: "#c9a84c", fontWeight: 500, letterSpacing: "4px" }}>Noir — Handoff Build</p>
           <p className="uppercase text-xs mb-12" style={{ color: "#5a5650", letterSpacing: "2px" }}>Developer Reference</p>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -103,8 +103,7 @@ function NoirContent() {
         <div className="n-hero-ambient" />
         <div className="n-hero-content">
           <div className="n-hero-eyebrow">Late-Night · Fridays &amp; Saturdays · 10 PM — Late</div>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/noir.webp" alt="Oddyssey Noir" className="n-hero-logo" />
+          <Image src="/oddyssey/noir.webp" alt="Oddyssey Noir" width={404} height={505} className="n-hero-logo" priority />
           <h1>Immersive<br />Nightlife</h1>
           <p className="n-hero-sub">House · Techno · Melodic · Performance · Multi-room experience</p>
           <div className="n-hero-actions">
@@ -362,8 +361,7 @@ function NoirContent() {
       <footer className="n-footer">
         <div className="n-footer-top">
           <div className="n-footer-brand">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
+            <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} />
             <p>A late-night immersive nightlife environment inside AREA15 Las Vegas.</p>
           </div>
           <div className="n-footer-cols">

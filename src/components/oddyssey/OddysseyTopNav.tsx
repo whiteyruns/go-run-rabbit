@@ -18,6 +18,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 export type ActivePage = "home" | "manor" | "noir" | "private";
 
@@ -88,8 +89,7 @@ export function OddysseyTopNav({
       <style>{topNavStyles}</style>
       <nav className={`otn-nav ${scrolled ? "otn-scrolled" : ""}`}>
         <Link href="/oddyssey" className="otn-logo" aria-label="Oddyssey home">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
+          <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} priority />
         </Link>
         <ul className="otn-links">
           <li>

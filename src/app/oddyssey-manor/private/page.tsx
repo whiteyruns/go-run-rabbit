@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 
@@ -35,8 +36,7 @@ export default function PrivatePage() {
         style={{ background: "#060606", color: "#e8e4dd", fontFamily: "var(--sans)" }}>
         <div className="w-full max-w-md text-center" style={{ animation: "odFadeIn 1s ease-out" }}>
           <style>{`@keyframes odFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="mx-auto mb-6" style={{ height: 48, width: "auto" }} />
+          <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} className="mx-auto mb-6" style={{ height: 48, width: "auto" }} priority />
           <p className="uppercase text-xs mb-2" style={{ color: "#c9a84c", fontWeight: 500, letterSpacing: "4px" }}>Private Events — Handoff</p>
           <p className="uppercase text-xs mb-12" style={{ color: "#5a5650", letterSpacing: "2px" }}>Developer Reference</p>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -241,8 +241,7 @@ function PrivateContent() {
       <footer className="p-footer">
         <div className="p-footer-top">
           <div className="p-footer-brand">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" />
+            <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} />
             <p>Immersive venues for private events at AREA15 Las Vegas.</p>
           </div>
           <div className="p-footer-cols">

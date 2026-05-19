@@ -13,6 +13,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 
@@ -48,8 +49,7 @@ export default function ContestLandingPage() {
       >
         <div className="w-full max-w-md text-center" style={{ animation: "odFadeIn 1s ease-out" }}>
           <style>{`@keyframes odFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" className="mx-auto mb-6" style={{ height: 48, width: "auto" }} />
+          <Image src="/oddyssey/oddyssey-logo.svg" alt="Oddyssey" width={129} height={62} className="mx-auto mb-6" style={{ height: 48, width: "auto" }} priority />
           <p className="uppercase text-xs mb-2" style={{ color: "#c9a84c", letterSpacing: "4px", fontWeight: 500 }}>Contest · Free Entry</p>
           <p className="uppercase text-xs mb-12" style={{ color: "#5a5650", letterSpacing: "3px" }}>Enter Access Code</p>
           <form onSubmit={handleGate} className="space-y-4">
