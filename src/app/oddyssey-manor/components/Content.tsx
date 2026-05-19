@@ -58,7 +58,19 @@ export default function OddysseyContent() {
         <div>
           {/* Hero */}
           <section className="od-hero">
-            <div className="od-hero-bg" />
+            <video
+              className="od-hero-video"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              poster="/oddyssey/home-hero-poster.jpg"
+              aria-hidden="true"
+            >
+              <source src="/oddyssey/oddy-home-hero.webm" type="video/webm" />
+            </video>
+            <div className="od-hero-scrim" />
             <div className="od-hero-texture" />
             <div className="od-hero-ambient" />
             <div className="od-hero-content">
@@ -869,13 +881,17 @@ const styles = `
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: clamp(40px,8vw,120px); overflow: hidden;
 }
-.od-hero-bg {
-  position: absolute; inset: 0; z-index: 1;
+.od-hero-video {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  filter: saturate(0.95) brightness(0.75);
+}
+.od-hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
-    radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, rgba(13,8,18,0.8) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(6,6,6,0.15) 0%, rgba(6,6,6,0.4) 50%, rgba(6,6,6,0.85) 100%),
-    url('/oddyssey/gal7.webp') center 20%/cover no-repeat;
+    radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(13,8,18,0.6) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(6,6,6,0.15) 0%, rgba(6,6,6,0.45) 50%, rgba(6,6,6,0.88) 100%);
 }
 .od-hero-texture {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
