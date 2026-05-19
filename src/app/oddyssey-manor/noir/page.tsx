@@ -86,7 +86,19 @@ function NoirContent() {
 
       {/* ═══ HERO ═══ */}
       <section className="n-hero">
-        <div className="n-hero-bg" />
+        <video
+          className="n-hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/oddyssey/gal17.webp"
+          aria-hidden="true"
+        >
+          <source src="/oddyssey/oddy-noir-bg.webm" type="video/webm" />
+        </video>
+        <div className="n-hero-scrim" />
         <div className="n-hero-texture" />
         <div className="n-hero-ambient" />
         <div className="n-hero-content">
@@ -680,13 +692,17 @@ const noirStyles = `
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: clamp(40px,8vw,120px); overflow: hidden;
 }
-.n-hero-bg {
-  position: absolute; inset: 0; z-index: 1;
+.n-hero-video {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  filter: saturate(0.9) brightness(0.7);
+}
+.n-hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
-    radial-gradient(ellipse at 70% 80%, rgba(80,40,100,0.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(80,40,100,0.18) 0%, transparent 55%),
     radial-gradient(ellipse at 20% 30%, rgba(201,168,76,0.06) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(6,6,6,0.25) 0%, rgba(6,6,6,0.55) 50%, rgba(6,6,6,0.92) 100%),
-    url('/oddyssey/gal8.webp') center 40%/cover no-repeat;
+    linear-gradient(180deg, rgba(6,6,6,0.25) 0%, rgba(6,6,6,0.55) 50%, rgba(6,6,6,0.92) 100%);
 }
 .n-hero-texture {
   position: absolute; inset: 0; z-index: 2; pointer-events: none;
