@@ -357,27 +357,8 @@ export default function OddysseyContent() {
             </div>
           </section>
 
-          <section className="od-section-pad od-detail-tickets">
-            <div className="od-label" style={{ textAlign: "center" }}>Secure Your Entry</div>
-            <h2 className="od-heading-2" style={{ textAlign: "center" }}>Get Tickets</h2>
-            {/* Noir sells a single GA ticket via Ticketure — $20 + $2
-                service + $1.80 LET/tax = $21.80 all-in. Speculative
-                tier ladder removed. */}
-            <div className="od-ticket-tiers od-ticket-tiers-single">
-              <TicketTier
-                name="General Admission"
-                price="$20"
-                features={[
-                  "Entry to Oddyssey Noir",
-                  "Both dance floors + all themed rooms",
-                  "All performers & installations",
-                  "Golden Hour open bar 10 PM — 12 AM",
-                  "21+ only · Valid ID required",
-                ]}
-                featured
-              />
-            </div>
-          </section>
+          {/* Ticket section removed — events calendar already exposes
+              per-event Get Tickets buttons; this card was duplicating. */}
 
           {/* Bottles & Tables */}
           <section className="od-section-pad od-bottles" style={{ background: "var(--bg)", borderBottom: "1px solid var(--border-subtle)" }}>
@@ -856,27 +837,6 @@ function CalendarEvent({ event, showDetail }: { event: AnnotatedEventRow; showDe
   return (
     <div className="od-cal-event" onClick={showDetail}>
       {inner}
-    </div>
-  );
-}
-
-function TicketTier({ name, price, features, featured, outline }: { name: string; price: string; features: string[]; featured?: boolean; outline?: boolean }) {
-  return (
-    <div className={`od-ticket-tier ${featured ? "featured" : ""}`}>
-      <div className="od-tier-name">{name}</div>
-      <div className="od-tier-price">{price}</div>
-      <ul className="od-tier-features">
-        {features.map((f) => <li key={f}>{f}</li>)}
-      </ul>
-      <a
-        href="https://oddysseylv.com/noir#tickets"
-        target="_blank"
-        rel="noreferrer"
-        className={outline ? "od-btn-outline" : "od-btn-primary"}
-        style={{ textAlign: "center" }}
-      >
-        Reserve
-      </a>
     </div>
   );
 }
@@ -1387,7 +1347,7 @@ const styles = `
 /* ═══ TICKETS ═══ */
 .od-detail-tickets { background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
 .od-ticket-tiers { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border-subtle); margin-top: 48px; }
-.od-ticket-tiers.od-ticket-tiers-single { grid-template-columns: minmax(0, 520px); justify-content: center; }
+.od-ticket-tiers.od-ticket-tiers-single { grid-template-columns: minmax(0, 520px); justify-content: center; background: transparent; }
 .od-ticket-tier {
   background: var(--bg-elevated); padding: clamp(32px,4vw,56px);
   display: flex; flex-direction: column; transition: background 0.4s; position: relative;

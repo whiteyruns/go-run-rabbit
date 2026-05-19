@@ -250,38 +250,9 @@ function NoirContent() {
         )}
       </section>
 
-      {/* ═══ TICKET ═══ */}
-      <section className="n-section-pad n-tickets">
-        <div className="n-section-head">
-          <div className="n-label" style={{ textAlign: "center" }}>Entry</div>
-          <h2 className="n-heading-2" style={{ textAlign: "center" }}>Get In</h2>
-          <p className="n-section-sub">One ticket, both rooms. Bottle service handled separately below.</p>
-        </div>
-        <div className="n-tier-grid">
-          {TIERS.map((t) => (
-            <div key={t.name} className={`n-tier-card ${t.featured ? "featured" : ""}`}>
-              {t.featured && <div className="n-tier-tag">Per Event</div>}
-              <div className="n-tier-name">{t.name}</div>
-              <div className="n-tier-price">
-                <span className="n-tier-currency">$</span>{t.price}
-              </div>
-              {t.fineprint && <div className="n-tier-fineprint">{t.fineprint}</div>}
-              <ul className="n-tier-features">
-                {t.features.map((f) => <li key={f}>{f}</li>)}
-              </ul>
-              <a
-                href="https://oddysseylv.com/noir#tickets"
-                target="_blank"
-                rel="noreferrer"
-                className="n-btn-primary"
-                style={{ width: "100%", textAlign: "center" }}
-              >
-                Reserve Tickets
-              </a>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Ticket tier section removed — every row in the Events Calendar
+          above already carries its own Get Tickets button, so the
+          'Get In' card was duplicating the same CTA destination. */}
 
       {/* ═══ BOTTLES & TABLES ═══ */}
       <section className="n-section-pad n-bottles" id="n-tables">
@@ -465,25 +436,9 @@ function NoirContent() {
 // the Noir flagship and the home /oddyssey calendar share one source
 // of truth (and Pride dates auto-highlight on both).
 
-// Noir sells a single GA ticket via Ticketure ($20 base + $2 service
-// + $1.80 LET/tax = $21.80 all-in). VIP / Early-Entry tiers were
-// speculative — collapsed to match reality. Bottle service is its
-// own grid below (TABLES).
-const TIERS = [
-  {
-    name: "General Admission",
-    price: 20,
-    featured: true,
-    fineprint: "Adult 21+ · incl. $2 service + $1.80 LET/tax → $21.80 all-in",
-    features: [
-      "Entry to Oddyssey Noir",
-      "Both dance floors + all themed rooms",
-      "All performers & installations",
-      "Golden Hour open bar 10 PM — 12 AM (while supplies last)",
-      "21+ only · Valid ID required",
-    ],
-  },
-];
+// TIERS array removed — the ticket section was redundant with the
+// Events Calendar's per-event Get Tickets buttons. Bottle service
+// lives in the TABLES const below.
 
 const TABLES = [
   {
@@ -924,8 +879,8 @@ const noirStyles = `
 /* ═══ TIERS ═══ */
 .n-tickets { background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
 .n-tier-grid {
-  display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; gap: 1px;
-  background: var(--border-subtle); max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: minmax(0, 520px); justify-content: center;
+  max-width: 1100px; margin: 0 auto;
 }
 .n-tier-card {
   background: var(--bg-elevated); padding: clamp(32px,4vw,56px);
