@@ -445,6 +445,7 @@ const TICKET_TIERS: { name: string; price: number; image: string | null; feature
     name: "The Explorer",
     price: 99,
     image: "/oddyssey/explorer-img.jpg",
+    featured: true,
     features: [
       "Entry to Oddyssey Manor at a reserved time, with access to linger as long as desired.",
       "Includes Five (5) 1oz Specialty Craft Cocktail/Mocktail Tastings & Two (2) Crafted Cocktails/Mocktails.",
@@ -780,10 +781,11 @@ const manorStyles = `
   z-index: 2;
 }
 .m-ticket-tag {
-  position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+  position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
   font-size: 9px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500;
   background: var(--accent); color: var(--bg); padding: 6px 14px;
   z-index: 3;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.45);
 }
 .m-ticket-photo {
   width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #060606;
