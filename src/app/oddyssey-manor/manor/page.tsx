@@ -316,15 +316,31 @@ function ManorContent() {
       </section>
 
       {/* ═══ GALLERY ═══ */}
+      {/* Four cinematic shots from oddysseylv.com — replaced a 9-tile
+          grid of small gal*.webp (~700px wide, pixelated when stretched)
+          with the high-res shoots: performer + wolf head, welcome tea,
+          cocktail vs vintage poster, bathtub red-curtain. Each 3:4
+          portrait cell. */}
       <section className="m-section-pad m-gallery-section" id="m-gallery">
         <div className="m-section-head">
           <div className="m-label" style={{ textAlign: "center" }}>The Space</div>
           <h2 className="m-heading-2" style={{ textAlign: "center" }}>Inside the Manor</h2>
         </div>
         <div className="m-gallery-grid">
-          {[6, 15, 17, 5, 11, 16, 7, 14, 12].map((n, i) => (
-            <div key={i} className="m-gallery-cell">
-              <div className="m-gallery-cell-inner" style={{ backgroundImage: `url('/oddyssey/gal${n}.webp')` }} />
+          {[
+            { src: "/oddyssey/manor1.jpg", alt: "Performer with wolf-mask companion in Manor's red lantern hall" },
+            { src: "/oddyssey/manor2.jpg", alt: "Welcome tea cup with cornflower bloom on antique sideboard" },
+            { src: "/oddyssey/manor3.jpg", alt: "Cocktail in vintage coupe against an American Extravaganza poster" },
+            { src: "/oddyssey/manor4.jpg", alt: "Performer in vintage bathtub framed by red velvet curtains" },
+          ].map((g) => (
+            <div key={g.src} className="m-gallery-cell">
+              <Image
+                src={g.src}
+                alt={g.alt}
+                fill
+                sizes="(max-width: 600px) 50vw, (max-width: 1100px) 33vw, 25vw"
+                style={{ objectFit: "cover" }}
+              />
             </div>
           ))}
         </div>
@@ -1031,16 +1047,18 @@ const manorStyles = `
 /* ═══ GALLERY ═══ */
 .m-gallery-section { background: var(--bg); border-bottom: 1px solid var(--border-subtle); }
 .m-gallery-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
   max-width: 1300px; margin: 0 auto;
 }
-.m-gallery-cell { aspect-ratio: 4/3; overflow: hidden; position: relative; cursor: pointer; }
+.m-gallery-cell { aspect-ratio: 3/4; overflow: hidden; position: relative; cursor: pointer; }
+.m-gallery-cell img { transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+.m-gallery-cell:hover img { transform: scale(1.04); }
 .m-gallery-cell-inner {
   position: absolute; inset: 0; background-position: center; background-size: cover;
   transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
 }
 .m-gallery-cell:hover .m-gallery-cell-inner { transform: scale(1.06); }
-@media (max-width: 600px) { .m-gallery-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1000px) { .m-gallery-grid { grid-template-columns: 1fr 1fr; } }
 
 /* ═══ VENUE ═══ */
 .m-venue { background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
