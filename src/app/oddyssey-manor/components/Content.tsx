@@ -7,7 +7,7 @@ import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 import { FeaturedEventRail } from "@/components/oddyssey/FeaturedEventRail";
 import { ContestBand } from "@/components/oddyssey/ContestBand";
-import { FEATURED_EVENTS } from "@/components/oddyssey/featured-events";
+import { annotatedEvents, type AnnotatedEventRow } from "@/components/oddyssey/events-calendar";
 
 type PageName = "home" | "calendar" | "detail" | "private";
 
@@ -691,44 +691,11 @@ function CalendarMonth({ title, tbaCount }: { title: string; tbaCount?: number }
 type NightFilter = "all" | "friday" | "saturday" | "featured";
 type MonthFilter = "all" | "05" | "06" | "07";
 
-// Cadence: every Friday is Liquid Gold, every Saturday is Oddyssey
-// Noir. Featured slugs (Pride etc) come from FEATURED_EVENTS and
-// override the row's name + add a flyer link.
-const ALL_EVENTS = [
-  { date: "Fri May 22", dateISO: "2026-05-22", name: "Liquid Gold", dj: "DJ Brynn Taylor", night: "friday" as const },
-  { date: "Sat May 23", dateISO: "2026-05-23", name: "Oddyssey Noir", dj: "Tony Touch", night: "saturday" as const },
-  { date: "Fri May 29", dateISO: "2026-05-29", name: "Liquid Gold", dj: "Soni Withaneye", night: "friday" as const },
-  { date: "Sat May 30", dateISO: "2026-05-30", name: "Oddyssey Noir", dj: "John Julius Knight", night: "saturday" as const },
-  { date: "Fri Jun 05", dateISO: "2026-06-05", name: "Liquid Gold", night: "friday" as const },
-  { date: "Sat Jun 06", dateISO: "2026-06-06", name: "Oddyssey Noir", night: "saturday" as const },
-  { date: "Fri Jun 12", dateISO: "2026-06-12", name: "Liquid Gold", night: "friday" as const },
-  { date: "Sat Jun 13", dateISO: "2026-06-13", name: "Oddyssey Noir", night: "saturday" as const },
-  { date: "Fri Jun 19", dateISO: "2026-06-19", name: "Liquid Gold", night: "friday" as const },
-  { date: "Sat Jun 20", dateISO: "2026-06-20", name: "Oddyssey Noir", night: "saturday" as const },
-  { date: "Fri Jun 26", dateISO: "2026-06-26", name: "Liquid Gold", night: "friday" as const },
-  { date: "Sat Jun 27", dateISO: "2026-06-27", name: "Oddyssey Noir", night: "saturday" as const },
-  { date: "Fri Jul 03", dateISO: "2026-07-03", name: "Liquid Gold", night: "friday" as const },
-  { date: "Sat Jul 04", dateISO: "2026-07-04", name: "Oddyssey Noir", night: "saturday" as const },
-  { date: "Fri Jul 10", dateISO: "2026-07-10", name: "Liquid Gold", night: "friday" as const },
-  { date: "Sat Jul 11", dateISO: "2026-07-11", name: "Oddyssey Noir", night: "saturday" as const },
-];
-
 function CalendarPage({ showDetail }: { showDetail: () => void }) {
   const [night, setNight] = useState<NightFilter>("all");
   const [month, setMonth] = useState<MonthFilter>("all");
 
-  // Annotate each event with its featured-slug (if Pride/etc) so the
-  // row can promote name + link straight to the flyer page.
-  const annotated = ALL_EVENTS.map((e) => {
-    const featured = FEATURED_EVENTS.find((f) => f.dateISO === e.dateISO);
-    return {
-      ...e,
-      displayName: featured?.title ?? e.name,
-      eyebrow: featured?.eyebrow,
-      featuredSlug: featured?.slug,
-      accent: featured?.accent,
-    };
-  });
+  const annotated = annotatedEvents();
 
   // Visible after filter pass.
   const visible = annotated.filter((e) => {
@@ -846,19 +813,7 @@ function CalendarPage({ showDetail }: { showDetail: () => void }) {
   );
 }
 
-interface AnnotatedEvent {
-  date: string;
-  dateISO: string;
-  name: string;
-  night: "friday" | "saturday";
-  dj?: string;
-  displayName: string;
-  eyebrow?: string;
-  featuredSlug?: string;
-  accent?: string;
-}
-
-function CalendarEvent({ event, showDetail }: { event: AnnotatedEvent; showDetail: () => void }) {
+function CalendarEvent({ event, showDetail }: { event: AnnotatedEventRow; showDetail: () => void }) {
   const accent = event.accent ?? "var(--accent)";
   const inner = (
     <>

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 import { FeaturedEventRail } from "@/components/oddyssey/FeaturedEventRail";
+import { annotatedEvents } from "@/components/oddyssey/events-calendar";
 
 const ACCESS_CODE = "oddyssey2026";
 
@@ -61,15 +62,22 @@ export default function NoirPage() {
 }
 
 function NoirContent() {
-  const [filterNight, setFilterNight] = useState<"all" | "friday" | "saturday">("all");
+  const [filterNight, setFilterNight] = useState<"all" | "friday" | "saturday" | "featured">("all");
 
   const scrollToId = useCallback((id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
-  const filteredEvents = EVENTS.filter(
-    (e) => filterNight === "all" || e.night === filterNight
+  // Pull the same annotated event set as the home calendar so Pride
+  // dates auto-highlight and link to their flyer pages.
+  const allAnnotated = annotatedEvents();
+  const visible = allAnnotated.filter(
+    (e) => filterNight === "all"
+      || (filterNight === "featured" ? !!e.featuredSlug : e.night === filterNight)
   );
+  // TBA-only rows (no DJ, no featured) get collapsed into a footer note.
+  const showable = visible.filter((e) => e.dj || e.featuredSlug);
+  const tbaCount = visible.length - showable.length;
 
   return (
     <>
@@ -177,6 +185,7 @@ function NoirContent() {
             { id: "all", label: "All Nights" },
             { id: "friday", label: "Fridays — Liquid Gold" },
             { id: "saturday", label: "Saturdays — Oddyssey Noir" },
+            { id: "featured", label: "Featured" },
           ] as const).map((f) => (
             <button
               key={f.id}
@@ -189,21 +198,56 @@ function NoirContent() {
         </div>
 
         <div className="n-event-list">
-          {filteredEvents.map((evt, i) => (
-            <div key={i} className={`n-event-row n-event-${evt.night}`}>
-              <div className="n-event-date">{evt.date}</div>
-              <div className="n-event-body">
-                <div className="n-event-night">{evt.night === "friday" ? "Liquid Gold" : "Oddyssey Noir"}</div>
-                <h4>{evt.dj}</h4>
-                <span className="n-event-genre">{evt.genre}</span>
-              </div>
-              <div className="n-event-time">Doors 10 PM</div>
-              <div className="n-event-cta">
-                <span className="n-btn-primary n-btn-sm">Get Tickets</span>
-              </div>
+          {showable.length === 0 ? (
+            <div className="n-event-empty">
+              <p>No events match — try another filter.</p>
+              <button className="n-btn-outline" onClick={() => setFilterNight("all")}>
+                Reset filter
+              </button>
             </div>
-          ))}
+          ) : (
+            showable.map((evt) => {
+              const accent = evt.accent;
+              const cardLabel = evt.featuredSlug ? "Open Event" : "Get Tickets";
+              const inner = (
+                <>
+                  <div className="n-event-date">{evt.date}</div>
+                  <div className="n-event-body">
+                    {evt.eyebrow ? (
+                      <span className="n-event-eyebrow" style={{ color: accent }}>{evt.eyebrow}</span>
+                    ) : (
+                      <div className="n-event-night">{evt.night === "friday" ? "Liquid Gold" : "Oddyssey Noir"}</div>
+                    )}
+                    <h4>{evt.displayName}</h4>
+                    {evt.dj && <span className="n-event-dj">{evt.dj}</span>}
+                    <span className="n-event-genre">House · Electronic</span>
+                  </div>
+                  <div className="n-event-time">Doors 10 PM</div>
+                  <div className="n-event-cta">
+                    <span className="n-btn-primary n-btn-sm" style={evt.featuredSlug && accent ? { background: accent } : undefined}>
+                      {cardLabel}
+                    </span>
+                  </div>
+                </>
+              );
+              return evt.featuredSlug ? (
+                <Link key={evt.dateISO} href={`/oddyssey-manor/events/${evt.featuredSlug}`} className={`n-event-row n-event-${evt.night} n-event-featured`}>
+                  {inner}
+                </Link>
+              ) : (
+                <div key={evt.dateISO} className={`n-event-row n-event-${evt.night}`}>
+                  {inner}
+                </div>
+              );
+            })
+          )}
         </div>
+        {tbaCount > 0 && (
+          <p className="n-event-tba-note">
+            + {tbaCount} more {tbaCount === 1 ? "date" : "dates"} dropping — follow{" "}
+            <a href="https://www.instagram.com/oddyssey.noir/" target="_blank" rel="noopener noreferrer">@oddyssey.noir</a> for lineup announcements.
+          </p>
+        )}
       </section>
 
       {/* ═══ TICKET TIERS ═══ */}
@@ -402,20 +446,9 @@ function NoirContent() {
 // CONTENT DATA
 // ════════════════════════════════════════════════════════════════
 
-type NightType = "friday" | "saturday";
-
-const EVENTS: { date: string; night: NightType; dj: string; genre: string }[] = [
-  { date: "Fri May 22", night: "friday", dj: "DJ Brynn Taylor", genre: "House · Electronic" },
-  { date: "Sat May 23", night: "saturday", dj: "Tony Touch", genre: "House · Electronic" },
-  { date: "Fri May 29", night: "friday", dj: "Soni Withaneye", genre: "House · Electronic" },
-  { date: "Sat May 30", night: "saturday", dj: "John Julius Knight", genre: "House · Electronic" },
-  { date: "Fri Jun 05", night: "friday", dj: "TBA", genre: "House · Electronic" },
-  { date: "Sat Jun 06", night: "saturday", dj: "TBA", genre: "House · Electronic" },
-  { date: "Fri Jun 12", night: "friday", dj: "TBA", genre: "House · Electronic" },
-  { date: "Sat Jun 13", night: "saturday", dj: "TBA", genre: "House · Electronic" },
-  { date: "Fri Jun 19", night: "friday", dj: "TBA", genre: "House · Electronic" },
-  { date: "Sat Jun 20", night: "saturday", dj: "TBA", genre: "House · Electronic" },
-];
+// Calendar data moved to src/components/oddyssey/events-calendar.ts so
+// the Noir flagship and the home /oddyssey calendar share one source
+// of truth (and Pride dates auto-highlight on both).
 
 const TIERS = [
   {
@@ -827,15 +860,22 @@ const noirStyles = `
   display: grid; grid-template-columns: 120px 1fr auto auto; align-items: center; gap: 28px;
   padding: 24px 20px; border-bottom: 1px solid var(--border-subtle);
   cursor: pointer; transition: background 0.3s;
+  text-decoration: none; color: inherit;
 }
 .n-event-row:hover { background: var(--accent-dim); }
 .n-event-row:first-child { border-top: 1px solid var(--border-subtle); }
+.n-event-featured { background: rgba(240,98,146,0.05); }
+.n-event-featured:hover { background: rgba(240,98,146,0.12); }
 .n-event-date {
   font-size: 11px; font-weight: 500; letter-spacing: 2.5px; text-transform: uppercase;
   color: var(--accent);
 }
 .n-event-friday .n-event-date { color: #d4a574; }
 .n-event-body { display: flex; flex-direction: column; gap: 4px; }
+.n-event-eyebrow {
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  font-weight: 500; margin-bottom: 2px;
+}
 .n-event-night {
   font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--text-muted); font-weight: 500;
@@ -845,6 +885,10 @@ const noirStyles = `
   font-family: var(--serif); font-size: clamp(19px,2vw,26px); font-weight: 400;
   letter-spacing: 1.5px; margin: 0; color: var(--text);
 }
+.n-event-dj {
+  font-family: var(--serif); font-size: 14px; color: var(--text);
+  letter-spacing: 1px; margin-top: 2px;
+}
 .n-event-genre {
   font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
   color: var(--text-muted);
@@ -852,6 +896,17 @@ const noirStyles = `
 .n-event-time {
   font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-align: right;
 }
+.n-event-empty {
+  padding: 60px 20px; text-align: center; color: var(--text-secondary);
+  border-top: 1px solid var(--border-subtle); border-bottom: 1px solid var(--border-subtle);
+}
+.n-event-empty p { font-size: 14px; letter-spacing: 1px; margin-bottom: 20px; }
+.n-event-tba-note {
+  max-width: 1000px; margin: 24px auto 0; text-align: center;
+  font-size: 12px; letter-spacing: 1px; color: var(--text-muted); font-style: italic;
+}
+.n-event-tba-note a { color: var(--accent); text-decoration: none; }
+.n-event-tba-note a:hover { text-decoration: underline; }
 @media (max-width: 768px) {
   .n-event-row { grid-template-columns: 1fr; gap: 10px; padding: 24px 16px; }
   .n-event-time { text-align: left; }
