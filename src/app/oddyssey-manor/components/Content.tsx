@@ -1204,19 +1204,19 @@ const styles = `
 .od-proof-cell { position: relative; overflow: hidden; }
 .od-proof-cell-inner { position: absolute; inset: 0; transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); }
 .od-proof-cell:hover .od-proof-cell-inner { transform: scale(1.05); }
-/* Cinematic shoots replace the small gal*.webp tiles. Mapping reads
-   loosely along the label set (Dance floor / Performers / Lighting /
-   Crowd / Rooms / Art / Atmosphere / Energy). gal8 (the risqué shot
-   we already pulled off the Noir hero, Private Noir card, and Manor
-   experience hover) is finally retired from the public-facing pages. */
-.od-proof-cell-1 .od-proof-cell-inner { background: url('/oddyssey/home-hero-poster.jpg') center/cover; }
-.od-proof-cell-2 .od-proof-cell-inner { background: url('/oddyssey/manor1.jpg') center/cover; }
-.od-proof-cell-3 .od-proof-cell-inner { background: url('/oddyssey/manor4.jpg') center/cover; }
+/* Mix of Manor shoots + Noir nightclub frames (extracted from the
+   hero videos) — labels are Dance floor / Performers / Lighting /
+   Crowd / Rooms / Art / Atmosphere / Energy. Aim is roughly half
+   Noir nightlife to give the proof grid real nightlife flavor,
+   with the Manor shoots covering the theatrical/dining tiles. */
+.od-proof-cell-1 .od-proof-cell-inner { background: url('/oddyssey/noir-dj.jpg') center/cover; }
+.od-proof-cell-2 .od-proof-cell-inner { background: url('/oddyssey/noir-perf-hoops.jpg') center/cover; }
+.od-proof-cell-3 .od-proof-cell-inner { background: url('/oddyssey/noir-perf-laser.jpg') center/cover; }
 .od-proof-cell-4 .od-proof-cell-inner { background: url('/oddyssey/dinner-guest.jpg') center/cover; }
 .od-proof-cell-5 .od-proof-cell-inner { background: url('/oddyssey/manor-hero-poster.jpg') center/cover; }
 .od-proof-cell-6 .od-proof-cell-inner { background: url('/oddyssey/manor3.jpg') center/cover; }
-.od-proof-cell-7 .od-proof-cell-inner { background: url('/oddyssey/voyeur-img2.jpg') center/cover; }
-.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/noir-hero-poster.jpg') center/cover; }
+.od-proof-cell-7 .od-proof-cell-inner { background: url('/oddyssey/noir-perf-neon.jpg') center/cover; }
+.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/noir-bar.jpg') center/cover; }
 .od-proof-cell-label {
   position: absolute; bottom: 12px; left: 12px; font-size: 9px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--text-muted); opacity: 0; transform: translateY(8px);

@@ -757,24 +757,24 @@ const noirStyles = `
   transition: opacity 0.6s;
 }
 .n-night-card:hover::before { opacity: 0.4; }
-/* Photography backgrounds (replaced flyer wordmarks that competed
-   with the typography in the card body). Friday gets the explorer
-   vanity shot — gold-lit, intimate, matches Liquid Gold's
-   'polished + dance-forward' framing. Saturday gets voyeur-img2 —
-   wolf-mask intensity, matches 'headliner night, full voltage'. */
+/* Photography backgrounds use real Noir-nightclub footage (frames
+   pulled from oddy-home-hero.webm + oddy-noir-bg.webm). Friday gets
+   the bar bottles + purple/pink lighting — matches Liquid Gold's
+   polished, drink-forward vibe. Saturday gets the laser-performer
+   shot — peak intensity, matches 'headliner night, full voltage'. */
 .n-night-friday::before {
   background:
     radial-gradient(ellipse at 30% 80%, rgba(212,165,116,0.14) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(6,6,6,0.55), rgba(6,6,6,0.9)),
-    url('/oddyssey/explorer-img.jpg') center/cover no-repeat;
-  opacity: 0.5;
+    linear-gradient(180deg, rgba(6,6,6,0.5), rgba(6,6,6,0.88)),
+    url('/oddyssey/noir-bar.jpg') center/cover no-repeat;
+  opacity: 0.55;
 }
 .n-night-saturday::before {
   background:
     radial-gradient(ellipse at 70% 80%, rgba(180,110,200,0.16) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(6,6,6,0.55), rgba(6,6,6,0.9)),
-    url('/oddyssey/voyeur-img2.jpg') center/cover no-repeat;
-  opacity: 0.5;
+    linear-gradient(180deg, rgba(6,6,6,0.5), rgba(6,6,6,0.88)),
+    url('/oddyssey/noir-perf-laser.jpg') center/cover no-repeat;
+  opacity: 0.55;
 }
 .n-night-card:hover.n-night-friday::before,
 .n-night-card:hover.n-night-saturday::before { opacity: 0.7; }
