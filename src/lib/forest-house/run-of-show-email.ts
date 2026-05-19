@@ -13,7 +13,7 @@ export function renderRunOfShowEmailHtml({
   baseUrl: string;
   senderName?: string;
 }): string {
-  const link = `${baseUrl}/forest-house/admin/run-of-show/${slug}`;
+  const link = `${baseUrl}/forest-house/run-of-show/${slug}`;
   const rainbow =
     "linear-gradient(90deg,#e63946,#f4845f,#f7b731,#7bc67e,#2ec4b6,#48cae4)";
 

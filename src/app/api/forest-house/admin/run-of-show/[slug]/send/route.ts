@@ -69,9 +69,13 @@ export async function POST(
   }
 
   const data = await readRunOfShow(params.slug);
+  const forwardedHost = request.headers.get("x-forwarded-host");
+  const forwardedProto = request.headers.get("x-forwarded-proto");
   const baseUrl =
     process.env.NEXT_PUBLIC_BASE_URL ??
-    `${request.nextUrl.protocol}//${request.nextUrl.host}`;
+    (forwardedHost
+      ? `${forwardedProto ?? "https"}://${forwardedHost}`
+      : `${request.nextUrl.protocol}//${request.nextUrl.host}`);
   const html = renderRunOfShowEmailHtml({
     data,
     slug: params.slug,
