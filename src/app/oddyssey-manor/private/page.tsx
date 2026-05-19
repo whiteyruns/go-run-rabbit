@@ -77,12 +77,41 @@ function PrivateContent() {
 
       {/* ═══ HERO ═══ */}
       <section className="p-hero">
-        <div className="p-hero-bg" />
+        <video
+          className="p-hero-video"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          poster="/oddyssey/home-hero-poster.jpg"
+          aria-hidden="true"
+        >
+          <source src="/oddyssey/oddy-home-hero.webm" type="video/webm" />
+        </video>
+        <div className="p-hero-scrim" />
         <div className="p-hero-texture" />
         <div className="p-hero-content">
           <div className="p-label">Host at Oddyssey</div>
           <h1>Private<br />Events</h1>
-          <p className="p-hero-sub">Immersive venues for unforgettable experiences at AREA15</p>
+          <p className="p-hero-sub">The perfect party starts here &middot; AREA15 Las Vegas</p>
+        </div>
+      </section>
+
+      {/* ═══ SELLING POINTS ═══ */}
+      {/* Mirrors the live oddysseylv.com/private-events intro strip:
+          location, space variety, indoor/outdoor, capacity. The 15,000+
+          is the AREA15-wide capacity (Oddyssey + neighboring venues
+          can flex into combined buyouts via AREA15's events team). */}
+      <section className="p-section-pad p-points">
+        <div className="p-points-grid">
+          {SELLING_POINTS.map((p) => (
+            <div key={p.title} className="p-point">
+              <div className="p-point-mark">{p.mark}</div>
+              <h4>{p.title}</h4>
+              <p>{p.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -283,11 +312,22 @@ const EVENT_TYPES = [
   { title: "Full Buyouts", desc: "Exclusive access to Manor, Noir, or both for your group" },
 ];
 
+// Five service categories mirror oddysseylv.com/private-events
+// (Production & AV / Event Planning / Catering & Bars / Food & Beverage
+// / Décor & Theme).
 const SERVICES = [
-  { title: "Production", items: ["Sound & lighting design", "4K projection mapping", "Custom branded content"] },
-  { title: "Entertainment", items: ["Curated DJ sets", "Roaming performers", "Interactive characters"] },
-  { title: "Food & Beverage", items: ["Custom cocktail menus", "Catering packages", "Bottle service & VIP tables"] },
-  { title: "Planning", items: ["Dedicated event coordinator", "Day-of production management", "Photography & videography"] },
+  { title: "Production & AV", items: ["Sound & lighting design", "4K projection mapping", "Custom branded content"] },
+  { title: "Event Planning", items: ["Dedicated event coordinator", "Day-of production management", "Run-of-show + load-in"] },
+  { title: "Catering & Bars", items: ["Full mobile bar build-outs", "Bottle service & VIP tables", "Specialty cocktail menus"] },
+  { title: "Food & Beverage", items: ["Chef-curated bites", "Plated dinners + family-style", "Dietary accommodations"] },
+  { title: "Décor & Theme", items: ["Themed room styling", "Custom florals & installations", "Roaming performers & characters"] },
+];
+
+const SELLING_POINTS = [
+  { mark: "01", title: "Centrally Located", desc: "AREA15 sits between the Strip and Summerlin — fast access for locals, easy for out-of-town guests." },
+  { mark: "02", title: "Multiple Unique Spaces", desc: "Manor's themed rooms, Noir's two dance floors, plus AREA15 partner venues for hybrid programs." },
+  { mark: "03", title: "Indoor & Outdoor", desc: "Climate-controlled interiors, plus AREA15's outdoor District for evening receptions and arrivals." },
+  { mark: "04", title: "Up to 15,000+", desc: "Mix and match rooms for intimate gatherings or scale into the wider AREA15 ecosystem for festivals." },
 ];
 
 // ═══ STYLES ═══
@@ -411,12 +451,16 @@ const privateStyles = `
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: clamp(40px,6vw,100px); overflow: hidden;
 }
-.p-hero-bg {
-  position: absolute; inset: 0;
+.p-hero-video {
+  position: absolute; inset: 0; z-index: 0;
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  filter: saturate(0.92) brightness(0.7);
+}
+.p-hero-scrim {
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
   background:
-    radial-gradient(ellipse at 30% 70%, rgba(201,168,76,0.06) 0%, transparent 50%),
-    linear-gradient(180deg, rgba(6,6,6,0.3) 0%, rgba(6,6,6,0.85) 100%),
-    url('/oddyssey/gal5.webp') center/cover no-repeat;
+    radial-gradient(ellipse at 30% 70%, rgba(201,168,76,0.08) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(6,6,6,0.3) 0%, rgba(6,6,6,0.55) 50%, rgba(6,6,6,0.9) 100%);
 }
 .p-hero-texture {
   position: absolute; inset: 0; pointer-events: none;
@@ -434,6 +478,36 @@ const privateStyles = `
 }
 @keyframes pFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+/* SELLING POINTS */
+.p-points {
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.p-points-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--border-subtle); max-width: 1200px; margin: 0 auto;
+}
+.p-point {
+  background: var(--bg-elevated); padding: 36px 28px; text-align: left;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.p-point-mark {
+  font-family: var(--serif); font-size: 28px; font-weight: 300; font-style: italic;
+  color: var(--accent); line-height: 1; margin-bottom: 8px;
+}
+.p-point h4 {
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.28em; text-transform: uppercase; color: var(--text);
+  margin: 0;
+}
+.p-point p {
+  font-size: 13px; line-height: 1.7; color: var(--text-secondary); letter-spacing: 0.3px;
+  margin: 0;
+}
+@media (max-width: 900px) { .p-points-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .p-points-grid { grid-template-columns: 1fr; } }
+
 /* INTRO */
 .p-intro { border-bottom: 1px solid var(--border-subtle); }
 .p-intro-body {
@@ -450,10 +524,10 @@ const privateStyles = `
 .p-space:hover { background: var(--bg-card); }
 .p-space-img { min-height: 240px; }
 .p-space-manor {
-  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/gal15.webp') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(6,6,6,0.25), rgba(6,6,6,0.55)), url('/oddyssey/dinner-guest.jpg') center/cover no-repeat;
 }
 .p-space-noir {
-  background: linear-gradient(135deg, rgba(6,6,6,0.2), rgba(6,6,6,0.5)), url('/oddyssey/gal8.webp') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(6,6,6,0.25), rgba(6,6,6,0.55)), url('/oddyssey/voyeur-img2.jpg') center/cover no-repeat;
 }
 .p-space-body { padding: 36px; }
 .p-space-body h3 {
