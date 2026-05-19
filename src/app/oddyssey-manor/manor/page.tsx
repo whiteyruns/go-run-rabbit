@@ -228,11 +228,14 @@ function ManorContent() {
           <p className="m-section-sub">Ten rooms, multiple bars, one labyrinth. Wander freely — every space rewards the curious.</p>
         </div>
         <div className="m-floorplan-wrap">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src="/oddyssey/manor-floor-plan.png"
-            alt="Floor plan of Oddyssey Manor — Foyer, Main Street, Garden, Bath Tub, Dressing Room Bar, Felix's Apartment, Athena's Boudoir, Chapel, Main Stage, Full Bar"
+            alt="Floor plan of Oddyssey Manor — Foyer, Main Street, Garden, Bath Tub, Dressing Room Bar, Felix's Apartment, Athena's Boudoir, Chapel, Main Stage, Full Bar (cocktail glass markers indicate the bars in each room)"
+            width={1484}
+            height={958}
+            sizes="(max-width: 1100px) 90vw, 1100px"
             className="m-floorplan-img"
+            style={{ width: "100%", height: "auto" }}
           />
         </div>
       </section>
