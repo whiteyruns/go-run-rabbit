@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: { absolute: "Oddyssey Manor — Immersive Dining at AREA15 Las Vegas" },
   description:
     "Oddyssey Manor at AREA15: an immersive theatrical dining show. Tickets, floor plan, and what to expect.",
-  icons: { icon: [{ url: "/oddyssey-manor/icon.svg", type: "image/svg+xml" }] },
+  icons: { icon: [{ url: "/oddyssey-manor/icon.svg", type: "image/svg+xml", sizes: "any" }] },
   openGraph: {
     title: "Oddyssey Manor — Immersive Dining at AREA15 Las Vegas",
     description: "An immersive theatrical dining show inside AREA15. Five rooms. One night. Many secrets.",

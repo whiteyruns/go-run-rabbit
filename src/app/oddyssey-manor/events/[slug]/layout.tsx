@@ -15,7 +15,7 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!event) {
     return {
       title: { absolute: "Event Not Found — Oddyssey" },
-      icons: { icon: [{ url: "/oddyssey-manor/events/icon.svg", type: "image/svg+xml" }] },
+      icons: { icon: [{ url: "/oddyssey-manor/events/icon.svg", type: "image/svg+xml", sizes: "any" }] },
     };
   }
   const title = `${event.title} — Oddyssey ${event.venue} · ${event.date}`;
@@ -27,7 +27,7 @@ export function generateMetadata({ params }: Props): Metadata {
   return {
     title: { absolute: title },
     description,
-    icons: { icon: [{ url: iconUrl, type: "image/svg+xml" }] },
+    icons: { icon: [{ url: iconUrl, type: "image/svg+xml", sizes: "any" }] },
     openGraph: {
       title,
       description: event.tagline,

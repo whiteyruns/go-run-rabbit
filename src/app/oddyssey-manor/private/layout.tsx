@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: { absolute: "Private Events at Oddyssey — Manor + Noir, AREA15 Las Vegas" },
   description:
     "Host your private event at Oddyssey. Full Manor buyouts, Noir takeovers, hybrid packages. AREA15, Las Vegas.",
-  icons: { icon: [{ url: "/oddyssey-manor/icon.svg", type: "image/svg+xml" }] },
+  icons: { icon: [{ url: "/oddyssey-manor/icon.svg", type: "image/svg+xml", sizes: "any" }] },
   openGraph: {
     title: "Private Events at Oddyssey — Manor + Noir",
     description: "Buyouts and takeovers at AREA15. Manor immersive dinners, Noir late-night.",
