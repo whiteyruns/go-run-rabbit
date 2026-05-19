@@ -94,15 +94,10 @@ function ContestContent() {
 
   function handleEntry(e: React.FormEvent) {
     e.preventDefault();
-    // TODO wire to a real endpoint. Options:
-    //   1. POST /api/oddyssey/contest-entry → Resend mail to ops@ + log
-    //   2. Embed an external form (Tally / Typeform / Google Forms)
-    // For now we just transition to the success screen so the UX is
-    // complete end-to-end and the team can preview the full flow.
-    if (typeof window !== "undefined") {
-      // eslint-disable-next-line no-console
-      console.log("[contest-entry] not yet wired to endpoint:", entry);
-    }
+    // Intentionally dumb: AREA15 will wire the backend (their CRM /
+    // contest tooling). To plug in, replace this body with a fetch to
+    // their endpoint, then call setSubmitted(true) on success and
+    // surface an error state on failure. Field shape is `entry` above.
     setSubmitted(true);
   }
 
