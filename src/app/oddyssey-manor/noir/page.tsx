@@ -292,25 +292,9 @@ function NoirContent() {
         </div>
       </section>
 
-      {/* ═══ GALLERY ═══ */}
-      <section className="n-section-pad n-gallery-section" id="n-gallery">
-        <div className="n-section-head">
-          <div className="n-label" style={{ textAlign: "center" }}>The Environment</div>
-          <h2 className="n-heading-2" style={{ textAlign: "center" }}>Inside Noir</h2>
-        </div>
-        <div className="n-gallery-grid">
-          {[6, 15, 17, 5, 11, 16].map((n, i) => (
-            <div key={i} className="n-gallery-cell">
-              <div className="n-gallery-cell-inner" style={{ backgroundImage: `url('/oddyssey/gal${n}.webp')` }} />
-            </div>
-          ))}
-        </div>
-        <div className="n-gallery-caption">
-          <p>Nothing else like this in Las Vegas</p>
-        </div>
-      </section>
-
       {/* ═══ VENUE INFO ═══ */}
+      {/* Plan Your Visit runs before Gallery — go/no-go info (where,
+          when, age, dress, ADA) lands first; eye-candy comes after. */}
       <section className="n-section-pad n-venue">
         <div className="n-section-head">
           <div className="n-label" style={{ textAlign: "center" }}>Plan Your Visit</div>
@@ -341,6 +325,24 @@ function NoirContent() {
             <h4>Sensory Notice</h4>
             <p>Concert-level sound<br />Strobes · theatrical haze<br /><span>Performer proximity</span></p>
           </div>
+        </div>
+      </section>
+
+      {/* ═══ GALLERY ═══ */}
+      <section className="n-section-pad n-gallery-section" id="n-gallery">
+        <div className="n-section-head">
+          <div className="n-label" style={{ textAlign: "center" }}>The Environment</div>
+          <h2 className="n-heading-2" style={{ textAlign: "center" }}>Inside Noir</h2>
+        </div>
+        <div className="n-gallery-grid">
+          {[6, 15, 17, 5, 11, 16].map((n, i) => (
+            <div key={i} className="n-gallery-cell">
+              <div className="n-gallery-cell-inner" style={{ backgroundImage: `url('/oddyssey/gal${n}.webp')` }} />
+            </div>
+          ))}
+        </div>
+        <div className="n-gallery-caption">
+          <p>Nothing else like this in Las Vegas</p>
         </div>
       </section>
 

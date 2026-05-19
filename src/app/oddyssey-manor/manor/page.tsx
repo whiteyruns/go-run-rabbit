@@ -264,22 +264,10 @@ function ManorContent() {
         </div>
       </section>
 
-      {/* ═══ GALLERY ═══ */}
-      <section className="m-section-pad m-gallery-section" id="m-gallery">
-        <div className="m-section-head">
-          <div className="m-label" style={{ textAlign: "center" }}>The Space</div>
-          <h2 className="m-heading-2" style={{ textAlign: "center" }}>Inside the Manor</h2>
-        </div>
-        <div className="m-gallery-grid">
-          {[6, 15, 17, 5, 11, 16, 7, 14, 12].map((n, i) => (
-            <div key={i} className="m-gallery-cell">
-              <div className="m-gallery-cell-inner" style={{ backgroundImage: `url('/oddyssey/gal${n}.webp')` }} />
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ═══ VENUE INFO ═══ */}
+      {/* Plan Your Visit runs before Gallery — visitors deciding to
+          book need go/no-go info (where, when, dress, age, ADA) before
+          eye-candy. Gallery is vibes; Venue Info is the booking gate. */}
       <section className="m-section-pad m-venue">
         <div className="m-section-head">
           <div className="m-label" style={{ textAlign: "center" }}>Plan Your Visit</div>
@@ -310,6 +298,21 @@ function ManorContent() {
             <h4>Sensory Notice</h4>
             <p>Concert-level sound<br />Strobes &middot; theatrical haze<br /><span>Discretion advised</span></p>
           </div>
+        </div>
+      </section>
+
+      {/* ═══ GALLERY ═══ */}
+      <section className="m-section-pad m-gallery-section" id="m-gallery">
+        <div className="m-section-head">
+          <div className="m-label" style={{ textAlign: "center" }}>The Space</div>
+          <h2 className="m-heading-2" style={{ textAlign: "center" }}>Inside the Manor</h2>
+        </div>
+        <div className="m-gallery-grid">
+          {[6, 15, 17, 5, 11, 16, 7, 14, 12].map((n, i) => (
+            <div key={i} className="m-gallery-cell">
+              <div className="m-gallery-cell-inner" style={{ backgroundImage: `url('/oddyssey/gal${n}.webp')` }} />
+            </div>
+          ))}
         </div>
       </section>
 
