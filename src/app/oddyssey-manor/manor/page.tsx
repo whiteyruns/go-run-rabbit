@@ -149,7 +149,16 @@ function ManorContent() {
                 {tier.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
               <div className="m-ticket-cta-wrap">
-                <a className={tier.featured ? "m-btn-primary" : "m-btn-outline"} style={{ width: "100%", textAlign: "center" }}>
+                {/* Until AREA15 wires their Ticketure URL here, send
+                    visitors to the live booking page on oddysseylv.com
+                    so the CTA is real, not decorative. */}
+                <a
+                  href="https://oddysseylv.com/manor#get-tickets"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={tier.featured ? "m-btn-primary" : "m-btn-outline"}
+                  style={{ width: "100%", textAlign: "center" }}
+                >
                   Book {tier.name.split(" ").slice(-1)[0]}
                 </a>
               </div>

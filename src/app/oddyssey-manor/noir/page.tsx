@@ -250,26 +250,33 @@ function NoirContent() {
         )}
       </section>
 
-      {/* ═══ TICKET TIERS ═══ */}
+      {/* ═══ TICKET ═══ */}
       <section className="n-section-pad n-tickets">
         <div className="n-section-head">
           <div className="n-label" style={{ textAlign: "center" }}>Entry</div>
-          <h2 className="n-heading-2" style={{ textAlign: "center" }}>Select Your Tier</h2>
-          <p className="n-section-sub">Available for every event. Early pricing ends at capacity.</p>
+          <h2 className="n-heading-2" style={{ textAlign: "center" }}>Get In</h2>
+          <p className="n-section-sub">One ticket, both rooms. Bottle service handled separately below.</p>
         </div>
         <div className="n-tier-grid">
           {TIERS.map((t) => (
             <div key={t.name} className={`n-tier-card ${t.featured ? "featured" : ""}`}>
-              {t.featured && <div className="n-tier-tag">Most Popular</div>}
+              {t.featured && <div className="n-tier-tag">Per Event</div>}
               <div className="n-tier-name">{t.name}</div>
               <div className="n-tier-price">
                 <span className="n-tier-currency">$</span>{t.price}
               </div>
+              {t.fineprint && <div className="n-tier-fineprint">{t.fineprint}</div>}
               <ul className="n-tier-features">
                 {t.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
-              <a className={t.featured ? "n-btn-primary" : "n-btn-outline"} style={{ width: "100%", textAlign: "center" }}>
-                Select
+              <a
+                href="https://oddysseylv.com/noir#tickets"
+                target="_blank"
+                rel="noreferrer"
+                className="n-btn-primary"
+                style={{ width: "100%", textAlign: "center" }}
+              >
+                Reserve Tickets
               </a>
             </div>
           ))}
@@ -293,7 +300,15 @@ function NoirContent() {
               <ul className="n-table-features">
                 {t.features.map((f) => <li key={f}>{f}</li>)}
               </ul>
-              <a className={t.featured ? "n-btn-primary" : "n-btn-outline"} style={{ width: "100%", textAlign: "center" }}>
+              {/* VIP Buyout is inquiry-based; other tables go to Noir
+                  ticketing on the live site until AREA15 wires it. */}
+              <a
+                href={t.cta === "Contact Us" ? "mailto:events@oddysseylv.com?subject=Noir%20VIP%20Buyout%20inquiry" : "https://oddysseylv.com/noir#tickets"}
+                target={t.cta === "Contact Us" ? undefined : "_blank"}
+                rel={t.cta === "Contact Us" ? undefined : "noreferrer"}
+                className={t.featured ? "n-btn-primary" : "n-btn-outline"}
+                style={{ width: "100%", textAlign: "center" }}
+              >
                 {t.cta}
               </a>
             </div>
@@ -450,37 +465,22 @@ function NoirContent() {
 // the Noir flagship and the home /oddyssey calendar share one source
 // of truth (and Pride dates auto-highlight on both).
 
+// Noir sells a single GA ticket via Ticketure ($20 base + $2 service
+// + $1.80 LET/tax = $21.80 all-in). VIP / Early-Entry tiers were
+// speculative — collapsed to match reality. Bottle service is its
+// own grid below (TABLES).
 const TIERS = [
   {
-    name: "Early Entry",
-    price: 20,
-    features: [
-      "General admission access",
-      "Both dance floors",
-      "All themed rooms",
-      "Early pricing — limited",
-    ],
-  },
-  {
     name: "General Admission",
-    price: 35,
+    price: 20,
     featured: true,
+    fineprint: "Adult 21+ · incl. $2 service + $1.80 LET/tax → $21.80 all-in",
     features: [
-      "General admission access",
-      "Both dance floors",
-      "All themed rooms",
+      "Entry to Oddyssey Noir",
+      "Both dance floors + all themed rooms",
       "All performers & installations",
-      "Golden Hour open bar 10 PM — 12 AM",
-    ],
-  },
-  {
-    name: "VIP Experience",
-    price: 75,
-    features: [
-      "Priority entry — skip the line",
-      "Reserved seating area",
-      "Complimentary welcome drink",
-      "All access + backstage lounge",
+      "Golden Hour open bar 10 PM — 12 AM (while supplies last)",
+      "21+ only · Valid ID required",
     ],
   },
 ];
@@ -802,18 +802,27 @@ const noirStyles = `
   transition: opacity 0.6s;
 }
 .n-night-card:hover::before { opacity: 0.4; }
+/* Photography backgrounds (replaced flyer wordmarks that competed
+   with the typography in the card body). Friday gets the explorer
+   vanity shot — gold-lit, intimate, matches Liquid Gold's
+   'polished + dance-forward' framing. Saturday gets voyeur-img2 —
+   wolf-mask intensity, matches 'headliner night, full voltage'. */
 .n-night-friday::before {
   background:
     radial-gradient(ellipse at 30% 80%, rgba(212,165,116,0.14) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(6,6,6,0.6), rgba(6,6,6,0.92)),
-    url('/oddyssey/liquid-gold-friday.webp') center/cover no-repeat;
+    linear-gradient(180deg, rgba(6,6,6,0.55), rgba(6,6,6,0.9)),
+    url('/oddyssey/explorer-img.jpg') center/cover no-repeat;
+  opacity: 0.5;
 }
 .n-night-saturday::before {
   background:
-    radial-gradient(ellipse at 70% 80%, rgba(80,40,100,0.18) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(6,6,6,0.6), rgba(6,6,6,0.92)),
-    url('/oddyssey/oddyssey-noir-event.webp') center/cover no-repeat;
+    radial-gradient(ellipse at 70% 80%, rgba(180,110,200,0.16) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(6,6,6,0.55), rgba(6,6,6,0.9)),
+    url('/oddyssey/voyeur-img2.jpg') center/cover no-repeat;
+  opacity: 0.5;
 }
+.n-night-card:hover.n-night-friday::before,
+.n-night-card:hover.n-night-saturday::before { opacity: 0.7; }
 .n-night-card > * { position: relative; z-index: 1; }
 .n-night-day {
   font-size: 10px; letter-spacing: 3px; text-transform: uppercase; font-weight: 500;
@@ -915,7 +924,7 @@ const noirStyles = `
 /* ═══ TIERS ═══ */
 .n-tickets { background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
 .n-tier-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  display: grid; grid-template-columns: minmax(0, 520px); justify-content: center; gap: 1px;
   background: var(--border-subtle); max-width: 1100px; margin: 0 auto;
 }
 .n-tier-card {
@@ -938,9 +947,13 @@ const noirStyles = `
 }
 .n-tier-price {
   font-family: var(--serif); font-size: 56px; font-weight: 300; color: var(--accent);
-  line-height: 1; margin-bottom: 28px; display: flex; align-items: flex-start; gap: 4px;
+  line-height: 1; margin-bottom: 6px; display: flex; align-items: flex-start; gap: 4px;
 }
 .n-tier-currency { font-size: 22px; margin-top: 8px; opacity: 0.7; }
+.n-tier-fineprint {
+  font-size: 11px; color: var(--text-muted); letter-spacing: 0.3px;
+  margin-bottom: 22px;
+}
 .n-tier-features { list-style: none; margin: 0 0 28px; padding: 0; flex: 1; }
 .n-tier-features li {
   font-size: 12px; color: var(--text-secondary); padding: 9px 0;

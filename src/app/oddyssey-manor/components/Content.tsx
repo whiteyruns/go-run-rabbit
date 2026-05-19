@@ -178,7 +178,7 @@ export default function OddysseyContent() {
                     <span className="od-golden-flow-text">Full programming through close</span>
                   </div>
                 </div>
-                <a className="od-btn-golden">Get Tickets</a>
+                <a href="https://oddysseylv.com/noir#tickets" target="_blank" rel="noreferrer" className="od-btn-golden">Get Tickets</a>
               </div>
             </div>
           </section>
@@ -359,11 +359,23 @@ export default function OddysseyContent() {
 
           <section className="od-section-pad od-detail-tickets">
             <div className="od-label" style={{ textAlign: "center" }}>Secure Your Entry</div>
-            <h2 className="od-heading-2" style={{ textAlign: "center" }}>Select Tier</h2>
-            <div className="od-ticket-tiers">
-              <TicketTier name="Early Entry" price="$20" features={["General admission access", "Both dance floors", "All themed rooms", "Early pricing — limited"]} outline />
-              <TicketTier name="General Admission" price="$35" features={["General admission access", "Both dance floors", "All themed rooms", "All performers & installations"]} featured />
-              <TicketTier name="VIP Experience" price="$75" features={["Priority entry — skip the line", "Reserved seating area", "Complimentary welcome drink", "All access + backstage lounge"]} outline />
+            <h2 className="od-heading-2" style={{ textAlign: "center" }}>Get Tickets</h2>
+            {/* Noir sells a single GA ticket via Ticketure — $20 + $2
+                service + $1.80 LET/tax = $21.80 all-in. Speculative
+                tier ladder removed. */}
+            <div className="od-ticket-tiers od-ticket-tiers-single">
+              <TicketTier
+                name="General Admission"
+                price="$20"
+                features={[
+                  "Entry to Oddyssey Noir",
+                  "Both dance floors + all themed rooms",
+                  "All performers & installations",
+                  "Golden Hour open bar 10 PM — 12 AM",
+                  "21+ only · Valid ID required",
+                ]}
+                featured
+              />
             </div>
           </section>
 
@@ -382,7 +394,7 @@ export default function OddysseyContent() {
                   <li>Dedicated server</li>
                   <li>Choice of premium bottles</li>
                 </ul>
-                <a className="od-btn-outline" style={{ textAlign: "center", width: "100%" }}>Reserve</a>
+                <a href="https://oddysseylv.com/noir#tickets" target="_blank" rel="noreferrer" className="od-btn-outline" style={{ textAlign: "center", width: "100%" }}>Reserve</a>
               </div>
               <div className="od-bottle-card od-bottle-featured">
                 <div className="od-bottle-name">Private Table</div>
@@ -395,7 +407,7 @@ export default function OddysseyContent() {
                   <li>Priority entry for group</li>
                   <li>Choice of premium bottles</li>
                 </ul>
-                <a className="od-btn-primary" style={{ textAlign: "center", width: "100%" }}>Reserve</a>
+                <a href="https://oddysseylv.com/noir#tickets" target="_blank" rel="noreferrer" className="od-btn-primary" style={{ textAlign: "center", width: "100%" }}>Reserve</a>
               </div>
               <div className="od-bottle-card">
                 <div className="od-bottle-name">VIP Buyout</div>
@@ -408,7 +420,7 @@ export default function OddysseyContent() {
                   <li>Custom bottle selection</li>
                   <li>Priority entry for full group</li>
                 </ul>
-                <a className="od-btn-outline" style={{ textAlign: "center", width: "100%" }}>Contact Us</a>
+                <a href="mailto:events@oddysseylv.com?subject=VIP%20Buyout%20inquiry" className="od-btn-outline" style={{ textAlign: "center", width: "100%" }}>Contact Us</a>
               </div>
             </div>
 
@@ -457,7 +469,7 @@ export default function OddysseyContent() {
 
           <section className="od-section-pad od-capture" style={{ borderTop: "1px solid var(--border-subtle)" }}>
             <h2 className="od-heading-2" style={{ marginBottom: 32 }}>Don&apos;t Miss This Night</h2>
-            <a className="od-btn-primary">Get Tickets</a>
+            <a href="https://oddysseylv.com/noir#tickets" target="_blank" rel="noreferrer" className="od-btn-primary">Get Tickets</a>
           </section>
 
           <Footer />
@@ -856,7 +868,15 @@ function TicketTier({ name, price, features, featured, outline }: { name: string
       <ul className="od-tier-features">
         {features.map((f) => <li key={f}>{f}</li>)}
       </ul>
-      <a className={outline ? "od-btn-outline" : "od-btn-primary"} style={{ textAlign: "center" }}>Select</a>
+      <a
+        href="https://oddysseylv.com/noir#tickets"
+        target="_blank"
+        rel="noreferrer"
+        className={outline ? "od-btn-outline" : "od-btn-primary"}
+        style={{ textAlign: "center" }}
+      >
+        Reserve
+      </a>
     </div>
   );
 }
@@ -1224,14 +1244,19 @@ const styles = `
 .od-proof-cell { position: relative; overflow: hidden; }
 .od-proof-cell-inner { position: absolute; inset: 0; transition: transform 0.8s cubic-bezier(0.16,1,0.3,1); }
 .od-proof-cell:hover .od-proof-cell-inner { transform: scale(1.05); }
-.od-proof-cell-1 .od-proof-cell-inner { background: url('/oddyssey/gal7.webp') center/cover; }
-.od-proof-cell-2 .od-proof-cell-inner { background: url('/oddyssey/gal14.webp') center/cover; }
-.od-proof-cell-3 .od-proof-cell-inner { background: url('/oddyssey/gal6.webp') center/cover; }
-.od-proof-cell-4 .od-proof-cell-inner { background: url('/oddyssey/gal12.webp') center/cover; }
-.od-proof-cell-5 .od-proof-cell-inner { background: url('/oddyssey/gal8.webp') center/cover; }
-.od-proof-cell-6 .od-proof-cell-inner { background: url('/oddyssey/gal16.webp') center/cover; }
-.od-proof-cell-7 .od-proof-cell-inner { background: url('/oddyssey/gal11.webp') center/cover; }
-.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/gal9.webp') center/cover; }
+/* Cinematic shoots replace the small gal*.webp tiles. Mapping reads
+   loosely along the label set (Dance floor / Performers / Lighting /
+   Crowd / Rooms / Art / Atmosphere / Energy). gal8 (the risqué shot
+   we already pulled off the Noir hero, Private Noir card, and Manor
+   experience hover) is finally retired from the public-facing pages. */
+.od-proof-cell-1 .od-proof-cell-inner { background: url('/oddyssey/home-hero-poster.jpg') center/cover; }
+.od-proof-cell-2 .od-proof-cell-inner { background: url('/oddyssey/manor1.jpg') center/cover; }
+.od-proof-cell-3 .od-proof-cell-inner { background: url('/oddyssey/manor4.jpg') center/cover; }
+.od-proof-cell-4 .od-proof-cell-inner { background: url('/oddyssey/dinner-guest.jpg') center/cover; }
+.od-proof-cell-5 .od-proof-cell-inner { background: url('/oddyssey/manor-hero-poster.jpg') center/cover; }
+.od-proof-cell-6 .od-proof-cell-inner { background: url('/oddyssey/manor3.jpg') center/cover; }
+.od-proof-cell-7 .od-proof-cell-inner { background: url('/oddyssey/voyeur-img2.jpg') center/cover; }
+.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/noir-hero-poster.jpg') center/cover; }
 .od-proof-cell-label {
   position: absolute; bottom: 12px; left: 12px; font-size: 9px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--text-muted); opacity: 0; transform: translateY(8px);
@@ -1362,6 +1387,7 @@ const styles = `
 /* ═══ TICKETS ═══ */
 .od-detail-tickets { background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
 .od-ticket-tiers { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border-subtle); margin-top: 48px; }
+.od-ticket-tiers.od-ticket-tiers-single { grid-template-columns: minmax(0, 520px); justify-content: center; }
 .od-ticket-tier {
   background: var(--bg-elevated); padding: clamp(32px,4vw,56px);
   display: flex; flex-direction: column; transition: background 0.4s; position: relative;
