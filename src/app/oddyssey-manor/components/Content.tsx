@@ -7,6 +7,7 @@ import { OddysseyTopNav } from "@/components/oddyssey/OddysseyTopNav";
 import { FollowBand } from "@/components/oddyssey/FollowBand";
 import { FeaturedEventRail } from "@/components/oddyssey/FeaturedEventRail";
 import { ContestBand } from "@/components/oddyssey/ContestBand";
+import { FEATURED_EVENTS } from "@/components/oddyssey/featured-events";
 
 type PageName = "home" | "calendar" | "detail" | "private";
 
@@ -324,68 +325,7 @@ export default function OddysseyContent() {
       )}
 
       {/* ════════ CALENDAR ════════ */}
-      {activePage === "calendar" && (
-        <div>
-          <div className="od-section-pad od-calendar-hero">
-            <div className="od-label">Programming</div>
-            <h1 className="od-heading-1">Events</h1>
-            <p style={{ fontSize: 14, color: "var(--text-muted)", letterSpacing: "1.5px" }}>
-              Fridays &amp; Saturdays inside AREA15 &bull; 10 PM &ndash; Late
-            </p>
-          </div>
-
-          <div className="od-filters">
-            {["All Events", "Techno", "House", "Melodic"].map((f, i) => (
-              <button key={f} className={`od-filter-btn ${i === 0 ? "active" : ""}`}>{f}</button>
-            ))}
-            <div className="od-filter-divider" />
-            {["May", "June", "July"].map((m) => (
-              <button key={m} className="od-filter-btn">{m}</button>
-            ))}
-          </div>
-
-          <div className="od-calendar-list">
-            <CalendarMonth title="May 2026" />
-            {[
-              { date: "Fri May 22", name: "Liquid Gold", genre: "House · Electronic", dj: "DJ Brynn Taylor" },
-              { date: "Sat May 23", name: "Oddyssey Noir", genre: "House · Electronic", dj: "Tony Touch" },
-              { date: "Fri May 29", name: "Liquid Gold", genre: "House · Electronic", dj: "Soni Withaneye" },
-              { date: "Sat May 30", name: "Oddyssey Noir", genre: "House · Electronic", dj: "John Julius Knight" },
-            ].map((e, i) => (
-              <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
-            ))}
-
-            <CalendarMonth title="June 2026" />
-            {[
-              { date: "Fri Jun 05", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jun 06", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
-              { date: "Fri Jun 12", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jun 13", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
-              { date: "Fri Jun 19", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jun 20", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
-              { date: "Fri Jun 26", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jun 27", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
-            ].map((e, i) => (
-              <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
-            ))}
-
-            <CalendarMonth title="July 2026" />
-            {[
-              { date: "Fri Jul 03", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jul 04", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
-              { date: "Fri Jul 10", name: "Liquid Gold", genre: "House · Electronic", dj: "TBA" },
-              { date: "Sat Jul 11", name: "Oddyssey Noir", genre: "House · Electronic", dj: "TBA" },
-            ].map((e, i) => (
-              <CalendarEvent key={i} {...e} onClick={() => showPage("detail")} />
-            ))}
-          </div>
-
-          <div style={{ padding: 60, textAlign: "center" }}>
-            <a className="od-btn-outline" onClick={() => window.scrollTo(0, 0)}>Back to Top</a>
-          </div>
-          <Footer />
-        </div>
-      )}
+      {activePage === "calendar" && <CalendarPage showDetail={() => showPage("detail")} />}
 
       {/* ════════ EVENT DETAIL ════════ */}
       {activePage === "detail" && (
@@ -734,23 +674,221 @@ function Footer() {
   );
 }
 
-function CalendarMonth({ title }: { title: string }) {
+function CalendarMonth({ title, tbaCount }: { title: string; tbaCount?: number }) {
   return (
-    <div className="od-cal-month"><h3>{title}</h3></div>
+    <div className="od-cal-month">
+      <h3>{title}</h3>
+      {tbaCount && tbaCount > 0 ? (
+        <span className="od-cal-month-note">
+          + {tbaCount} more {tbaCount === 1 ? "date" : "dates"} dropping — follow{" "}
+          <a href="https://www.instagram.com/oddysseylv/" target="_blank" rel="noopener noreferrer">@oddysseylv</a>
+        </span>
+      ) : null}
+    </div>
   );
 }
 
-function CalendarEvent({ date, name, genre, dj, onClick }: { date: string; name: string; genre: string; dj?: string; onClick: () => void }) {
+type NightFilter = "all" | "friday" | "saturday" | "featured";
+type MonthFilter = "all" | "05" | "06" | "07";
+
+// Cadence: every Friday is Liquid Gold, every Saturday is Oddyssey
+// Noir. Featured slugs (Pride etc) come from FEATURED_EVENTS and
+// override the row's name + add a flyer link.
+const ALL_EVENTS = [
+  { date: "Fri May 22", dateISO: "2026-05-22", name: "Liquid Gold", dj: "DJ Brynn Taylor", night: "friday" as const },
+  { date: "Sat May 23", dateISO: "2026-05-23", name: "Oddyssey Noir", dj: "Tony Touch", night: "saturday" as const },
+  { date: "Fri May 29", dateISO: "2026-05-29", name: "Liquid Gold", dj: "Soni Withaneye", night: "friday" as const },
+  { date: "Sat May 30", dateISO: "2026-05-30", name: "Oddyssey Noir", dj: "John Julius Knight", night: "saturday" as const },
+  { date: "Fri Jun 05", dateISO: "2026-06-05", name: "Liquid Gold", night: "friday" as const },
+  { date: "Sat Jun 06", dateISO: "2026-06-06", name: "Oddyssey Noir", night: "saturday" as const },
+  { date: "Fri Jun 12", dateISO: "2026-06-12", name: "Liquid Gold", night: "friday" as const },
+  { date: "Sat Jun 13", dateISO: "2026-06-13", name: "Oddyssey Noir", night: "saturday" as const },
+  { date: "Fri Jun 19", dateISO: "2026-06-19", name: "Liquid Gold", night: "friday" as const },
+  { date: "Sat Jun 20", dateISO: "2026-06-20", name: "Oddyssey Noir", night: "saturday" as const },
+  { date: "Fri Jun 26", dateISO: "2026-06-26", name: "Liquid Gold", night: "friday" as const },
+  { date: "Sat Jun 27", dateISO: "2026-06-27", name: "Oddyssey Noir", night: "saturday" as const },
+  { date: "Fri Jul 03", dateISO: "2026-07-03", name: "Liquid Gold", night: "friday" as const },
+  { date: "Sat Jul 04", dateISO: "2026-07-04", name: "Oddyssey Noir", night: "saturday" as const },
+  { date: "Fri Jul 10", dateISO: "2026-07-10", name: "Liquid Gold", night: "friday" as const },
+  { date: "Sat Jul 11", dateISO: "2026-07-11", name: "Oddyssey Noir", night: "saturday" as const },
+];
+
+function CalendarPage({ showDetail }: { showDetail: () => void }) {
+  const [night, setNight] = useState<NightFilter>("all");
+  const [month, setMonth] = useState<MonthFilter>("all");
+
+  // Annotate each event with its featured-slug (if Pride/etc) so the
+  // row can promote name + link straight to the flyer page.
+  const annotated = ALL_EVENTS.map((e) => {
+    const featured = FEATURED_EVENTS.find((f) => f.dateISO === e.dateISO);
+    return {
+      ...e,
+      displayName: featured?.title ?? e.name,
+      eyebrow: featured?.eyebrow,
+      featuredSlug: featured?.slug,
+      accent: featured?.accent,
+    };
+  });
+
+  // Visible after filter pass.
+  const visible = annotated.filter((e) => {
+    if (night === "friday" && e.night !== "friday") return false;
+    if (night === "saturday" && e.night !== "saturday") return false;
+    if (night === "featured" && !e.featuredSlug) return false;
+    if (month !== "all" && e.dateISO.slice(5, 7) !== month) return false;
+    return true;
+  });
+
+  // Filterable but TBA-only rows get collapsed into a per-month
+  // 'more dates dropping' tag rather than printed as a wall of TBA.
+  const showable = visible.filter((e) => e.dj || e.featuredSlug);
+
+  // Group surviving events by month for headered render.
+  const months: { key: string; label: string; events: typeof showable; tbaCount: number }[] = [];
+  const tbaByMonth: Record<string, number> = {};
+  for (const e of visible) {
+    if (!e.dj && !e.featuredSlug) {
+      const k = e.dateISO.slice(0, 7);
+      tbaByMonth[k] = (tbaByMonth[k] ?? 0) + 1;
+    }
+  }
+  for (const e of showable) {
+    const k = e.dateISO.slice(0, 7);
+    let m = months.find((mm) => mm.key === k);
+    if (!m) {
+      const [yr, mo] = k.split("-");
+      const labelMap: Record<string, string> = { "05": "May", "06": "June", "07": "July" };
+      m = { key: k, label: `${labelMap[mo]} ${yr}`, events: [], tbaCount: tbaByMonth[k] ?? 0 };
+      months.push(m);
+    }
+    m.events.push(e);
+  }
+  // Months with TBA-only events but no showables still get a header so
+  // the 'more dates dropping' callout surfaces.
+  for (const k of Object.keys(tbaByMonth)) {
+    if (months.find((m) => m.key === k)) continue;
+    const [yr, mo] = k.split("-");
+    const labelMap: Record<string, string> = { "05": "May", "06": "June", "07": "July" };
+    months.push({ key: k, label: `${labelMap[mo]} ${yr}`, events: [], tbaCount: tbaByMonth[k] });
+  }
+  months.sort((a, b) => a.key.localeCompare(b.key));
+
+  const NIGHT_OPTS: { id: NightFilter; label: string }[] = [
+    { id: "all", label: "All Events" },
+    { id: "friday", label: "Liquid Gold (Fri)" },
+    { id: "saturday", label: "Noir (Sat)" },
+    { id: "featured", label: "Featured" },
+  ];
+  const MONTH_OPTS: { id: MonthFilter; label: string }[] = [
+    { id: "all", label: "All Months" },
+    { id: "05", label: "May" },
+    { id: "06", label: "June" },
+    { id: "07", label: "July" },
+  ];
+
   return (
-    <div className="od-cal-event" onClick={onClick}>
-      <div className="od-cal-date">{date}</div>
+    <div>
+      <div className="od-section-pad od-calendar-hero">
+        <div className="od-label">Programming</div>
+        <h1 className="od-heading-1">Events</h1>
+        <p style={{ fontSize: 14, color: "var(--text-muted)", letterSpacing: "1.5px" }}>
+          Fridays &amp; Saturdays inside AREA15 &bull; 10 PM &ndash; Late
+        </p>
+      </div>
+
+      <div className="od-filters">
+        {NIGHT_OPTS.map((f) => (
+          <button
+            key={f.id}
+            className={`od-filter-btn ${night === f.id ? "active" : ""}`}
+            onClick={() => setNight(f.id)}
+          >
+            {f.label}
+          </button>
+        ))}
+        <div className="od-filter-divider" />
+        {MONTH_OPTS.map((m) => (
+          <button
+            key={m.id}
+            className={`od-filter-btn ${month === m.id ? "active" : ""}`}
+            onClick={() => setMonth(m.id)}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="od-calendar-list">
+        {months.length === 0 ? (
+          <div className="od-cal-empty">
+            <p>No events match — try a different filter.</p>
+            <button className="od-btn-outline" onClick={() => { setNight("all"); setMonth("all"); }}>
+              Reset filters
+            </button>
+          </div>
+        ) : (
+          months.map((m) => (
+            <div key={m.key}>
+              <CalendarMonth title={m.label} tbaCount={m.tbaCount} />
+              {m.events.map((e) => (
+                <CalendarEvent key={e.dateISO} event={e} showDetail={showDetail} />
+              ))}
+            </div>
+          ))
+        )}
+      </div>
+
+      <div style={{ padding: 60, textAlign: "center" }}>
+        <a className="od-btn-outline" onClick={() => window.scrollTo(0, 0)}>Back to Top</a>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+interface AnnotatedEvent {
+  date: string;
+  dateISO: string;
+  name: string;
+  night: "friday" | "saturday";
+  dj?: string;
+  displayName: string;
+  eyebrow?: string;
+  featuredSlug?: string;
+  accent?: string;
+}
+
+function CalendarEvent({ event, showDetail }: { event: AnnotatedEvent; showDetail: () => void }) {
+  const accent = event.accent ?? "var(--accent)";
+  const inner = (
+    <>
+      <div className="od-cal-date">{event.date}</div>
       <div className="od-cal-info">
-        <h4>{name}</h4>
-        {dj && <span className="od-cal-dj">{dj}</span>}
-        <span className="od-cal-genre">{genre}</span>
+        {event.eyebrow && (
+          <span className="od-cal-eyebrow" style={{ color: accent }}>{event.eyebrow}</span>
+        )}
+        <h4>{event.displayName}</h4>
+        {event.dj && <span className="od-cal-dj">{event.dj}</span>}
+        <span className="od-cal-genre">House · Electronic</span>
       </div>
       <div className="od-cal-time">Doors 10 PM</div>
-      <div className="od-cal-ticket"><span className="od-btn-primary od-btn-sm">Buy Tickets</span></div>
+      <div className="od-cal-ticket">
+        <span className="od-btn-primary od-btn-sm" style={event.featuredSlug ? { background: accent } : undefined}>
+          {event.featuredSlug ? "Open Event" : "Buy Tickets"}
+        </span>
+      </div>
+    </>
+  );
+  if (event.featuredSlug) {
+    return (
+      <Link href={`/oddyssey-manor/events/${event.featuredSlug}`} className="od-cal-event od-cal-event-featured">
+        {inner}
+      </Link>
+    );
+  }
+  return (
+    <div className="od-cal-event" onClick={showDetail}>
+      {inner}
     </div>
   );
 }
@@ -1195,18 +1333,24 @@ const styles = `
 .od-filter-btn:hover, .od-filter-btn.active { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
 .od-filter-divider { width: 1px; height: 20px; background: var(--border-subtle); margin: 0 8px; }
 .od-calendar-list { padding: 0 clamp(20px,6vw,120px); }
-.od-cal-month { padding-top: 48px; margin-bottom: 8px; }
+.od-cal-month { padding-top: 48px; margin-bottom: 8px; display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px; }
 .od-cal-month h3 {
   font-family: var(--serif); font-size: 14px; font-weight: 400; letter-spacing: 4px;
-  text-transform: uppercase; color: var(--text-muted); padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-subtle);
+  text-transform: uppercase; color: var(--text-muted); margin: 0;
 }
+.od-cal-month-note { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-muted); font-style: italic; }
+.od-cal-month-note a { color: var(--accent); text-decoration: none; }
+.od-cal-month-note a:hover { text-decoration: underline; }
 .od-cal-event {
   display: grid; grid-template-columns: 140px 1fr auto auto; align-items: center; gap: 32px;
   padding: 28px 0; border-bottom: 1px solid var(--border-subtle); cursor: pointer; transition: background 0.3s;
+  text-decoration: none; color: inherit;
 }
 .od-cal-event:hover { background: var(--accent-dim); margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+.od-cal-event-featured { background: rgba(180,110,200,0.04); }
+.od-cal-event-featured:hover { background: rgba(180,110,200,0.10); }
 .od-cal-date { font-size: 11px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+.od-cal-eyebrow { display: block; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
 .od-cal-info h4 {
   font-family: var(--serif); font-size: clamp(18px,2vw,26px); font-weight: 400;
   letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px;
@@ -1214,6 +1358,9 @@ const styles = `
 .od-cal-dj { display: block; font-family: var(--serif); font-size: 15px; font-weight: 400; color: var(--text); letter-spacing: 1px; margin-bottom: 4px; }
 .od-cal-genre { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
 .od-cal-time { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; text-align: right; }
+.od-cal-empty { padding: 80px 20px; text-align: center; color: var(--text-secondary); }
+.od-cal-empty p { font-size: 14px; letter-spacing: 1px; margin-bottom: 24px; }
+.od-cal-empty button { font-family: inherit; cursor: pointer; }
 @media (max-width: 768px) {
   .od-cal-event { grid-template-columns: 1fr; gap: 12px; padding: 24px 0; }
   .od-cal-time { text-align: left; }
