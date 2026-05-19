@@ -88,7 +88,7 @@ function ManorContent() {
           loop
           playsInline
           preload="auto"
-          poster="/oddyssey/gal17.webp"
+          poster="/oddyssey/manor-hero-poster.jpg"
           aria-hidden="true"
         >
           <source src="/oddyssey/oddy-manor-2026.webm" type="video/webm" />

@@ -93,7 +93,7 @@ function NoirContent() {
           loop
           playsInline
           preload="auto"
-          poster="/oddyssey/gal17.webp"
+          poster="/oddyssey/noir-hero-poster.jpg"
           aria-hidden="true"
         >
           <source src="/oddyssey/oddy-noir-bg.webm" type="video/webm" />
