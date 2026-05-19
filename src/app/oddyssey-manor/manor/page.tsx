@@ -228,15 +228,48 @@ function ManorContent() {
           <p className="m-section-sub">Ten rooms, multiple bars, one labyrinth. Wander freely — every space rewards the curious.</p>
         </div>
         <div className="m-floorplan-wrap">
-          <Image
-            src="/oddyssey/manor-floor-plan.png"
-            alt="Floor plan of Oddyssey Manor — Foyer, Main Street, Garden, Bath Tub, Dressing Room Bar, Felix's Apartment, Athena's Boudoir, Chapel, Main Stage, Full Bar (cocktail glass markers indicate the bars in each room)"
-            width={1484}
-            height={958}
-            sizes="(max-width: 1100px) 90vw, 1100px"
-            className="m-floorplan-img"
-            style={{ width: "100%", height: "auto" }}
-          />
+          <div className="m-floorplan-stage">
+            <Image
+              src="/oddyssey/manor-floor-plan.png"
+              alt="Floor plan of Oddyssey Manor — Foyer, Main Street, Garden, Bath Tub, Dressing Room Bar, Felix's Apartment, Athena's Boudoir, Chapel, Main Stage, Full Bar (cocktail glass markers indicate the bars in each room)"
+              width={1484}
+              height={958}
+              sizes="(max-width: 1100px) 90vw, 1100px"
+              className="m-floorplan-img"
+              style={{ width: "100%", height: "auto", display: "block" }}
+            />
+            {ROOMS.map((r) => (
+              <button
+                key={r.id}
+                type="button"
+                className="m-room-hit"
+                style={{
+                  top: `${r.top}%`,
+                  left: `${r.left}%`,
+                  width: `${r.width}%`,
+                  height: `${r.height}%`,
+                }}
+                aria-label={`${r.name} — ${r.bar ?? "no bar"}`}
+                onClick={(e) => e.preventDefault()}
+              >
+                <span className="m-room-tooltip">
+                  <span className="m-room-tt-eyebrow">
+                    {r.bar ? r.bar : "Room"}
+                  </span>
+                  <span className="m-room-tt-name">{r.name}</span>
+                  {r.cocktail && (
+                    <span className="m-room-tt-cocktail">
+                      <em>{r.cocktail}</em>
+                    </span>
+                  )}
+                  {r.vibe && <span className="m-room-tt-vibe">{r.vibe}</span>}
+                </span>
+              </button>
+            ))}
+          </div>
+          <p className="m-floorplan-hint">
+            Tap or hover any room — every cocktail glass marks a bar.
+          </p>
         </div>
       </section>
 
@@ -435,6 +468,80 @@ function ManorContent() {
 // is intentionally photo-less on the live site (it's the entry tier;
 // the absence of a hero signals the lower price point). Voyeur/
 // Explorer/Dinner Guest each get their flagship shoot.
+// Hit-region coordinates expressed as % of the floor-plan image
+// (1484x958). Eyeballed from manor-floor-plan.png — adjust if the
+// art ever changes. `bar` + `cocktail` cross-reference COCKTAILS,
+// `vibe` is a one-line hook for the tooltip.
+interface RoomHit {
+  id: string;
+  name: string;
+  top: number; left: number; width: number; height: number;
+  bar?: string;        // e.g. "Dressing Room Bar"
+  cocktail?: string;   // matching COCKTAILS entry
+  vibe?: string;
+}
+
+const ROOMS: RoomHit[] = [
+  {
+    id: "foyer", name: "Foyer",
+    top: 10, left: 2, width: 18, height: 36,
+    vibe: "Where the night begins. Welcome Tea served on arrival.",
+    cocktail: "Welcome Tea",
+  },
+  {
+    id: "main-street", name: "Main Street",
+    bar: "Main Street Bar", cocktail: "Penelope's Love Letter",
+    top: 24, left: 21, width: 18, height: 19,
+    vibe: "The Manor's central artery — Penelope's domain.",
+  },
+  {
+    id: "garden", name: "Garden",
+    top: 12, left: 40, width: 18, height: 30,
+    vibe: "Open-air interlude. Where the Sirens often appear.",
+  },
+  {
+    id: "bath-tub", name: "Bath Tub",
+    bar: "Bath Tub Bar", cocktail: "Cici's Remedy",
+    top: 10, left: 58, width: 12, height: 31,
+    vibe: "Sultry, playful, and not what it appears. Cici's corner.",
+  },
+  {
+    id: "dressing-room", name: "Dressing Room Bar",
+    bar: "Dressing Room Bar", cocktail: "The Sirens Song",
+    top: 8, left: 80, width: 17, height: 31,
+    vibe: "Backstage, but you're in it. The Sirens prepare here.",
+  },
+  {
+    id: "felix-apt", name: "Felix's Apartment",
+    bar: "Felix's Bar", cocktail: "Felix's Nightcap",
+    top: 42, left: 55, width: 18, height: 17,
+    vibe: "Our host's private chambers. He'll pour you one himself.",
+  },
+  {
+    id: "chapel", name: "Chapel",
+    bar: "Chapel Bar", cocktail: "Henry's Nightgown",
+    top: 58, left: 21, width: 16, height: 26,
+    vibe: "Confessions, vows, and Henry's laughter echoing through.",
+  },
+  {
+    id: "athenas-boudoir", name: "Athena's Boudoir",
+    bar: "Boudoir Bar", cocktail: "Athena's Disguise",
+    top: 62, left: 56, width: 16, height: 24,
+    vibe: "Felix's right hand keeps her own counsel — and her own bar.",
+  },
+  {
+    id: "main-stage", name: "Main Stage",
+    top: 42, left: 78, width: 21, height: 44,
+    vibe: "Where the night peaks. Performances rotate every cycle.",
+  },
+  {
+    id: "full-bar", name: "Full Bar",
+    bar: "Full Bar",
+    top: 80, left: 38, width: 16, height: 15,
+    vibe: "The Manor's all-purpose pour station — anything you ask for.",
+  },
+];
+
 const TICKET_TIERS: { name: string; price: number; image: string | null; featured?: boolean; features: string[] }[] = [
   {
     name: "The Taster",
@@ -997,6 +1104,86 @@ const manorStyles = `
 .m-floorplan-img {
   display: block; width: 100%; height: auto;
   filter: brightness(1.05) contrast(1.05);
+}
+.m-floorplan-stage { position: relative; }
+
+/* Hit regions sit on top of each room. Invisible until hover —
+   then a subtle accent outline + tooltip card. */
+.m-room-hit {
+  position: absolute;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  transition: background 0.25s, border-color 0.25s;
+  z-index: 1;
+}
+.m-room-hit:hover,
+.m-room-hit:focus-visible {
+  background: rgba(201, 168, 76, 0.12);
+  border-color: rgba(201, 168, 76, 0.55);
+  outline: none;
+}
+.m-room-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  min-width: 220px; max-width: 280px;
+  padding: 14px 16px;
+  background: #0d0d0d;
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.55);
+  display: flex; flex-direction: column; gap: 6px;
+  text-align: left;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s, transform 0.25s;
+  z-index: 10;
+}
+.m-room-hit:hover .m-room-tooltip,
+.m-room-hit:focus-visible .m-room-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.m-room-tt-eyebrow {
+  font-family: var(--sans); font-size: 9px; font-weight: 500;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--accent);
+}
+.m-room-tt-name {
+  font-family: var(--serif); font-size: 18px; font-weight: 400;
+  letter-spacing: 1.2px; color: var(--text);
+}
+.m-room-tt-cocktail {
+  font-family: var(--serif); font-size: 13px; font-style: italic;
+  color: rgba(232, 228, 221, 0.82);
+}
+.m-room-tt-vibe {
+  font-family: var(--sans); font-size: 12px; line-height: 1.55;
+  color: var(--text-secondary); letter-spacing: 0.2px;
+}
+/* Tooltips on the bottom row of the map flip above the room so they
+   don't get clipped by the section edge. The :nth-child cascade is
+   keyed to ROOMS order so room ids stay loose. */
+@media (min-width: 600px) {
+  .m-room-hit:nth-last-child(-n+3) .m-room-tooltip {
+    bottom: auto; top: calc(100% + 10px);
+    transform: translateX(-50%) translateY(-6px);
+  }
+  .m-room-hit:nth-last-child(-n+3):hover .m-room-tooltip,
+  .m-room-hit:nth-last-child(-n+3):focus-visible .m-room-tooltip {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+.m-floorplan-hint {
+  margin-top: 18px; text-align: center;
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); font-style: italic;
+}
+@media (max-width: 600px) {
+  .m-room-tooltip { min-width: 180px; max-width: 220px; padding: 10px 12px; }
+  .m-room-tt-name { font-size: 16px; }
+  .m-room-tt-vibe { font-size: 11px; }
 }
 
 /* ═══ THE PLAYERS ═══ */
