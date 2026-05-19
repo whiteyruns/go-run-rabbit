@@ -1094,17 +1094,22 @@ const styles = `
 .od-experience-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border-subtle); margin-top: 60px; }
 .od-experience-card { background: var(--bg); padding: clamp(40px,5vw,80px); position: relative; overflow: hidden; transition: background 0.6s; }
 .od-experience-card:hover { background: var(--bg-card); }
-.od-exp-bg { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s; }
-.od-experience-card:hover .od-exp-bg { opacity: 1; }
+.od-exp-bg { position: absolute; inset: 0; opacity: 0.55; transition: opacity 0.8s; }
+.od-experience-card:hover .od-exp-bg { opacity: 0.95; }
+/* Card hover backgrounds use the cinematic brand shoots — gal15
+   (small 700px) was upscaled and pixelated; gal8 was the same risqué
+   shot we pulled off the Noir hero + Private. Manor card now uses
+   manor1 (performer + wolf-mask, red lanterns); Noir card uses the
+   noir-hero-poster (DJ neon + AREA15 exterior at night). */
 .od-exp-bg-manor {
-  background: radial-gradient(ellipse at 30% 80%, rgba(201,168,76,0.08) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(6,6,6,0.7), rgba(6,6,6,0.9)),
-    url('/oddyssey/gal15.webp') center/cover no-repeat;
+  background: radial-gradient(ellipse at 30% 80%, rgba(201,168,76,0.10) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(6,6,6,0.55), rgba(6,6,6,0.85)),
+    url('/oddyssey/manor1.jpg') center/cover no-repeat;
 }
 .od-exp-bg-noir {
-  background: radial-gradient(ellipse at 70% 80%, rgba(80,40,100,0.08) 0%, transparent 60%),
-    linear-gradient(180deg, rgba(6,6,6,0.6), rgba(6,6,6,0.85)),
-    url('/oddyssey/gal8.webp') center/cover no-repeat;
+  background: radial-gradient(ellipse at 70% 80%, rgba(180,110,200,0.10) 0%, transparent 60%),
+    linear-gradient(180deg, rgba(6,6,6,0.5), rgba(6,6,6,0.85)),
+    url('/oddyssey/noir-hero-poster.jpg') center/cover no-repeat;
 }
 .od-exp-content { position: relative; z-index: 2; }
 .od-exp-logo { height: 60px; width: auto; margin-bottom: 20px; opacity: 0.9; filter: brightness(1.1); }
