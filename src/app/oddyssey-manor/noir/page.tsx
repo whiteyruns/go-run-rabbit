@@ -761,6 +761,7 @@ const noirStyles = `
   display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
   background: var(--border-subtle); max-width: 1200px; margin: 0 auto;
 }
+@media (max-width: 768px) { .n-night-grid { grid-template-columns: 1fr; } }
 .n-night-card {
   padding: clamp(40px,5vw,72px); position: relative; overflow: hidden;
   background: var(--bg-elevated); transition: background 0.6s;

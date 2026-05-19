@@ -1431,4 +1431,22 @@ const styles = `
 .od-footer-links a { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); cursor: pointer; transition: color 0.3s; }
 .od-footer-links a:hover { color: var(--accent); }
 .od-footer-legal { width: 100%; margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 10px; color: var(--text-muted); letter-spacing: 1px; }
+
+/* ═══ MOBILE FALLBACKS ═══ */
+/* Any multi-column grid on this page that didn't already have a
+   mobile rule. Two breakpoints: 900px collapses tablets, 600px
+   collapses phones. */
+@media (max-width: 900px) {
+  .od-experience-grid { grid-template-columns: 1fr; }
+  .od-about-grid { grid-template-columns: 1fr; gap: 32px; }
+  .od-private-form-grid { grid-template-columns: 1fr; }
+  .od-info-grid { grid-template-columns: 1fr 1fr; }
+  .od-private-types { grid-template-columns: 1fr 1fr; }
+  .od-ticket-tiers { grid-template-columns: 1fr; }
+  .od-event-cards { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .od-info-grid { grid-template-columns: 1fr; }
+  .od-private-types { grid-template-columns: 1fr; }
+}
 `;
