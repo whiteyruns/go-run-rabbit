@@ -15,14 +15,19 @@ export function generateMetadata({ params }: Props): Metadata {
   if (!event) {
     return {
       title: { absolute: "Event Not Found — Oddyssey" },
+      icons: { icon: [{ url: "/oddyssey-manor/events/icon.svg", type: "image/svg+xml" }] },
     };
   }
   const title = `${event.title} — Oddyssey ${event.venue} · ${event.date}`;
   const description = `${event.tagline} ${event.blurb}`.trim();
   const ogImage = event.poster ?? "/oddyssey/manor.webp";
+  // Events currently all run at Noir → purple mark. Manor events
+  // would override per-event when added.
+  const iconUrl = "/oddyssey-manor/events/icon.svg";
   return {
     title: { absolute: title },
     description,
+    icons: { icon: [{ url: iconUrl, type: "image/svg+xml" }] },
     openGraph: {
       title,
       description: event.tagline,

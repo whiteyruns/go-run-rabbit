@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: { absolute: "Oddyssey Noir — Late Night at AREA15 Las Vegas" },
   description:
     "Oddyssey Noir at AREA15: Friday Liquid Gold, Saturday late-night, weekly DJ lineups, bottle service, and reservations.",
+  // Purple Noir mark — overrides parent oddyssey-manor's gold mark.
+  icons: { icon: [{ url: "/oddyssey-manor/noir/icon.svg", type: "image/svg+xml" }] },
   openGraph: {
     title: "Oddyssey Noir — Late Night at AREA15 Las Vegas",
     description: "Fri Liquid Gold + Sat Oddyssey Noir. Doors at 10 PM. AREA15, Las Vegas.",

@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: { absolute: "Oddyssey — Immersive Nightlife at AREA15 Las Vegas" },
   description:
     "Oddyssey at AREA15 Las Vegas. Manor delivers an immersive dining show; Noir takes over for late-night nightlife.",
+  // Override the root /favicon.ico so /oddyssey serves the Oddyssey
+  // wordmark-O mark, not the Go Run Rabbit favicon.
+  icons: { icon: [{ url: "/oddyssey/icon.svg", type: "image/svg+xml" }] },
   openGraph: {
     title: "Oddyssey — Immersive Nightlife at AREA15 Las Vegas",
     description: "Two destinations. One Oddyssey. Inside AREA15, Las Vegas.",

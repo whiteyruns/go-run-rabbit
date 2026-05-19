@@ -512,7 +512,7 @@ const COCKTAILS = [
 const FOOD = [
   { name: "Charcuterie", image: "/oddyssey/food1.png", objectPosition: "55% 40%", desc: "Cured meats, aged cheese, and house accompaniments." },
   { name: "Spare Ribs", image: "/oddyssey/food2.png", objectPosition: "center 35%", desc: "Slow-braised, glazed, and served warm." },
-  { name: "Ube Cheesecake", image: "/oddyssey/food6.png", objectPosition: "center 40%", desc: "A bite of something sweet — purple, smooth, and unexpected." },
+  { name: "Ube Cheesecake", image: "/oddyssey/food6.png", objectPosition: "38% 40%", desc: "A bite of something sweet — purple, smooth, and unexpected." },
 ];
 
 // Mirrors the live oddysseylv.com/manor "Engagement Guide" — five

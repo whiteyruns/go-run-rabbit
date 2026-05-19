@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   title: { absolute: "Oddyssey — Immersive Nightlife at AREA15 Las Vegas" },
   description:
     "Oddyssey at AREA15 Las Vegas. Manor delivers an immersive dining show; Noir takes over for late-night nightlife.",
+  // Override the root layout's icons (the Go Run Rabbit favicon) with
+  // the Oddyssey wordmark-O. File-convention icon.svg alone wasn't
+  // winning the cascade because the root metadata explicitly declares
+  // `icons.icon`. Setting it here (and on each child route layout)
+  // makes Oddyssey's mark the one that ships in <link rel="icon">.
+  icons: { icon: [{ url: "/oddyssey-manor/icon.svg", type: "image/svg+xml" }] },
   openGraph: {
     title: "Oddyssey — Immersive Nightlife at AREA15 Las Vegas",
     description: "Two destinations. One Oddyssey. Inside AREA15, Las Vegas.",
