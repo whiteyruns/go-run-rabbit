@@ -424,7 +424,7 @@ const TIERS = [
       "General admission access",
       "Both dance floors",
       "All themed rooms",
-      "All performers &amp; installations",
+      "All performers & installations",
       "Golden Hour open bar 10 PM — 12 AM",
     ],
   },
@@ -475,7 +475,7 @@ const TABLES = [
     features: [
       "8+ guests",
       "Exclusive section",
-      "Dedicated host &amp; server",
+      "Dedicated host & server",
       "Custom bottle selection",
       "Priority entry for full group",
     ],

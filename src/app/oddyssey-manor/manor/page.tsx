@@ -191,7 +191,7 @@ function ManorContent() {
             <div key={f.name} className="m-food-item">
               <div className="m-food-item-photo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={f.image} alt={f.name} loading="lazy" />
+                <img src={f.image} alt={f.name} loading="lazy" style={{ objectPosition: f.objectPosition }} />
               </div>
               <h4>{f.name}</h4>
               <p>{f.desc}</p>
@@ -470,19 +470,21 @@ const COCKTAILS = [
 
 // food1/2/6 are the three Manor bites the live site has shot
 // (Charcuterie / Spare Ribs / Ube Cheesecake). Shrimp Ceviche
-// dropped — no shoot exists.
+// dropped — no shoot exists. Each source is portrait composition;
+// `objectPosition` picks the right focal point so the square crop
+// keeps the dish (not the negative space) centered.
 const FOOD = [
-  { name: "Charcuterie", image: "/oddyssey/food1.png", desc: "Cured meats, aged cheese, and house accompaniments." },
-  { name: "Spare Ribs", image: "/oddyssey/food2.png", desc: "Slow-braised, glazed, and served warm." },
-  { name: "Ube Cheesecake", image: "/oddyssey/food6.png", desc: "A bite of something sweet — purple, smooth, and unexpected." },
+  { name: "Charcuterie", image: "/oddyssey/food1.png", objectPosition: "55% 40%", desc: "Cured meats, aged cheese, and house accompaniments." },
+  { name: "Spare Ribs", image: "/oddyssey/food2.png", objectPosition: "center 35%", desc: "Slow-braised, glazed, and served warm." },
+  { name: "Ube Cheesecake", image: "/oddyssey/food6.png", objectPosition: "center 40%", desc: "A bite of something sweet — purple, smooth, and unexpected." },
 ];
 
 // Mirrors the live oddysseylv.com/manor "Engagement Guide" — five
 // tips, title case, in the same order as the live page.
 const PLAY_GUIDE = [
   { title: "Wander Freely", desc: "No set path. Every room holds something." },
-  { title: "Engage the Characters", desc: "Ask questions. Accept invitations. They&rsquo;re expecting you." },
-  { title: "Visit All the Bars", desc: "Each has its own personality &mdash; and its own drink." },
+  { title: "Engage the Characters", desc: "Ask questions. Accept invitations. They’re expecting you." },
+  { title: "Visit All the Bars", desc: "Each has its own personality — and its own drink." },
   { title: "Follow the Energy", desc: "When something shifts, move toward it." },
   { title: "Play Along", desc: "The story bends toward guests who lean in." },
 ];
@@ -494,12 +496,12 @@ const PLAYERS = [
   {
     label: "Hosts",
     names: "Felix & Penelope",
-    desc: "The husband-and-wife proprietors of Oddyssey Manor. Gracious to all performers, true keepers of its legacy. This reopening is their grand return, equal parts celebration, séance, and love letter to the theatre&rsquo;s past.",
+    desc: "The husband-and-wife proprietors of Oddyssey Manor. Gracious to all performers, true keepers of its legacy. This reopening is their grand return, equal parts celebration, séance, and love letter to the theatre’s past.",
   },
   {
     label: "The Residents",
     names: "Athena, Felix, Cici, and Henry",
-    desc: "Within the Manor&rsquo;s walls live Athena, Felix&rsquo;s poised and capable right hand; Cici, the spirited heartbeat of the house whose warmth and mischief keep theatre alive (and rumors swirling about her and Athena); and Henry, the absent jester and leer whose laughter still echoes through the rafters.",
+    desc: "Within the Manor’s walls live Athena, Felix’s poised and capable right hand; Cici, the spirited heartbeat of the house whose warmth and mischief keep theatre alive (and rumors swirling about her and Athena); and Henry, the absent jester and leer whose laughter still echoes through the rafters.",
   },
   {
     label: "The Performers",
@@ -509,7 +511,7 @@ const PLAYERS = [
   {
     label: "Special Guests",
     names: "Mysterious Visitors",
-    desc: "Mysterious visitors drift through the Manor&rsquo;s doors, bringing new stories, strange talents, and moments of magic.",
+    desc: "Mysterious visitors drift through the Manor’s doors, bringing new stories, strange talents, and moments of magic.",
   },
 ];
 
@@ -529,18 +531,18 @@ const FAQ = [
   },
   {
     q: "Can I take photos?",
-    a: "Discreet photography is welcome. No flash, no tripods, and please don&rsquo;t interrupt a scene to capture it. Videography for commercial use requires advance permission.",
+    a: "Discreet photography is welcome. No flash, no tripods, and please don’t interrupt a scene to capture it. Videography for commercial use requires advance permission.",
   },
   {
     q: "Is the experience wheelchair accessible?",
     a: "Yes. The Manor is fully ADA-compliant. If you have specific access needs, contact us 48 hours before your visit so we can prepare.",
   },
   {
-    q: "I&rsquo;m sensitive to strobes or loud sound — should I come?",
-    a: "The experience includes concert-level sound, theatrical haze, and occasional strobes. If you&rsquo;re sensitive, reach out and we&rsquo;ll advise on the best times or tiers.",
+    q: "I’m sensitive to strobes or loud sound — should I come?",
+    a: "The experience includes concert-level sound, theatrical haze, and occasional strobes. If you’re sensitive, reach out and we’ll advise on the best times or tiers.",
   },
   {
-    q: "What&rsquo;s included with Noir access?",
+    q: "What’s included with Noir access?",
     a: "Every Manor ticket tier on Friday and Saturday includes entry to Oddyssey Noir — the after-dark party of a sensual, living-room maze centered by a pulsing dance floor. Doors at 10 PM, runs late.",
   },
   {
@@ -896,7 +898,7 @@ const manorStyles = `
 }
 .m-food-item:hover { background: var(--bg-elevated); }
 .m-food-item-photo {
-  width: 100%; aspect-ratio: 4 / 3; overflow: hidden; background: #060606;
+  width: 100%; aspect-ratio: 1 / 1; overflow: hidden; background: #060606;
   margin-bottom: 22px;
 }
 .m-food-item-photo img {

@@ -280,7 +280,7 @@ const EVENT_TYPES = [
   { title: "Celebrations", desc: "Birthdays, bachelorette & bachelor parties, anniversaries" },
   { title: "Brand Activations", desc: "Immersive branded experiences, influencer events, press launches" },
   { title: "Wedding Events", desc: "Rehearsal dinners, after-parties, non-traditional ceremonies" },
-  { title: "Holiday Parties", desc: "Company holiday events, New Year&rsquo;s Eve, themed seasonal gatherings" },
+  { title: "Holiday Parties", desc: "Company holiday events, New Year’s Eve, themed seasonal gatherings" },
   { title: "Full Buyouts", desc: "Exclusive access to Manor, Noir, or both for your group" },
 ];
 
