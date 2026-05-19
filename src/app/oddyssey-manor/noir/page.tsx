@@ -766,7 +766,7 @@ const noirStyles = `
   background:
     radial-gradient(ellipse at 30% 80%, rgba(212,165,116,0.14) 0%, transparent 60%),
     linear-gradient(180deg, rgba(6,6,6,0.5), rgba(6,6,6,0.88)),
-    url('/oddyssey/noir-bar.jpg') center/cover no-repeat;
+    url('/oddyssey/noir-crowd-dj.jpg') center/cover no-repeat;
   opacity: 0.55;
 }
 .n-night-saturday::before {

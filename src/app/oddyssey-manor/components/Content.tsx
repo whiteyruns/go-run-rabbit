@@ -1216,7 +1216,7 @@ const styles = `
 .od-proof-cell-5 .od-proof-cell-inner { background: url('/oddyssey/manor-hero-poster.jpg') center/cover; }
 .od-proof-cell-6 .od-proof-cell-inner { background: url('/oddyssey/manor3.jpg') center/cover; }
 .od-proof-cell-7 .od-proof-cell-inner { background: url('/oddyssey/noir-perf-neon.jpg') center/cover; }
-.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/noir-bar.jpg') center/cover; }
+.od-proof-cell-8 .od-proof-cell-inner { background: url('/oddyssey/noir-perf-antler.jpg') center/cover; }
 .od-proof-cell-label {
   position: absolute; bottom: 12px; left: 12px; font-size: 9px; letter-spacing: 2px;
   text-transform: uppercase; color: var(--text-muted); opacity: 0; transform: translateY(8px);
