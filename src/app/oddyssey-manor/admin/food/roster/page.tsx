@@ -1,5 +1,6 @@
 "use client";
 
+import { EmailRosterForm } from "@/components/oddyssey-food/EmailRosterForm";
 import { RosterPrint } from "@/components/oddyssey-food/RosterPrint";
 import { RosterTable } from "@/components/oddyssey-food/RosterTable";
 import { WalkupForm } from "@/components/oddyssey-food/WalkupForm";
@@ -17,6 +18,7 @@ export default function RosterPage() {
   const [loaded, setLoaded] = useState(false);
   const [search, setSearch] = useState("");
   const [showWalkup, setShowWalkup] = useState(false);
+  const [showEmail, setShowEmail] = useState(false);
   const [walkupCount, setWalkupCount] = useState(0);
 
   const refresh = useCallback(() => {
@@ -113,6 +115,7 @@ export default function RosterPage() {
           </div>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
             <button onClick={() => setShowWalkup(true)} style={btnOutline}>+ Add Walk-Up</button>
+            <button onClick={() => setShowEmail(true)} style={btnOutline}>Email to Team</button>
             <button onClick={() => window.print()} style={btnPrimary}>Print Roster</button>
             <Link href="/oddyssey-manor/admin/food/kitchen" style={btnOutline}>View Totals &amp; Charts →</Link>
           </div>
@@ -175,6 +178,8 @@ export default function RosterPage() {
           onSaved={() => { setShowWalkup(false); refresh(); }}
         />
       )}
+
+      {showEmail && <EmailRosterForm onClose={() => setShowEmail(false)} />}
     </>
   );
 }
