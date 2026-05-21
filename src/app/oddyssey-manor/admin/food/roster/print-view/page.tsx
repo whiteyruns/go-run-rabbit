@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { RosterPrint } from "@/components/oddyssey-food/RosterPrint";
+import { loadStoredAssignments } from "@/lib/oddyssey-food/assignments-server";
 import { buildStateFromCsv } from "@/lib/oddyssey-food/build-state";
 import { buildRoster } from "@/lib/oddyssey-food/roster";
 
@@ -41,11 +42,11 @@ export default async function RosterPrintViewPage({
   }
 
   const { state } = buildStateFromCsv("latest.csv", csv);
-  // Server-side render uses empty assignments map — manual UI overrides
-  // (location, package type, walk-ups) live in browser localStorage and
-  // are not visible to the server. Auto-derived fields from the CSV
-  // (derived_package_types etc.) are populated by buildStateFromCsv.
-  const allSections = buildRoster(state, {});
+  // Assignments are mirrored to data/oddyssey-food/assignments.json
+  // by the admin UI on every saveAssignments() call. Walk-ups are
+  // still localStorage-only and won't appear here.
+  const { map: assignments } = loadStoredAssignments();
+  const allSections = buildRoster(state, assignments);
 
   const targetDate = dateParam ?? todayInPT();
   const sections = showAll
@@ -60,6 +61,9 @@ export default async function RosterPrintViewPage({
           The CSV has {allSections.length} date section(s) but none match{" "}
           <code>{targetDate}</code>. Add <code>?all=1</code> to see every date,
           or <code>?date=YYYY-MM-DD</code> for a specific one.
+        </p>
+        <p style={{ color: "#666", fontSize: 13, marginTop: 16 }}>
+          Server assignments: {Object.keys(assignments).length} guest(s).
         </p>
       </div>
     );

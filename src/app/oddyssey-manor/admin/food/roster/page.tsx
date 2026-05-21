@@ -28,6 +28,17 @@ export default function RosterPage() {
   useEffect(() => {
     refresh();
     setLoaded(true);
+    // Bootstrap: mirror current localStorage assignments to the server
+    // so the nightly roster-pdf cron sees them even if no edit happens
+    // before 2:35 PM PT. saveAssignments() also mirrors on every change.
+    const map = loadAssignments();
+    if (Object.keys(map).length > 0) {
+      void fetch("/api/oddyssey-food/assignments", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ map }),
+      }).catch(() => { /* non-fatal */ });
+    }
   }, [refresh]);
 
   const sections = useMemo(() => {

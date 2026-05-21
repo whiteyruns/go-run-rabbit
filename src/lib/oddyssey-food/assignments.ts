@@ -55,6 +55,18 @@ export function loadAssignments(): AssignmentsMap {
 export function saveAssignments(map: AssignmentsMap): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(KEY, JSON.stringify(map));
+  // Fire-and-forget mirror to the server so the nightly roster-pdf
+  // cron + print-view server component see the same data. UI failure
+  // shouldn't block on the network — localStorage stays the UI source
+  // of truth.
+  void fetch("/api/oddyssey-food/assignments", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ map }),
+    keepalive: true,
+  }).catch(() => {
+    /* network errors are non-fatal; the next save will retry */
+  });
 }
 
 export function updateAssignment(
