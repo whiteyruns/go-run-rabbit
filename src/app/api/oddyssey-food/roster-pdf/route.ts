@@ -87,7 +87,8 @@ export async function POST(request: Request) {
     const { Resend } = await import("resend");
     const resend = new Resend(process.env.RESEND_API_KEY);
     const { error, data } = await resend.emails.send({
-      from: "Keith @ Go Run Rabbit <keith@gorunrabbit.com>",
+      from: "Oddyssey Manor Kitchen <keith@gorunrabbit.com>",
+      replyTo: "bpereyda@area15.com",
       to: recipients,
       cc: cc.length > 0 ? cc : undefined,
       subject,
