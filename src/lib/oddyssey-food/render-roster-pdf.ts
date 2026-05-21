@@ -29,6 +29,14 @@ export async function renderRosterPdf(opts: RenderOpts): Promise<RenderedPdf> {
   try {
     const ctx = await browser.newContext({ viewport: { width: 1600, height: 1200 } });
     const page = await ctx.newPage();
+    // Pre-set the AdminShell's session flag before any page script runs.
+    // /oddyssey-manor/admin/food/* is gated by an access-code form in
+    // AdminShell.tsx that checks sessionStorage.od-auth on mount; a
+    // clean Playwright context has empty storage and would render the
+    // login screen instead of the roster.
+    await page.addInitScript(() => {
+      try { sessionStorage.setItem("od-auth", "true"); } catch { /* */ }
+    });
     await page.goto(url, { waitUntil: "networkidle", timeout: 60_000 });
 
     // Wait for fonts so the printed layout is stable.
