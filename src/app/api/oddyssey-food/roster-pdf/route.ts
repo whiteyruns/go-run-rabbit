@@ -48,10 +48,12 @@ export async function POST(request: Request) {
     );
   }
 
-  // Resolve the local origin where the running Next server is listening.
-  // request.url is the inbound URL; use its origin so Playwright hits the
-  // same process that handles the API call.
-  const origin = new URL(request.url).origin;
+  // Playwright runs in the same Node process as this handler, so always
+  // navigate via plain HTTP loopback. Deriving from request.url breaks
+  // when Cloudflare/Nginx forwards X-Forwarded-Proto=https — the URL
+  // ends up as https://localhost:3102 and SSL fails on the loopback.
+  const port = process.env.PORT ?? "3102";
+  const origin = process.env.ROSTER_PDF_BASE_URL ?? `http://127.0.0.1:${port}`;
 
   let pdf: Buffer;
   let renderedFrom: string;
