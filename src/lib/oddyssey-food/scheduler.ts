@@ -171,6 +171,29 @@ async function sendEmail(
 const sendRecap = (venue: "manor" | "noir", date: string) => sendEmail("recap", venue, date);
 const sendBriefing = (venue: "manor" | "noir", date: string) => sendEmail("briefing", venue, date);
 
+// Manor food roster PDF — runs after the 2 PM regular pull (45-min
+// offset gives the CSV write room to settle, same pattern as the
+// 17:05 briefing offset from the 17:00 pull).
+async function sendRosterPdf(date: string) {
+  const port = process.env.PORT ?? "3102";
+  const url = `http://localhost:${port}/api/oddyssey-food/roster-pdf`;
+  const stamp = new Date().toISOString();
+  console.log(`[oddyssey-scheduler] ${stamp} fire: roster-pdf-manor (${date})`);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ date }),
+    });
+    const data = await res.json();
+    console.log(
+      `[oddyssey-scheduler] roster-pdf-manor → ${data.status} ${data.subject ?? ""} → ${(data.recipients ?? []).join(", ")}${data.cc?.length ? ` cc:${data.cc.join(",")}` : ""} ${data.resend_id ? `(${data.resend_id})` : data.message ?? ""}`
+    );
+  } catch (e) {
+    console.log(`[oddyssey-scheduler] roster-pdf-manor failed: ${String(e)}`);
+  }
+}
+
 // Monday 8 AM PT weekend-recap upload reminder. Posts to a Node-runtime
 // API route instead of importing reminder.ts directly — mirrors the
 // sendEmail() pattern above and keeps fs-using code out of the
@@ -321,6 +344,10 @@ export function startScheduler(): void {
     // sales keep coming through the afternoon, so we pull through 5 PM
     // to make the 5 PM GM briefing email up-to-date.
     ["manor-regular", "0 9-17 * * 4,5,6,0", () => runPull("manor-regular", "manor")],
+    // 2:45 PM PT — kitchen-prep roster PDF, sent 45 min after the 2 PM
+    // pull writes latest.csv. To: LV_EventsManagement@area15.com,
+    // CC: Brandon + Keith (configured in roster-pdf/route.ts defaults).
+    ["manor-roster-pdf", "45 14 * * 4,5,6,0", () => sendRosterPdf(todayLocal())],
     // 5 PM PT GM briefing email — talking points for the evening
     // Brief fires 5 min after the regular 17:00 pull so latest.csv has
     // finished writing. Same-minute race produced a 0-admission briefing

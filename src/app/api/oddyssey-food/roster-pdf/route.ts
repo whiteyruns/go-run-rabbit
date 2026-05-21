@@ -5,9 +5,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const TEST_RECIPIENT = "keith@gorunrabbit.com";
-// Production list once we flip the cron on. Wire in scheduler.ts after
-// the test send confirms the pipeline end-to-end.
-// const DEFAULT_RECIPIENTS = ["kwhite@consultant.area15.com", "bpereyda@area15.com"];
+const PROD_TO = ["LV_EventsManagement@area15.com"];
+const PROD_CC = ["bpereyda@area15.com", "keith@gorunrabbit.com"];
 
 function todayInPT(): string {
   return new Intl.DateTimeFormat("en-CA", {
@@ -32,6 +31,7 @@ interface SendBody {
   date?: string;
   all?: boolean;
   recipients?: string[];
+  cc?: string[];
   test?: boolean;
 }
 
@@ -39,7 +39,11 @@ export async function POST(request: Request) {
   const body = (await request.json().catch(() => ({}))) as SendBody;
   const date = body.date ?? todayInPT();
   const all = body.all ?? false;
-  const recipients = body.recipients ?? [TEST_RECIPIENT];
+  // test=true OR explicit recipients override → use that list (with no CC)
+  // otherwise → production To + CC
+  const recipients =
+    body.recipients ?? (body.test ? [TEST_RECIPIENT] : PROD_TO);
+  const cc = body.cc ?? (body.test || body.recipients ? [] : PROD_CC);
 
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json(
@@ -75,12 +79,8 @@ export async function POST(request: Request) {
   const filename = `manor-roster-${all ? "all" : date}.pdf`;
 
   const html = `
-    <p>Attached: auto-generated food allocation roster for <strong>${dateLabel}</strong>.</p>
-    <p style="color:#666;font-size:13px">Snapshot from <code>latest.csv</code>.
-    Manual UI overrides (location, package type, walk-ups) are not yet included —
-    those still live in browser localStorage. Server-side persistence is a
-    follow-up if needed.</p>
-    <p style="color:#999;font-size:12px">Rendered from ${renderedFrom}</p>
+    <p>Attached: tonight's food allocation roster for <strong>${dateLabel}</strong> at Oddyssey Manor.</p>
+    <p style="color:#666;font-size:13px">Auto-generated from the ticketing snapshot. Walk-ups added after this send won't appear; check the live dashboard at <a href="https://gorunrabbit.com/oddyssey-manor/admin/food/roster">gorunrabbit.com/oddyssey-manor/admin/food/roster</a> for the latest.</p>
   `;
 
   try {
@@ -89,6 +89,7 @@ export async function POST(request: Request) {
     const { error, data } = await resend.emails.send({
       from: "Keith @ Go Run Rabbit <keith@gorunrabbit.com>",
       to: recipients,
+      cc: cc.length > 0 ? cc : undefined,
       subject,
       html,
       attachments: [
@@ -100,7 +101,7 @@ export async function POST(request: Request) {
     });
     if (error) {
       return NextResponse.json(
-        { status: "error", phase: "send", message: error.message, recipients },
+        { status: "error", phase: "send", message: error.message, recipients, cc },
         { status: 500 },
       );
     }
@@ -109,6 +110,7 @@ export async function POST(request: Request) {
       resend_id: data?.id,
       subject,
       recipients,
+      cc,
       bytes: pdf.length,
       rendered_from: renderedFrom,
     });
