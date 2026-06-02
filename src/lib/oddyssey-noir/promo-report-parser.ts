@@ -52,6 +52,12 @@ export interface PromoReportResult {
 
 const REQUIRED_HEADERS = ['audit_action', 'codes', 'session_time'] as const;
 
+// Restrict to Noir rows when the export contains multiple events. The
+// Ticketure UI event filter is unreliable in headless Playwright, so we
+// always defensive-filter here. If `event_name` column is missing (older
+// exports without it), all rows are kept.
+const NOIR_EVENT_NAME = /^oddyssey\s+noir$/i;
+
 export function parsePromoReport(input: PromoReportInput): PromoReportResult {
   const warnings: string[] = [];
   const wb = XLSX.read(input.buf, { cellDates: true });
@@ -78,16 +84,26 @@ export function parsePromoReport(input: PromoReportInput): PromoReportResult {
     }
     idx[h] = i;
   }
+  // Optional — present in the Tixr/Ticketure audit/redemption exports.
+  const eventNameIdx = header.indexOf('event_name');
 
   // Collect coded redemption rows with their PT date.
   type CodedRow = { date: string; dayOfWeek: 'fri' | 'sat' | 'other'; code: string };
   const coded: CodedRow[] = [];
   let skippedBadSession = 0;
+  let skippedNonNoir = 0;
   for (let r = 1; r < rows.length; r++) {
     const row = rows[r];
     const action = row[idx.audit_action];
     if (typeof action !== 'string') continue;
     if (!/^(redeemed|force_redeemed)$/i.test(action)) continue;
+    if (eventNameIdx >= 0) {
+      const ev = row[eventNameIdx];
+      if (typeof ev !== 'string' || !NOIR_EVENT_NAME.test(ev.trim())) {
+        skippedNonNoir++;
+        continue;
+      }
+    }
     const session = row[idx.session_time];
     if (!(session instanceof Date)) {
       skippedBadSession++;
@@ -107,6 +123,9 @@ export function parsePromoReport(input: PromoReportInput): PromoReportResult {
   }
   if (skippedBadSession > 0) {
     warnings.push(`Skipped ${skippedBadSession} redemption rows with no parseable session_time.`);
+  }
+  if (skippedNonNoir > 0) {
+    warnings.push(`Skipped ${skippedNonNoir} redemption rows from non-Noir events.`);
   }
 
   if (coded.length === 0) {
