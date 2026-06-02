@@ -113,7 +113,10 @@ async function main() {
   const page = await context.newPage();
 
   try {
-    const reportUrl = `${BASE}/${ACCOUNT}/reports/redemption`;
+    // Try URL-param date range first. Many Ticketure pages accept these
+    // (the food/attendees pull uses ?from=&until=); if accepted here, it
+    // saves us the date-picker dance. If ignored, we fall back to DOM.
+    const reportUrl = `${BASE}/${ACCOUNT}/reports/redemption?from=${from}&until=${until}`;
     console.log(`[audit-pull] go ${reportUrl}`);
     await page.goto(reportUrl, { waitUntil: 'networkidle' }).catch(() => {});
 
@@ -181,73 +184,105 @@ async function main() {
       }
     }
 
-    // ─── Set date range ────────────────────────────────────────────────
-    // The page has two date inputs (from / to). Targets vary across
-    // Ticketure builds — try a few approaches.
+    // ─── Set date range via DOM (URL params may have been ignored) ──────
+    // The displayed text is like "Tue, Jun 2, 2026" — a custom date control,
+    // not a plain text input. We try several strategies in order and log
+    // which one worked so future iterations don't re-guess.
     console.log(`[audit-pull] setting date range ${from} → ${until}`);
-    const dateInputs = page.locator('input[type="text"]').filter({
-      hasText: /,\s*\d{4}$/, // matches things like "May 28, 2026"
-    });
-    const inputCount = await dateInputs.count().catch(() => 0);
-    console.log(`[audit-pull] found ${inputCount} date-like inputs`);
-
-    // Fallback: locate inputs by their displayed value pattern.
-    const dateLocator = page.locator('input').filter({
-      has: page.locator(':scope'),
-    });
-    void dateLocator;
-
-    // Most-robust path: find inputs whose value matches a date string and overwrite.
-    const allInputs = await page.locator('input').all();
-    let dateInputsSet = 0;
     const fromHuman = humanDate(from);
     const untilHuman = humanDate(until);
-    for (const input of allInputs) {
+    let dateStrategy = 'none';
+
+    // Strategy 1: a hidden/visible input whose VALUE looks like a date.
+    const inputs = await page.locator('input').all();
+    let inputsSet = 0;
+    for (const input of inputs) {
       const value = (await input.inputValue().catch(() => '')) ?? '';
-      if (/^[A-Z][a-z]{2},\s+[A-Z][a-z]{2}\s+\d{1,2},\s+\d{4}$/.test(value) || /\d{1,2}\/\d{1,2}\/\d{4}/.test(value)) {
-        // First match = from, second = until
-        const target = dateInputsSet === 0 ? fromHuman : untilHuman;
-        await input.click({ timeout: 3000 }).catch(() => {});
-        await input.fill('').catch(() => {});
+      if (/^[A-Z][a-z]{2},?\s+[A-Z][a-z]{2}\s+\d{1,2},?\s+\d{4}$/.test(value) || /\d{1,2}\/\d{1,2}\/\d{4}/.test(value)) {
+        const target = inputsSet === 0 ? fromHuman : untilHuman;
+        await input.click({ timeout: 2000 }).catch(() => {});
         await input.fill(target).catch(() => {});
         await input.press('Enter').catch(() => {});
-        dateInputsSet++;
-        if (dateInputsSet >= 2) break;
+        inputsSet++;
+        if (inputsSet >= 2) break;
       }
     }
-    console.log(`[audit-pull] set ${dateInputsSet} date inputs`);
-    if (dateInputsSet < 2) {
-      await page.screenshot({ path: path.join(outDir, 'last-date-input-miss.png'), fullPage: true }).catch(() => {});
-      console.warn('[audit-pull] could not locate both date inputs — proceeding with whatever the page has');
-    }
-    await page.waitForTimeout(500);
-
-    // ─── Ensure Oddyssey Noir event is selected ─────────────────────────
-    // The screenshot shows a chip "Oddyssey Noir x" already selected; the
-    // multi-select likely persists across sessions for the logged-in user.
-    // If it's missing, click the Events combobox and pick the option.
-    const eventsChip = page.getByText(new RegExp(`^${escapeRegex(EVENT_NAME)}$`));
-    const hasChip = await eventsChip.first().isVisible({ timeout: 1500 }).catch(() => false);
-    if (!hasChip) {
-      console.log('[audit-pull] Oddyssey Noir chip missing — selecting it');
-      const eventsInput = page.locator('label:has-text("Events")').locator('..').locator('input').first();
-      if (await eventsInput.isVisible({ timeout: 2000 }).catch(() => false)) {
-        await eventsInput.click();
-        await eventsInput.fill(EVENT_NAME);
-        await page.waitForTimeout(500);
-        const option = page.getByRole('option', { name: new RegExp(EVENT_NAME, 'i') }).first();
-        if (await option.isVisible({ timeout: 2000 }).catch(() => false)) {
-          await option.click();
-        }
-      }
+    if (inputsSet >= 2) {
+      dateStrategy = 'value-matched-inputs';
     } else {
-      console.log('[audit-pull] Oddyssey Noir already selected');
+      // Strategy 2: click the visible date TEXT, fill the input that the
+      // picker exposes inside its popover.
+      const dateTexts = page.locator('text=/^[A-Za-z]{3},?\\s+[A-Za-z]{3}\\s+\\d{1,2},?\\s+\\d{4}$/');
+      const textCount = await dateTexts.count().catch(() => 0);
+      console.log(`[audit-pull] strategy-2 found ${textCount} date-text candidates`);
+      for (let i = 0; i < Math.min(textCount, 4) && inputsSet < 2; i++) {
+        const target = inputsSet === 0 ? fromHuman : untilHuman;
+        await dateTexts.nth(i).click({ timeout: 2000 }).catch(() => {});
+        await page.waitForTimeout(400);
+        // The picker may now have an editable input — find the most recently
+        // focused element, or any visible input near the click.
+        const popoverInput = page.locator('input:visible').first();
+        if (await popoverInput.isVisible({ timeout: 1500 }).catch(() => false)) {
+          await popoverInput.fill(target).catch(() => {});
+          await popoverInput.press('Enter').catch(() => {});
+          inputsSet++;
+        }
+        await page.keyboard.press('Escape').catch(() => {});
+        await page.waitForTimeout(300);
+      }
+      if (inputsSet >= 2) dateStrategy = 'click-text-then-fill';
+    }
+    console.log(`[audit-pull] date strategy: ${dateStrategy} (${inputsSet}/2 set)`);
+    if (inputsSet < 2) {
+      await page.screenshot({ path: path.join(outDir, 'last-date-input-miss.png'), fullPage: true }).catch(() => {});
+      console.warn('[audit-pull] could not locate both date inputs');
     }
     await page.waitForTimeout(500);
 
-    // ─── Click "Select All" on ticket types (safe default) ──────────────
+    // ─── Set Oddyssey Noir event filter (always; don't skip-if-present) ──
+    // Previous "is it already selected?" check matched the word elsewhere on
+    // the page and incorrectly skipped. Always perform the selection — it's
+    // idempotent if the chip is already there.
+    console.log('[audit-pull] setting Events filter to Oddyssey Noir');
+    let eventSet = false;
+    const eventComboboxSelectors = [
+      'input[placeholder*="All Events" i]',
+      'input[placeholder*="Events" i]',
+      'label:has-text("Events") + * input',
+      'label:has-text("Events") ~ * input',
+      '[role="combobox"]',
+    ];
+    for (const sel of eventComboboxSelectors) {
+      const loc = page.locator(sel).first();
+      if (!(await loc.isVisible({ timeout: 600 }).catch(() => false))) continue;
+      await loc.click({ timeout: 1500 }).catch(() => {});
+      await loc.fill(EVENT_NAME).catch(() => {});
+      await page.waitForTimeout(400);
+      const option = page.getByRole('option', { name: new RegExp(EVENT_NAME, 'i') }).first();
+      if (await option.isVisible({ timeout: 1500 }).catch(() => false)) {
+        await option.click();
+        eventSet = true;
+        console.log(`[audit-pull] event filter set via "${sel}"`);
+        break;
+      }
+      // Try plain text option fallback
+      const textOption = page.getByText(new RegExp(`^${escapeRegex(EVENT_NAME)}$`)).first();
+      if (await textOption.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await textOption.click();
+        eventSet = true;
+        console.log(`[audit-pull] event filter set via "${sel}" (text fallback)`);
+        break;
+      }
+      await page.keyboard.press('Escape').catch(() => {});
+    }
+    if (!eventSet) {
+      console.warn('[audit-pull] could not select Oddyssey Noir event filter');
+    }
+    await page.waitForTimeout(800);
+
+    // ─── Click "Select All" on ticket types ─────────────────────────────
     const selectAll = page.getByText(/^select all$/i).first();
-    if (await selectAll.isVisible({ timeout: 2000 }).catch(() => false)) {
+    if (await selectAll.isVisible({ timeout: 1500 }).catch(() => false)) {
       console.log('[audit-pull] clicking Select All');
       await selectAll.click();
       await page.waitForTimeout(500);
@@ -256,23 +291,39 @@ async function main() {
     await page.screenshot({ path: path.join(outDir, 'last-before-export.png'), fullPage: true }).catch(() => {});
 
     // ─── Click the kebab/three-dot export menu ──────────────────────────
+    // The kebab is at the right end of the date range bar. Try many
+    // selector patterns (MUI, semantic, structural). Each click opens a
+    // popover; we then look for an Export-ish item.
     let exportClicked = false;
-    const kebabCandidates = [
-      page.locator('button[aria-label*="more" i]'),
-      page.locator('button[aria-haspopup="true"]'),
-      page.locator('[data-toggle="dropdown"]'),
-      page.locator('.EditOptions__toggle'),
-      page.locator('button:has(svg)'),
+    const exportItemPattern = /export|download|csv|xlsx|spreadsheet/i;
+
+    const kebabCandidates: Array<{ name: string; loc: ReturnType<typeof page.locator> }> = [
+      { name: 'button[aria-label~="more" i]', loc: page.locator('button[aria-label~="more" i]') },
+      { name: 'button[aria-label~="export" i]', loc: page.locator('button[aria-label~="export" i]') },
+      { name: 'button[aria-label~="options" i]', loc: page.locator('button[aria-label~="options" i]') },
+      { name: 'button[aria-label~="actions" i]', loc: page.locator('button[aria-label~="actions" i]') },
+      { name: 'button[aria-label~="menu" i]', loc: page.locator('button[aria-label~="menu" i]') },
+      { name: 'button[aria-haspopup="true"]', loc: page.locator('button[aria-haspopup="true"]') },
+      { name: '.MuiIconButton-root', loc: page.locator('.MuiIconButton-root') },
+      { name: '[data-testid*="menu"]', loc: page.locator('[data-testid*="menu" i]') },
+      // Generic: any button whose tooltip text contains "more options"
+      { name: 'button[title*="more" i]', loc: page.locator('button[title*="more" i]') },
+      { name: 'button:has(svg)', loc: page.locator('button:has(svg)') },
     ];
-    for (const loc of kebabCandidates) {
+
+    for (const { name, loc } of kebabCandidates) {
+      if (exportClicked) break;
       const count = await loc.count().catch(() => 0);
+      if (count === 0) continue;
+      console.log(`[audit-pull] trying kebab selector "${name}" (${count} matches)`);
       for (let i = 0; i < count && !exportClicked; i++) {
         const el = loc.nth(i);
-        if (!(await el.isVisible({ timeout: 500 }).catch(() => false))) continue;
-        await el.click({ timeout: 2000 }).catch(() => {});
-        await page.waitForTimeout(400);
-        const exportItem = page.getByText(/export|download.*xlsx|download.*csv/i).first();
-        if (await exportItem.isVisible({ timeout: 1500 }).catch(() => false)) {
+        if (!(await el.isVisible({ timeout: 400 }).catch(() => false))) continue;
+        await el.click({ timeout: 1500 }).catch(() => {});
+        await page.waitForTimeout(500);
+        const exportItem = page.getByText(exportItemPattern).first();
+        if (await exportItem.isVisible({ timeout: 1000 }).catch(() => false)) {
+          console.log(`[audit-pull] menu opened via "${name}" idx ${i}, found export item`);
           const [download] = await Promise.all([
             page.waitForEvent('download', { timeout: 30000 }),
             exportItem.click(),
@@ -281,17 +332,17 @@ async function main() {
           exportClicked = true;
           break;
         }
-        // Close menu so we can try the next candidate
         await page.keyboard.press('Escape').catch(() => {});
+        await page.waitForTimeout(200);
       }
-      if (exportClicked) break;
     }
 
     if (!exportClicked) {
       await page.screenshot({ path: path.join(outDir, 'last-export-not-found.png'), fullPage: true }).catch(() => {});
+      await dumpDom(page, outDir);
       throw new Error(
         'Could not locate the kebab/export menu on the Redemption Report page — ' +
-          'check last-export-not-found.png to see the rendered DOM.',
+          'check last-export-not-found.png and dom-dump.json.',
       );
     }
   } catch (err) {
@@ -332,6 +383,79 @@ async function saveDownload(download: Download, outDir: string, from: string, un
 
   console.log(`[audit-pull] saved: ${outPath}`);
   console.log(`[audit-pull] latest: ${latestPath}`);
+}
+
+/**
+ * Dump a JSON description of small clickables (likely kebab candidates)
+ * AND any input-like elements, with bounding rects, aria attributes, and
+ * text. Used to derive correct selectors when blind selector lists fail.
+ */
+async function dumpDom(page: import('playwright').Page, outDir: string): Promise<void> {
+  try {
+    const dump = await page.evaluate(() => {
+      const result: {
+        url: string;
+        inputs: Array<{ tag: string; type: string; placeholder: string; value: string; ariaLabel: string; rect: { x: number; y: number; w: number; h: number } }>;
+        buttons: Array<{ tag: string; cls: string; ariaLabel: string; title: string; ariaHaspopup: string; text: string; rect: { x: number; y: number; w: number; h: number } }>;
+        comboboxes: Array<{ tag: string; cls: string; ariaLabel: string; text: string; rect: { x: number; y: number; w: number; h: number } }>;
+      } = { url: location.href, inputs: [], buttons: [], comboboxes: [] };
+
+      const visible = (el: Element): boolean => {
+        const r = el.getBoundingClientRect();
+        return r.width > 0 && r.height > 0;
+      };
+
+      // Inputs (full set)
+      for (const el of Array.from(document.querySelectorAll('input'))) {
+        if (!visible(el)) continue;
+        const r = el.getBoundingClientRect();
+        result.inputs.push({
+          tag: el.tagName,
+          type: el.getAttribute('type') ?? '',
+          placeholder: el.getAttribute('placeholder') ?? '',
+          value: (el as HTMLInputElement).value ?? '',
+          ariaLabel: el.getAttribute('aria-label') ?? '',
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+        });
+      }
+
+      // Buttons — only small ones (likely icon buttons / kebabs)
+      for (const el of Array.from(document.querySelectorAll('button, [role="button"]'))) {
+        if (!visible(el)) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width > 80 || r.height > 80) continue;
+        result.buttons.push({
+          tag: el.tagName,
+          cls: (el.className?.toString() ?? '').slice(0, 80),
+          ariaLabel: el.getAttribute('aria-label') ?? '',
+          title: el.getAttribute('title') ?? '',
+          ariaHaspopup: el.getAttribute('aria-haspopup') ?? '',
+          text: (el.textContent ?? '').trim().slice(0, 30),
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+        });
+        if (result.buttons.length >= 30) break;
+      }
+
+      // Comboboxes / select-like elements
+      for (const el of Array.from(document.querySelectorAll('[role="combobox"], [role="listbox"], [aria-haspopup="listbox"]'))) {
+        if (!visible(el)) continue;
+        const r = el.getBoundingClientRect();
+        result.comboboxes.push({
+          tag: el.tagName,
+          cls: (el.className?.toString() ?? '').slice(0, 80),
+          ariaLabel: el.getAttribute('aria-label') ?? '',
+          text: (el.textContent ?? '').trim().slice(0, 50),
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+        });
+      }
+
+      return result;
+    });
+    await fs.writeFile(path.join(outDir, 'dom-dump.json'), JSON.stringify(dump, null, 2), 'utf-8');
+    console.log(`[audit-pull] dumped DOM probe to dom-dump.json (${dump.buttons.length} buttons, ${dump.inputs.length} inputs, ${dump.comboboxes.length} comboboxes)`);
+  } catch (e) {
+    console.warn(`[audit-pull] dumpDom failed: ${(e as Error).message}`);
+  }
 }
 
 function humanDate(iso: string): string {
