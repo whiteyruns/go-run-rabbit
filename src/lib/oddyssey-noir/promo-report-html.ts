@@ -9,13 +9,22 @@
 import type { PromoNightCode, PromoReportResult } from './promo-report-parser';
 
 /**
- * Plain-text invoice block, matching the format Brandon already uses in his
- * iMessage thread:
+ * Plain-text invoice block, matching the format Brandon uses in his
+ * WhatsApp messages to the team:
+ *
+ *   5/29 Incentives
+ *   Ayiro: $30
+ *   Ryan T: $30
+ *   Saturn: $20
  *
  *   5/30 Incentives
- *   Tyler Anthony: $25 — 5 redemptions
- *   Christina D: $10 — 2 redemptions
- *   ...
+ *   Tyler Anthony: $25
+ *   Christina D: $10
+ *   Nia H: $10
+ *
+ * Just Name: $amount lines, blank line between nights. No redemption
+ * counts, no em-dashes, no totals — Brandon annotates "already invoiced"
+ * himself after paying out. Keep it copy-paste-into-WhatsApp clean.
  */
 export function renderPromoInvoiceText(result: PromoReportResult): string {
   if (result.promoters.length === 0) {
@@ -24,14 +33,12 @@ export function renderPromoInvoiceText(result: PromoReportResult): string {
   const blocks: string[] = [];
   for (const night of result.promoters) {
     if (night.codes.length === 0) continue;
-    const total = night.codes.reduce((a, c) => a + c.owed, 0);
     const header = `${shortDate(night.date)} Incentives`;
     const lines = night.codes.map(
-      (c) => `${c.mapped?.displayName ?? c.code}: $${c.owed} — ${c.count} redemption${c.count === 1 ? '' : 's'}`,
+      (c) => `${c.mapped?.displayName ?? c.code}: $${c.owed}`,
     );
-    blocks.push(`${header}\n${lines.join('\n')}\nNight total: $${total}`);
+    blocks.push(`${header}\n${lines.join('\n')}`);
   }
-  blocks.push(`Weekend total: $${result.totals.promoterOwed}`);
   return blocks.join('\n\n');
 }
 
@@ -62,6 +69,22 @@ export function renderPromoReportHtmlBlock(result: PromoReportResult): string {
         ${result.totals.promoterRedemptions} promoter redemptions · <strong style="color:${text};">$${result.totals.promoterOwed}</strong> owed
         ${result.totals.nonPromoterRedemptions > 0 ? ` · ${result.totals.nonPromoterRedemptions} non-promoter` : ''}
         ${result.totals.unmappedRedemptions > 0 ? ` · ${result.totals.unmappedRedemptions} unmapped` : ''}
+      </div>
+    </div>
+  `);
+
+  // WhatsApp-ready copy block — first thing Brandon sees, no scrolling.
+  // Email clients can't run JS so no copy button, but the <pre> text is
+  // long-press selectable on mobile / triple-clickable on desktop.
+  const invoiceText = renderPromoInvoiceText(result);
+  sections.push(`
+    <div style="margin-top:20px;background:#0a3d2a;border:1px solid #1f6147;border-radius:6px;padding:16px 18px;">
+      <div style="font-family:Consolas,monospace;font-size:10px;letter-spacing:2px;color:#5cd29d;text-transform:uppercase;margin-bottom:10px;">
+        📋 Copy → WhatsApp
+      </div>
+      <pre style="margin:0;padding:0;font-family:'SF Mono','Menlo','Monaco',Consolas,monospace;font-size:14px;line-height:1.55;color:#e8e4dd;white-space:pre-wrap;background:transparent;border:none;user-select:all;">${escape(invoiceText)}</pre>
+      <div style="margin-top:10px;font-size:11px;color:${muted};font-style:italic;">
+        Triple-click (desktop) or long-press (mobile) to select the whole block.
       </div>
     </div>
   `);
