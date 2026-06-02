@@ -18,6 +18,7 @@ export const runtime = 'nodejs';
 
 const AUDIT_DIR = path.resolve(process.cwd(), 'data/oddyssey-noir/audit');
 const LATEST_XLSX = path.join(AUDIT_DIR, 'latest.xlsx');
+const LATEST_CSV = path.join(AUDIT_DIR, 'latest.csv');
 const LATEST_META = path.join(AUDIT_DIR, 'latest-meta.json');
 const LATEST_JSON = path.join(AUDIT_DIR, 'latest.json');
 
@@ -88,20 +89,29 @@ export async function POST(request: Request) {
     );
   }
 
-  // Parse the downloaded xlsx
-  let xlsxBuf: Buffer;
+  // Parse the downloaded file — Ticketure's "Export Actions as CSV" produces
+  // a .csv; the parser uses XLSX.read which auto-detects format. Prefer
+  // .xlsx if present (older path), fall back to .csv.
+  let fileBuf: Buffer;
+  let sourceName: string;
   try {
-    xlsxBuf = await fs.readFile(LATEST_XLSX);
+    fileBuf = await fs.readFile(LATEST_XLSX);
+    sourceName = 'latest.xlsx';
   } catch {
-    return NextResponse.json(
-      {
-        status: 'error',
-        stage: 'read-xlsx',
-        message: `Script reported success but ${LATEST_XLSX} not found`,
-        log: result.stdout,
-      },
-      { status: 500 },
-    );
+    try {
+      fileBuf = await fs.readFile(LATEST_CSV);
+      sourceName = 'latest.csv';
+    } catch {
+      return NextResponse.json(
+        {
+          status: 'error',
+          stage: 'read-file',
+          message: `Script reported success but neither ${LATEST_XLSX} nor ${LATEST_CSV} found`,
+          log: result.stdout,
+        },
+        { status: 500 },
+      );
+    }
   }
 
   let meta: PullMeta | null = null;
@@ -114,8 +124,8 @@ export async function POST(request: Request) {
   let parsed: PromoReportResult;
   try {
     parsed = parsePromoReport({
-      buf: xlsxBuf,
-      sourceFile: meta?.filename ?? 'latest.xlsx',
+      buf: fileBuf,
+      sourceFile: meta?.filename ?? sourceName,
     });
   } catch (e) {
     return NextResponse.json(

@@ -1,21 +1,28 @@
 #!/usr/bin/env bash
-# Safely deploy go-rabbit-web to the Mac Mini.
+# Safely deploy go-rabbit-web to Perrin Mini.
+#
+# Migrated 2026-06-02: target switched from white@100.97.115.18 (Claymore,
+# white user deleted) to perrinclaw@<perrin-mini>. Process manager switched
+# from PM2 to launchd (label com.gorunrabbit.web).
 #
 # Usage:   ./scripts/deploy.sh
 # Env overrides (optional):
-#   DEPLOY_SSH_TARGET   default: white@100.97.115.18
-#   DEPLOY_APP_DIR      default: /Users/white/apps/go-rabbit-web
-#   DEPLOY_PM2_NAME     default: go-rabbit-web
+#   DEPLOY_SSH_TARGET     default: perrinclaw@perrins-mac-mini (Tailscale MagicDNS)
+#   DEPLOY_APP_DIR        default: /Users/perrinclaw/apps/go-rabbit-web
+#   DEPLOY_LAUNCHD_LABEL  default: com.gorunrabbit.web
 #
 # Fails loudly on the first error. The remote build is run BEFORE the
-# pm2 restart, so a broken build can never leave pm2 in a crash loop —
+# launchd kickstart, so a broken build can never restart into a bad state —
 # the old process keeps serving until the new one is known to be good.
 
 set -euo pipefail
 
-SSH_TARGET="${DEPLOY_SSH_TARGET:-white@100.97.115.18}"
-APP_DIR="${DEPLOY_APP_DIR:-/Users/white/apps/go-rabbit-web}"
-PM2_NAME="${DEPLOY_PM2_NAME:-go-rabbit-web}"
+# Tailscale MagicDNS hostname avoids hard-coding the IP — survives
+# Tailscale IP reassignments. Override DEPLOY_SSH_TARGET if Tailscale is
+# unavailable (e.g. DEPLOY_SSH_TARGET=perrinclaw@192.168.0.49 on LAN).
+SSH_TARGET="${DEPLOY_SSH_TARGET:-perrinclaw@perrins-mac-mini}"
+APP_DIR="${DEPLOY_APP_DIR:-/Users/perrinclaw/apps/go-rabbit-web}"
+LAUNCHD_LABEL="${DEPLOY_LAUNCHD_LABEL:-com.gorunrabbit.web}"
 PUBLIC_URL="${DEPLOY_PUBLIC_URL:-https://gorunrabbit.com/}"
 
 step() { printf "\n\033[1;36m==> %s\033[0m\n" "$*"; }
@@ -69,17 +76,12 @@ rm -rf .next
 
 echo "-> npm run build"
 # next build exits non-zero on lint errors / compilation failures. set -e
-# will abort the whole SSH session before we touch pm2.
+# will abort the whole SSH session before we touch launchd.
 npm run build
 test -f .next/BUILD_ID || { echo "FAIL: .next/BUILD_ID missing after build" >&2; exit 1; }
 
-echo "-> pm2 restart (or start if it's been dropped)"
-if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
-  pm2 restart "$PM2_NAME" --update-env
-else
-  pm2 start npm --name "$PM2_NAME" -- start
-fi
-pm2 save
+echo "-> launchctl kickstart $LAUNCHD_LABEL"
+launchctl kickstart -k "gui/\$(id -u)/$LAUNCHD_LABEL"
 
 echo "-> waiting for localhost:3102 to come up"
 code=000

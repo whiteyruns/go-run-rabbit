@@ -217,11 +217,11 @@ async function main() {
     const manualInputs = await frame.locator('input.date-manual').all();
     console.log(`[audit-pull] found ${manualInputs.length} .date-manual inputs`);
     let inputsSet = 0;
-    const fromDmy = ddmmyyyy(from);
-    const untilDmy = ddmmyyyy(until);
+    const fromMdy = mmddyyyy(from);
+    const untilMdy = mmddyyyy(until);
     for (let i = 0; i < manualInputs.length && inputsSet < 2; i++) {
       const input = manualInputs[i];
-      const target = inputsSet === 0 ? fromDmy : untilDmy;
+      const target = inputsSet === 0 ? fromMdy : untilMdy;
       await input.click({ timeout: 2000 }).catch(() => {});
       await input.fill('').catch(() => {});
       await input.fill(target).catch(() => {});
@@ -229,7 +229,7 @@ async function main() {
       await page.waitForTimeout(400);
       inputsSet++;
     }
-    if (inputsSet >= 2) dateStrategy = 'date-manual-dmy';
+    if (inputsSet >= 2) dateStrategy = 'date-manual-mdy';
     console.log(`[audit-pull] date strategy: ${dateStrategy} (${inputsSet}/2 set)`);
     if (inputsSet < 2) {
       await page.screenshot({ path: path.join(outDir, 'last-date-input-miss.png'), fullPage: true }).catch(() => {});
@@ -479,10 +479,12 @@ function humanDate(iso: string): string {
   return `${months[m - 1]} ${d}, ${y}`;
 }
 
-function ddmmyyyy(iso: string): string {
-  // "2026-05-28" → "28/05/2026" (matches the date-manual placeholder)
+function mmddyyyy(iso: string): string {
+  // "2026-05-28" → "05/28/2026" (Ticketure is US-format despite the
+  // "dd/mm/yyyy" placeholder — confirmed empirically: 01/06/2026 parsed
+  // as Jan 6 not Jun 1).
   const [y, m, d] = iso.split('-');
-  return `${d}/${m}/${y}`;
+  return `${m}/${d}/${y}`;
 }
 
 function escapeRegex(s: string): string {
