@@ -169,26 +169,38 @@ async function main() {
       await page.goto(reportUrl, { waitUntil: 'networkidle' });
     }
 
-    // ─── Click the Redemption Report tab ────────────────────────────────
-    const redemptionTab = page.getByRole('tab', { name: /redemption report/i }).first();
+    // ─── Resolve the iframe ────────────────────────────────────────────
+    // Ticketure renders report content inside an iframe. EVERYTHING below
+    // — date controls, event filter, kebab, export — lives in that frame.
+    // (The food-pull script confirms this pattern for the attendees page.)
+    console.log('[audit-pull] resolving iframe');
+    await page.waitForTimeout(1500);
+    const iframeHandle = await page.locator('iframe').first().elementHandle({ timeout: 10000 });
+    const frame = iframeHandle ? await iframeHandle.contentFrame() : null;
+    if (!frame) {
+      await page.screenshot({ path: path.join(outDir, 'last-no-iframe.png'), fullPage: true }).catch(() => {});
+      throw new Error('Could not resolve report iframe.');
+    }
+    await frame.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForTimeout(1000);
+
+    // ─── Click the Redemption Report tab (inside iframe) ────────────────
+    const redemptionTab = frame.getByRole('tab', { name: /redemption report/i }).first();
     if (await redemptionTab.isVisible({ timeout: 5000 }).catch(() => false)) {
       console.log('[audit-pull] clicking Redemption Report tab');
       await redemptionTab.click();
       await page.waitForTimeout(800);
     } else {
-      // Try a text-based fallback in case it's not exposed as role=tab
-      const fallback = page.getByText(/redemption report/i).first();
+      const fallback = frame.getByText(/redemption report/i).first();
       if (await fallback.isVisible({ timeout: 2000 }).catch(() => false)) {
         await fallback.click();
         await page.waitForTimeout(800);
       }
     }
 
-    // Probe the DOM immediately after page-load so we have a baseline
-    // for selector iteration, regardless of what happens later.
-    await page.waitForTimeout(1500);
+    // Probe the iframe DOM after tab-click for selector iteration.
     await page.screenshot({ path: path.join(outDir, 'last-after-nav.png'), fullPage: true }).catch(() => {});
-    await dumpDom(page, outDir);
+    await dumpDom(frame, outDir);
 
     // ─── Set date range via DOM (URL params may have been ignored) ──────
     // The displayed text is like "Tue, Jun 2, 2026" — a custom date control,
@@ -199,8 +211,8 @@ async function main() {
     const untilHuman = humanDate(until);
     let dateStrategy = 'none';
 
-    // Strategy 1: a hidden/visible input whose VALUE looks like a date.
-    const inputs = await page.locator('input').all();
+    // Strategy 1: an iframe input whose VALUE looks like a date.
+    const inputs = await frame.locator('input').all();
     let inputsSet = 0;
     for (const input of inputs) {
       const value = (await input.inputValue().catch(() => '')) ?? '';
@@ -216,18 +228,15 @@ async function main() {
     if (inputsSet >= 2) {
       dateStrategy = 'value-matched-inputs';
     } else {
-      // Strategy 2: click the visible date TEXT, fill the input that the
-      // picker exposes inside its popover.
-      const dateTexts = page.locator('text=/^[A-Za-z]{3},?\\s+[A-Za-z]{3}\\s+\\d{1,2},?\\s+\\d{4}$/');
+      // Strategy 2: click the visible date TEXT inside the frame.
+      const dateTexts = frame.locator('text=/^[A-Za-z]{3},?\\s+[A-Za-z]{3}\\s+\\d{1,2},?\\s+\\d{4}$/');
       const textCount = await dateTexts.count().catch(() => 0);
       console.log(`[audit-pull] strategy-2 found ${textCount} date-text candidates`);
       for (let i = 0; i < Math.min(textCount, 4) && inputsSet < 2; i++) {
         const target = inputsSet === 0 ? fromHuman : untilHuman;
         await dateTexts.nth(i).click({ timeout: 2000 }).catch(() => {});
         await page.waitForTimeout(400);
-        // The picker may now have an editable input — find the most recently
-        // focused element, or any visible input near the click.
-        const popoverInput = page.locator('input:visible').first();
+        const popoverInput = frame.locator('input:visible').first();
         if (await popoverInput.isVisible({ timeout: 1500 }).catch(() => false)) {
           await popoverInput.fill(target).catch(() => {});
           await popoverInput.press('Enter').catch(() => {});
@@ -245,10 +254,7 @@ async function main() {
     }
     await page.waitForTimeout(500);
 
-    // ─── Set Oddyssey Noir event filter (always; don't skip-if-present) ──
-    // Previous "is it already selected?" check matched the word elsewhere on
-    // the page and incorrectly skipped. Always perform the selection — it's
-    // idempotent if the chip is already there.
+    // ─── Set Oddyssey Noir event filter (always; iframe-scoped) ──────────
     console.log('[audit-pull] setting Events filter to Oddyssey Noir');
     let eventSet = false;
     const eventComboboxSelectors = [
@@ -259,20 +265,19 @@ async function main() {
       '[role="combobox"]',
     ];
     for (const sel of eventComboboxSelectors) {
-      const loc = page.locator(sel).first();
+      const loc = frame.locator(sel).first();
       if (!(await loc.isVisible({ timeout: 600 }).catch(() => false))) continue;
       await loc.click({ timeout: 1500 }).catch(() => {});
       await loc.fill(EVENT_NAME).catch(() => {});
       await page.waitForTimeout(400);
-      const option = page.getByRole('option', { name: new RegExp(EVENT_NAME, 'i') }).first();
+      const option = frame.getByRole('option', { name: new RegExp(EVENT_NAME, 'i') }).first();
       if (await option.isVisible({ timeout: 1500 }).catch(() => false)) {
         await option.click();
         eventSet = true;
         console.log(`[audit-pull] event filter set via "${sel}"`);
         break;
       }
-      // Try plain text option fallback
-      const textOption = page.getByText(new RegExp(`^${escapeRegex(EVENT_NAME)}$`)).first();
+      const textOption = frame.getByText(new RegExp(`^${escapeRegex(EVENT_NAME)}$`)).first();
       if (await textOption.isVisible({ timeout: 1000 }).catch(() => false)) {
         await textOption.click();
         eventSet = true;
@@ -287,7 +292,7 @@ async function main() {
     await page.waitForTimeout(800);
 
     // ─── Click "Select All" on ticket types ─────────────────────────────
-    const selectAll = page.getByText(/^select all$/i).first();
+    const selectAll = frame.getByText(/^select all$/i).first();
     if (await selectAll.isVisible({ timeout: 1500 }).catch(() => false)) {
       console.log('[audit-pull] clicking Select All');
       await selectAll.click();
@@ -295,26 +300,23 @@ async function main() {
     }
 
     await page.screenshot({ path: path.join(outDir, 'last-before-export.png'), fullPage: true }).catch(() => {});
+    await dumpDom(frame, outDir);
 
-    // ─── Click the kebab/three-dot export menu ──────────────────────────
-    // The kebab is at the right end of the date range bar. Try many
-    // selector patterns (MUI, semantic, structural). Each click opens a
-    // popover; we then look for an Export-ish item.
+    // ─── Click the kebab/three-dot export menu (iframe-scoped) ──────────
     let exportClicked = false;
     const exportItemPattern = /export|download|csv|xlsx|spreadsheet/i;
 
-    const kebabCandidates: Array<{ name: string; loc: ReturnType<typeof page.locator> }> = [
-      { name: 'button[aria-label~="more" i]', loc: page.locator('button[aria-label~="more" i]') },
-      { name: 'button[aria-label~="export" i]', loc: page.locator('button[aria-label~="export" i]') },
-      { name: 'button[aria-label~="options" i]', loc: page.locator('button[aria-label~="options" i]') },
-      { name: 'button[aria-label~="actions" i]', loc: page.locator('button[aria-label~="actions" i]') },
-      { name: 'button[aria-label~="menu" i]', loc: page.locator('button[aria-label~="menu" i]') },
-      { name: 'button[aria-haspopup="true"]', loc: page.locator('button[aria-haspopup="true"]') },
-      { name: '.MuiIconButton-root', loc: page.locator('.MuiIconButton-root') },
-      { name: '[data-testid*="menu"]', loc: page.locator('[data-testid*="menu" i]') },
-      // Generic: any button whose tooltip text contains "more options"
-      { name: 'button[title*="more" i]', loc: page.locator('button[title*="more" i]') },
-      { name: 'button:has(svg)', loc: page.locator('button:has(svg)') },
+    const kebabCandidates: Array<{ name: string; loc: ReturnType<typeof frame.locator> }> = [
+      { name: 'button[aria-label~="more" i]', loc: frame.locator('button[aria-label~="more" i]') },
+      { name: 'button[aria-label~="export" i]', loc: frame.locator('button[aria-label~="export" i]') },
+      { name: 'button[aria-label~="options" i]', loc: frame.locator('button[aria-label~="options" i]') },
+      { name: 'button[aria-label~="actions" i]', loc: frame.locator('button[aria-label~="actions" i]') },
+      { name: 'button[aria-label~="menu" i]', loc: frame.locator('button[aria-label~="menu" i]') },
+      { name: 'button[aria-haspopup="true"]', loc: frame.locator('button[aria-haspopup="true"]') },
+      { name: '.MuiIconButton-root', loc: frame.locator('.MuiIconButton-root') },
+      { name: '[data-testid*="menu"]', loc: frame.locator('[data-testid*="menu" i]') },
+      { name: 'button[title*="more" i]', loc: frame.locator('button[title*="more" i]') },
+      { name: 'button:has(svg)', loc: frame.locator('button:has(svg)') },
     ];
 
     for (const { name, loc } of kebabCandidates) {
@@ -327,7 +329,7 @@ async function main() {
         if (!(await el.isVisible({ timeout: 400 }).catch(() => false))) continue;
         await el.click({ timeout: 1500 }).catch(() => {});
         await page.waitForTimeout(500);
-        const exportItem = page.getByText(exportItemPattern).first();
+        const exportItem = frame.getByText(exportItemPattern).first();
         if (await exportItem.isVisible({ timeout: 1000 }).catch(() => false)) {
           console.log(`[audit-pull] menu opened via "${name}" idx ${i}, found export item`);
           const [download] = await Promise.all([
@@ -398,7 +400,10 @@ async function saveDownload(download: Download, outDir: string, from: string, un
  * tsx adds `__name(fn, "name")` calls for named arrows, which breaks when
  * the function is serialized into the browser context.
  */
-async function dumpDom(page: import('playwright').Page, outDir: string): Promise<void> {
+async function dumpDom(
+  target: import('playwright').Page | import('playwright').Frame,
+  outDir: string,
+): Promise<void> {
   try {
     // Pass as STRING to avoid tsx's __name() helper injection.
     const evalSrc = `(() => {
@@ -472,7 +477,7 @@ async function dumpDom(page: import('playwright').Page, outDir: string): Promise
       }
       return result;
     })()`;
-    const dump = await page.evaluate(evalSrc);
+    const dump = await target.evaluate(evalSrc);
     await fs.writeFile(path.join(outDir, 'dom-dump.json'), JSON.stringify(dump, null, 2), 'utf-8');
     const d = dump as { buttons: unknown[]; inputs: unknown[]; comboboxes: unknown[]; dateLikeText: unknown[] };
     console.log(`[audit-pull] dom-dump.json: ${d.buttons.length} buttons, ${d.inputs.length} inputs, ${d.comboboxes.length} comboboxes, ${d.dateLikeText.length} date-text matches`);
