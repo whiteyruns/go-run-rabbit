@@ -59,6 +59,16 @@ const TOOLS: Tool[] = [
     meta: 'Liber Gigante · Fri + Sat',
   },
   {
+    slug: 'promo-report',
+    eyebrow: 'Noir · Weekly',
+    title: 'Promo Code Report',
+    blurb:
+      "Upload the Tixr ticket_audit xlsx → per-promoter redemption tally + invoice-ready breakdown. Replaces Brandon's yellow-notepad tally.",
+    href: '/oddyssey-manor/admin/promo-report',
+    accent: 'purple',
+    meta: 'Brandon · Monday',
+  },
+  {
     slug: 'pour-log',
     eyebrow: 'Golden Hour',
     title: 'Pour Log',

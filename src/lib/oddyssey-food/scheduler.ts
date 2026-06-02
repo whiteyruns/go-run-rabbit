@@ -230,6 +230,52 @@ async function runWeekendRecapReminder() {
   }
 }
 
+// Noir Redemption Report auto-pull. The API route spawns the Playwright
+// script, parses the xlsx, and persists data/oddyssey-noir/audit/latest.json
+// — the same path the manual upload writes to, so the email job downstream
+// reads one source of truth.
+async function runNoirAuditPull() {
+  const port = process.env.PORT ?? "3102";
+  const url = `http://localhost:${port}/api/oddyssey-noir/audit/pull`;
+  const stamp = new Date().toISOString();
+  console.log(`[oddyssey-scheduler] ${stamp} fire: noir-audit-pull`);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+    const data = await res.json();
+    console.log(
+      `[oddyssey-scheduler] noir-audit-pull → ${data.status} weekend=${data.snapshot?.result?.weekendLabel ?? "?"} owed=$${data.snapshot?.result?.totals?.promoterOwed ?? "?"} ${data.message ?? data.stage ?? ""}`,
+    );
+  } catch (err) {
+    console.log(`[oddyssey-scheduler] noir-audit-pull failed: ${String(err)}`);
+  }
+}
+
+// Noir promo report email — sends Brandon the per-promoter tally read
+// from the persisted snapshot. Send route falls back to disk if no body.
+async function runNoirPromoEmail() {
+  const port = process.env.PORT ?? "3102";
+  const url = `http://localhost:${port}/api/oddyssey-noir/promo-report/send`;
+  const stamp = new Date().toISOString();
+  console.log(`[oddyssey-scheduler] ${stamp} fire: noir-promo-email`);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ test: false }),
+    });
+    const data = await res.json();
+    console.log(
+      `[oddyssey-scheduler] noir-promo-email → ${data.status} subject="${data.subject ?? ""}" recipients=${(data.recipients ?? []).join(",")} ${data.message ?? ""}`,
+    );
+  } catch (err) {
+    console.log(`[oddyssey-scheduler] noir-promo-email failed: ${String(err)}`);
+  }
+}
+
 function todayLocal(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -366,6 +412,14 @@ export function startScheduler(): void {
     // Post-show pull at 03:00 Sat/Sun (after 2 AM close), recap at 03:15
     ["noir-postshow", "0 3 * * 6,0", () => runPull("noir-postshow", "noir", yesterdayLocal())],
     ["noir-recap", "15 3 * * 6,0", () => sendRecap("noir", yesterdayLocal())],
+
+    // --- NOIR PROMO REPORT ---
+    // Sunday 04:00 PT — pull the Redemption Report (Thu→Mon) from Ticketure
+    // after Saturday's 3 AM close. Parses + persists the tally.
+    ["noir-audit-pull", "0 4 * * 0", () => void runNoirAuditPull()],
+    // Monday 07:45 PT — email Brandon the per-promoter tally + invoice text,
+    // 15 min before the existing 08:00 weekend-recap-reminder.
+    ["noir-promo-email", "45 7 * * 1", () => void runNoirPromoEmail()],
 
     // --- WEEKEND RECAP ---
     // Monday 8 AM PT — nudge Keith to upload MANOR P&L + NOIR Budgets workbooks.
