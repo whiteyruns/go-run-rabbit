@@ -184,6 +184,12 @@ async function main() {
       }
     }
 
+    // Probe the DOM immediately after page-load so we have a baseline
+    // for selector iteration, regardless of what happens later.
+    await page.waitForTimeout(1500);
+    await page.screenshot({ path: path.join(outDir, 'last-after-nav.png'), fullPage: true }).catch(() => {});
+    await dumpDom(page, outDir);
+
     // ─── Set date range via DOM (URL params may have been ignored) ──────
     // The displayed text is like "Tue, Jun 2, 2026" — a custom date control,
     // not a plain text input. We try several strategies in order and log
@@ -386,73 +392,90 @@ async function saveDownload(download: Download, outDir: string, from: string, un
 }
 
 /**
- * Dump a JSON description of small clickables (likely kebab candidates)
- * AND any input-like elements, with bounding rects, aria attributes, and
- * text. Used to derive correct selectors when blind selector lists fail.
+ * Dump a JSON description of inputs, small buttons, and combobox-like
+ * elements. Used to derive correct selectors when blind selector lists
+ * fail. The inner code is plain JS with NO named function expressions —
+ * tsx adds `__name(fn, "name")` calls for named arrows, which breaks when
+ * the function is serialized into the browser context.
  */
 async function dumpDom(page: import('playwright').Page, outDir: string): Promise<void> {
   try {
-    const dump = await page.evaluate(() => {
-      const result: {
-        url: string;
-        inputs: Array<{ tag: string; type: string; placeholder: string; value: string; ariaLabel: string; rect: { x: number; y: number; w: number; h: number } }>;
-        buttons: Array<{ tag: string; cls: string; ariaLabel: string; title: string; ariaHaspopup: string; text: string; rect: { x: number; y: number; w: number; h: number } }>;
-        comboboxes: Array<{ tag: string; cls: string; ariaLabel: string; text: string; rect: { x: number; y: number; w: number; h: number } }>;
-      } = { url: location.href, inputs: [], buttons: [], comboboxes: [] };
-
-      const visible = (el: Element): boolean => {
-        const r = el.getBoundingClientRect();
-        return r.width > 0 && r.height > 0;
-      };
-
-      // Inputs (full set)
-      for (const el of Array.from(document.querySelectorAll('input'))) {
-        if (!visible(el)) continue;
-        const r = el.getBoundingClientRect();
+    // Pass as STRING to avoid tsx's __name() helper injection.
+    const evalSrc = `(() => {
+      var result = { url: location.href, inputs: [], buttons: [], comboboxes: [], dateLikeText: [] };
+      var els, el, r, text;
+      // Inputs (all visible)
+      els = document.querySelectorAll('input');
+      for (var i = 0; i < els.length; i++) {
+        el = els[i];
+        r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
         result.inputs.push({
-          tag: el.tagName,
-          type: el.getAttribute('type') ?? '',
-          placeholder: el.getAttribute('placeholder') ?? '',
-          value: (el as HTMLInputElement).value ?? '',
-          ariaLabel: el.getAttribute('aria-label') ?? '',
-          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+          type: el.getAttribute('type') || '',
+          placeholder: el.getAttribute('placeholder') || '',
+          value: el.value || '',
+          ariaLabel: el.getAttribute('aria-label') || '',
+          readonly: el.hasAttribute('readonly'),
+          cls: String(el.className || '').slice(0, 80),
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) }
         });
       }
-
-      // Buttons — only small ones (likely icon buttons / kebabs)
-      for (const el of Array.from(document.querySelectorAll('button, [role="button"]'))) {
-        if (!visible(el)) continue;
-        const r = el.getBoundingClientRect();
+      // Small buttons (likely kebabs/icon buttons)
+      els = document.querySelectorAll('button, [role="button"]');
+      for (var i = 0; i < els.length && result.buttons.length < 50; i++) {
+        el = els[i];
+        r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
         if (r.width > 80 || r.height > 80) continue;
         result.buttons.push({
           tag: el.tagName,
-          cls: (el.className?.toString() ?? '').slice(0, 80),
-          ariaLabel: el.getAttribute('aria-label') ?? '',
-          title: el.getAttribute('title') ?? '',
-          ariaHaspopup: el.getAttribute('aria-haspopup') ?? '',
-          text: (el.textContent ?? '').trim().slice(0, 30),
-          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+          cls: String(el.className || '').slice(0, 80),
+          ariaLabel: el.getAttribute('aria-label') || '',
+          title: el.getAttribute('title') || '',
+          ariaHaspopup: el.getAttribute('aria-haspopup') || '',
+          text: (el.textContent || '').trim().slice(0, 30),
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) }
         });
-        if (result.buttons.length >= 30) break;
       }
-
-      // Comboboxes / select-like elements
-      for (const el of Array.from(document.querySelectorAll('[role="combobox"], [role="listbox"], [aria-haspopup="listbox"]'))) {
-        if (!visible(el)) continue;
-        const r = el.getBoundingClientRect();
+      // Comboboxes
+      els = document.querySelectorAll('[role="combobox"], [role="listbox"], [aria-haspopup="listbox"]');
+      for (var i = 0; i < els.length; i++) {
+        el = els[i];
+        r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
         result.comboboxes.push({
           tag: el.tagName,
-          cls: (el.className?.toString() ?? '').slice(0, 80),
-          ariaLabel: el.getAttribute('aria-label') ?? '',
-          text: (el.textContent ?? '').trim().slice(0, 50),
-          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) },
+          cls: String(el.className || '').slice(0, 80),
+          ariaLabel: el.getAttribute('aria-label') || '',
+          text: (el.textContent || '').trim().slice(0, 50),
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) }
         });
       }
-
+      // Elements containing date-like text (so we can find the actual date control)
+      var rx = /\\b[A-Z][a-z]{2},?\\s+[A-Z][a-z]{2}\\s+\\d{1,2},?\\s+\\d{4}\\b/;
+      var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+      var node;
+      while ((node = walker.nextNode()) && result.dateLikeText.length < 20) {
+        text = (node.nodeValue || '').trim();
+        if (!rx.test(text)) continue;
+        var parent = node.parentElement;
+        if (!parent) continue;
+        r = parent.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        result.dateLikeText.push({
+          text: text.slice(0, 60),
+          parentTag: parent.tagName,
+          parentCls: String(parent.className || '').slice(0, 80),
+          parentRole: parent.getAttribute('role') || '',
+          rect: { x: Math.round(r.x), y: Math.round(r.y), w: Math.round(r.width), h: Math.round(r.height) }
+        });
+      }
       return result;
-    });
+    })()`;
+    const dump = await page.evaluate(evalSrc);
     await fs.writeFile(path.join(outDir, 'dom-dump.json'), JSON.stringify(dump, null, 2), 'utf-8');
-    console.log(`[audit-pull] dumped DOM probe to dom-dump.json (${dump.buttons.length} buttons, ${dump.inputs.length} inputs, ${dump.comboboxes.length} comboboxes)`);
+    const d = dump as { buttons: unknown[]; inputs: unknown[]; comboboxes: unknown[]; dateLikeText: unknown[] };
+    console.log(`[audit-pull] dom-dump.json: ${d.buttons.length} buttons, ${d.inputs.length} inputs, ${d.comboboxes.length} comboboxes, ${d.dateLikeText.length} date-text matches`);
   } catch (e) {
     console.warn(`[audit-pull] dumpDom failed: ${(e as Error).message}`);
   }
