@@ -211,93 +211,61 @@ async function main() {
     const untilHuman = humanDate(until);
     let dateStrategy = 'none';
 
-    // Strategy 1: an iframe input whose VALUE looks like a date.
-    const inputs = await frame.locator('input').all();
+    // Target the WRITABLE inputs (class="date-manual", placeholder="dd/mm/yyyy"),
+    // not the readonly display inputs. Fill with dd/mm/yyyy format the
+    // placeholder hints at.
+    const manualInputs = await frame.locator('input.date-manual').all();
+    console.log(`[audit-pull] found ${manualInputs.length} .date-manual inputs`);
     let inputsSet = 0;
-    for (const input of inputs) {
-      const value = (await input.inputValue().catch(() => '')) ?? '';
-      if (/^[A-Z][a-z]{2},?\s+[A-Z][a-z]{2}\s+\d{1,2},?\s+\d{4}$/.test(value) || /\d{1,2}\/\d{1,2}\/\d{4}/.test(value)) {
-        const target = inputsSet === 0 ? fromHuman : untilHuman;
-        await input.click({ timeout: 2000 }).catch(() => {});
-        await input.fill(target).catch(() => {});
-        await input.press('Enter').catch(() => {});
-        inputsSet++;
-        if (inputsSet >= 2) break;
-      }
+    const fromDmy = ddmmyyyy(from);
+    const untilDmy = ddmmyyyy(until);
+    for (let i = 0; i < manualInputs.length && inputsSet < 2; i++) {
+      const input = manualInputs[i];
+      const target = inputsSet === 0 ? fromDmy : untilDmy;
+      await input.click({ timeout: 2000 }).catch(() => {});
+      await input.fill('').catch(() => {});
+      await input.fill(target).catch(() => {});
+      await input.press('Tab').catch(() => {}); // blur + commit
+      await page.waitForTimeout(400);
+      inputsSet++;
     }
-    if (inputsSet >= 2) {
-      dateStrategy = 'value-matched-inputs';
-    } else {
-      // Strategy 2: click the visible date TEXT inside the frame.
-      const dateTexts = frame.locator('text=/^[A-Za-z]{3},?\\s+[A-Za-z]{3}\\s+\\d{1,2},?\\s+\\d{4}$/');
-      const textCount = await dateTexts.count().catch(() => 0);
-      console.log(`[audit-pull] strategy-2 found ${textCount} date-text candidates`);
-      for (let i = 0; i < Math.min(textCount, 4) && inputsSet < 2; i++) {
-        const target = inputsSet === 0 ? fromHuman : untilHuman;
-        await dateTexts.nth(i).click({ timeout: 2000 }).catch(() => {});
-        await page.waitForTimeout(400);
-        const popoverInput = frame.locator('input:visible').first();
-        if (await popoverInput.isVisible({ timeout: 1500 }).catch(() => false)) {
-          await popoverInput.fill(target).catch(() => {});
-          await popoverInput.press('Enter').catch(() => {});
-          inputsSet++;
-        }
-        await page.keyboard.press('Escape').catch(() => {});
-        await page.waitForTimeout(300);
-      }
-      if (inputsSet >= 2) dateStrategy = 'click-text-then-fill';
-    }
+    if (inputsSet >= 2) dateStrategy = 'date-manual-dmy';
     console.log(`[audit-pull] date strategy: ${dateStrategy} (${inputsSet}/2 set)`);
     if (inputsSet < 2) {
       await page.screenshot({ path: path.join(outDir, 'last-date-input-miss.png'), fullPage: true }).catch(() => {});
       console.warn('[audit-pull] could not locate both date inputs');
     }
+    // Wait for the report to reload with the new date range (chart spinner).
+    await frame.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForTimeout(1500);
+
+    // ─── Event filter: check if Oddyssey Noir is already selected ────────
+    // DOM dump confirms there's an <input class="search" value="Oddyssey Noir">
+    // in the events filter area when the filter is set. Trust that — don't
+    // re-click which can clear it.
+    const eventSearchVal = await frame.locator('input.search').first().inputValue().catch(() => '');
+    if (eventSearchVal === EVENT_NAME) {
+      console.log('[audit-pull] event filter already set to Oddyssey Noir (via input.search)');
+    } else {
+      console.log(`[audit-pull] event filter not set (input.search="${eventSearchVal}"); attempting selection`);
+      // Click the events field area, type, pick option. We don't know the
+      // exact selector yet — use coordinates from dom-dump if needed.
+      const eventsField = frame.getByText(/^Events$/).first();
+      if (await eventsField.isVisible({ timeout: 1000 }).catch(() => false)) {
+        await eventsField.click().catch(() => {});
+        await page.keyboard.type(EVENT_NAME);
+        await page.waitForTimeout(500);
+        const option = frame.getByText(new RegExp(`^${escapeRegex(EVENT_NAME)}$`)).first();
+        if (await option.isVisible({ timeout: 1500 }).catch(() => false)) {
+          await option.click();
+        }
+      }
+    }
     await page.waitForTimeout(500);
 
-    // ─── Set Oddyssey Noir event filter (always; iframe-scoped) ──────────
-    console.log('[audit-pull] setting Events filter to Oddyssey Noir');
-    let eventSet = false;
-    const eventComboboxSelectors = [
-      'input[placeholder*="All Events" i]',
-      'input[placeholder*="Events" i]',
-      'label:has-text("Events") + * input',
-      'label:has-text("Events") ~ * input',
-      '[role="combobox"]',
-    ];
-    for (const sel of eventComboboxSelectors) {
-      const loc = frame.locator(sel).first();
-      if (!(await loc.isVisible({ timeout: 600 }).catch(() => false))) continue;
-      await loc.click({ timeout: 1500 }).catch(() => {});
-      await loc.fill(EVENT_NAME).catch(() => {});
-      await page.waitForTimeout(400);
-      const option = frame.getByRole('option', { name: new RegExp(EVENT_NAME, 'i') }).first();
-      if (await option.isVisible({ timeout: 1500 }).catch(() => false)) {
-        await option.click();
-        eventSet = true;
-        console.log(`[audit-pull] event filter set via "${sel}"`);
-        break;
-      }
-      const textOption = frame.getByText(new RegExp(`^${escapeRegex(EVENT_NAME)}$`)).first();
-      if (await textOption.isVisible({ timeout: 1000 }).catch(() => false)) {
-        await textOption.click();
-        eventSet = true;
-        console.log(`[audit-pull] event filter set via "${sel}" (text fallback)`);
-        break;
-      }
-      await page.keyboard.press('Escape').catch(() => {});
-    }
-    if (!eventSet) {
-      console.warn('[audit-pull] could not select Oddyssey Noir event filter');
-    }
-    await page.waitForTimeout(800);
-
-    // ─── Click "Select All" on ticket types ─────────────────────────────
-    const selectAll = frame.getByText(/^select all$/i).first();
-    if (await selectAll.isVisible({ timeout: 1500 }).catch(() => false)) {
-      console.log('[audit-pull] clicking Select All');
-      await selectAll.click();
-      await page.waitForTimeout(500);
-    }
+    // ─── Final wait for any data reload to complete before export ─────────
+    await frame.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForTimeout(2000);
 
     await page.screenshot({ path: path.join(outDir, 'last-before-export.png'), fullPage: true }).catch(() => {});
     await dumpDom(frame, outDir);
@@ -328,18 +296,36 @@ async function main() {
         const el = loc.nth(i);
         if (!(await el.isVisible({ timeout: 400 }).catch(() => false))) continue;
         await el.click({ timeout: 1500 }).catch(() => {});
-        await page.waitForTimeout(500);
-        const exportItem = frame.getByText(exportItemPattern).first();
-        if (await exportItem.isVisible({ timeout: 1000 }).catch(() => false)) {
-          console.log(`[audit-pull] menu opened via "${name}" idx ${i}, found export item`);
-          const [download] = await Promise.all([
-            page.waitForEvent('download', { timeout: 30000 }),
-            exportItem.click(),
-          ]);
-          await saveDownload(download, outDir, from, until);
-          exportClicked = true;
+        await page.waitForTimeout(700);
+        // Snapshot the open menu state — crucial for iterating selectors.
+        await page.screenshot({ path: path.join(outDir, 'last-menu-open.png'), fullPage: true }).catch(() => {});
+        // Try most specific first: "Export to CSV" (food-pull pattern), then
+        // broader "Export to XLSX", then any "Export" text.
+        const exportCandidates = [
+          frame.getByText(/export to csv/i).first(),
+          frame.getByText(/export to xlsx/i).first(),
+          frame.getByText(/export to excel/i).first(),
+          frame.getByText(/download.*xlsx/i).first(),
+          frame.getByText(/download.*csv/i).first(),
+          frame.getByText(exportItemPattern).first(),
+        ];
+        for (const exportItem of exportCandidates) {
+          if (!(await exportItem.isVisible({ timeout: 800 }).catch(() => false))) continue;
+          const itemText = (await exportItem.textContent().catch(() => '')) ?? '';
+          console.log(`[audit-pull] menu opened via "${name}" idx ${i}; clicking item "${itemText.trim().slice(0, 40)}"`);
+          try {
+            const [download] = await Promise.all([
+              page.waitForEvent('download', { timeout: 45000 }),
+              exportItem.click(),
+            ]);
+            await saveDownload(download, outDir, from, until);
+            exportClicked = true;
+          } catch (e) {
+            console.warn(`[audit-pull] download did not fire after clicking "${itemText.trim().slice(0, 40)}": ${(e as Error).message}`);
+          }
           break;
         }
+        if (exportClicked) break;
         await page.keyboard.press('Escape').catch(() => {});
         await page.waitForTimeout(200);
       }
@@ -491,6 +477,12 @@ function humanDate(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);
   const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   return `${months[m - 1]} ${d}, ${y}`;
+}
+
+function ddmmyyyy(iso: string): string {
+  // "2026-05-28" → "28/05/2026" (matches the date-manual placeholder)
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
 }
 
 function escapeRegex(s: string): string {
