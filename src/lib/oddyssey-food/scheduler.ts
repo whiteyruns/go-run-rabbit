@@ -369,6 +369,18 @@ export function startScheduler(): void {
     );
   } catch { /* non-fatal */ }
 
+  // KILL SWITCH (Jun 3 2026): Oddyssey Manor/Noir automation fully stopped
+  // after Brandon's departure. The entire scheduler is off by default — no
+  // jobs register, so no Ticketure/Square pulls, GM briefings, AREA15 kitchen
+  // roster PDFs, recaps, or promoter emails fire. To revive the engagement,
+  // set ODDYSSEY_SCHEDULER_ENABLED=true in the server env and restart.
+  if (process.env.ODDYSSEY_SCHEDULER_ENABLED !== "true") {
+    console.log(
+      "[oddyssey-scheduler] disabled — set ODDYSSEY_SCHEDULER_ENABLED=true to re-enable (off since Jun 3 2026, Brandon offboarding)"
+    );
+    return;
+  }
+
   if (STATE.started) return;
   STATE.started = true;
   STATE.startedAt = new Date().toISOString();
