@@ -62,7 +62,7 @@ git push origin HEAD
 step "Remote: pull + install + build + restart"
 ssh "$SSH_TARGET" bash -s <<REMOTE
 set -euo pipefail
-export PATH=/opt/homebrew/bin:\$PATH
+export PATH=/opt/homebrew/opt/node@22/bin:/opt/homebrew/bin:\$PATH
 cd "$APP_DIR"
 
 echo "-> git pull"
@@ -97,7 +97,7 @@ done
 
 if [ "\$code" != "200" ]; then
   echo "FAIL: localhost:3102 not serving 200 after restart. Recent logs:" >&2
-  pm2 logs "$PM2_NAME" --lines 40 --nostream >&2 || true
+  tail -40 "$APP_DIR/logs/web.log" >&2 || true
   exit 1
 fi
 REMOTE
