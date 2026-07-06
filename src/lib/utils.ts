@@ -34,5 +34,9 @@ export const fmt = (n: number): string => {
   return `$${n}`;
 };
 
-/** Format a number with locale-aware thousand separators */
-export const fmtNum = (n: number): string => n.toLocaleString();
+/**
+ * Format a number with thousand separators. Locale is pinned to en-US so the
+ * server (Node) and browser render identical text — a bare toLocaleString()
+ * uses each runtime's default locale and triggers React hydration mismatches.
+ */
+export const fmtNum = (n: number): string => n.toLocaleString("en-US");
