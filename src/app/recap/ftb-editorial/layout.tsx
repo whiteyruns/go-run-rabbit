@@ -73,6 +73,7 @@ export default function EditorialRecapLayout({
           }
 
           .recap-no-print { display: none !important; }
+          .recap-print-only { display: block !important; }
 
           /* Break *before* a section. */
           .recap-page-break {
@@ -178,6 +179,8 @@ export default function EditorialRecapLayout({
         }
         /* Hide the running footer on-screen; only print shows it. */
         .pdf-running-footer { display: none; }
+        /* Print-only poster fallback for the hero film — hidden on-screen. */
+        .recap-print-only { display: none; }
 
         /* Screen-only min-height for the cover hero (replaces Tailwind
            min-h-[90vh] which in print evaluated to 9.9in and caused the

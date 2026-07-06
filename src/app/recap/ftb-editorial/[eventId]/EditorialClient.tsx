@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { feedTheBlock } from "@/data/feed-the-block";
 import { isCbmAnchor } from "@/data/feed-the-block/marshmello-apr2";
 import { estimatedImpact } from "@/data/feed-the-block/series";
@@ -8,84 +8,10 @@ import { FTB_EXECUTIVE_SUMMARY } from "@/data/feed-the-block/recap/exec-summary"
 import { photoUrl, type RecapBundle } from "@/data/feed-the-block/recap/bundle";
 import { fmt, fmtNum } from "@/lib/utils";
 
-const ACCESS_CODE = "feed2026";
-
-export function EditorialClient({
-  bundle,
-  previewAuthed = false,
-}: {
-  bundle: RecapBundle;
-  previewAuthed?: boolean;
-}) {
-  // Admins viewing drafts bypass the public code gate.
-  if (previewAuthed) return <RecapBody bundle={bundle} />;
-  return (
-    <AuthGate>
-      <RecapBody bundle={bundle} />
-    </AuthGate>
-  );
-}
-
-function AuthGate({ children }: { children: React.ReactNode }) {
-  const [authed, setAuthed] = useState(false);
-  const [input, setInput] = useState("");
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    if (sessionStorage.getItem("ftb-recap-auth") === "true") setAuthed(true);
-  }, []);
-
-  if (authed) return <>{children}</>;
-
-  const submit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (input.toLowerCase().trim() === ACCESS_CODE) {
-      sessionStorage.setItem("ftb-recap-auth", "true");
-      setAuthed(true);
-    } else {
-      setError(true);
-      setTimeout(() => setError(false), 2000);
-    }
-  };
-
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center recap-no-print px-8"
-      style={{ background: "#fdf9f3" }}
-    >
-      <form onSubmit={submit} className="flex flex-col items-center gap-8 max-w-sm w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/feed-the-block/logo.webp"
-          alt="Feed The Block"
-          className="h-24 w-auto"
-        />
-        <p className="uppercase tracking-[0.3em] text-[10px] text-[#7f5700]">
-          Event Recap · Access Required
-        </p>
-        <input
-          type="password"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter access code"
-          autoFocus
-          className="w-full bg-transparent border-b border-[#c9912b] py-3 text-center text-base tracking-widest outline-none text-[#1c1c18] placeholder:text-[#504536]/50"
-          style={{ borderColor: error ? "#ba1a1a" : "#c9912b" }}
-        />
-        <button
-          type="submit"
-          className="px-12 py-3 text-[10px] uppercase tracking-widest font-medium transition-opacity hover:opacity-85 bg-[#7f5700] text-white"
-        >
-          View Recap
-        </button>
-        {error && (
-          <p className="text-xs uppercase tracking-widest text-[#ba1a1a]">
-            Invalid access code
-          </p>
-        )}
-      </form>
-    </div>
-  );
+export function EditorialClient({ bundle }: { bundle: RecapBundle }) {
+  // Public recap — open access, no code gate. Draft visibility is enforced
+  // server-side (admin session) in page.tsx.
+  return <RecapBody bundle={bundle} />;
 }
 
 function RecapBody({ bundle }: { bundle: RecapBundle }) {
@@ -341,7 +267,32 @@ function RecapBody({ bundle }: { bundle: RecapBundle }) {
         {/* 3. The Event (full-bleed) */}
         {hero && (
           <section id="event" className="scroll-mt-20 py-16 md:py-20 recap-page-break">
-            <figure className="pdf-avoid-break w-full h-[400px] md:h-[716px] relative overflow-hidden bg-[#1c1c18]">
+            {/* Screen — the recap film */}
+            <figure className="recap-no-print pdf-avoid-break w-full relative bg-[#1c1c18]">
+              <div className="relative w-full aspect-video">
+                <iframe
+                  src="https://player.vimeo.com/video/1180884686?title=0&byline=0&portrait=0&dnt=1"
+                  title={hero.alt}
+                  className="absolute inset-0 h-full w-full border-0"
+                  allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                />
+              </div>
+              <figcaption className="px-6 md:px-8 py-4">
+                {hero.caption && (
+                  <span className="block text-white serif italic text-sm md:text-base">
+                    {hero.caption}
+                  </span>
+                )}
+                <span className="block text-white/60 uppercase tracking-widest text-[9px] mt-2">
+                  Film · Corner Bar Management
+                </span>
+              </figcaption>
+            </figure>
+
+            {/* Print / PDF — poster frame (video cannot render in a PDF) */}
+            <figure className="recap-print-only w-full h-[716px] relative overflow-hidden bg-[#1c1c18]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photoUrl(bundle.photoPathKey, hero.slug, 1920)}

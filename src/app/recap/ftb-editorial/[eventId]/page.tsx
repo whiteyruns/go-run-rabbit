@@ -65,13 +65,12 @@ export default async function EditorialRecapPage({
   const bundle = await loadRecap(params.eventId);
   if (!bundle) notFound();
 
-  // Drafts require an admin session; no public code-gate access.
-  let previewAuthed = false;
+  // Drafts require an admin session (enforced server-side). Published recaps
+  // are open — no access code.
   if (bundle.status === "draft") {
     const session = await getSession();
     if (!session || session.role !== "admin") notFound();
-    previewAuthed = true;
   }
 
-  return <EditorialClient bundle={bundle} previewAuthed={previewAuthed} />;
+  return <EditorialClient bundle={bundle} />;
 }
