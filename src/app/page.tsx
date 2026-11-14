@@ -171,7 +171,7 @@ export default function HomePage() {
             </a>
 
             {/* Feed the Block */}
-            <a href="https://eastfremontdistrict.com" target="_blank" rel="noopener noreferrer" className="md:col-span-5 group cursor-pointer block">
+            <div className="md:col-span-5 group block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[16/10]">
                 <img src="/projects/feed-the-block.jpg" alt="Feed the Block concert event" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/70 to-transparent" />
@@ -183,7 +183,7 @@ export default function HomePage() {
                   <p className="text-[#d0cfd2] text-sm drop-shadow-md">Concert series — Marshmello, Gryffin, Diplo. 100K+ projected 2026. $400K municipal sponsorship.</p>
                 </div>
               </div>
-            </a>
+            </div>
 
             {/* Forest House — Small */}
             <a href="https://foresthou.se" target="_blank" rel="noopener noreferrer" className="md:col-span-5 group cursor-pointer block">
@@ -198,16 +198,16 @@ export default function HomePage() {
             </a>
 
             {/* Prodigal Swan */}
-            <div className="md:col-span-7 group cursor-pointer">
+            <a href="https://prodigalswan.com" target="_blank" rel="noopener noreferrer" className="md:col-span-7 group cursor-pointer block">
               <div className="relative overflow-hidden rounded-xl bg-[#1f1f23] aspect-[21/10]">
-                <img src="/projects/prodigal-swan.jpg" alt="Prodigal Swan art installation" className="absolute inset-0 w-full h-full object-cover" />
+                <img src="/projects/prodigal-swan.jpg" alt="Prodigal Swan art car" className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e11] via-[#0e0e11]/70 to-transparent" />
                 <div className="absolute bottom-8 left-8 right-8">
                   <h3 className="text-2xl font-bold mb-2 drop-shadow-lg">Prodigal Swan</h3>
-                  <p className="text-[#d0cfd2] text-sm drop-shadow-md">Large-scale art installation — Burning Man. Design, fabrication, and playa logistics.</p>
+                  <p className="text-[#d0cfd2] text-sm drop-shadow-md">Fire-breathing, LED-lit art car based in Las Vegas. Design, fabrication, and playa logistics.</p>
                 </div>
               </div>
-            </div>
+            </a>
 
           </div>
         </section>
@@ -267,22 +267,22 @@ export default function HomePage() {
                 Under <span className="text-[#f3f0f4] font-bold">Go Run Rabbit</span>, I work with hospitality companies and event producers who need someone who understands both sides — the production floor and the codebase.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-4 gap-6">
+            <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-6">
               <div>
-                <div className="text-3xl font-black text-[#00eefc] mb-1">16</div>
-                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Venues</div>
+                <div className="text-3xl font-black text-[#00eefc] mb-1">17</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Years in Events</div>
               </div>
               <div>
-                <div className="text-3xl font-black text-[#aea2ff] mb-1">6</div>
-                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Projects Shipped</div>
+                <div className="text-3xl font-black text-[#aea2ff] mb-1">16</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">District Venues</div>
               </div>
               <div>
-                <div className="text-3xl font-black text-[#ff6b98] mb-1">100K+</div>
-                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Event Attendees</div>
+                <div className="text-3xl font-black text-[#ff6b98] mb-1">150K+</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Festival Attendees</div>
               </div>
               <div>
-                <div className="text-3xl font-black text-[#00eefc] mb-1">5</div>
-                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Platforms Built</div>
+                <div className="text-3xl font-black text-[#00eefc] mb-1">$400K</div>
+                <div className="text-[10px] uppercase tracking-[0.15em] font-bold text-[#48474b]">Sponsorship Secured</div>
               </div>
             </div>
           </div>
@@ -329,8 +329,9 @@ export default function HomePage() {
                 <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[#48474b] mb-3">Links</p>
                 <div className="flex flex-col gap-2">
                   <a href="mailto:keith@gorunrabbit.com" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Contact</a>
-                  <a href="https://swanforestcamp.com/terms" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Terms</a>
-                  <a href="https://swanforestcamp.com/privacy" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Privacy</a>
+                  <a href="/terms" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Terms</a>
+                  <a href="/privacy" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">Privacy</a>
+                  <a href="/sms" className="text-[#acaaae] hover:text-[#00eefc] transition-colors text-sm">SMS Program</a>
                 </div>
               </div>
             </div>
