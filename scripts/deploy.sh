@@ -7,7 +7,7 @@
 #
 # Usage:   ./scripts/deploy.sh
 # Env overrides (optional):
-#   DEPLOY_SSH_TARGET     default: perrinclaw@perrins-mac-mini (Tailscale MagicDNS)
+#   DEPLOY_SSH_TARGET     default: perrinclaw@perrins-mac-mini-1 (Tailscale MagicDNS)
 #   DEPLOY_APP_DIR        default: /Users/perrinclaw/apps/go-rabbit-web
 #   DEPLOY_LAUNCHD_LABEL  default: com.gorunrabbit.web
 #
@@ -20,7 +20,7 @@ set -euo pipefail
 # Tailscale MagicDNS hostname avoids hard-coding the IP — survives
 # Tailscale IP reassignments. Override DEPLOY_SSH_TARGET if Tailscale is
 # unavailable (e.g. DEPLOY_SSH_TARGET=perrinclaw@192.168.0.49 on LAN).
-SSH_TARGET="${DEPLOY_SSH_TARGET:-perrinclaw@perrins-mac-mini}"
+SSH_TARGET="${DEPLOY_SSH_TARGET:-perrinclaw@perrins-mac-mini-1}"
 APP_DIR="${DEPLOY_APP_DIR:-/Users/perrinclaw/apps/go-rabbit-web}"
 LAUNCHD_LABEL="${DEPLOY_LAUNCHD_LABEL:-com.gorunrabbit.web}"
 PUBLIC_URL="${DEPLOY_PUBLIC_URL:-https://gorunrabbit.com/}"
